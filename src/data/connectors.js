@@ -1,11 +1,12 @@
 /* eslint-disable new-cap */
 
-import Mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import Random from 'meteor-random';
 
 
 export const connectToMongo = () => {
-  Mongoose.connect(
+  mongoose.Promise = global.Promise;
+  mongoose.connect(
     process.env.MONGO_URL, {
       server: {
         // after server reload, user must not reload widget manually
@@ -15,19 +16,19 @@ export const connectToMongo = () => {
   );
 };
 
-const UserSchema = Mongoose.Schema({
+const UserSchema = mongoose.Schema({
   _id: String,
   details: {
     avatar: String,
   },
 });
 
-const BrandSchema = Mongoose.Schema({
+const BrandSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   code: String,
 });
 
-const IntegrationSchema = Mongoose.Schema({
+const IntegrationSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   brandId: String,
   formId: String,
@@ -35,7 +36,7 @@ const IntegrationSchema = Mongoose.Schema({
   kind: String,
 });
 
-const CustomerSchema = Mongoose.Schema({
+const CustomerSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   integrationId: String,
   email: String,
@@ -44,7 +45,7 @@ const CustomerSchema = Mongoose.Schema({
   inAppMessagingData: Object,
 });
 
-const ConversationSchema = Mongoose.Schema({
+const ConversationSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   createdAt: Date,
   content: String,
@@ -56,14 +57,14 @@ const ConversationSchema = Mongoose.Schema({
   readUserIds: [String],
 });
 
-const AttachmentSchema = Mongoose.Schema({
+const AttachmentSchema = mongoose.Schema({
   url: String,
   name: String,
   size: Number,
   type: String,
 });
 
-const MessageSchema = Mongoose.Schema({
+const MessageSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   userId: String,
   conversationId: String,
@@ -76,12 +77,12 @@ const MessageSchema = Mongoose.Schema({
   formWidgetData: Object,
 });
 
-const FormSchema = Mongoose.Schema({
+const FormSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   title: String,
 });
 
-const FormFieldSchema = Mongoose.Schema({
+const FormFieldSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   formId: String,
   type: String,
@@ -94,14 +95,14 @@ const FormFieldSchema = Mongoose.Schema({
   order: Number,
 });
 
-const Users = Mongoose.model('users', UserSchema);
-const Brands = Mongoose.model('brands', BrandSchema);
-const Integrations = Mongoose.model('integrations', IntegrationSchema);
-const Customers = Mongoose.model('customers', CustomerSchema);
-const Conversations = Mongoose.model('conversations', ConversationSchema);
-const Messages = Mongoose.model('conversation_messages', MessageSchema);
-const Forms = Mongoose.model('forms', FormSchema);
-const FormFields = Mongoose.model('form_fields', FormFieldSchema);
+const Users = mongoose.model('users', UserSchema);
+const Brands = mongoose.model('brands', BrandSchema);
+const Integrations = mongoose.model('integrations', IntegrationSchema);
+const Customers = mongoose.model('customers', CustomerSchema);
+const Conversations = mongoose.model('conversations', ConversationSchema);
+const Messages = mongoose.model('conversation_messages', MessageSchema);
+const Forms = mongoose.model('forms', FormSchema);
+const FormFields = mongoose.model('form_fields', FormFieldSchema);
 
 export {
   Users, Brands, Integrations, Customers, Conversations,
