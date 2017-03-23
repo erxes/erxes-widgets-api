@@ -2,11 +2,11 @@
 
 import Mongoose from 'mongoose';
 import Random from 'meteor-random';
-import settings from '../settings';
+
 
 export const connectToMongo = () => {
   Mongoose.connect(
-    settings.MONGO_URL, {
+    process.env.MONGO_URL, {
       server: {
         // after server reload, user must not reload widget manually
         auto_reconnect: true,
