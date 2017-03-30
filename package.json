@@ -2,20 +2,26 @@
   "name": "erxes-api",
   "version": "0.1.0",
   "description": "GraphQL API for erxes apps",
+  "homepage": "https://erxes.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erxes/erxes-api"
+  },
+  "bugs": "https://github.com/erxes/erxes-api/issues",
+  "keywords": [
+    "node",
+    "express",
+    "graphql",
+    "apollo"
+  ],
   "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "node dist",
     "dev": "nodemon src --exec babel-node",
     "test": "mocha src/data/tests --reporter spec --compilers js:babel-core/register",
     "build": "babel src --out-dir dist --ignore tests --copy-files"
   },
-  "keywords": [
-    "Javascript",
-    "Node.js",
-    "Express",
-    "GraphQL",
-    "Apollo"
-  ],
   "dependencies": {
     "body-parser": "^1.17.1",
     "cors": "^2.8.1",
