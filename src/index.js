@@ -28,7 +28,6 @@ app.use(cors());
 app.use('/graphql', graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
-// server
 const server = createServer(app);
 const { PORT } = process.env;
 const SUBSCRIPTION_PATH = '/subscriptions';
@@ -37,15 +36,13 @@ server.listen(PORT, () => {
   console.log(`GraphQL server is running on port ${PORT}`);
   console.log(`Websocket server is running on port ${PORT}${SUBSCRIPTION_PATH}`);
 
-  // subscription server
-  const subscriptionServer = new SubscriptionServer(
+  // eslint-disable-next-line no-new
+  new SubscriptionServer(
     {
       subscriptionManager,
       onConnect(connectionParams, webSocket) {
         webSocket.on('message', (message) => {
           const parsedMessage = JSON.parse(message);
-
-          console.log(parsedMessage);
 
           if (parsedMessage.type === 'inAppConnected') {
             webSocket.inAppData = parsedMessage.value; // eslint-disable-line no-param-reassign
