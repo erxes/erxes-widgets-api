@@ -46,28 +46,37 @@ describe('Form mutations', () => {
   });
 
   describe('formConnect', () => {
-    const brandCode = 'code';
-    const formId = 'DFDFDFD';
+    let brandId;
+
+    const brandCode = 'brandCode';
+    const formCode = 'formCode';
 
     beforeEach((done) => {
       // create brand
-      brandFactory({ code: brandCode }).then((brand) => {
-        // create integration
-        integrationFactory({ brandId: brand._id, formId, kind: 'form' }).then(() => {
-          done();
+      brandFactory({ code: brandCode })
+        .then((brand) => {
+          brandId = brand._id;
+
+          return formFactory({ code: formCode });
+        })
+
+        .then((form) => {
+          // create integration
+          integrationFactory({ brandId, formId: form._id }).then(() => {
+            done();
+          });
         });
-      });
     });
 
     it('connect', (done) => {
       // call mutation
       expectPromise(
         done,
-        formMutations.formConnect({}, { brandCode }),
+        formMutations.formConnect({}, { brandCode, formCode }),
         (res) => {
-          // must return integrationId and newly created customerId
+          // must return integrationId and formId
           expect(res.integrationId).to.not.equal(undefined);
-          expect(res.formId).equal(formId);
+          expect(res.formId).to.not.equal(undefined);
 
           done();
         });
@@ -236,7 +245,7 @@ describe('Form mutations', () => {
 
           // check message fields
           const p4 = Messages.findOne({}).then((message) => {
-            expect(message.conversationId).to.not.be.null;
+            expect(message.conversationId).to.not.equal(null);
             expect(message.content).to.equal(formTitle);
             expect(message.formWidgetData).to.deep.equal(submissions);
           });

@@ -64,4 +64,10 @@ export default {
 
     parseLiteral: jSONparseLiteral,
   }),
+
+  Field: {
+    name(field) {
+      return `erxes-form-field-${field._id}`;
+    },
+  },
 };
