@@ -139,6 +139,7 @@ export default {
       // return integration details
       .then(integ => ({
         integrationId: integ._id,
+        integrationName: integ.name,
         formId: integ.formId,
         formLoadType: integ.formLoadType,
       }))

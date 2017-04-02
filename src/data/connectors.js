@@ -30,6 +30,7 @@ const BrandSchema = mongoose.Schema({
 
 const IntegrationSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
+  name: String,
   brandId: String,
   formId: String,
   formLoadType: String,

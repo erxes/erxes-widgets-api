@@ -101,6 +101,7 @@ const typeDefs = `
 
   type FormConnectResponse {
     integrationId: String!
+    integrationName: String!
     formId: String!
     formLoadType: String!
   }
