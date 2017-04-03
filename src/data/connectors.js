@@ -35,6 +35,8 @@ const IntegrationSchema = mongoose.Schema({
   formId: String,
   formLoadType: String,
   kind: String,
+  inAppData: Object,
+  uiOptions: Object,
 });
 
 const CustomerSchema = mongoose.Schema({
