@@ -23,6 +23,8 @@ export default {
    */
   inAppConnect(root, args) {
     let integrationId;
+    let uiOptions;
+    let inAppData;
 
     const { brandCode, email, name } = args;
 
@@ -32,6 +34,8 @@ export default {
       // find customer
       .then((integration) => {
         integrationId = integration._id;
+        uiOptions = integration.uiOptions;
+        inAppData = integration.inAppData;
 
         return getCustomer(integration._id, email);
       })
@@ -76,6 +80,8 @@ export default {
       // return integrationId, customerId
       .then(customer => ({
         integrationId,
+        uiOptions,
+        inAppData,
         customerId: customer._id,
       }))
 

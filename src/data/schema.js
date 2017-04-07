@@ -96,6 +96,8 @@ const typeDefs = `
 
   type InAppConnectResponse {
     integrationId: String!
+    uiOptions: JSON
+    inAppData: JSON
     customerId: String!
   }
 
