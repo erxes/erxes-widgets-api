@@ -14,6 +14,7 @@ const typeDefs = `
   # user ================
   type UserDetails {
     avatar: String
+    fullName: String
   }
 
   type User {

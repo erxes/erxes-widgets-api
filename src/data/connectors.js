@@ -20,6 +20,7 @@ const UserSchema = mongoose.Schema({
   _id: String,
   details: {
     avatar: String,
+    fullName: String,
   },
 });
 
