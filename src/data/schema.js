@@ -111,7 +111,7 @@ const typeDefs = `
   }
 
   type Mutation {
-    inAppConnect(brandCode: String!, email: String!, data: JSON): InAppConnectResponse
+    inAppConnect(brandCode: String!, email: String!, name: String, data: JSON): InAppConnectResponse
     insertMessage(integrationId: String!, customerId: String!,
       conversationId: String!, message: String, attachments: [AttachmentInput]): Message
 
