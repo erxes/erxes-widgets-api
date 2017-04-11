@@ -1,8 +1,7 @@
 import _ from 'underscore';
 import validator from 'validator';
-import { Forms, FormFields } from './connectors';
+import { Integrations, Brands, Forms, FormFields } from './connectors';
 import {
-  getIntegration,
   createConversation,
   createMessage,
   getCustomer,
@@ -114,12 +113,33 @@ export const saveValues = ({ integrationId, submissions, formId }) =>
       });
     });
 
+
 export default {
   // Find integrationId by brandCode
   formConnect(root, args) {
-    return getIntegration(args.brandCode, 'form')
+    let brandId;
+
+    // find brand by code
+    return Brands.findOne({ code: args.brandCode })
+      .then((brand) => {
+        brandId = brand._id;
+
+        // find form by code
+        return Forms.findOne({ code: args.formCode });
+      })
+
+      // find integration by brandId & formId
+      .then(form =>
+        Integrations.findOne({
+          brandId,
+          formId: form._id,
+        }),
+      )
+
+      // return integration details
       .then(integ => ({
         integrationId: integ._id,
+        integrationName: integ.name,
         formId: integ.formId,
         formLoadType: integ.formLoadType,
       }))

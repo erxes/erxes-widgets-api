@@ -73,6 +73,7 @@ const typeDefs = `
     description: String
     options: [String]
     isRequired: Boolean
+    name: String
     order: Int
   }
 
@@ -95,11 +96,14 @@ const typeDefs = `
 
   type InAppConnectResponse {
     integrationId: String!
+    uiOptions: JSON
+    inAppData: JSON
     customerId: String!
   }
 
   type FormConnectResponse {
     integrationId: String!
+    integrationName: String!
     formId: String!
     formLoadType: String!
   }
@@ -121,7 +125,7 @@ const typeDefs = `
     chatConnect(brandCode: String!): String
     chatCreateConversation(integrationId: String!, email: String!, content: String!): Message
 
-    formConnect(brandCode: String!): FormConnectResponse
+    formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
   }
 

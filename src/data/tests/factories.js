@@ -23,9 +23,10 @@ export const integrationFactory = (params) => {
   return integration.save();
 };
 
-export const formFactory = ({ title }) => {
+export const formFactory = ({ title, code }) => {
   const form = new Forms({
     title: title || faker.random.word(),
+    code: code || Random.id(),
   });
 
   return form.save();
