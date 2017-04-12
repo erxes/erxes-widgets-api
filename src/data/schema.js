@@ -51,6 +51,7 @@ const typeDefs = `
     status: String!
     content: String
     createdAt: Date
+    participatedUsers: [User]
     readUserIds: [String]
   }
 

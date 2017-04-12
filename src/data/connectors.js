@@ -59,6 +59,7 @@ const ConversationSchema = mongoose.Schema({
   messageCount: Number,
   status: String,
   readUserIds: [String],
+  participatedUserIds: [String],
 });
 
 const AttachmentSchema = mongoose.Schema({
