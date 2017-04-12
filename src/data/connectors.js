@@ -20,6 +20,7 @@ const UserSchema = mongoose.Schema({
   _id: String,
   details: {
     avatar: String,
+    fullName: String,
   },
 });
 
@@ -58,6 +59,7 @@ const ConversationSchema = mongoose.Schema({
   messageCount: Number,
   status: String,
   readUserIds: [String],
+  participatedUserIds: [String],
 });
 
 const AttachmentSchema = mongoose.Schema({

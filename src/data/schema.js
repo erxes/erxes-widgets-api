@@ -14,6 +14,7 @@ const typeDefs = `
   # user ================
   type UserDetails {
     avatar: String
+    fullName: String
   }
 
   type User {
@@ -50,6 +51,7 @@ const typeDefs = `
     status: String!
     content: String
     createdAt: Date
+    participatedUsers: [User]
     readUserIds: [String]
   }
 

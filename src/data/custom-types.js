@@ -77,4 +77,10 @@ export default {
       return Users.findOne({ _id: message.userId });
     },
   },
+
+  Conversation: {
+    participatedUsers(conversation) {
+      return Users.find({ _id: { $in: conversation.participatedUserIds } });
+    },
+  },
 };
