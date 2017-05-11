@@ -1,5 +1,6 @@
 import _ from 'underscore';
-import { Conversations, Messages, Users } from './connectors';
+import { Integrations, Conversations, Messages, Users } from './connectors';
+import { checkAvailability } from './check-availability';
 
 export default {
   conversations(root, args) {
@@ -55,5 +56,15 @@ export default {
     return Messages.findOne(messageQuery).then(message =>
       Users.findOne({ _id: message && message.userId }),
     );
+  },
+
+  isInAppOnline(root, args) {
+    return Integrations.findOne({ _id: args.integrationId }).then(integ => {
+      integ.availabilityMethod = integ.inAppData.availabilityMethod;
+      integ.isOnline = integ.inAppData.isOnline;
+      integ.onlineHours = integ.inAppData.onlineHours;
+
+      return checkAvailability(integ, new Date())
+    });
   },
 };

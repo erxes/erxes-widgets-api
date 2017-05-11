@@ -91,6 +91,7 @@ const typeDefs = `
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int
     conversationLastStaff(_id: String): User
+    isInAppOnline(integrationId: String!): Boolean
 
     # form =====
     form(formId: String): Form
