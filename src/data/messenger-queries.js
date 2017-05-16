@@ -63,8 +63,8 @@ export default {
       const messengerData = integ.messengerData || {};
 
       integ.availabilityMethod = messengerData.availabilityMethod;
-      integ.isOnline = integ.messengerData.isOnline;
-      integ.onlineHours = integ.messengerData.onlineHours;
+      integ.isOnline = messengerData.isOnline;
+      integ.onlineHours = messengerData.onlineHours;
 
       return checkAvailability(integ, new Date())
     });
