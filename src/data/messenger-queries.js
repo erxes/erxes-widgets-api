@@ -60,7 +60,9 @@ export default {
 
   isMessengerOnline(root, args) {
     return Integrations.findOne({ _id: args.integrationId }).then(integ => {
-      integ.availabilityMethod = integ.messengerData.availabilityMethod;
+      const messengerData = integ.messengerData || {};
+
+      integ.availabilityMethod = messengerData.availabilityMethod;
       integ.isOnline = integ.messengerData.isOnline;
       integ.onlineHours = integ.messengerData.onlineHours;
 
