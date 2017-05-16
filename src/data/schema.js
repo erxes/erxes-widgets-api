@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from 'graphql-tools';
-import inAppQueries from './inapp-queries';
+import messengerQueries from './messenger-queries';
 import formQueries from './form-queries';
-import inAppMutations from './inapp-mutations';
+import messengerMutations from './messenger-mutations';
 import ChatMutations from './chat-mutations';
 import FormMutations from './form-mutations';
 import subscriptions from './subscriptions';
@@ -91,16 +91,16 @@ const typeDefs = `
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int
     conversationLastStaff(_id: String): User
-    isInAppOnline(integrationId: String!): Boolean
+    isMessengerOnline(integrationId: String!): Boolean
 
     # form =====
     form(formId: String): Form
   }
 
-  type InAppConnectResponse {
+  type MessengerConnectResponse {
     integrationId: String!
     uiOptions: JSON
-    inAppData: JSON
+    messengerData: JSON
     customerId: String!
   }
 
@@ -118,7 +118,7 @@ const typeDefs = `
   }
 
   type Mutation {
-    inAppConnect(brandCode: String!, email: String!, name: String, data: JSON): InAppConnectResponse
+    messengerConnect(brandCode: String!, email: String!, name: String, data: JSON): MessengerConnectResponse
     insertMessage(integrationId: String!, customerId: String!,
       conversationId: String!, message: String, attachments: [AttachmentInput]): Message
 
@@ -150,12 +150,12 @@ const typeDefs = `
 const resolvers = {
   ...customTypes,
   RootQuery: {
-    ...inAppQueries,
+    ...messengerQueries,
     ...formQueries,
   },
   ...subscriptions,
   Mutation: {
-    ...inAppMutations,
+    ...messengerMutations,
     ...ChatMutations,
     ...FormMutations,
   },

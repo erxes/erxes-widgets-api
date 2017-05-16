@@ -58,11 +58,11 @@ export default {
     );
   },
 
-  isInAppOnline(root, args) {
+  isMessengerOnline(root, args) {
     return Integrations.findOne({ _id: args.integrationId }).then(integ => {
-      integ.availabilityMethod = integ.inAppData.availabilityMethod;
-      integ.isOnline = integ.inAppData.isOnline;
-      integ.onlineHours = integ.inAppData.onlineHours;
+      integ.availabilityMethod = integ.messengerData.availabilityMethod;
+      integ.isOnline = integ.messengerData.isOnline;
+      integ.onlineHours = integ.messengerData.onlineHours;
 
       return checkAvailability(integ, new Date())
     });

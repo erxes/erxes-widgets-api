@@ -21,21 +21,21 @@ export default {
   /*
    * create or update customer info, when connection establish
    */
-  inAppConnect(root, args) {
+  messengerConnect(root, args) {
     let integrationId;
     let uiOptions;
-    let inAppData;
+    let messengerData;
 
     const { brandCode, email, name } = args;
 
     // find integration
-    return getIntegration(brandCode, 'in_app_messaging')
+    return getIntegration(brandCode, 'messenger')
 
       // find customer
       .then((integration) => {
         integrationId = integration._id;
         uiOptions = integration.uiOptions;
-        inAppData = integration.inAppData;
+        messengerData = integration.messengerData;
 
         return getCustomer(integration._id, email);
       })
@@ -51,21 +51,21 @@ export default {
 
         // update customer
         if (customer) {
-          // update inAppMessagingData
+          // update messengerData
           Customers.update(
             { _id: customer._id },
             { $set: {
-              'inAppMessagingData.lastSeenAt': now,
-              'inAppMessagingData.isActive': true,
+              'messengerData.lastSeenAt': now,
+              'messengerData.isActive': true,
             } },
             () => {},
           );
 
-          if ((now - customer.inAppMessagingData.lastSeenAt) > 30 * 60 * 1000) {
+          if ((now - customer.messengerData.lastSeenAt) > 30 * 60 * 1000) {
             // update session count
             Customers.update(
               { _id: customer._id },
-              { $inc: { 'inAppMessagingData.sessionCount': 1 } },
+              { $inc: { 'messengerData.sessionCount': 1 } },
               () => {},
             );
           }
@@ -81,7 +81,7 @@ export default {
       .then(customer => ({
         integrationId,
         uiOptions,
-        inAppData,
+        messengerData,
         customerId: customer._id,
       }))
 

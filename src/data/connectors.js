@@ -36,7 +36,7 @@ const IntegrationSchema = mongoose.Schema({
   formId: String,
   formLoadType: String,
   kind: String,
-  inAppData: Object,
+  messengerData: Object,
   uiOptions: Object,
 });
 
@@ -46,7 +46,7 @@ const CustomerSchema = mongoose.Schema({
   email: String,
   name: String,
   createdAt: Date,
-  inAppMessagingData: Object,
+  messengerData: Object,
 });
 
 const ConversationSchema = mongoose.Schema({

@@ -47,7 +47,7 @@ export const createCustomer = ({ integrationId, email, name }) => {
     email,
     name,
     integrationId,
-    inAppMessagingData: {
+    messengerData: {
       lastSeenAt: new Date(),
       isActive: true,
       sessionCount: 1,
@@ -190,8 +190,8 @@ export const markCustomerAsNotActive = (customerId) => {
     { _id: customerId },
     {
       $set: {
-        'inAppMessagingData.isActive': false,
-        'inAppMessagingData.lastSeenAt': new Date(),
+        'messengerData.isActive': false,
+        'messengerData.lastSeenAt': new Date(),
       },
     },
 
