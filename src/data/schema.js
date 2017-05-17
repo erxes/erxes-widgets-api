@@ -2,7 +2,6 @@ import { makeExecutableSchema } from 'graphql-tools';
 import messengerQueries from './messenger-queries';
 import formQueries from './form-queries';
 import messengerMutations from './messenger-mutations';
-import ChatMutations from './chat-mutations';
 import FormMutations from './form-mutations';
 import subscriptions from './subscriptions';
 import customTypes from './custom-types';
@@ -125,9 +124,6 @@ const typeDefs = `
     simulateInsertMessage(messageId: String): Message
     readConversationMessages(conversationId: String): String
 
-    chatConnect(brandCode: String!): String
-    chatCreateConversation(integrationId: String!, email: String!, content: String!): Message
-
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
   }
@@ -156,7 +152,6 @@ const resolvers = {
   ...subscriptions,
   Mutation: {
     ...messengerMutations,
-    ...ChatMutations,
     ...FormMutations,
   },
 };
