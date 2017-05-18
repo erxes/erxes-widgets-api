@@ -40,13 +40,11 @@ export const getCustomer = (integrationId, email) =>
  * Create new customer
  */
 
-export const createCustomer = ({ integrationId, email, name }) => {
+export const createCustomer = (params) => {
   // create new customer
   const customerObj = new Customers({
     createdAt: new Date(),
-    email,
-    name,
-    integrationId,
+    ...params,
     messengerData: {
       lastSeenAt: new Date(),
       isActive: true,

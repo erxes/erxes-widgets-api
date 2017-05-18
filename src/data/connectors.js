@@ -44,6 +44,7 @@ const CustomerSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   integrationId: String,
   email: String,
+  isUser: Boolean,
   name: String,
   createdAt: Date,
   messengerData: Object,

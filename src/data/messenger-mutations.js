@@ -26,7 +26,7 @@ export default {
     let uiOptions;
     let messengerData;
 
-    const { brandCode, email, name } = args;
+    const { brandCode, email, isUser, name } = args;
 
     // find integration
     return getIntegration(brandCode, 'messenger')
@@ -57,6 +57,7 @@ export default {
             { $set: {
               'messengerData.lastSeenAt': now,
               'messengerData.isActive': true,
+              isUser,
             } },
             () => {},
           );
@@ -74,7 +75,7 @@ export default {
         }
 
         // create new customer
-        return createCustomer({ integrationId, email, name });
+        return createCustomer({ integrationId, email, isUser, name });
       })
 
       // return integrationId, customerId

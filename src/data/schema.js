@@ -117,15 +117,21 @@ const typeDefs = `
   }
 
   type Mutation {
-    messengerConnect(brandCode: String!, email: String!, name: String, data: JSON): MessengerConnectResponse
+    messengerConnect(brandCode: String!, email: String!, name: String,
+      isUser: Boolean, data: JSON): MessengerConnectResponse
+
     insertMessage(integrationId: String!, customerId: String!,
-      conversationId: String!, message: String, attachments: [AttachmentInput]): Message
+      conversationId: String!, message: String,
+      attachments: [AttachmentInput]): Message
 
     simulateInsertMessage(messageId: String): Message
+
     readConversationMessages(conversationId: String): String
 
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
+
+    saveForm(integrationId: String!, formId: String!,
+      submissions: [FieldValueInput]): [Error]
   }
 
   # subscriptions
