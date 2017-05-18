@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Customers, Brands, Integrations, Conversations, Messages } from '../connectors';
 import { createCustomer, createConversation, createMessage } from '../utils';
 import { brandFactory, integrationFactory } from './factories';
-import inAppMutations from '../inapp-mutations';
+import messengerMutations from '../messenger-mutations';
 
 
 // helper function that calls then and catch on given promise
@@ -20,7 +20,7 @@ const expectPromise = (done, promise, callback) => {
 };
 
 describe('Mutations', () => {
-  describe('inAppConnect', () => {
+  describe('messengerConnect', () => {
     let integrationId;
     let customerId;
 
@@ -31,7 +31,7 @@ describe('Mutations', () => {
     beforeEach((done) => {
       // create brand
       brandFactory({ code: brandCode }).then((brandId) => {
-        integrationFactory({ brandId, kind: 'in_app_messaging' }).then(({ _id }) => {
+        integrationFactory({ brandId, kind: 'messenger' }).then(({ _id }) => {
           integrationId = _id;
           done();
         });
@@ -62,7 +62,7 @@ describe('Mutations', () => {
         // call mutation
         expectPromise(
           done,
-          inAppMutations.inAppConnect({}, { brandCode, email }),
+          messengerMutations.messengerConnect({}, { brandCode, email }),
           (res) => {
             // must return integrationId and newly created customerId
             expect(res.integrationId).to.not.equal(undefined);
@@ -76,9 +76,9 @@ describe('Mutations', () => {
             // check customer fields
             const p2 = Customers.findOne({}).then((customer) => {
               expect(customer.email).to.equal(email);
-              expect(customer.inAppMessagingData.lastSeenAt).to.not.equal(undefined);
-              expect(customer.inAppMessagingData.isActive).to.equal(true);
-              expect(customer.inAppMessagingData.sessionCount).to.equal(1);
+              expect(customer.messengerData.lastSeenAt).to.not.equal(undefined);
+              expect(customer.messengerData.isActive).to.equal(true);
+              expect(customer.messengerData.sessionCount).to.equal(1);
             });
 
             expectPromise(done, Promise.all([p1, p2]), () => { done(); });
@@ -100,7 +100,7 @@ describe('Mutations', () => {
         // call mutation
         expectPromise(
           done,
-          inAppMutations.inAppConnect({}, { brandCode, email }),
+          messengerMutations.messengerConnect({}, { brandCode, email }),
           (res) => {
             // must return integrationId and old customerId
             expect(res.integrationId).to.equal(integrationId);
@@ -117,7 +117,7 @@ describe('Mutations', () => {
     });
   });
 
-  describe('in app insert message', () => {
+  describe('messenger insert message', () => {
     const integrationId = 'DFDFDFDFD';
     const customerId = 'JJJELJKFJDF';
 
@@ -146,7 +146,7 @@ describe('Mutations', () => {
         // call mutation
         expectPromise(
           done,
-          inAppMutations.insertMessage({}, args),
+          messengerMutations.insertMessage({}, args),
           (messageObj) => {
             // check message fields
             expect(messageObj.content).to.equal(message);
@@ -186,7 +186,7 @@ describe('Mutations', () => {
         // call mutation
         expectPromise(
           done,
-          inAppMutations.insertMessage({}, args),
+          messengerMutations.insertMessage({}, args),
           (messageObj) => {
             // check message fields
             expect(messageObj.conversationId).to.equal(conversationId);
@@ -257,7 +257,7 @@ describe('Mutations', () => {
       // call mutation
       expectPromise(
         done,
-        inAppMutations.readConversationMessages({}, { conversationId }),
+        messengerMutations.readConversationMessages({}, { conversationId }),
         () => {
           // check whether or not all messages are marked as read
           expectPromise(done, findMessages().count(), (count) => {

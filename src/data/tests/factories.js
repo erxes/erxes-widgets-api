@@ -15,7 +15,7 @@ export const brandFactory = (params) => {
 export const integrationFactory = (params) => {
   const integration = new Integrations({
     name: faker.random.word(),
-    kind: params.kind || 'in_app_messaging',
+    kind: params.kind || 'messenger',
     brandId: params.brandId || Random.id(),
     formId: params.formId || Random.id(),
   });

@@ -1,8 +1,7 @@
 import { makeExecutableSchema } from 'graphql-tools';
-import inAppQueries from './inapp-queries';
+import messengerQueries from './messenger-queries';
 import formQueries from './form-queries';
-import inAppMutations from './inapp-mutations';
-import ChatMutations from './chat-mutations';
+import messengerMutations from './messenger-mutations';
 import FormMutations from './form-mutations';
 import subscriptions from './subscriptions';
 import customTypes from './custom-types';
@@ -14,6 +13,7 @@ const typeDefs = `
   # user ================
   type UserDetails {
     avatar: String
+    fullName: String
   }
 
   type User {
@@ -50,6 +50,7 @@ const typeDefs = `
     status: String!
     content: String
     createdAt: Date
+    participatedUsers: [User]
     readUserIds: [String]
   }
 
@@ -89,15 +90,16 @@ const typeDefs = `
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int
     conversationLastStaff(_id: String): User
+    isMessengerOnline(integrationId: String!): Boolean
 
     # form =====
     form(formId: String): Form
   }
 
-  type InAppConnectResponse {
+  type MessengerConnectResponse {
     integrationId: String!
     uiOptions: JSON
-    inAppData: JSON
+    messengerData: JSON
     customerId: String!
   }
 
@@ -115,15 +117,12 @@ const typeDefs = `
   }
 
   type Mutation {
-    inAppConnect(brandCode: String!, email: String!, name: String, data: JSON): InAppConnectResponse
+    messengerConnect(brandCode: String!, email: String!, name: String, data: JSON): MessengerConnectResponse
     insertMessage(integrationId: String!, customerId: String!,
       conversationId: String!, message: String, attachments: [AttachmentInput]): Message
 
     simulateInsertMessage(messageId: String): Message
     readConversationMessages(conversationId: String): String
-
-    chatConnect(brandCode: String!): String
-    chatCreateConversation(integrationId: String!, email: String!, content: String!): Message
 
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
@@ -147,13 +146,12 @@ const typeDefs = `
 const resolvers = {
   ...customTypes,
   RootQuery: {
-    ...inAppQueries,
+    ...messengerQueries,
     ...formQueries,
   },
   ...subscriptions,
   Mutation: {
-    ...inAppMutations,
-    ...ChatMutations,
+    ...messengerMutations,
     ...FormMutations,
   },
 };

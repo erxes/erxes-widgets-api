@@ -25,19 +25,33 @@ export const validate = (formId, submissions) =>
           errors.push({ fieldId: field._id, code: 'required', text: 'Required' });
         }
 
-        // email
-        if ((type === 'email' || validation === 'email') && !validator.isEmail(value)) {
-          errors.push({ fieldId: field._id, code: 'invalidEmail', text: 'Invalid email' });
-        }
+        if (value) {
+          // email
+          if ((type === 'email' || validation === 'email') && !validator.isEmail(value)) {
+            errors.push({
+              fieldId: field._id,
+              code: 'invalidEmail',
+              text: 'Invalid email',
+            });
+          }
 
-        // number
-        if (validation === 'number' && !validator.isNumeric(value.toString())) {
-          errors.push({ fieldId: field._id, code: 'invalidNumber', text: 'Invalid number' });
-        }
+          // number
+          if (validation === 'number' && !validator.isNumeric(value.toString())) {
+            errors.push({
+              fieldId: field._id,
+              code: 'invalidNumber',
+              text: 'Invalid number',
+            });
+          }
 
-        // date
-        if (validation === 'date' && !validator.isISO8601(value)) {
-          errors.push({ fieldId: field._id, code: 'invalidDate', text: 'Invalid Date' });
+          // date
+          if (validation === 'date' && !validator.isISO8601(value)) {
+            errors.push({
+              fieldId: field._id,
+              code: 'invalidDate',
+              text: 'Invalid Date',
+            });
+          }
         }
       });
 

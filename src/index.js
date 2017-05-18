@@ -44,16 +44,16 @@ server.listen(PORT, () => {
         webSocket.on('message', (message) => {
           const parsedMessage = JSON.parse(message);
 
-          if (parsedMessage.type === 'inAppConnected') {
-            webSocket.inAppData = parsedMessage.value; // eslint-disable-line no-param-reassign
+          if (parsedMessage.type === 'messengerConnected') {
+            webSocket.messengerData = parsedMessage.value; // eslint-disable-line no-param-reassign
           }
         });
       },
       onDisconnect(webSocket) {
-        const inAppData = webSocket.inAppData;
+        const messengerData = webSocket.messengerData;
 
-        if (inAppData) {
-          markCustomerAsNotActive(inAppData.customerId);
+        if (messengerData) {
+          markCustomerAsNotActive(messengerData.customerId);
         }
       },
     },

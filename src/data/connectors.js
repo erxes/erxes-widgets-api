@@ -20,6 +20,7 @@ const UserSchema = mongoose.Schema({
   _id: String,
   details: {
     avatar: String,
+    fullName: String,
   },
 });
 
@@ -35,7 +36,7 @@ const IntegrationSchema = mongoose.Schema({
   formId: String,
   formLoadType: String,
   kind: String,
-  inAppData: Object,
+  messengerData: Object,
   uiOptions: Object,
 });
 
@@ -45,7 +46,7 @@ const CustomerSchema = mongoose.Schema({
   email: String,
   name: String,
   createdAt: Date,
-  inAppMessagingData: Object,
+  messengerData: Object,
 });
 
 const ConversationSchema = mongoose.Schema({
@@ -58,6 +59,7 @@ const ConversationSchema = mongoose.Schema({
   messageCount: Number,
   status: String,
   readUserIds: [String],
+  participatedUserIds: [String],
 });
 
 const AttachmentSchema = mongoose.Schema({
