@@ -57,6 +57,7 @@ export default {
             { $set: {
               'messengerData.lastSeenAt': now,
               'messengerData.isActive': true,
+              name,
               isUser,
             } },
             () => {},
