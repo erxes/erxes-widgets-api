@@ -34,8 +34,8 @@ const IntegrationSchema = mongoose.Schema({
   name: String,
   brandId: String,
   formId: String,
-  formLoadType: String,
   kind: String,
+  formData: Object,
   messengerData: Object,
   uiOptions: Object,
 });

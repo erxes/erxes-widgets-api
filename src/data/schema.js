@@ -113,7 +113,7 @@ const typeDefs = `
     integrationId: String!
     integrationName: String!
     formId: String!
-    formLoadType: String!
+    formData: JSON!
   }
 
   type Error {

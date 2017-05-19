@@ -155,7 +155,7 @@ export default {
         integrationId: integ._id,
         integrationName: integ.name,
         formId: integ.formId,
-        formLoadType: integ.formLoadType,
+        formData: integ.formData,
       }))
 
       // catch exception
