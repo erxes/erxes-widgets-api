@@ -42,6 +42,11 @@ const typeDefs = `
     value: String
   }
 
+  type Integration {
+    _id: String!
+    uiOptions: JSON
+  }
+
   # conversation ===========
   type Conversation {
     _id: String!
@@ -86,6 +91,7 @@ const typeDefs = `
   # the schema allows the following queries:
   type RootQuery {
     conversations(integrationId: String!, customerId: String!): [Conversation]
+    getMessengerIntegration(brandCode: String!): Integration
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int

@@ -1,8 +1,13 @@
 import _ from 'underscore';
 import { Integrations, Conversations, Messages, Users } from './connectors';
 import { checkAvailability } from './check-availability';
+import { getIntegration } from './utils';
 
 export default {
+  getMessengerIntegration(root, args) {
+    return getIntegration(args.brandCode, 'messenger');
+  },
+
   conversations(root, args) {
     const { integrationId, customerId } = args;
 
@@ -13,7 +18,8 @@ export default {
   },
 
   messages(root, { conversationId }) {
-    return Messages.find({ conversationId, internal: false }).sort({ createdAt: 1 });
+    return Messages.find({
+      conversationId, internal: false }).sort({ createdAt: 1 });
   },
 
   unreadCount(root, { conversationId }) {
@@ -59,14 +65,15 @@ export default {
   },
 
   isMessengerOnline(root, args) {
-    return Integrations.findOne({ _id: args.integrationId }).then(integ => {
-      const messengerData = integ.messengerData || {};
+    return Integrations.findOne({ _id: args.integrationId }).then((integ) => {
+      const integration = integ;
+      const messengerData = integration.messengerData || {};
 
-      integ.availabilityMethod = messengerData.availabilityMethod;
-      integ.isOnline = messengerData.isOnline;
-      integ.onlineHours = messengerData.onlineHours;
+      integration.availabilityMethod = messengerData.availabilityMethod;
+      integration.isOnline = messengerData.isOnline;
+      integration.onlineHours = messengerData.onlineHours;
 
-      return checkAvailability(integ, new Date())
+      return checkAvailability(integration, new Date());
     });
   },
 };
