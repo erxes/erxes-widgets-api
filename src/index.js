@@ -30,6 +30,7 @@ app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 const server = createServer(app);
 const { PORT } = process.env;
+
 const SUBSCRIPTION_PATH = '/subscriptions';
 
 server.listen(PORT, () => {

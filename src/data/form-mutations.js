@@ -6,6 +6,7 @@ import {
   createMessage,
   getCustomer,
   createCustomer,
+  sendEmail,
 } from './utils';
 
 export const validate = (formId, submissions) =>
@@ -175,5 +176,10 @@ export default {
 
       return saveValues(args).then(() => []);
     });
+  },
+
+  // send email
+  sendEmail(root, args) {
+    sendEmail(args);
   },
 };

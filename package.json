@@ -33,6 +33,7 @@
     "graphql-tools": "^0.10.1",
     "meteor-random": "0.0.3",
     "mongoose": "^4.9.2",
+    "nodemailer": "^4.0.1",
     "subscriptions-transport-ws": "0.5.3",
     "underscore": "^1.8.3",
     "validator": "^7.0.0"

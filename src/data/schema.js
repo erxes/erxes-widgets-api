@@ -80,6 +80,7 @@ const typeDefs = `
     options: [String]
     isRequired: Boolean
     name: String
+    validation: String
     order: Int
   }
 
@@ -138,6 +139,9 @@ const typeDefs = `
 
     saveForm(integrationId: String!, formId: String!,
       submissions: [FieldValueInput]): [Error]
+
+    sendEmail(toEmails: [String], fromEmail: String,
+      title: String, content: String): String
   }
 
   # subscriptions
