@@ -45,6 +45,7 @@ const typeDefs = `
   type Integration {
     _id: String!
     uiOptions: JSON
+    messengerData: JSON
   }
 
   # conversation ===========
