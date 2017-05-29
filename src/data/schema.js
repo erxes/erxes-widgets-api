@@ -38,6 +38,7 @@ const typeDefs = `
   input FieldValueInput {
     _id: String!
     type: String
+    validation: String
     text: String
     value: String
   }
