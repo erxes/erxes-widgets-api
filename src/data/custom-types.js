@@ -16,7 +16,7 @@ function jSONparseLiteral(ast) {
       return parseFloat(ast.value);
     case Kind.OBJECT: {
       const value = Object.create(null);
-      ast.fields.forEach((field) => {
+      ast.fields.forEach(field => {
         value[field.name.value] = jSONparseLiteral(field.value);
       });
 
@@ -56,8 +56,8 @@ export default {
 
     description:
       'The `jSON` scalar type represents jSON values as specified by ' +
-      '[ECMA-404](http://www.ecma-international.org/' +
-      'publications/files/ECMA-ST/ECMA-404.pdf).',
+        '[ECMA-404](http://www.ecma-international.org/' +
+        'publications/files/ECMA-ST/ECMA-404.pdf).',
 
     serialize: jSONidentity,
 

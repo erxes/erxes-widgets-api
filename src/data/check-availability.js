@@ -51,7 +51,6 @@ const isWeekday = day => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'
 
 const isWeekend = day => ['saturday', 'sunday'].includes(day);
 
-
 export const checkAvailability = (integration, date) => {
   // we can determine state from isOnline field value when method is manual
   if (integration.availabilityMethod === 'manual') {

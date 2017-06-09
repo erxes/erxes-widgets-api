@@ -11,11 +11,10 @@ import {
 
 export default {
   simulateInsertMessage(root, args) {
-    return Messages.findOne({ _id: args.messageId })
-      .then((message) => {
-        pubsub.publish('newMessagesChannel', message);
-        pubsub.publish('notification');
-      });
+    return Messages.findOne({ _id: args.messageId }).then(message => {
+      pubsub.publish('newMessagesChannel', message);
+      pubsub.publish('notification');
+    });
   },
 
   /*
@@ -29,140 +28,140 @@ export default {
     const { brandCode, email, isUser, name } = args;
 
     // find integration
-    return getIntegration(brandCode, 'messenger')
+    return (
+      getIntegration(brandCode, 'messenger')
+        // find customer
+        .then(integration => {
+          integrationId = integration._id;
+          uiOptions = integration.uiOptions;
+          messengerData = integration.messengerData;
 
-      // find customer
-      .then((integration) => {
-        integrationId = integration._id;
-        uiOptions = integration.uiOptions;
-        messengerData = integration.messengerData;
+          return getCustomer(integration._id, email);
+        })
+        // update or create customer
+        .then(customer => {
+          const now = new Date();
 
-        return getCustomer(integration._id, email);
-      })
-
-      // update or create customer
-      .then((customer) => {
-        const now = new Date();
-
-        // check email
-        if (!email) {
-          throw new Error('Email is required');
-        }
-
-        // update customer
-        if (customer) {
-          // update messengerData
-          Customers.update(
-            { _id: customer._id },
-            { $set: {
-              'messengerData.lastSeenAt': now,
-              'messengerData.isActive': true,
-              name,
-              isUser,
-            } },
-            () => {},
-          );
-
-          if ((now - customer.messengerData.lastSeenAt) > 30 * 60 * 1000) {
-            // update session count
-            Customers.update(
-              { _id: customer._id },
-              { $inc: { 'messengerData.sessionCount': 1 } },
-              () => {},
-            );
+          // check email
+          if (!email) {
+            throw new Error('Email is required');
           }
 
-          return Customers.findOne({ _id: customer._id });
-        }
+          // update customer
+          if (customer) {
+            // update messengerData
+            Customers.update(
+              { _id: customer._id },
+              {
+                $set: {
+                  'messengerData.lastSeenAt': now,
+                  'messengerData.isActive': true,
+                  name,
+                  isUser,
+                },
+              },
+              () => {},
+            );
 
-        // create new customer
-        return createCustomer({ integrationId, email, isUser, name });
-      })
+            if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+              // update session count
+              Customers.update(
+                { _id: customer._id },
+                { $inc: { 'messengerData.sessionCount': 1 } },
+                () => {},
+              );
+            }
 
-      // return integrationId, customerId
-      .then(customer => ({
-        integrationId,
-        uiOptions,
-        messengerData,
-        customerId: customer._id,
-      }))
+            return Customers.findOne({ _id: customer._id });
+          }
 
-      // catch exception
-      .catch((error) => {
-        console.log(error); // eslint-disable-line no-console
-      });
+          // create new customer
+          return createCustomer({ integrationId, email, isUser, name });
+        })
+        // return integrationId, customerId
+        .then(customer => ({
+          integrationId,
+          uiOptions,
+          messengerData,
+          customerId: customer._id,
+        }))
+        // catch exception
+        .catch(error => {
+          console.log(error); // eslint-disable-line no-console
+        })
+    );
   },
 
   /*
    * create new message
    */
   insertMessage(root, args) {
-    const {
-      integrationId, customerId, conversationId, message, attachments,
-    } = args;
+    const { integrationId, customerId, conversationId, message, attachments } = args;
 
     // get or create conversation
-    return getOrCreateConversation({
-      conversationId,
-      integrationId,
-      customerId,
-      message,
-    })
-
-    // create message
-    .then(id =>
-      createMessage({
-        conversationId: id,
+    return (
+      getOrCreateConversation({
+        conversationId,
+        integrationId,
         customerId,
-        content: message,
-        attachments,
-      }),
-    )
+        message,
+      })
+        // create message
+        .then(id =>
+          createMessage({
+            conversationId: id,
+            customerId,
+            content: message,
+            attachments,
+          }),
+        )
+        .then(msg => {
+          Conversations.update(
+            { _id: msg.conversationId },
+            {
+              $set: {
+                // if conversation is closed then reopen it.
+                status: CONVERSATION_STATUSES.OPEN,
 
-    .then((msg) => {
-      Conversations.update(
-        { _id: msg.conversationId },
-        { $set: {
-          // if conversation is closed then reopen it.
-          status: CONVERSATION_STATUSES.OPEN,
+                // empty read users list then it will be shown as unread again
+                readUserIds: [],
+              },
+            },
+            () => {},
+          );
 
-          // empty read users list then it will be shown as unread again
-          readUserIds: [],
-        } },
-        () => {},
-      );
+          // publish change
+          pubsub.publish('newMessagesChannel', msg);
+          pubsub.publish('notification');
 
-      // publish change
-      pubsub.publish('newMessagesChannel', msg);
-      pubsub.publish('notification');
-
-      return msg;
-    })
-
-    // catch exception
-    .catch((error) => {
-      console.log(error); // eslint-disable-line no-console
-    });
+          return msg;
+        })
+        // catch exception
+        .catch(error => {
+          console.log(error); // eslint-disable-line no-console
+        })
+    );
   },
 
   /*
    * mark given conversation's messages as read
    */
   readConversationMessages(root, args) {
-    return Messages.update(
-      {
-        conversationId: args.conversationId,
-        userId: { $exists: true },
-        isCustomerRead: { $exists: false },
-      },
-      { isCustomerRead: true },
-      { multi: true },
-    )
-
-    // notify all notification subscribers that message's read
-    // state changed
-    .then(() => {
-      pubsub.publish('notification');
-    });
+    return (
+      Messages.update(
+        {
+          conversationId: args.conversationId,
+          userId: { $exists: true },
+          isCustomerRead: { $exists: false },
+        },
+        { isCustomerRead: true },
+        { multi: true },
+      )
+        // notify all notification subscribers that message's read
+        // state changed
+        .then(() => {
+          pubsub.publish('notification');
+        })
+    );
   },
 };

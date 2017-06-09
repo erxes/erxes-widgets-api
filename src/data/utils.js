@@ -1,12 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import {
-  Messages,
-  Conversations,
-  Brands,
-  Customers,
-  Integrations,
-} from './connectors';
+import { Messages, Conversations, Brands, Customers, Integrations } from './connectors';
 
 export const CONVERSATION_STATUSES = {
   NEW: 'new',
@@ -20,29 +14,25 @@ export const CONVERSATION_STATUSES = {
  */
 
 export const getIntegration = (brandCode, kind) =>
-  Brands.findOne({ code: brandCode })
-    .then(brand =>
-      // find integration by brand
-      Integrations.findOne({
-        brandId: brand._id,
-        kind,
-      }),
-    );
-
+  Brands.findOne({ code: brandCode }).then(brand =>
+    // find integration by brand
+    Integrations.findOne({
+      brandId: brand._id,
+      kind,
+    }),
+  );
 
 /*
  * Get customer
  */
 
-export const getCustomer = (integrationId, email) =>
-  Customers.findOne({ email, integrationId });
-
+export const getCustomer = (integrationId, email) => Customers.findOne({ email, integrationId });
 
 /*
  * Create new customer
  */
 
-export const createCustomer = (params) => {
+export const createCustomer = params => {
   // create new customer
   const customerObj = new Customers({
     createdAt: new Date(),
@@ -57,37 +47,34 @@ export const createCustomer = (params) => {
   return customerObj.save();
 };
 
-
 /*
  * Get or create customer
  */
 
-export const getOrCreateCustomer = (doc) => {
+export const getOrCreateCustomer = doc => {
   const { integrationId, email } = doc;
 
   // try to find by integrationId and email
-  return getCustomer(integrationId, email)
-    .then((customerId) => {
-      // if found
-      if (customerId) {
-        return Promise.resolve(customerId);
-      }
+  return getCustomer(integrationId, email).then(customerId => {
+    // if found
+    if (customerId) {
+      return Promise.resolve(customerId);
+    }
 
-      // if not, create new
-      return createCustomer(doc);
-    });
+    // if not, create new
+    return createCustomer(doc);
+  });
 };
-
 
 /*
  * Create new conversation
  */
 
-export const createConversation = (doc) => {
+export const createConversation = doc => {
   const { integrationId, customerId, content } = doc;
 
   // get total conversations count
-  return Conversations.find({ customerId, integrationId }).count().then((count) => {
+  return Conversations.find({ customerId, integrationId }).count().then(count => {
     // create conversation object
     const conversationObj = new Conversations({
       customerId,
@@ -104,12 +91,11 @@ export const createConversation = (doc) => {
   });
 };
 
-
 /*
  * Get or create conversation
  */
 
-export const getOrCreateConversation = (doc) => {
+export const getOrCreateConversation = doc => {
   const { conversationId, integrationId, customerId, message } = doc;
 
   // customer can write message to even closed conversation
@@ -136,12 +122,11 @@ export const getOrCreateConversation = (doc) => {
   });
 };
 
-
 /*
  * Create new message
  */
 
-export const createMessage = (doc) => {
+export const createMessage = doc => {
   const messageOptions = {
     createdAt: new Date(),
     internal: false,
@@ -155,37 +140,36 @@ export const createMessage = (doc) => {
   return messageObj.save().then(_id => Messages.findOne({ _id }));
 };
 
-
 /*
  * Create conversation and message
  */
 
-export const createConversationWithMessage = (doc) => {
+export const createConversationWithMessage = doc => {
   const { integrationId, customerId, content } = doc;
 
   // create conversation
-  return createConversation({
-    customerId,
-    integrationId,
-    content,
-  })
-
-  // create message
-  .then(conversationId =>
-    createMessage({
-      conversationId,
+  return (
+    createConversation({
       customerId,
-      message: content,
-    }),
+      integrationId,
+      content,
+    })
+      // create message
+      .then(conversationId =>
+        createMessage({
+          conversationId,
+          customerId,
+          message: content,
+        }),
+      )
   );
 };
-
 
 /*
  * mark as not active when connection close
  */
 
-export const markCustomerAsNotActive = (customerId) => {
+export const markCustomerAsNotActive = customerId => {
   Customers.update(
     { _id: customerId },
     {
@@ -194,7 +178,6 @@ export const markCustomerAsNotActive = (customerId) => {
         'messengerData.lastSeenAt': new Date(),
       },
     },
-
     () => {},
   );
 };
@@ -210,7 +193,7 @@ export const sendEmail = ({ toEmails, fromEmail, title, content }) => {
     },
   });
 
-  toEmails.forEach((toEmail) => {
+  toEmails.forEach(toEmail => {
     const mailOptions = {
       from: fromEmail,
       to: toEmail,
