@@ -21,7 +21,15 @@
     "dev": "nodemon src --exec babel-node",
     "test": "mocha src/data/tests --reporter spec --compilers js:babel-core/register",
     "build": "babel src --out-dir dist --ignore tests --copy-files",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --print-width 100 --single-quote --trailing-comma all",
+      "git add"
+    ]
   },
   "dependencies": {
     "body-parser": "^1.17.1",
@@ -46,7 +54,10 @@
     "chai": "^3.5.0",
     "eslint": "3.19.0",
     "faker": "^4.1.0",
+    "husky": "^0.13.4",
+    "lint-staged": "^3.6.0",
     "mocha": "^3.2.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "prettier": "^1.4.4"
   }
 }
