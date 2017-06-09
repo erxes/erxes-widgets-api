@@ -19,7 +19,9 @@ export default {
 
   messages(root, { conversationId }) {
     return Messages.find({
-      conversationId, internal: false }).sort({ createdAt: 1 });
+      conversationId,
+      internal: false,
+    }).sort({ createdAt: 1 });
   },
 
   unreadCount(root, { conversationId }) {
@@ -38,9 +40,7 @@ export default {
     return Conversations.find({
       integrationId,
       customerId,
-    })
-
-    .then((conversations) => {
+    }).then(conversations => {
       const conversationIds = _.pluck(conversations, '_id');
 
       // find read messages count
@@ -65,7 +65,7 @@ export default {
   },
 
   isMessengerOnline(root, args) {
-    return Integrations.findOne({ _id: args.integrationId }).then((integ) => {
+    return Integrations.findOne({ _id: args.integrationId }).then(integ => {
       const integration = integ;
       const messengerData = integration.messengerData || {};
 

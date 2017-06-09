@@ -11,29 +11,25 @@ import {
   Messages,
   Customers,
 } from '../connectors';
-import {
-  brandFactory,
-  integrationFactory,
-  formFieldFactory,
-  formFactory,
-} from './factories';
-
+import { brandFactory, integrationFactory, formFieldFactory, formFactory } from './factories';
 
 // helper function that calls then and catch on given promise
 const expectPromise = (done, promise, callback) => {
   // success callback
-  promise.then((...params) => {
-    callback(...params);
+  promise
+    .then((...params) => {
+      callback(...params);
 
-  // catch exception
-  }).catch((error) => {
-    done(error);
-  });
+      // catch exception
+    })
+    .catch(error => {
+      done(error);
+    });
 };
 
 describe('Form mutations', () => {
   // remove previous datas
-  afterEach((done) => {
+  afterEach(done => {
     const p1 = Integrations.remove({});
     const p2 = Brands.remove({});
     const p3 = FormFields.remove({});
@@ -42,7 +38,9 @@ describe('Form mutations', () => {
     const p6 = Forms.remove({});
     const p7 = Customers.remove({});
 
-    expectPromise(done, Promise.all([p1, p2, p3, p4, p5, p6, p7]), () => { done(); });
+    expectPromise(done, Promise.all([p1, p2, p3, p4, p5, p6, p7]), () => {
+      done();
+    });
   });
 
   describe('formConnect', () => {
@@ -51,16 +49,15 @@ describe('Form mutations', () => {
     const brandCode = 'brandCode';
     const formCode = 'formCode';
 
-    beforeEach((done) => {
+    beforeEach(done => {
       // create brand
       brandFactory({ code: brandCode })
-        .then((brand) => {
+        .then(brand => {
           brandId = brand._id;
 
           return formFactory({ code: formCode });
         })
-
-        .then((form) => {
+        .then(form => {
           // create integration
           integrationFactory({ brandId, formId: form._id }).then(() => {
             done();
@@ -68,18 +65,15 @@ describe('Form mutations', () => {
         });
     });
 
-    it('connect', (done) => {
+    it('connect', done => {
       // call mutation
-      expectPromise(
-        done,
-        formMutations.formConnect({}, { brandCode, formCode }),
-        (res) => {
-          // must return integrationId and formId
-          expect(res.integrationId).to.not.equal(undefined);
-          expect(res.formId).to.not.equal(undefined);
+      expectPromise(done, formMutations.formConnect({}, { brandCode, formCode }), res => {
+        // must return integrationId and formId
+        expect(res.integrationId).to.not.equal(undefined);
+        expect(res.formId).to.not.equal(undefined);
 
-          done();
-        });
+        done();
+      });
     });
   });
 
@@ -93,46 +87,42 @@ describe('Form mutations', () => {
     let validDateFieldId = '';
     let validNumberFieldId = '';
 
-    beforeEach((done) => {
+    beforeEach(done => {
       // create required form field
-      formFieldFactory({ formId, isRequired: true }).then((field) => {
-        requiredFieldId = field._id;
-      })
+      formFieldFactory({ formId, isRequired: true })
+        .then(field => {
+          requiredFieldId = field._id;
+        })
+        .then(() =>
+          formFieldFactory({ formId, validation: 'email' }).then(field => {
+            emailFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, validation: 'number' }).then(field => {
+            numberFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, validation: 'number' }).then(field => {
+            validNumberFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, validation: 'date' }).then(field => {
+            validDateFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, validation: 'date' }).then(field => {
+            dateFieldId = field._id;
 
-      .then(() =>
-        formFieldFactory({ formId, validation: 'email' }).then((field) => {
-          emailFieldId = field._id;
-        }),
-      )
-
-      .then(() =>
-        formFieldFactory({ formId, validation: 'number' }).then((field) => {
-          numberFieldId = field._id;
-        }),
-      )
-
-      .then(() =>
-        formFieldFactory({ formId, validation: 'number' }).then((field) => {
-          validNumberFieldId = field._id;
-        }),
-      )
-
-      .then(() =>
-        formFieldFactory({ formId, validation: 'date' }).then((field) => {
-          validDateFieldId = field._id;
-        }),
-      )
-
-      .then(() =>
-        formFieldFactory({ formId, validation: 'date' }).then((field) => {
-          dateFieldId = field._id;
-
-          done();
-        }),
-      );
+            done();
+          }),
+        );
     });
 
-    it('validate', (done) => {
+    it('validate', done => {
       const submissions = [
         { _id: requiredFieldId, value: null },
         { _id: emailFieldId, value: 'email', validation: 'email' },
@@ -143,33 +133,30 @@ describe('Form mutations', () => {
       ];
 
       // call function
-      expectPromise(
-        done,
-        validate(formId, submissions),
-        (errors) => {
-          // must be 4 error
-          expect(errors.length).equal(4);
+      expectPromise(done, validate(formId, submissions), errors => {
+        // must be 4 error
+        expect(errors.length).equal(4);
 
-          const [requiredError, emailError, numberError, dateError] = errors;
+        const [requiredError, emailError, numberError, dateError] = errors;
 
-          // required
-          expect(requiredError.fieldId).equal(requiredFieldId);
-          expect(requiredError.code).equal('required');
+        // required
+        expect(requiredError.fieldId).equal(requiredFieldId);
+        expect(requiredError.code).equal('required');
 
-          // email
-          expect(emailError.fieldId).equal(emailFieldId);
-          expect(emailError.code).equal('invalidEmail');
+        // email
+        expect(emailError.fieldId).equal(emailFieldId);
+        expect(emailError.code).equal('invalidEmail');
 
-          // number
-          expect(numberError.fieldId).equal(numberFieldId);
-          expect(numberError.code).equal('invalidNumber');
+        // number
+        expect(numberError.fieldId).equal(numberFieldId);
+        expect(numberError.code).equal('invalidNumber');
 
-          // date
-          expect(dateError.fieldId).equal(dateFieldId);
-          expect(dateError.code).equal('invalidDate');
+        // date
+        expect(dateError.fieldId).equal(dateFieldId);
+        expect(dateError.code).equal('invalidDate');
 
-          done();
-        });
+        done();
+      });
     });
   });
 
@@ -183,38 +170,38 @@ describe('Form mutations', () => {
     let lastNameFieldId;
     let arbitraryFieldId;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       // create form
-      formFactory({ title: formTitle }).then((form) => {
-        formId = form._id;
-      })
+      formFactory({ title: formTitle })
+        .then(form => {
+          formId = form._id;
+        })
+        // create fields
+        .then(() =>
+          formFieldFactory({ formId, type: 'emailFieldId' }).then(field => {
+            emailFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, type: 'firstNameFieldId' }).then(field => {
+            firstNameFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, type: 'lastNameFieldId' }).then(field => {
+            lastNameFieldId = field._id;
+          }),
+        )
+        .then(() =>
+          formFieldFactory({ formId, type: 'input' }).then(field => {
+            arbitraryFieldId = field._id;
 
-      // create fields
-      .then(() =>
-        formFieldFactory({ formId, type: 'emailFieldId' }).then((field) => {
-          emailFieldId = field._id;
-        }),
-      )
-      .then(() =>
-        formFieldFactory({ formId, type: 'firstNameFieldId' }).then((field) => {
-          firstNameFieldId = field._id;
-        }),
-      )
-      .then(() =>
-        formFieldFactory({ formId, type: 'lastNameFieldId' }).then((field) => {
-          lastNameFieldId = field._id;
-        }),
-      )
-      .then(() =>
-        formFieldFactory({ formId, type: 'input' }).then((field) => {
-          arbitraryFieldId = field._id;
-
-          done();
-        }),
-      );
+            done();
+          }),
+        );
     });
 
-    it('saveValues', (done) => {
+    it('saveValues', done => {
       const submissions = [
         { _id: arbitraryFieldId, value: 'Value', type: 'input' },
         { _id: emailFieldId, value: 'email@gmail.com', type: 'email' },
@@ -223,46 +210,45 @@ describe('Form mutations', () => {
       ];
 
       // call function
-      expectPromise(
-        done,
-        saveValues({ integrationId, formId, submissions }),
-        () => {
-          // must create 1 conversation
-          const p1 = Conversations.find().count().then((count) => {
-            expect(count).to.equal(1);
-          });
-
-          // must create 1 message
-          const p2 = Messages.find().count().then((count) => {
-            expect(count).to.equal(1);
-          });
-
-          // check conversation fields
-          const p3 = Conversations.findOne({}).then((conversation) => {
-            expect(conversation.content).to.equal(formTitle);
-            expect(conversation.integrationId).to.equal(integrationId);
-          });
-
-          // check message fields
-          const p4 = Messages.findOne({}).then((message) => {
-            expect(message.conversationId).to.not.equal(null);
-            expect(message.content).to.equal(formTitle);
-            expect(message.formWidgetData).to.deep.equal(submissions);
-          });
-
-          // must create 1 customer
-          const p5 = Customers.find().count().then((count) => {
-            expect(count).to.equal(1);
-          });
-
-          // check customer fields
-          const p6 = Customers.findOne({}).then((customer) => {
-            expect(customer.email).to.equal('email@gmail.com');
-            expect(customer.name).to.equal('last name first name');
-          });
-
-          expectPromise(done, Promise.all([p1, p2, p3, p4, p5, p6]), () => { done(); });
+      expectPromise(done, saveValues({ integrationId, formId, submissions }), () => {
+        // must create 1 conversation
+        const p1 = Conversations.find().count().then(count => {
+          expect(count).to.equal(1);
         });
+
+        // must create 1 message
+        const p2 = Messages.find().count().then(count => {
+          expect(count).to.equal(1);
+        });
+
+        // check conversation fields
+        const p3 = Conversations.findOne({}).then(conversation => {
+          expect(conversation.content).to.equal(formTitle);
+          expect(conversation.integrationId).to.equal(integrationId);
+        });
+
+        // check message fields
+        const p4 = Messages.findOne({}).then(message => {
+          expect(message.conversationId).to.not.equal(null);
+          expect(message.content).to.equal(formTitle);
+          expect(message.formWidgetData).to.deep.equal(submissions);
+        });
+
+        // must create 1 customer
+        const p5 = Customers.find().count().then(count => {
+          expect(count).to.equal(1);
+        });
+
+        // check customer fields
+        const p6 = Customers.findOne({}).then(customer => {
+          expect(customer.email).to.equal('email@gmail.com');
+          expect(customer.name).to.equal('last name first name');
+        });
+
+        expectPromise(done, Promise.all([p1, p2, p3, p4, p5, p6]), () => {
+          done();
+        });
+      });
     });
   });
 });

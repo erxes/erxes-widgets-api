@@ -3,17 +3,14 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
 
-
 export const connectToMongo = () => {
   mongoose.Promise = global.Promise;
-  mongoose.connect(
-    process.env.MONGO_URL, {
-      server: {
-        // after server reload, user must not reload widget manually
-        auto_reconnect: true,
-      },
+  mongoose.connect(process.env.MONGO_URL, {
+    server: {
+      // after server reload, user must not reload widget manually
+      auto_reconnect: true,
     },
-  );
+  });
 };
 
 const UserSchema = mongoose.Schema({
@@ -111,7 +108,4 @@ const Messages = mongoose.model('conversation_messages', MessageSchema);
 const Forms = mongoose.model('forms', FormSchema);
 const FormFields = mongoose.model('form_fields', FormFieldSchema);
 
-export {
-  Users, Brands, Integrations, Customers, Conversations,
-  Messages, Forms, FormFields,
-};
+export { Users, Brands, Integrations, Customers, Conversations, Messages, Forms, FormFields };

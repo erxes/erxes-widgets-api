@@ -42,7 +42,7 @@ server.listen(PORT, () => {
     {
       subscriptionManager,
       onConnect(connectionParams, webSocket) {
-        webSocket.on('message', (message) => {
+        webSocket.on('message', message => {
           const parsedMessage = JSON.parse(message);
 
           if (parsedMessage.type === 'messengerConnected') {
