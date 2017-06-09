@@ -20,7 +20,8 @@
     "start": "node dist",
     "dev": "nodemon src --exec babel-node",
     "test": "mocha src/data/tests --reporter spec --compilers js:babel-core/register",
-    "build": "babel src --out-dir dist --ignore tests --copy-files"
+    "build": "babel src --out-dir dist --ignore tests --copy-files",
+    "lint": "eslint src"
   },
   "dependencies": {
     "body-parser": "^1.17.1",
