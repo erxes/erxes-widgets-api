@@ -3,17 +3,14 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
 
-
 export const connectToMongo = () => {
   mongoose.Promise = global.Promise;
-  mongoose.connect(
-    process.env.MONGO_URL, {
-      server: {
-        // after server reload, user must not reload widget manually
-        auto_reconnect: true,
-      },
+  mongoose.connect(process.env.MONGO_URL, {
+    server: {
+      // after server reload, user must not reload widget manually
+      auto_reconnect: true,
     },
-  );
+  });
 };
 
 const UserSchema = mongoose.Schema({
@@ -34,8 +31,8 @@ const IntegrationSchema = mongoose.Schema({
   name: String,
   brandId: String,
   formId: String,
-  formLoadType: String,
   kind: String,
+  formData: Object,
   messengerData: Object,
   uiOptions: Object,
 });
@@ -44,6 +41,7 @@ const CustomerSchema = mongoose.Schema({
   _id: { type: String, unique: true, default: () => Random.id() },
   integrationId: String,
   email: String,
+  isUser: Boolean,
   name: String,
   createdAt: Date,
   messengerData: Object,
@@ -110,7 +108,4 @@ const Messages = mongoose.model('conversation_messages', MessageSchema);
 const Forms = mongoose.model('forms', FormSchema);
 const FormFields = mongoose.model('form_fields', FormFieldSchema);
 
-export {
-  Users, Brands, Integrations, Customers, Conversations,
-  Messages, Forms, FormFields,
-};
+export { Users, Brands, Integrations, Customers, Conversations, Messages, Forms, FormFields };

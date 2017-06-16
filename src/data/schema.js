@@ -38,8 +38,15 @@ const typeDefs = `
   input FieldValueInput {
     _id: String!
     type: String
+    validation: String
     text: String
     value: String
+  }
+
+  type Integration {
+    _id: String!
+    uiOptions: JSON
+    messengerData: JSON
   }
 
   # conversation ===========
@@ -75,6 +82,7 @@ const typeDefs = `
     options: [String]
     isRequired: Boolean
     name: String
+    validation: String
     order: Int
   }
 
@@ -86,6 +94,7 @@ const typeDefs = `
   # the schema allows the following queries:
   type RootQuery {
     conversations(integrationId: String!, customerId: String!): [Conversation]
+    getMessengerIntegration(brandCode: String!): Integration
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int
@@ -107,7 +116,7 @@ const typeDefs = `
     integrationId: String!
     integrationName: String!
     formId: String!
-    formLoadType: String!
+    formData: JSON!
   }
 
   type Error {
@@ -117,15 +126,24 @@ const typeDefs = `
   }
 
   type Mutation {
-    messengerConnect(brandCode: String!, email: String!, name: String, data: JSON): MessengerConnectResponse
+    messengerConnect(brandCode: String!, email: String!, name: String,
+      isUser: Boolean, data: JSON): MessengerConnectResponse
+
     insertMessage(integrationId: String!, customerId: String!,
-      conversationId: String!, message: String, attachments: [AttachmentInput]): Message
+      conversationId: String!, message: String,
+      attachments: [AttachmentInput]): Message
 
     simulateInsertMessage(messageId: String): Message
+
     readConversationMessages(conversationId: String): String
 
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
+
+    saveForm(integrationId: String!, formId: String!,
+      submissions: [FieldValueInput]): [Error]
+
+    sendEmail(toEmails: [String], fromEmail: String,
+      title: String, content: String): String
   }
 
   # subscriptions

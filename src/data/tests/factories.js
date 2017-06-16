@@ -2,7 +2,7 @@ import Random from 'meteor-random';
 import faker from 'faker';
 import { Integrations, Brands, Forms, FormFields } from '../connectors';
 
-export const brandFactory = (params) => {
+export const brandFactory = params => {
   const brand = new Brands({
     name: faker.random.word(),
     code: params.code || faker.random.word(),
@@ -12,7 +12,7 @@ export const brandFactory = (params) => {
   return brand.save();
 };
 
-export const integrationFactory = (params) => {
+export const integrationFactory = params => {
   const integration = new Integrations({
     name: faker.random.word(),
     kind: params.kind || 'messenger',
@@ -32,7 +32,7 @@ export const formFactory = ({ title, code }) => {
   return form.save();
 };
 
-export const formFieldFactory = (params) => {
+export const formFieldFactory = params => {
   const field = new FormFields({
     formId: params.formId || Random.id(),
     type: params.type || faker.random.word(),

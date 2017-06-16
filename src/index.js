@@ -30,6 +30,7 @@ app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 const server = createServer(app);
 const { PORT } = process.env;
+
 const SUBSCRIPTION_PATH = '/subscriptions';
 
 server.listen(PORT, () => {
@@ -41,7 +42,7 @@ server.listen(PORT, () => {
     {
       subscriptionManager,
       onConnect(connectionParams, webSocket) {
-        webSocket.on('message', (message) => {
+        webSocket.on('message', message => {
           const parsedMessage = JSON.parse(message);
 
           if (parsedMessage.type === 'messengerConnected') {
