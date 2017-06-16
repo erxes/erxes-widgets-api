@@ -25,7 +25,7 @@ export default {
     let uiOptions;
     let messengerData;
 
-    const { brandCode, email, isUser, name } = args;
+    const { brandCode, email, isUser, name, data } = args;
 
     // find integration
     return (
@@ -76,7 +76,7 @@ export default {
           }
 
           // create new customer
-          return createCustomer({ integrationId, email, isUser, name });
+          return createCustomer({ integrationId, email, isUser, name }, data);
         })
         // return integrationId, customerId
         .then(customer => ({

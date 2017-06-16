@@ -32,7 +32,7 @@ export const getCustomer = (integrationId, email) => Customers.findOne({ email, 
  * Create new customer
  */
 
-export const createCustomer = params => {
+export const createCustomer = (params, data) => {
   // create new customer
   const customerObj = new Customers({
     createdAt: new Date(),
@@ -41,6 +41,7 @@ export const createCustomer = params => {
       lastSeenAt: new Date(),
       isActive: true,
       sessionCount: 1,
+      customData: data,
     },
   });
 
