@@ -1,8 +1,9 @@
 import Random from 'meteor-random';
 import faker from 'faker';
-import { Integrations, Brands, Forms, FormFields } from '../connectors';
+import { Integrations, Brands, Forms, FormFields, Customers, Conversations } from '../connectors';
+import { CONVERSATION_STATUSES } from '../utils';
 
-export const brandFactory = params => {
+export const brandFactory = (params = {}) => {
   const brand = new Brands({
     name: faker.random.word(),
     code: params.code || faker.random.word(),
@@ -46,3 +47,35 @@ export const formFieldFactory = params => {
 
   return field.save();
 };
+
+export function customerFactory(params = {}) {
+  const createdAt = faker.date.past();
+  const customer = new Customers({
+    integrationId: params.integrationId || Random.id(),
+    createdAt,
+    email: faker.internet.email(),
+    isUser: faker.random.boolean(),
+    name: faker.name.findName(),
+    messengerData: {
+      lastSeenAt: faker.date.between(createdAt, new Date()),
+      isActive: faker.random.boolean(),
+      sessionCount: faker.random.number(),
+    },
+  });
+
+  return customer.save();
+}
+
+export function conversationFactory() {
+  const conversation = new Conversations({
+    createdAt: faker.date.past(),
+    content: faker.lorem.sentence,
+    customerId: Random.id(),
+    integrationId: Random.id(),
+    number: 1,
+    messageCount: 0,
+    status: CONVERSATION_STATUSES.NEW,
+  });
+
+  return conversation.save();
+}
