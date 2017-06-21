@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import validator from 'validator';
 import { Integrations, Brands, Forms, FormFields } from './connectors';
 import { createConversation, createMessage, getCustomer, createCustomer, sendEmail } from './utils';
@@ -9,14 +8,18 @@ export const validate = (formId, submissions) =>
 
     fields.forEach(field => {
       // find submission object by _id
-      const submission = _.find(submissions, sub => sub._id === field._id);
+      const submission = submissions.find(sub => sub._id === field._id);
       const value = submission.value || '';
       const type = field.type;
       const validation = field.validation;
 
       // required
       if (field.isRequired && !value) {
-        errors.push({ fieldId: field._id, code: 'required', text: 'Required' });
+        errors.push({
+          fieldId: field._id,
+          code: 'required',
+          text: 'Required',
+        });
       }
 
       if (value) {

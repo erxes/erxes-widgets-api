@@ -1,17 +1,5 @@
-/* eslint-disable new-cap */
-
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
-
-export const connectToMongo = () => {
-  mongoose.Promise = global.Promise;
-  mongoose.connect(process.env.MONGO_URL, {
-    server: {
-      // after server reload, user must not reload widget manually
-      auto_reconnect: true,
-    },
-  });
-};
 
 const UserSchema = mongoose.Schema({
   _id: String,

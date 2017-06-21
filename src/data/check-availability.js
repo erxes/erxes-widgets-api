@@ -1,94 +1,63 @@
-const getDayAsString = dayNumber => {
-  let day;
+const daysAsString = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-  switch (dayNumber) {
-    case 1:
-      day = 'monday';
-      break;
-
-    case 2:
-      day = 'tuesday';
-      break;
-
-    case 3:
-      day = 'wednesday';
-      break;
-
-    case 4:
-      day = 'thursday';
-      break;
-
-    case 5:
-      day = 'friday';
-      break;
-
-    case 6:
-      day = 'saturday';
-      break;
-
-    case 7:
-      day = 'sunday';
-      break;
-  }
-
-  return day;
-};
-
-const isDateInRange = (date, from, to) => {
+function isDateInRange(date, from, to) {
+  // concatnating time ranges with today's date
   const fromDate = new Date(Date.parse(`${date.toLocaleDateString()} ${from}`));
-
   const endDate = new Date(Date.parse(`${date.toLocaleDateString()} ${to}`));
 
-  // check interval
-  if (fromDate <= date && endDate >= date) {
-    return true;
-  }
+  return fromDate <= date && date <= endDate;
+}
 
-  return false;
-};
+function isWeekday(day) {
+  return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
+}
 
-const isWeekday = day => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
+function isWeekend(day) {
+  return ['saturday', 'sunday'].includes(day);
+}
 
-const isWeekend = day => ['saturday', 'sunday'].includes(day);
+export function checkAvailability(integration) {
+  const now = new Date();
 
-export const checkAvailability = (integration, date) => {
-  // we can determine state from isOnline field value when method is manual
+  /**
+   * Manual: We can determine state from isOnline field value when method is manual
+   */
   if (integration.availabilityMethod === 'manual') {
     return integration.isOnline;
   }
 
-  const day = getDayAsString(date.getDay());
+  /**
+   * Auto
+   */
+  const day = daysAsString[now.getDay()];
 
-  // auto ====================
+  if (!integration.onlineHours) {
+    return false;
+  }
 
   // check by everyday config
-  const onlineHours = onlineHours || [];
-  const everydayConf = onlineHours.find(c => c.day === 'everyday');
-
+  const everydayConf = integration.onlineHours.find(c => c.day === 'everyday');
   if (everydayConf) {
-    return isDateInRange(date, everydayConf.from, everydayConf.to);
+    return isDateInRange(now, everydayConf.from, everydayConf.to);
   }
 
   // check by weekdays config
-  const weekdaysConf = onlineHours.find(c => c.day === 'weekdays');
-
+  const weekdaysConf = integration.onlineHours.find(c => c.day === 'weekdays');
   if (weekdaysConf && isWeekday(day)) {
-    return isDateInRange(date, weekdaysConf.from, weekdaysConf.to);
+    return isDateInRange(now, weekdaysConf.from, weekdaysConf.to);
   }
 
   // check by weekends config
-  const weekendsConf = onlineHours.find(c => c.day === 'weekends');
-
+  const weekendsConf = integration.onlineHours.find(c => c.day === 'weekends');
   if (weekendsConf && isWeekend(day)) {
-    return isDateInRange(date, weekendsConf.from, weekendsConf.to);
+    return isDateInRange(now, weekendsConf.from, weekendsConf.to);
   }
 
   // check by regular day config
-  const dayConf = onlineHours.find(c => c.day === day);
-
+  const dayConf = integration.onlineHours.find(c => c.day === day);
   if (dayConf) {
-    return isDateInRange(date, dayConf.from, dayConf.to);
+    return isDateInRange(now, dayConf.from, dayConf.to);
   }
 
   return false;
-};
+}

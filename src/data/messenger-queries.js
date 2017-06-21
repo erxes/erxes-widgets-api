@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import { Integrations, Conversations, Messages, Users } from './connectors';
 import { checkAvailability } from './check-availability';
 import { getIntegration } from './utils';
@@ -8,9 +7,7 @@ export default {
     return getIntegration(args.brandCode, 'messenger');
   },
 
-  conversations(root, args) {
-    const { integrationId, customerId } = args;
-
+  conversations(root, { integrationId, customerId }) {
     return Conversations.find({
       integrationId,
       customerId,
@@ -33,15 +30,13 @@ export default {
     });
   },
 
-  totalUnreadCount(root, args) {
-    const { integrationId, customerId } = args;
-
+  totalUnreadCount(root, { integrationId, customerId }) {
     // find conversations
     return Conversations.find({
       integrationId,
       customerId,
     }).then(conversations => {
-      const conversationIds = _.pluck(conversations, '_id');
+      const conversationIds = conversations.map(c => c._id);
 
       // find read messages count
       return Messages.count({
@@ -65,15 +60,15 @@ export default {
   },
 
   isMessengerOnline(root, args) {
-    return Integrations.findOne({ _id: args.integrationId }).then(integ => {
-      const integration = integ;
-      const messengerData = integration.messengerData || {};
+    return Integrations.findOne({ _id: args.integrationId }).then(integration => {
+      const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {};
+      const modifiedIntegration = Object.assign({}, integration, {
+        availabilityMethod,
+        isOnline,
+        onlineHours,
+      });
 
-      integration.availabilityMethod = messengerData.availabilityMethod;
-      integration.isOnline = messengerData.isOnline;
-      integration.onlineHours = messengerData.onlineHours;
-
-      return checkAvailability(integration, new Date());
+      return checkAvailability(modifiedIntegration);
     });
   },
 };

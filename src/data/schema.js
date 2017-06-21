@@ -10,7 +10,7 @@ const typeDefs = `
   scalar Date
   scalar JSON
 
-  # user ================
+  # user
   type UserDetails {
     avatar: String
     fullName: String
@@ -49,7 +49,7 @@ const typeDefs = `
     messengerData: JSON
   }
 
-  # conversation ===========
+  # conversation
   type Conversation {
     _id: String!
     customerId: String!
@@ -101,7 +101,7 @@ const typeDefs = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
 
-    # form =====
+    # form
     form(formId: String): Form
   }
 

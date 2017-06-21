@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-
 import { Messages, Conversations, Brands, Customers, Integrations } from './connectors';
 
 export const CONVERSATION_STATUSES = {
@@ -9,109 +8,113 @@ export const CONVERSATION_STATUSES = {
   ALL_LIST: ['new', 'open', 'closed'],
 };
 
-/*
- * Get integration by brandCode and integration kind
+/**
+ * Get integration
+ * @param  {String} brandCode
+ * @param  {String} kind
+ * @return {Promise} Existing integration object
  */
-
 export const getIntegration = (brandCode, kind) =>
   Brands.findOne({ code: brandCode }).then(brand =>
-    // find integration by brand
     Integrations.findOne({
       brandId: brand._id,
       kind,
     }),
   );
 
-/*
+/**
  * Get customer
+ * @param  {String} integrationId
+ * @param  {String} email
+ * @return {Promise} Existing customer object
  */
-
 export const getCustomer = (integrationId, email) => Customers.findOne({ email, integrationId });
 
-/*
- * Create new customer
+/**
+ * Create a new customer
+ * @param  {Object} customerObj Customer object without computational fields
+ * @return {Promise} Newly created customer object
  */
-
-export const createCustomer = params => {
-  // create new customer
-  const customerObj = new Customers({
-    createdAt: new Date(),
-    ...params,
+export const createCustomer = customerObj => {
+  const now = new Date();
+  const customer = new Customers({
+    ...customerObj,
+    createdAt: now,
     messengerData: {
-      lastSeenAt: new Date(),
+      lastSeenAt: now,
       isActive: true,
       sessionCount: 1,
     },
   });
 
-  return customerObj.save();
+  return customer.save();
 };
 
-/*
+/**
  * Get or create customer
+ * @param  {Object} customerObj Expected customer object
+ * @return {Promise} Existing or newly created customer object
  */
+export const getOrCreateCustomer = customerObj => {
+  const { integrationId, email } = customerObj;
 
-export const getOrCreateCustomer = doc => {
-  const { integrationId, email } = doc;
-
-  // try to find by integrationId and email
-  return getCustomer(integrationId, email).then(customerId => {
-    // if found
-    if (customerId) {
-      return Promise.resolve(customerId);
+  return getCustomer(integrationId, email).then(customer => {
+    if (customer) {
+      return Promise.resolve(customer);
     }
 
-    // if not, create new
-    return createCustomer(doc);
+    return createCustomer(customerObj);
   });
 };
 
-/*
+/**
  * Create new conversation
+ * @param  {Object} conversationObj
+ * @return {Promise} Newly created conversation object
  */
+export const createConversation = conversationObj => {
+  const { integrationId, customerId, content } = conversationObj;
 
-export const createConversation = doc => {
-  const { integrationId, customerId, content } = doc;
-
-  // get total conversations count
   return Conversations.find({ customerId, integrationId }).count().then(count => {
-    // create conversation object
-    const conversationObj = new Conversations({
+    const conversation = new Conversations({
       customerId,
       integrationId,
       content,
       status: CONVERSATION_STATUSES.NEW,
       createdAt: new Date(),
+
+      // QUESTION: What is this number for?
       number: count + 1,
+
       messageCount: 0,
     });
 
-    // save conversation
-    return conversationObj.save();
+    return conversation.save();
   });
 };
 
-/*
+/**
  * Get or create conversation
+ * @param  {Object} doc
+ * @return {Promise}
  */
-
 export const getOrCreateConversation = doc => {
   const { conversationId, integrationId, customerId, message } = doc;
 
-  // customer can write message to even closed conversation
+  // customer can write a message
+  // to the closed conversation even if it's closed
   if (conversationId) {
-    Conversations.update(
-      { _id: conversationId },
+    return Conversations.findByIdAndUpdate(
+      conversationId,
       {
-        // empty read users list then it will be shown as unread again
+        // mark this conversation as unread
         readUserIds: [],
 
-        // if conversation is closed then reopen it.
+        // reopen this conversation if it's closed
         status: CONVERSATION_STATUSES.OPEN,
       },
+      { new: true },
     );
-
-    return Promise.resolve(doc.conversationId);
   }
 
   // create conversation
@@ -122,63 +125,36 @@ export const getOrCreateConversation = doc => {
   });
 };
 
-/*
+/**
  * Create new message
+ * @param  {Object} messageObj
+ * @return {Promise} New message
  */
-
-export const createMessage = doc => {
-  const messageOptions = {
+export const createMessage = messageObj => {
+  const message = new Messages({
     createdAt: new Date(),
     internal: false,
-    ...doc,
-  };
+    ...messageObj,
+  });
 
-  // create message object
-  const messageObj = new Messages(messageOptions);
-
-  // save and return newly created one
-  return messageObj.save().then(_id => Messages.findOne({ _id }));
+  return message.save();
 };
 
-/*
- * Create conversation and message
+/**
+ * Mark customer as inactive
+ * @param  {String} customerId
+ * @return {Promise} Updated customer
  */
-
-export const createConversationWithMessage = doc => {
-  const { integrationId, customerId, content } = doc;
-
-  // create conversation
-  return (
-    createConversation({
-      customerId,
-      integrationId,
-      content,
-    })
-      // create message
-      .then(conversationId =>
-        createMessage({
-          conversationId,
-          customerId,
-          message: content,
-        }),
-      )
-  );
-};
-
-/*
- * mark as not active when connection close
- */
-
 export const markCustomerAsNotActive = customerId => {
-  Customers.update(
-    { _id: customerId },
+  return Customers.findByIdAndUpdate(
+    customerId,
     {
       $set: {
         'messengerData.isActive': false,
         'messengerData.lastSeenAt': new Date(),
       },
     },
-    () => {},
+    { new: true },
   );
 };
 

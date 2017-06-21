@@ -7,7 +7,7 @@ import cors from 'cors';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { createServer } from 'http';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { connectToMongo } from './data/connectors';
+import { connect } from './data/db/connection';
 import { subscriptionManager } from './data/subscription-manager';
 import schema from './data/schema';
 import { markCustomerAsNotActive } from './data/utils';
@@ -16,7 +16,7 @@ import { markCustomerAsNotActive } from './data/utils';
 dotenv.config();
 
 // connect to mongo database
-connectToMongo();
+connect();
 
 const app = express();
 
