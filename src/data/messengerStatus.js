@@ -1,11 +1,12 @@
-const daysAsString = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const daysAsString = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-function isDateInRange(date, from, to) {
+export function isTimeInBetween(date, startTime, closeTime) {
   // concatnating time ranges with today's date
-  const fromDate = new Date(Date.parse(`${date.toLocaleDateString()} ${from}`));
-  const endDate = new Date(Date.parse(`${date.toLocaleDateString()} ${to}`));
+  const dateString = date.toLocaleDateString();
+  const startDate = new Date(`${dateString} ${startTime}`);
+  const closeDate = new Date(`${dateString} ${closeTime}`);
 
-  return fromDate <= date && date <= endDate;
+  return startDate <= date && date <= closeDate;
 }
 
 function isWeekday(day) {
@@ -36,25 +37,25 @@ export function isOnline(integration, now = new Date()) {
   // check by everyday config
   const everydayConf = integration.onlineHours.find(c => c.day === 'everyday');
   if (everydayConf) {
-    return isDateInRange(now, everydayConf.from, everydayConf.to);
+    return isTimeInBetween(now, everydayConf.from, everydayConf.to);
   }
 
   // check by weekdays config
   const weekdaysConf = integration.onlineHours.find(c => c.day === 'weekdays');
   if (weekdaysConf && isWeekday(day)) {
-    return isDateInRange(now, weekdaysConf.from, weekdaysConf.to);
+    return isTimeInBetween(now, weekdaysConf.from, weekdaysConf.to);
   }
 
   // check by weekends config
   const weekendsConf = integration.onlineHours.find(c => c.day === 'weekends');
   if (weekendsConf && isWeekend(day)) {
-    return isDateInRange(now, weekendsConf.from, weekendsConf.to);
+    return isTimeInBetween(now, weekendsConf.from, weekendsConf.to);
   }
 
   // check by regular day config
   const dayConf = integration.onlineHours.find(c => c.day === day);
   if (dayConf) {
-    return isDateInRange(now, dayConf.from, dayConf.to);
+    return isTimeInBetween(now, dayConf.from, dayConf.to);
   }
 
   return false;
