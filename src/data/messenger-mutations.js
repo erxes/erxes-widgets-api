@@ -1,4 +1,4 @@
-import { Conversations, Messages, Customers } from './connectors';
+import { Conversations, Messages, Customers } from './db/models';
 import { pubsub } from './subscription-manager';
 import {
   getIntegration,

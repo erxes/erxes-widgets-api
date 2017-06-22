@@ -10,7 +10,7 @@ import {
   Conversations,
   Messages,
   Customers,
-} from '../connectors';
+} from '../db/models';
 import { brandFactory, integrationFactory, formFieldFactory, formFactory } from './factories';
 
 // helper function that calls then and catch on given promise

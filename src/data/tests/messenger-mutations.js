@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'chai';
-import { Customers, Brands, Integrations, Conversations, Messages } from '../connectors';
+import { Customers, Brands, Integrations, Conversations, Messages } from '../db/models';
 import { createCustomer, createConversation, createMessage } from '../utils';
 import { brandFactory, integrationFactory } from './factories';
 import messengerMutations from '../messenger-mutations';

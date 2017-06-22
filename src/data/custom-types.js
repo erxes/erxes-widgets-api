@@ -1,6 +1,6 @@
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
-import { Users } from './connectors';
+import { Users } from './db/models';
 
 function jSONidentity(value) {
   return value;

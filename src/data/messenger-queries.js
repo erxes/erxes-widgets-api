@@ -1,4 +1,4 @@
-import { Integrations, Conversations, Messages, Users } from './connectors';
+import { Integrations, Conversations, Messages, Users } from './db/models';
 import { checkAvailability } from './check-availability';
 import { getIntegration } from './utils';
 

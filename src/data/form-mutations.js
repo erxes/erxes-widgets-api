@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { Integrations, Brands, Forms, FormFields } from './connectors';
+import { Integrations, Brands, Forms, FormFields } from './db/models';
 import { createConversation, createMessage, getCustomer, createCustomer, sendEmail } from './utils';
 
 export const validate = (formId, submissions) =>

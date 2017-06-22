@@ -21,7 +21,7 @@ import {
   getOrCreateConversation,
   createMessage,
 } from '../utils';
-import { Customers, Conversations, Messages } from '../connectors';
+import { Customers, Conversations, Messages } from '../db/models';
 
 beforeAll(() => connect());
 

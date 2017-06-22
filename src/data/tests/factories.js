@@ -1,6 +1,6 @@
 import Random from 'meteor-random';
 import faker from 'faker';
-import { Integrations, Brands, Forms, FormFields, Customers, Conversations } from '../connectors';
+import { Integrations, Brands, Forms, FormFields, Customers, Conversations } from '../db/models';
 import { CONVERSATION_STATUSES } from '../utils';
 
 export const brandFactory = (params = {}) => {
