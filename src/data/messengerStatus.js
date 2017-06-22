@@ -16,9 +16,7 @@ function isWeekend(day) {
   return ['saturday', 'sunday'].includes(day);
 }
 
-export function checkAvailability(integration) {
-  const now = new Date();
-
+export function isOnline(integration, now = new Date()) {
   /**
    * Manual: We can determine state from isOnline field value when method is manual
    */

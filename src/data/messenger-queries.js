@@ -1,5 +1,5 @@
 import { Integrations, Conversations, Messages, Users } from './db/models';
-import { checkAvailability } from './check-availability';
+import { isOnline as isStaffsOnline } from './messengerStatus';
 import { getIntegration } from './utils';
 
 export default {
@@ -68,7 +68,7 @@ export default {
         onlineHours,
       });
 
-      return checkAvailability(modifiedIntegration);
+      return isStaffsOnline(modifiedIntegration);
     });
   },
 };
