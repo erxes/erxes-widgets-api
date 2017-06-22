@@ -26,7 +26,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/graphql', graphqlExpress({ schema }));
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+if (process.env.NODE_ENV === 'development') {
+  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+}
 
 const server = createServer(app);
 const { PORT } = process.env;

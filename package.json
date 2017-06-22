@@ -18,7 +18,7 @@
   "private": true,
   "scripts": {
     "start": "node dist",
-    "dev": "nodemon src --exec babel-node",
+    "dev": "NODE_ENV=development nodemon src --exec babel-node",
     "test": "mocha src/data/tests --reporter spec --compilers js:babel-core/register",
     "jest": "jest tests",
     "build": "babel src --out-dir dist --ignore tests --copy-files",
