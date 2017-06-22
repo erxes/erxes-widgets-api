@@ -10,16 +10,19 @@ const isTest = NODE_ENV == 'test';
 const DB_URI = isTest ? TEST_MONGO_URL : MONGO_URL;
 
 mongoose.Promise = global.Promise;
-mongoose.connection
-  .on('connected', () => {
-    console.log(`Connected to the database: ${DB_URI}`);
-  })
-  .on('disconnected', () => {
-    console.log(`Disconnected from the database: ${DB_URI}`);
-  })
-  .on('error', error => {
-    console.log(`Database connection error: ${DB_URI}`, error);
-  });
+
+if (!isTest) {
+  mongoose.connection
+    .on('connected', () => {
+      console.log(`Connected to the database: ${DB_URI}`);
+    })
+    .on('disconnected', () => {
+      console.log(`Disconnected from the database: ${DB_URI}`);
+    })
+    .on('error', error => {
+      console.log(`Database connection error: ${DB_URI}`, error);
+    });
+}
 
 export function connect() {
   return mongoose
