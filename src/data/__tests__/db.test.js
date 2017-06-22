@@ -9,7 +9,7 @@ import {
   integrationFactory,
   customerFactory,
   conversationFactory,
-} from './factories';
+} from '../factories';
 import {
   CONVERSATION_STATUSES,
   getIntegration,
