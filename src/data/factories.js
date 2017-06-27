@@ -1,6 +1,14 @@
 import Random from 'meteor-random';
 import faker from 'faker';
-import { Integrations, Brands, Forms, FormFields, Customers, Conversations } from './db/models';
+import {
+  Integrations,
+  Brands,
+  Forms,
+  FormFields,
+  Customers,
+  Conversations,
+  Messages,
+} from './db/models';
 import { CONVERSATION_STATUSES } from './utils';
 
 export const brandFactory = (params = {}) => {
@@ -78,4 +86,20 @@ export function conversationFactory() {
   });
 
   return conversation.save();
+}
+
+export function messageFactory(params = {}) {
+  const obj = Object.assign(
+    {
+      userId: Random.id(),
+      conversationId: Random.id(),
+      customerId: Random.id(),
+      content: faker.lorem.sentence,
+      createdAt: faker.date.past(),
+    },
+    params,
+  );
+  const message = new Messages(obj);
+
+  return message.save();
 }
