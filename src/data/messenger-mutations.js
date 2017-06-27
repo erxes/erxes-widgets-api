@@ -92,6 +92,7 @@ export default {
    */
   insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
     // get or create conversation
+    let newMessage;
     return (
       getOrCreateConversation({ conversationId, integrationId, customerId, message })
         // create message
@@ -104,7 +105,8 @@ export default {
           }),
         )
         .then(msg => {
-          Conversations.update(
+          newMessage = msg;
+          return Conversations.update(
             { _id: msg.conversationId },
             {
               $set: {
@@ -116,12 +118,13 @@ export default {
               },
             },
           );
-
+        })
+        .then(() => {
           // publish changes
-          pubsub.publish('newMessagesChannel', msg);
+          pubsub.publish('newMessagesChannel', newMessage);
           pubsub.publish('notification');
 
-          return msg;
+          return newMessage;
         })
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
@@ -146,8 +149,9 @@ export default {
       )
         // notify all notification subscribers that message's read
         // state changed
-        .then(() => {
+        .then(response => {
           pubsub.publish('notification');
+          return response;
         })
     );
   },
