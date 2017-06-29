@@ -12,7 +12,7 @@ import {
   conversationFactory,
   messageFactory,
 } from '../db/factories';
-import messengerMutations from '../data/resolvers/messenger-mutations';
+import messengerMutations from '../data/resolvers/mutations/messenger';
 import { CONVERSATION_STATUSES } from '../db/utils';
 
 beforeAll(() => connect());

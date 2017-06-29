@@ -1,19 +1,19 @@
 import customTypes from './custom-types';
-import messengerQueries from './messenger-queries';
-import formQueries from './form-queries';
-import messengerMutations from './messenger-mutations';
-import FormMutations from './form-mutations';
-import subscriptions from './subscriptions';
+import Query from './queries';
+import Mutation from './mutations';
+import Subscription from './subscriptions';
+import Conversation from './conversation';
+import Message from './message';
+import Field from './field';
 
 export default {
   ...customTypes,
-  Query: {
-    ...messengerQueries,
-    ...formQueries,
-  },
-  Mutation: {
-    ...messengerMutations,
-    ...FormMutations,
-  },
-  ...subscriptions,
+
+  Conversation,
+  Message,
+  Field,
+
+  Query,
+  Mutation,
+  Subscription,
 };

@@ -1,6 +1,5 @@
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
-import { Users } from '../../db/models';
 
 function jSONidentity(value) {
   return value;
@@ -57,22 +56,4 @@ export default {
     parseValue: jSONidentity,
     parseLiteral: jSONparseLiteral,
   }),
-
-  Field: {
-    name(field) {
-      return `erxes-form-field-${field._id}`;
-    },
-  },
-
-  Message: {
-    user(message) {
-      return Users.findOne({ _id: message.userId });
-    },
-  },
-
-  Conversation: {
-    participatedUsers(conversation) {
-      return Users.find({ _id: { $in: conversation.participatedUserIds } });
-    },
-  },
 };

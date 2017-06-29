@@ -1,6 +1,6 @@
-import { Integrations, Conversations, Messages, Users } from '../../db/models';
-import { isOnline as isStaffsOnline } from './utils/messengerStatus';
-import { getIntegration } from '../../db/utils';
+import { Integrations, Conversations, Messages, Users } from '../../../db/models';
+import { isOnline as isStaffsOnline } from '../utils/messengerStatus';
+import { getIntegration } from '../../../db/utils';
 
 export default {
   getMessengerIntegration(root, args) {

@@ -1,7 +1,5 @@
 export default {
-  Subscription: {
-    messageInserted(message) {
-      return message;
-    },
+  messageInserted(message) {
+    return message;
   },
 };
