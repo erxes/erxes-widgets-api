@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { Messages, Conversations, Brands, Customers, Integrations } from './db/models';
+import { Messages, Conversations, Brands, Customers, Integrations } from './models';
 
 export const CONVERSATION_STATUSES = {
   NEW: 'new',

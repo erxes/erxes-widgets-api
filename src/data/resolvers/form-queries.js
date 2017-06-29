@@ -1,4 +1,4 @@
-import { Forms, FormFields } from './db/models';
+import { Forms, FormFields } from '../../db/models';
 
 export default {
   form(root, { formId }) {

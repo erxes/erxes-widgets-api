@@ -1,5 +1,5 @@
-import { Conversations, Messages, Customers } from './db/models';
-import { pubsub } from './subscription-manager';
+import { Conversations, Messages, Customers } from '../../db/models';
+import { pubsub } from '../subscription-manager';
 import {
   getIntegration,
   getCustomer,
@@ -7,7 +7,7 @@ import {
   createMessage,
   createCustomer,
   CONVERSATION_STATUSES,
-} from './utils';
+} from '../../db/utils';
 
 export default {
   simulateInsertMessage(root, args) {

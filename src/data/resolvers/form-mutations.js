@@ -1,6 +1,12 @@
 import validator from 'validator';
-import { Integrations, Brands, Forms, FormFields } from './db/models';
-import { createConversation, createMessage, getCustomer, createCustomer, sendEmail } from './utils';
+import { Integrations, Brands, Forms, FormFields } from '../../db/models';
+import {
+  createConversation,
+  createMessage,
+  getCustomer,
+  createCustomer,
+  sendEmail,
+} from '../../db/utils';
 
 export const validate = (formId, submissions) =>
   FormFields.find({ formId }).then(fields => {

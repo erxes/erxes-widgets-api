@@ -4,13 +4,13 @@ import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { createServer } from 'http';
+import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { connect } from './data/db/connection';
+import { connect } from './db/connection';
+import { markCustomerAsNotActive } from './db/utils';
+import schema from './data';
 import { subscriptionManager } from './data/subscription-manager';
-import schema from './data/schema';
-import { markCustomerAsNotActive } from './data/utils';
 
 // load environment variables
 dotenv.config();

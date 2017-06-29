@@ -8,7 +8,7 @@ import {
   Customers,
   Conversations,
   Messages,
-} from './db/models';
+} from './models';
 import { CONVERSATION_STATUSES } from './utils';
 
 export const brandFactory = (params = {}) => {

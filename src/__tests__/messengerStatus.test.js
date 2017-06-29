@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { isOnline, isTimeInBetween } from '../messengerStatus';
+import { isOnline, isTimeInBetween } from '../data/resolvers/utils/messengerStatus';
 
 describe('Manual mode', () => {
   test('isOnline() must return status as it is', () => {

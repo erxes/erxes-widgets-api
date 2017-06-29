@@ -11,9 +11,9 @@ import {
   customerFactory,
   conversationFactory,
   messageFactory,
-} from '../factories';
-import messengerMutations from '../messenger-mutations';
-import { CONVERSATION_STATUSES } from '../utils';
+} from '../db/factories';
+import messengerMutations from '../data/resolvers/messenger-mutations';
+import { CONVERSATION_STATUSES } from '../db/utils';
 
 beforeAll(() => connect());
 

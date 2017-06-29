@@ -9,7 +9,7 @@ import {
   integrationFactory,
   customerFactory,
   conversationFactory,
-} from '../factories';
+} from '../db/factories';
 import {
   CONVERSATION_STATUSES,
   getIntegration,
@@ -20,7 +20,7 @@ import {
   createConversation,
   getOrCreateConversation,
   createMessage,
-} from '../utils';
+} from '../db/utils';
 import { Customers, Conversations, Messages } from '../db/models';
 
 beforeAll(() => connect());
