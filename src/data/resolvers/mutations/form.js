@@ -1,7 +1,14 @@
-import _ from 'underscore';
 import validator from 'validator';
-import { Integrations, Brands, Forms, FormFields } from './connectors';
-import { createConversation, createMessage, getCustomer, createCustomer, sendEmail } from './utils';
+import {
+  Customers,
+  Integrations,
+  Brands,
+  Conversations,
+  Messages,
+  Forms,
+  FormFields,
+} from '../../../db/models';
+import { sendEmail } from '../utils/email';
 
 export const validate = (formId, submissions) =>
   FormFields.find({ formId }).then(fields => {
@@ -9,14 +16,18 @@ export const validate = (formId, submissions) =>
 
     fields.forEach(field => {
       // find submission object by _id
-      const submission = _.find(submissions, sub => sub._id === field._id);
+      const submission = submissions.find(sub => sub._id === field._id);
       const value = submission.value || '';
       const type = field.type;
       const validation = field.validation;
 
       // required
       if (field.isRequired && !value) {
-        errors.push({ fieldId: field._id, code: 'required', text: 'Required' });
+        errors.push({
+          fieldId: field._id,
+          code: 'required',
+          text: 'Required',
+        });
       }
 
       if (value) {
@@ -53,7 +64,7 @@ export const validate = (formId, submissions) =>
   });
 
 export const getOrCreateCustomer = (integrationId, email, name) =>
-  getCustomer(integrationId, email).then(customer => {
+  Customers.getCustomer(integrationId, email).then(customer => {
     if (!email) {
       return Promise.resolve(null);
     }
@@ -64,7 +75,9 @@ export const getOrCreateCustomer = (integrationId, email, name) =>
     }
 
     // create customer
-    return createCustomer({ integrationId, email, name }).then(cus => Promise.resolve(cus._id));
+    return Customers.createCustomer({ integrationId, email, name }).then(cus =>
+      Promise.resolve(cus._id),
+    );
   });
 
 export const saveValues = ({ integrationId, submissions, formId }) =>
@@ -94,7 +107,7 @@ export const saveValues = ({ integrationId, submissions, formId }) =>
       getOrCreateCustomer(integrationId, email, `${lastName} ${firstName}`)
         // create conversation
         .then(customerId =>
-          createConversation({
+          Conversations.createConversation({
             integrationId,
             customerId,
             content,
@@ -102,7 +115,7 @@ export const saveValues = ({ integrationId, submissions, formId }) =>
         )
         // create message
         .then(conversationId =>
-          createMessage({
+          Messages.createMessage({
             conversationId,
             content,
             formWidgetData: submissions,

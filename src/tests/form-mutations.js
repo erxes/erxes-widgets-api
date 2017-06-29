@@ -10,8 +10,8 @@ import {
   Conversations,
   Messages,
   Customers,
-} from '../connectors';
-import { brandFactory, integrationFactory, formFieldFactory, formFactory } from './factories';
+} from '../db/models';
+import { brandFactory, integrationFactory, formFieldFactory, formFactory } from '../factories';
 
 // helper function that calls then and catch on given promise
 const expectPromise = (done, promise, callback) => {

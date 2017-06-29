@@ -4,19 +4,19 @@ import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { createServer } from 'http';
+import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { connectToMongo } from './data/connectors';
-import { subscriptionManager } from './data/subscription-manager';
-import schema from './data/schema';
-import { markCustomerAsNotActive } from './data/utils';
+import { connect } from './db/connection';
+import { Customers } from './db/models';
+import schema from './data';
+import { getSubscriptionManager } from './data/subscriptionManager';
 
 // load environment variables
 dotenv.config();
 
 // connect to mongo database
-connectToMongo();
+connect();
 
 const app = express();
 
@@ -26,7 +26,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/graphql', graphqlExpress({ schema }));
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+if (process.env.NODE_ENV === 'development') {
+  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+}
 
 const server = createServer(app);
 const { PORT } = process.env;
@@ -37,16 +40,15 @@ server.listen(PORT, () => {
   console.log(`GraphQL server is running on port ${PORT}`);
   console.log(`Websocket server is running on port ${PORT}${SUBSCRIPTION_PATH}`);
 
-  // eslint-disable-next-line no-new
   new SubscriptionServer(
     {
-      subscriptionManager,
+      subscriptionManager: getSubscriptionManager(schema),
       onConnect(connectionParams, webSocket) {
         webSocket.on('message', message => {
           const parsedMessage = JSON.parse(message);
 
           if (parsedMessage.type === 'messengerConnected') {
-            webSocket.messengerData = parsedMessage.value; // eslint-disable-line no-param-reassign
+            webSocket.messengerData = parsedMessage.value;
           }
         });
       },
@@ -54,7 +56,7 @@ server.listen(PORT, () => {
         const messengerData = webSocket.messengerData;
 
         if (messengerData) {
-          markCustomerAsNotActive(messengerData.customerId);
+          Customers.markCustomerAsNotActive(messengerData.customerId);
         }
       },
     },
