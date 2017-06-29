@@ -102,7 +102,6 @@ export const types = `
   }
 `;
 
-// Schema allows the following queries
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]

@@ -40,7 +40,6 @@ server.listen(PORT, () => {
   console.log(`GraphQL server is running on port ${PORT}`);
   console.log(`Websocket server is running on port ${PORT}${SUBSCRIPTION_PATH}`);
 
-  // eslint-disable-next-line no-new
   new SubscriptionServer(
     {
       subscriptionManager,
@@ -49,7 +48,7 @@ server.listen(PORT, () => {
           const parsedMessage = JSON.parse(message);
 
           if (parsedMessage.type === 'messengerConnected') {
-            webSocket.messengerData = parsedMessage.value; // eslint-disable-line no-param-reassign
+            webSocket.messengerData = parsedMessage.value;
           }
         });
       },
