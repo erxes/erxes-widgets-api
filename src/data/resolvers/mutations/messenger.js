@@ -7,7 +7,7 @@ import {
   createCustomer,
   CONVERSATION_STATUSES,
 } from '../../../db/utils';
-import { pubsub } from '../../subscription-manager';
+import { pubsub } from '../../subscriptionManager';
 
 export default {
   simulateInsertMessage(root, args) {

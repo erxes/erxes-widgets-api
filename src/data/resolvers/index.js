@@ -1,4 +1,4 @@
-import customTypes from './custom-types';
+import customScalars from './customScalars';
 import Query from './queries';
 import Mutation from './mutations';
 import Subscription from './subscriptions';
@@ -7,7 +7,7 @@ import Message from './message';
 import Field from './field';
 
 export default {
-  ...customTypes,
+  ...customScalars,
 
   Conversation,
   Message,

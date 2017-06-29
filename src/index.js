@@ -10,7 +10,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { connect } from './db/connection';
 import { markCustomerAsNotActive } from './db/utils';
 import schema from './data';
-import { subscriptionManager } from './data/subscription-manager';
+import { subscriptionManager } from './data/subscriptionManager';
 
 // load environment variables
 dotenv.config();
