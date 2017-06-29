@@ -1,10 +1,9 @@
 import { Integrations, Conversations, Messages, Users } from '../../../db/models';
 import { isOnline as isStaffsOnline } from '../utils/messengerStatus';
-import { getIntegration } from '../../../db/utils';
 
 export default {
   getMessengerIntegration(root, args) {
-    return getIntegration(args.brandCode, 'messenger');
+    return Integrations.getIntegration(args.brandCode, 'messenger');
   },
 
   conversations(root, { integrationId, customerId }) {

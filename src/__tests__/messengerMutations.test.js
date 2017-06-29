@@ -13,7 +13,6 @@ import {
   messageFactory,
 } from '../db/factories';
 import messengerMutations from '../data/resolvers/mutations/messenger';
-import { CONVERSATION_STATUSES } from '../db/utils';
 
 beforeAll(() => connect());
 
@@ -144,7 +143,7 @@ describe('insertMessage()', () => {
       )
       .then(message => Conversations.findById(message.conversationId))
       .then(conversation => {
-        expect(conversation.status).toBe(CONVERSATION_STATUSES.OPEN);
+        expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
         expect(conversation.readUserIds.length).toBe(0);
       });
   });

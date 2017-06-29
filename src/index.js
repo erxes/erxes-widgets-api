@@ -8,9 +8,9 @@ import { createServer } from 'http';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { connect } from './db/connection';
-import { markCustomerAsNotActive } from './db/utils';
+import { Customers } from './db/models';
 import schema from './data';
-import { subscriptionManager } from './data/subscriptionManager';
+import { getSubscriptionManager } from './data/subscriptionManager';
 
 // load environment variables
 dotenv.config();
@@ -42,7 +42,7 @@ server.listen(PORT, () => {
 
   new SubscriptionServer(
     {
-      subscriptionManager,
+      subscriptionManager: getSubscriptionManager(schema),
       onConnect(connectionParams, webSocket) {
         webSocket.on('message', message => {
           const parsedMessage = JSON.parse(message);
@@ -56,7 +56,7 @@ server.listen(PORT, () => {
         const messengerData = webSocket.messengerData;
 
         if (messengerData) {
-          markCustomerAsNotActive(messengerData.customerId);
+          Customers.markCustomerAsNotActive(messengerData.customerId);
         }
       },
     },

@@ -10,18 +10,7 @@ import {
   customerFactory,
   conversationFactory,
 } from '../db/factories';
-import {
-  CONVERSATION_STATUSES,
-  getIntegration,
-  createCustomer,
-  getCustomer,
-  getOrCreateCustomer,
-  markCustomerAsNotActive,
-  createConversation,
-  getOrCreateConversation,
-  createMessage,
-} from '../db/utils';
-import { Customers, Conversations, Messages } from '../db/models';
+import { Integrations, Customers, Conversations, Messages } from '../db/models';
 
 beforeAll(() => connect());
 
@@ -49,7 +38,7 @@ describe('Integrations', () => {
   });
 
   test('getIntegration() must return an integration', () => {
-    return getIntegration(_brand.code, _integration.kind).then(integration => {
+    return Integrations.getIntegration(_brand.code, _integration.kind).then(integration => {
       expect(integration).toBeDefined();
       expect(integration.kind).toBe(_integration.kind);
     });
@@ -76,7 +65,7 @@ describe('Customers', () => {
 
   test('createCustomer() must return a new customer', () => {
     const now = new Date();
-    return createCustomer({
+    return Customers.createCustomer({
       integrationId: _customer.integrationId,
       email: _customer.email,
       isUser: _customer.isUser,
@@ -94,7 +83,7 @@ describe('Customers', () => {
   });
 
   test('getCustomer() must return an existing customer', () => {
-    return getCustomer(_customer.integrationId, _customer.email).then(customer => {
+    return Customers.getCustomer(_customer.integrationId, _customer.email).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.email).toBe(_customer.email);
       expect(customer.isUser).toBe(_customer.isUser);
@@ -108,7 +97,7 @@ describe('Customers', () => {
 
   test('getOrCreateCustomer() must return an existing customer', () => {
     const now = new Date();
-    return getOrCreateCustomer(_customer).then(customer => {
+    return Customers.getOrCreateCustomer(_customer).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.email).toBe(_customer.email);
       expect(customer.isUser).toBe(_customer.isUser);
@@ -127,7 +116,7 @@ describe('Customers', () => {
       email: faker.internet.email(),
     };
     const now = new Date();
-    return getOrCreateCustomer(unexistingCustomer).then(customer => {
+    return Customers.getOrCreateCustomer(unexistingCustomer).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.email).toBe(unexistingCustomer.email);
       expect(customer.integrationId).toBe(unexistingCustomer.integrationId);
@@ -139,7 +128,7 @@ describe('Customers', () => {
 
   test('markCustomerAsNotActive() must return true', () => {
     const now = new Date();
-    return markCustomerAsNotActive(_customer._id).then(customer => {
+    return Customers.markCustomerAsNotActive(_customer._id).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.messengerData.isActive).toBeFalsy();
       expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
@@ -167,7 +156,7 @@ describe('Conversations', () => {
 
   test('createConversation() must return a new conversation', () => {
     const now = new Date();
-    return createConversation({
+    return Conversations.createConversation({
       integrationId: _conversation.integrationId,
       customerId: _conversation.customerId,
       content: _conversation.content,
@@ -178,14 +167,14 @@ describe('Conversations', () => {
       expect(conversation.content).toBe(_conversation.content);
       expect(conversation.createdAt >= now).toBe(true);
       expect(conversation.messageCount).toBe(0);
-      expect(conversation.status).toBe(CONVERSATION_STATUSES.NEW);
+      expect(conversation.status).toBe(Conversations.getConversationStatuses().NEW);
       expect(conversation.number).toBe(2);
     });
   });
 
   test('getOrCreateConversation() must return an existing conversation', () => {
     const now = new Date();
-    return getOrCreateConversation({
+    return Conversations.getOrCreateConversation({
       conversationId: _conversation._id,
       integrationId: _conversation.integrationId,
       customerId: _conversation.customerId,
@@ -194,14 +183,14 @@ describe('Conversations', () => {
       expect(conversation).toBeDefined();
       expect(conversation._id).toBe(_conversation._id);
       expect(conversation.createdAt < now).toBe(true);
-      expect(conversation.status).toBe(CONVERSATION_STATUSES.OPEN);
+      expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
       expect(conversation.readUserIds.length).toBe(0);
     });
   });
 
   test('getOrCreateConversation() must return a new conversation', () => {
     const now = new Date();
-    return getOrCreateConversation({
+    return Conversations.getOrCreateConversation({
       integrationId: _conversation.integrationId,
       customerId: _conversation.customerId,
       message: _conversation.content,
@@ -209,7 +198,7 @@ describe('Conversations', () => {
       expect(conversation).toBeDefined();
       expect(conversation._id).not.toBe(_conversation._id);
       expect(conversation.createdAt >= now).toBe(true);
-      expect(conversation.status).toBe(CONVERSATION_STATUSES.NEW);
+      expect(conversation.status).toBe(Conversations.getConversationStatuses().NEW);
       expect(conversation.messageCount).toBe(0);
       expect(conversation.content).toBe(_conversation.content);
       expect(conversation.readUserIds.length).toBe(0);
@@ -224,7 +213,7 @@ describe('Conversations', () => {
       customerId: Random.id(),
       content: faker.lorem.sentence(),
     };
-    return createMessage(_message).then(message => {
+    return Messages.createMessage(_message).then(message => {
       expect(message).toBeDefined();
       expect(message._id).toBeDefined();
       expect(message.createdAt >= now).toBeTruthy();

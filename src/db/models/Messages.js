@@ -25,6 +25,23 @@ const MessageSchema = mongoose.Schema({
   formWidgetData: Object,
 });
 
+class Message {
+  /**
+   * Create new message
+   * @param  {Object} messageObj
+   * @return {Promise} New message
+   */
+  static createMessage(messageObj) {
+    return this.create({
+      createdAt: new Date(),
+      internal: false,
+      ...messageObj,
+    });
+  }
+}
+
+MessageSchema.loadClass(Message);
+
 const Messages = mongoose.model('conversation_messages', MessageSchema);
 
 export default Messages;

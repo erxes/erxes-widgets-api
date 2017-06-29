@@ -1,12 +1,4 @@
-import { Conversations, Messages, Customers } from '../../../db/models';
-import {
-  getIntegration,
-  getCustomer,
-  getOrCreateConversation,
-  createMessage,
-  createCustomer,
-  CONVERSATION_STATUSES,
-} from '../../../db/utils';
+import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
 import { pubsub } from '../../subscriptionManager';
 
 export default {
@@ -34,20 +26,20 @@ export default {
 
     // find integration
     return (
-      getIntegration(brandCode, 'messenger')
+      Integrations.getIntegration(brandCode, 'messenger')
         // fetch integration and customer data
         .then(integration => {
           integrationId = integration._id;
           uiOptions = integration.uiOptions;
           messengerData = integration.messengerData;
 
-          return getCustomer(integrationId, email);
+          return Customers.getCustomer(integrationId, email);
         })
         // If it's existing user, update its information
         // if not create a new one
         .then(customer => {
           if (!customer) {
-            return createCustomer({ integrationId, email, isUser, name });
+            return Customers.createCustomer({ integrationId, email, isUser, name });
           }
 
           // Updating session count
@@ -94,10 +86,10 @@ export default {
     // get or create conversation
     let newMessage;
     return (
-      getOrCreateConversation({ conversationId, integrationId, customerId, message })
+      Conversations.getOrCreateConversation({ conversationId, integrationId, customerId, message })
         // create message
         .then(conversation =>
-          createMessage({
+          Messages.createMessage({
             conversationId: conversation._id,
             customerId,
             content: message,
@@ -111,7 +103,7 @@ export default {
             {
               $set: {
                 // Reopen its conversation if it's closed
-                status: CONVERSATION_STATUSES.OPEN,
+                status: Conversations.getConversationStatuses().OPEN,
 
                 // Mark as unread
                 readUserIds: [],

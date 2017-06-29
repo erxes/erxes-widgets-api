@@ -9,7 +9,6 @@ import {
   Conversations,
   Messages,
 } from './models';
-import { CONVERSATION_STATUSES } from './utils';
 
 export const brandFactory = (params = {}) => {
   const brand = new Brands({
@@ -82,7 +81,7 @@ export function conversationFactory() {
     integrationId: Random.id(),
     number: 1,
     messageCount: 0,
-    status: CONVERSATION_STATUSES.NEW,
+    status: Conversations.getConversationStatuses().NEW,
   });
 
   return conversation.save();
