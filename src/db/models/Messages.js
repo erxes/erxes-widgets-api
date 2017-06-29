@@ -22,6 +22,7 @@ const MessageSchema = mongoose.Schema({
   createdAt: Date,
   isCustomerRead: Boolean,
   internal: Boolean,
+  engageData: Object,
   formWidgetData: Object,
 });
 

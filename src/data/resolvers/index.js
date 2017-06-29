@@ -5,6 +5,7 @@ import Subscription from './subscriptions';
 import Conversation from './conversation';
 import Message from './message';
 import Field from './field';
+import Engage from './engage';
 
 export default {
   ...customScalars,
@@ -12,6 +13,10 @@ export default {
   Conversation,
   Message,
   Field,
+
+  EngageData: {
+    ...Engage,
+  },
 
   Query,
   Mutation,

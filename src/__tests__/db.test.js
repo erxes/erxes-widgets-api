@@ -83,7 +83,10 @@ describe('Customers', () => {
   });
 
   test('getCustomer() must return an existing customer', () => {
-    return Customers.getCustomer(_customer.integrationId, _customer.email).then(customer => {
+    return Customers.getCustomer({
+      integrationId: _customer.integrationId,
+      email: _customer.email,
+    }).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.email).toBe(_customer.email);
       expect(customer.isUser).toBe(_customer.isUser);
