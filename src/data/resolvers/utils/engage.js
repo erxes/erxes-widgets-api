@@ -179,6 +179,10 @@ export const createConversation = ({ customer, integration, user, messenger }) =
         message,
         conversation,
       }))
+      // catch exception
+      .catch(error => {
+        console.log(error); // eslint-disable-line no-console
+      })
   );
 };
 
@@ -188,7 +192,7 @@ export const createConversation = ({ customer, integration, user, messenger }) =
  * @return Promise
  */
 
-export const engageVisitorMessage = ({
+export const createEngageVisitorMessages = ({
   brandCode,
   customer,
   integration,
@@ -206,7 +210,9 @@ export const engageVisitorMessage = ({
         customerIds: { $nin: [customer._id] },
       }),
     )
-    .then(messages =>
+    .then(messages => {
+      const results = [];
+
       messages.forEach(message => {
         // add given customer to customerIds list
         EngageMessages.update(
@@ -216,12 +222,12 @@ export const engageVisitorMessage = ({
           () => {},
         );
 
-        Users.findOne({ _id: message.fromUserId }).then(user => {
+        const result = Users.findOne({ _id: message.fromUserId }).then(user => {
           // check for rules
           if (checkRules({ rules: message.messenger.rules, browserInfo, remoteAddress })) {
             // if given visitor is matched with given condition then create
             // conversations
-            createConversation({
+            return createConversation({
               customer,
               integration,
               user,
@@ -229,8 +235,12 @@ export const engageVisitorMessage = ({
             });
           }
         });
-      }),
-    )
+
+        results.push(result);
+      });
+
+      return Promise.all(results);
+    })
     // catch exception
     .catch(error => {
       console.log(error); // eslint-disable-line no-console

@@ -8,7 +8,18 @@ import {
   Customers,
   Conversations,
   Messages,
+  Users,
 } from './models';
+
+export const userFactory = (params = {}) => {
+  const user = new Users({
+    details: {
+      fullName: params.fullName || faker.random.word(),
+    },
+  });
+
+  return user.save();
+};
 
 export const brandFactory = (params = {}) => {
   const brand = new Brands({
