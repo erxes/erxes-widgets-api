@@ -3,6 +3,7 @@ export const types = `
   scalar JSON
 
   type EngageData {
+    messageId: String
     brandId: String
     content: String
     fromUserId: String
@@ -148,6 +149,7 @@ export const mutations = `
     simulateInsertMessage(messageId: String): Message
     notify: String
     readConversationMessages(conversationId: String): String
+    readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerEmail(customerId: String!, email: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
