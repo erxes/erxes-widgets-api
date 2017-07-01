@@ -20,11 +20,13 @@ export default {
    * @return {Promise}
    */
 
-  messengerConnect(root, args, { remoteAddress }) {
+  messengerConnect(root, args, context) {
     let customerId;
     let integration;
     let uiOptions;
     let messengerData;
+
+    const { remoteAddress } = context || {};
 
     const { brandCode, email, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
