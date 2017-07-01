@@ -44,11 +44,6 @@ describe('messengerConnect()', () => {
     return Promise.all([Brands.remove({}), Integrations.remove({}), Customers.remove({})]);
   });
 
-  test('rejects to be error if email is not provided', () => {
-    const connectPromise = messengerMutations.messengerConnect({}, { brandCode: _brand.code });
-    return expect(connectPromise).rejects.toBeDefined();
-  });
-
   test('returns proper integrationId', () => {
     return messengerMutations
       .messengerConnect({}, { brandCode: _brand.code, email: faker.internet.email() })

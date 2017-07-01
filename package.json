@@ -19,7 +19,7 @@
   "scripts": {
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon src --exec babel-node",
-    "test": "mocha src/data/tests --reporter spec --compilers js:babel-core/register",
+    "test": "mocha src/tests --reporter spec --compilers js:babel-core/register",
     "jest": "jest",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",

@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
+import Random from 'meteor-random';
 
 const UserSchema = mongoose.Schema({
-  _id: String,
+  _id: {
+    type: String,
+    unique: true,
+    default: () => Random.id(),
+  },
   details: {
     avatar: String,
     fullName: String,

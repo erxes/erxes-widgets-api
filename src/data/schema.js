@@ -2,6 +2,17 @@ export const types = `
   scalar Date
   scalar JSON
 
+  type EngageData {
+    messageId: String
+    brandId: String
+    content: String
+    fromUserId: String
+    fromUser: User
+    kind: String
+    sentAs: String
+  }
+
+
   type UserDetails {
     avatar: String
     fullName: String
@@ -60,6 +71,7 @@ export const types = `
     createdAt: Date
     attachments: [Attachment]
     internal: Boolean
+    engageData: EngageData
   }
 
   type Field {
@@ -106,6 +118,7 @@ export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
     getMessengerIntegration(brandCode: String!): Integration
+    lastUnreadMessage(integrationId: String!, customerId: String!): Message
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [Message]
     unreadCount(conversationId: String): Int
@@ -119,10 +132,12 @@ export const mutations = `
   type Mutation {
     messengerConnect(
       brandCode: String!,
-      email: String!,
+      email: String,
       name: String,
       isUser: Boolean,
-      data: JSON
+      data: JSON,
+      browserInfo: JSON,
+      cachedCustomerId: String
     ): MessengerConnectResponse
     insertMessage(
       integrationId: String!,
@@ -132,7 +147,10 @@ export const mutations = `
       attachments: [AttachmentInput]
     ): Message
     simulateInsertMessage(messageId: String): Message
+    notify: String
     readConversationMessages(conversationId: String): String
+    readEngageMessage(messageId: String!, customerId: String!): String
+    saveCustomerEmail(customerId: String!, email: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
     sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String

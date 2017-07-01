@@ -22,8 +22,14 @@ class Customer {
    * @param  {String} email
    * @return {Promise} Existing customer object
    */
-  static getCustomer(integrationId, email) {
-    return this.findOne({ email, integrationId });
+  static getCustomer({ integrationId, email, cachedCustomerId }) {
+    if (email) {
+      return Customers.findOne({ email, integrationId });
+    }
+
+    if (cachedCustomerId) {
+      return Customers.findOne({ _id: cachedCustomerId });
+    }
   }
 
   /**
@@ -52,7 +58,7 @@ class Customer {
   static getOrCreateCustomer(customerObj) {
     const { integrationId, email } = customerObj;
 
-    return this.getCustomer(integrationId, email).then(customer => {
+    return this.getCustomer({ integrationId, email }).then(customer => {
       if (customer) {
         return Promise.resolve(customer);
       }

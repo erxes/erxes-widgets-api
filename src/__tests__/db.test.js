@@ -83,7 +83,10 @@ describe('Customers', () => {
   });
 
   test('getCustomer() must return an existing customer', () => {
-    return Customers.getCustomer(_customer.integrationId, _customer.email).then(customer => {
+    return Customers.getCustomer({
+      integrationId: _customer.integrationId,
+      email: _customer.email,
+    }).then(customer => {
       expect(customer).toBeDefined();
       expect(customer.email).toBe(_customer.email);
       expect(customer.isUser).toBe(_customer.isUser);
@@ -209,10 +212,11 @@ describe('Conversations', () => {
   test('createMessage() must return a new message', () => {
     const now = new Date();
     const _message = {
-      conversationId: Random.id(),
+      conversationId: _conversation._id,
       customerId: Random.id(),
       content: faker.lorem.sentence(),
     };
+
     return Messages.createMessage(_message).then(message => {
       expect(message).toBeDefined();
       expect(message._id).toBeDefined();

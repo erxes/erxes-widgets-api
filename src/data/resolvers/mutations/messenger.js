@@ -1,5 +1,6 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
 import { pubsub } from '../../subscriptionManager';
+import { createEngageVisitorMessages } from '../utils/engage';
 
 export default {
   simulateInsertMessage(root, args) {
@@ -9,69 +10,98 @@ export default {
     });
   },
 
+  notify() {
+    pubsub.publish('notification');
+  },
+
   /**
    * Create a new customer or update existing customer info
    * when connection established
    * @return {Promise}
    */
-  messengerConnect(root, { brandCode, email, isUser, name }) {
-    let integrationId;
+
+  messengerConnect(root, args, context) {
+    let customerId;
+    let integration;
     let uiOptions;
     let messengerData;
 
-    // Email is required
-    if (!email) {
-      return Promise.reject('Email is required');
-    }
+    const { remoteAddress } = context || {};
+
+    const { brandCode, email, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
     return (
       Integrations.getIntegration(brandCode, 'messenger')
-        // fetch integration and customer data
-        .then(integration => {
-          integrationId = integration._id;
-          uiOptions = integration.uiOptions;
-          messengerData = integration.messengerData;
+        // find customer
+        .then(integ => {
+          integration = integ;
+          uiOptions = integ.uiOptions;
+          messengerData = integ.messengerData;
 
-          return Customers.getCustomer(integrationId, email);
+          return Customers.getCustomer({ cachedCustomerId, integrationId: integ._id, email });
         })
-        // If it's existing user, update its information
-        // if not create a new one
         .then(customer => {
-          if (!customer) {
-            return Customers.createCustomer({ integrationId, email, isUser, name });
+          const now = new Date();
+
+          // update customer
+          if (customer) {
+            // update messengerData
+            Customers.update(
+              { _id: customer._id },
+              {
+                $set: {
+                  'messengerData.lastSeenAt': now,
+                  'messengerData.isActive': true,
+                  name,
+                  isUser,
+                },
+              },
+              () => {},
+            );
+
+            if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+              // update session count
+              Customers.update(
+                { _id: customer._id },
+                { $inc: { 'messengerData.sessionCount': 1 } },
+                () => {},
+              );
+            }
+
+            return Customers.findOne({ _id: customer._id });
           }
 
-          // Updating session count
-          // QUESTION: Is it working properly?
-          const now = new Date();
-          const idleLimit = 30 * 60 * 1000;
-          const incrementBy = now - customer.messengerData.lastSeenAt > idleLimit ? 1 : 0;
-
-          return Customers.findByIdAndUpdate(
-            customer._id,
-            {
-              $set: {
-                name,
-                isUser,
-                'messengerData.lastSeenAt': now,
-                'messengerData.isActive': true,
-              },
-              $inc: {
-                'messengerData.sessionCount': incrementBy,
-              },
-            },
-            { new: true },
+          // create new customer
+          return Customers.createCustomer(
+            { integrationId: integration._id, email, isUser, name },
+            data,
           );
         })
-        // TODO: Returning the variables outside promise is not safe.
-        // integrationId, uiOptions, messengerData
-        .then(customer => ({
-          integrationId,
+        // create engage chat auto messages
+        .then(customer => {
+          customerId = customer._id;
+
+          if (!customer.email) {
+            return createEngageVisitorMessages({
+              brandCode,
+              customer,
+              integration,
+              remoteAddress,
+              browserInfo,
+            });
+          }
+
+          return Promise.resolve(customer);
+        })
+        // return integrationId, customerId
+        .then(() => ({
+          integrationId: integration._id,
           uiOptions,
           messengerData,
-          customerId: customer._id,
+          customerId,
         }))
+        // catch exception
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
         })
@@ -146,5 +176,9 @@ export default {
           return response;
         })
     );
+  },
+
+  saveCustomerEmail(root, args) {
+    return Customers.update({ _id: args.customerId }, { email: args.email });
   },
 };
