@@ -212,10 +212,11 @@ describe('Conversations', () => {
   test('createMessage() must return a new message', () => {
     const now = new Date();
     const _message = {
-      conversationId: Random.id(),
+      conversationId: _conversation._id,
       customerId: Random.id(),
       content: faker.lorem.sentence(),
     };
+
     return Messages.createMessage(_message).then(message => {
       expect(message).toBeDefined();
       expect(message._id).toBeDefined();

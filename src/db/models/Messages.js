@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
 
+import Conversations from './Conversations';
+
 const AttachmentSchema = mongoose.Schema({
   url: String,
   name: String,
@@ -33,11 +35,25 @@ class Message {
    * @return {Promise} New message
    */
   static createMessage(messageObj) {
-    return this.create({
-      createdAt: new Date(),
-      internal: false,
-      ...messageObj,
-    });
+    return (
+      Conversations.findOne({ _id: messageObj.conversationId })
+        // increment messageCount
+        .then(conversation =>
+          Conversations.findByIdAndUpdate(
+            conversation._id,
+            { messageCount: conversation.messageCount + 1 },
+            { new: true },
+          ),
+        )
+        // create message
+        .then(() =>
+          this.create({
+            createdAt: new Date(),
+            internal: false,
+            ...messageObj,
+          }),
+        )
+    );
   }
 }
 
