@@ -21,6 +21,7 @@ export default {
    */
 
   messengerConnect(root, args, { remoteAddress }) {
+    let customerId;
     let integration;
     let uiOptions;
     let messengerData;
@@ -75,24 +76,25 @@ export default {
             data,
           );
         })
-        // return integrationId, customerId
+        // create engage chat auto messages
         .then(customer => {
-          // create engage chat auto messages
-          createEngageVisitorMessages({
+          customerId = customer._id;
+
+          return createEngageVisitorMessages({
             brandCode,
             customer,
             integration,
             remoteAddress,
             browserInfo,
           });
-
-          return {
-            integrationId: integration._id,
-            uiOptions,
-            messengerData,
-            customerId: customer._id,
-          };
         })
+        // return integrationId, customerId
+        .then(() => ({
+          integrationId: integration._id,
+          uiOptions,
+          messengerData,
+          customerId,
+        }))
         // catch exception
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
