@@ -214,34 +214,38 @@ export const createEngageVisitorMessages = ({
       const results = [];
 
       messages.forEach(message => {
-        // add given customer to customerIds list
-        EngageMessages.update(
-          { _id: message._id },
-          { $push: { customerIds: customer._id } },
-          {},
-          () => {},
-        );
-
         const result = Users.findOne({ _id: message.fromUserId }).then(user =>
           // check for rules
           checkRules({
             rules: message.messenger.rules,
             browserInfo,
             remoteAddress,
+            numberOfVisits: customer.messengerData.sessionCount || 0,
           }).then(isPassedAllRules => {
             // if given visitor is matched with given condition then create
             // conversations
             if (isPassedAllRules) {
-              return createConversation({
-                customer,
-                integration,
-                user,
-                engageData: {
-                  ...message.messenger,
-                  messageId: message._id,
-                  fromUserId: message.fromUserId,
-                },
-              });
+              return (
+                createConversation({
+                  customer,
+                  integration,
+                  user,
+                  engageData: {
+                    ...message.messenger,
+                    messageId: message._id,
+                    fromUserId: message.fromUserId,
+                  },
+                })
+                  // add given customer to customerIds list
+                  .then(() =>
+                    EngageMessages.update(
+                      { _id: message._id },
+                      { $push: { customerIds: customer._id } },
+                      {},
+                      () => {},
+                    ),
+                  )
+              );
             }
           }),
         );
