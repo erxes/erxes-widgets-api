@@ -146,10 +146,10 @@ export const checkRules = ({ rules, browserInfo, numberOfVisits, remoteAddress }
  * Creates conversation & message object using given info
  * @return Promise
  */
-export const createConversation = ({ customer, integration, user, messenger }) => {
+export const createConversation = ({ customer, integration, user, engageData }) => {
   // replace keys in content
   const replacedContent = replaceKeys({
-    content: messenger.content,
+    content: engageData.content,
     customer: customer,
     user,
   });
@@ -169,7 +169,7 @@ export const createConversation = ({ customer, integration, user, messenger }) =
         conversation = _conversation;
 
         return Messages.createMessage({
-          engageData: messenger,
+          engageData,
           conversationId: _conversation._id,
           userId: user._id,
           customerId: customer._id,
@@ -189,8 +189,7 @@ export const createConversation = ({ customer, integration, user, messenger }) =
 
 /*
  * this function will be used in messagerConnect and it will create conversations
- * when visitor messenger connect
- * @return Promise
+ * when visitor messenger connect * @return Promise
  */
 
 export const createEngageVisitorMessages = ({
@@ -237,8 +236,9 @@ export const createEngageVisitorMessages = ({
                 customer,
                 integration,
                 user,
-                messenger: {
+                engageData: {
                   ...message.messenger,
+                  messageId: message._id,
                   fromUserId: message.fromUserId,
                 },
               });

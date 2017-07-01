@@ -69,7 +69,7 @@ describe('createConversation', () => {
       customer: _customer,
       integration: _integration,
       user,
-      messenger: {
+      engageData: {
         content: 'hi {{ customer.name }} {{ user.fullName }}',
       },
     }).then(({ message, conversation }) => {
