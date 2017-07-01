@@ -236,7 +236,10 @@ export const createEngageVisitorMessages = ({
                 customer,
                 integration,
                 user,
-                messenger: message.messenger,
+                messenger: {
+                  ...message.messenger,
+                  fromUserId: message.fromUserId,
+                },
               });
             }
           }),
