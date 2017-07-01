@@ -82,13 +82,17 @@ export default {
         .then(customer => {
           customerId = customer._id;
 
-          return createEngageVisitorMessages({
-            brandCode,
-            customer,
-            integration,
-            remoteAddress,
-            browserInfo,
-          });
+          if (!customer.email) {
+            return createEngageVisitorMessages({
+              brandCode,
+              customer,
+              integration,
+              remoteAddress,
+              browserInfo,
+            });
+          }
+
+          return Promise.resolve(customer);
         })
         // return integrationId, customerId
         .then(() => ({
