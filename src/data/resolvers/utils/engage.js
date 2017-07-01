@@ -159,6 +159,7 @@ export const createConversation = ({ customer, integration, user, messenger }) =
   // create conversation
   return (
     Conversations.createConversation({
+      userId: user._id,
       customerId: customer._id,
       integrationId: integration._id,
       content: replacedContent,

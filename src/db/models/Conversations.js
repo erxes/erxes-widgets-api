@@ -10,6 +10,7 @@ const ConversationSchema = mongoose.Schema({
   createdAt: Date,
   content: String,
   customerId: String,
+  userId: String,
   integrationId: String,
   number: Number,
   messageCount: Number,
@@ -34,11 +35,12 @@ class Conversation {
    * @return {Promise} Newly created conversation object
    */
   static createConversation(conversationObj) {
-    const { integrationId, customerId, content } = conversationObj;
+    const { integrationId, userId, customerId, content } = conversationObj;
 
     return this.find({ customerId, integrationId }).count().then(count =>
       this.create({
         customerId,
+        userId,
         integrationId,
         content,
         status: this.getConversationStatuses().NEW,
