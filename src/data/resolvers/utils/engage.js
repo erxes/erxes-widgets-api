@@ -222,19 +222,25 @@ export const createEngageVisitorMessages = ({
           () => {},
         );
 
-        const result = Users.findOne({ _id: message.fromUserId }).then(user => {
+        const result = Users.findOne({ _id: message.fromUserId }).then(user =>
           // check for rules
-          if (checkRules({ rules: message.messenger.rules, browserInfo, remoteAddress })) {
+          checkRules({
+            rules: message.messenger.rules,
+            browserInfo,
+            remoteAddress,
+          }).then(isPassedAllRules => {
             // if given visitor is matched with given condition then create
             // conversations
-            return createConversation({
-              customer,
-              integration,
-              user,
-              messenger: message.messenger,
-            });
-          }
-        });
+            if (isPassedAllRules) {
+              return createConversation({
+                customer,
+                integration,
+                user,
+                messenger: message.messenger,
+              });
+            }
+          }),
+        );
 
         results.push(result);
       });

@@ -1,5 +1,6 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
 import { pubsub } from '../../subscriptionManager';
+import { createEngageVisitorMessages } from '../utils/engage';
 
 export default {
   simulateInsertMessage(root, args) {
@@ -19,12 +20,12 @@ export default {
    * @return {Promise}
    */
 
-  messengerConnect(root, args) {
+  messengerConnect(root, args, { remoteAddress }) {
     let integration;
     let uiOptions;
     let messengerData;
 
-    const { brandCode, email, isUser, name, data, cachedCustomerId } = args;
+    const { brandCode, email, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
     return (
@@ -76,6 +77,15 @@ export default {
         })
         // return integrationId, customerId
         .then(customer => {
+          // create engage chat auto messages
+          createEngageVisitorMessages({
+            brandCode,
+            customer,
+            integration,
+            remoteAddress,
+            browserInfo,
+          });
+
           return {
             integrationId: integration._id,
             uiOptions,
