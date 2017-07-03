@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'chai';
-import formMutations, { validate, saveValues } from '../form-mutations';
+import formMutations, { validate, saveValues } from '../data/resolvers/mutations/form';
 import {
   Brands,
   Integrations,
@@ -10,8 +10,8 @@ import {
   Conversations,
   Messages,
   Customers,
-} from '../connectors';
-import { brandFactory, integrationFactory, formFieldFactory, formFactory } from './factories';
+} from '../db/models';
+import { brandFactory, integrationFactory, formFieldFactory, formFactory } from '../db/factories';
 
 // helper function that calls then and catch on given promise
 const expectPromise = (done, promise, callback) => {

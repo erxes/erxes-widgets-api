@@ -1,16 +1,18 @@
-import { makeExecutableSchema } from 'graphql-tools';
-import messengerQueries from './messenger-queries';
-import formQueries from './form-queries';
-import messengerMutations from './messenger-mutations';
-import FormMutations from './form-mutations';
-import subscriptions from './subscriptions';
-import customTypes from './custom-types';
-
-const typeDefs = `
+export const types = `
   scalar Date
   scalar JSON
 
-  # user ================
+  type EngageData {
+    messageId: String
+    brandId: String
+    content: String
+    fromUserId: String
+    fromUser: User
+    kind: String
+    sentAs: String
+  }
+
+
   type UserDetails {
     avatar: String
     fullName: String
@@ -49,7 +51,6 @@ const typeDefs = `
     messengerData: JSON
   }
 
-  # conversation ===========
   type Conversation {
     _id: String!
     customerId: String!
@@ -70,6 +71,7 @@ const typeDefs = `
     createdAt: Date
     attachments: [Attachment]
     internal: Boolean
+    engageData: EngageData
   }
 
   type Field {
@@ -91,20 +93,6 @@ const typeDefs = `
     fields: [Field]
   }
 
-  # the schema allows the following queries:
-  type RootQuery {
-    conversations(integrationId: String!, customerId: String!): [Conversation]
-    getMessengerIntegration(brandCode: String!): Integration
-    totalUnreadCount(integrationId: String!, customerId: String!): Int
-    messages(conversationId: String): [Message]
-    unreadCount(conversationId: String): Int
-    conversationLastStaff(_id: String): User
-    isMessengerOnline(integrationId: String!): Boolean
-
-    # form =====
-    form(formId: String): Form
-  }
-
   type MessengerConnectResponse {
     integrationId: String!
     uiOptions: JSON
@@ -124,59 +112,54 @@ const typeDefs = `
     code: String
     text: String
   }
+`;
 
-  type Mutation {
-    messengerConnect(brandCode: String!, email: String!, name: String,
-      isUser: Boolean, data: JSON): MessengerConnectResponse
-
-    insertMessage(integrationId: String!, customerId: String!,
-      conversationId: String!, message: String,
-      attachments: [AttachmentInput]): Message
-
-    simulateInsertMessage(messageId: String): Message
-
-    readConversationMessages(conversationId: String): String
-
-    formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-
-    saveForm(integrationId: String!, formId: String!,
-      submissions: [FieldValueInput]): [Error]
-
-    sendEmail(toEmails: [String], fromEmail: String,
-      title: String, content: String): String
+export const queries = `
+  type Query {
+    conversations(integrationId: String!, customerId: String!): [Conversation]
+    getMessengerIntegration(brandCode: String!): Integration
+    lastUnreadMessage(integrationId: String!, customerId: String!): Message
+    totalUnreadCount(integrationId: String!, customerId: String!): Int
+    messages(conversationId: String): [Message]
+    unreadCount(conversationId: String): Int
+    conversationLastStaff(_id: String): User
+    isMessengerOnline(integrationId: String!): Boolean
+    form(formId: String): Form
   }
+`;
 
-  # subscriptions
+export const mutations = `
+  type Mutation {
+    messengerConnect(
+      brandCode: String!,
+      email: String,
+      name: String,
+      isUser: Boolean,
+      data: JSON,
+      browserInfo: JSON,
+      cachedCustomerId: String
+    ): MessengerConnectResponse
+    insertMessage(
+      integrationId: String!,
+      customerId: String!,
+      conversationId: String!,
+      message: String,
+      attachments: [AttachmentInput]
+    ): Message
+    simulateInsertMessage(messageId: String): Message
+    notify: String
+    readConversationMessages(conversationId: String): String
+    readEngageMessage(messageId: String!, customerId: String!): String
+    saveCustomerEmail(customerId: String!, email: String!): String
+    formConnect(brandCode: String!, formCode: String!): FormConnectResponse
+    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
+    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
+  }
+`;
+
+export const subscriptions = `
   type Subscription {
     messageInserted(conversationId: String!): Message
     notification: String
   }
-
-  # we need to tell the server which types represent the root query
-  # and root mutation types. We call them RootQuery and RootMutation by convention.
-  schema {
-    query: RootQuery
-    subscription: Subscription
-    mutation: Mutation
-  }
 `;
-
-const resolvers = {
-  ...customTypes,
-  RootQuery: {
-    ...messengerQueries,
-    ...formQueries,
-  },
-  ...subscriptions,
-  Mutation: {
-    ...messengerMutations,
-    ...FormMutations,
-  },
-};
-
-const executableSchema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-});
-
-export default executableSchema;
