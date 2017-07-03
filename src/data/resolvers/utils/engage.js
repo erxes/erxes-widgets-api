@@ -1,6 +1,6 @@
 import requestify from 'requestify';
 
-import { Users, Brands, EngageMessages, Conversations, Messages } from '../../../db/models';
+import { Users, Integrations, EngageMessages, Conversations, Messages } from '../../../db/models';
 
 /*
  * replaces customer & user infos in given content
@@ -199,17 +199,25 @@ export const createEngageVisitorMessages = ({
   browserInfo,
   remoteAddress,
 }) =>
-  Brands.findOne({ code: brandCode })
+  Integrations.getIntegration(brandCode, 'messenger', true)
     // find engage messages
-    .then(brand =>
-      EngageMessages.find({
+    .then(({ brand, integration }) => {
+      const messengerData = integration.messengerData || {};
+
+      // if integration configured as hide conversations
+      // then do not create any engage messages
+      if (messengerData.hideConversationList) {
+        return Promise.resolve([]);
+      }
+
+      return EngageMessages.find({
         'messenger.brandId': brand._id,
         kind: 'visitorAuto',
         method: 'messenger',
         isLive: true,
         customerIds: { $nin: [customer._id] },
-      }),
-    )
+      });
+    })
     .then(messages => {
       const results = [];
 

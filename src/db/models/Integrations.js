@@ -22,13 +22,22 @@ class Integration {
    * Get integration
    * @param  {String} brandCode
    * @param  {String} kind
+   * @param  {Boolean} brandObject: Determines to include brand object
    * @return {Promise} Existing integration object
    */
-  static getIntegration(brandCode, kind) {
+  static getIntegration(brandCode, kind, brandObject = false) {
     return Brands.findOne({ code: brandCode }).then(brand =>
       this.findOne({
         brandId: brand._id,
         kind,
+      }).then(integration => {
+        if (brandObject) {
+          return {
+            integration,
+            brand,
+          };
+        }
+        return integration;
       }),
     );
   }

@@ -98,15 +98,15 @@ describe('createEngageVisitorMessages', () => {
     return customerFactory()
       .then(customer => {
         _customer = customer;
-        return integrationFactory({});
-      })
-      .then(integration => {
-        _integration = integration;
-
         return brandFactory({});
       })
       .then(brand => {
         _brand = brand;
+
+        return integrationFactory({ brandId: _brand._id });
+      })
+      .then(integration => {
+        _integration = integration;
 
         return userFactory({});
       })
