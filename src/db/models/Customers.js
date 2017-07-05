@@ -37,7 +37,7 @@ class Customer {
    * @param  {Object} customerObj Customer object without computational fields
    * @return {Promise} Newly created customer object
    */
-  static createCustomer(customerObj) {
+  static createCustomer(customerObj, messengerCustomData) {
     const now = new Date();
     return this.create({
       ...customerObj,
@@ -46,6 +46,7 @@ class Customer {
         lastSeenAt: now,
         isActive: true,
         sessionCount: 1,
+        customData: messengerCustomData,
       },
     });
   }
