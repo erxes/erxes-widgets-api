@@ -6,6 +6,7 @@ import Forms from './Forms';
 import Integrations from './Integrations';
 import Messages from './Messages';
 import Users from './Users';
+import KbTopics from './KbTopics';
 import { EngageMessages } from './Engages';
 
 export {
@@ -18,4 +19,5 @@ export {
   Messages,
   Users,
   EngageMessages,
+  KbTopics,
 };

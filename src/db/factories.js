@@ -9,6 +9,7 @@ import {
   Conversations,
   Messages,
   Users,
+  KbTopics,
 } from './models';
 
 export const userFactory = (params = {}) => {
@@ -112,4 +113,18 @@ export function messageFactory(params = {}) {
   const message = new Messages(obj);
 
   return message.save();
+}
+
+export function knowledgeBaseTopicFactory(params = {}) {
+  const obj = Object.assign(
+    {
+      title: faker.lorem.sentence,
+      // description: faker.lorem.sentence,
+      // createdDate: faker.date.past(),
+    },
+    params,
+  );
+  const kbTopic = new KbTopics(obj);
+
+  return kbTopic.save();
 }
