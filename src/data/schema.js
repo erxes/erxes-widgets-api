@@ -113,10 +113,15 @@ export const types = `
     text: String
   }
 
-  type KbTopic {
-    _id: String!
+  type KbCategory {
     title: String
     description: String
+  }
+
+  type KbTopic {
+    title: String
+    description: String
+    categories: [KbCategory]
   }
 `;
 
@@ -131,7 +136,7 @@ export const queries = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
-    knowledgebase_topic(topicId: String) : KbTopic
+    kbTopic(topicId: String) : KbTopic
   }
 `;
 

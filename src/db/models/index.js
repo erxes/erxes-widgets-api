@@ -7,6 +7,7 @@ import Integrations from './Integrations';
 import Messages from './Messages';
 import Users from './Users';
 import KbTopics from './KbTopics';
+import KbCategories from './KbCategories';
 import { EngageMessages } from './Engages';
 
 export {
@@ -20,4 +21,5 @@ export {
   Users,
   EngageMessages,
   KbTopics,
+  KbCategories,
 };
