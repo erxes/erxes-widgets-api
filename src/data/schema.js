@@ -114,18 +114,21 @@ export const types = `
   }
 
   type KbArticle {
+    _id: String
     title: String
     summary: String
     content: String
   }
 
   type KbCategory {
+    _id: String
     title: String
     description: String
     articles: [KbArticle]
   }
 
   type KbTopic {
+    _id: String
     title: String
     description: String
     categories: [KbCategory]
