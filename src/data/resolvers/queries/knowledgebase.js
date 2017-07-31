@@ -24,17 +24,28 @@ import { KbTopics, KbCategories, KbArticles } from '../../../db/models';
 // }
 
 export default {
-  kbTopic(root, { topicId }) {
+  kbTopic(root, { topicId, searchString }) {
     return KbTopics.findOne({ _id: topicId }).then(topic => ({
       title: topic.title,
       description: topic.description,
       categories: KbCategories.find({ topicId: topicId }).then(categories => {
         return categories.map(category => {
-          return {
-            title: category.title,
-            description: category.description,
-            articles: KbArticles.find({ categoryId: category._id }),
-          };
+          if (searchString) {
+            return {
+              title: category.title,
+              description: category.description,
+              articles: KbArticles.find({
+                categoryId: category._id,
+                content: { $regex: '.*' + searchString + '.*' },
+              }),
+            };
+          } else {
+            return {
+              title: category.title,
+              description: category.description,
+              articles: KbArticles.find({ categoryId: category._id }),
+            };
+          }
         });
       }),
     }));

@@ -143,7 +143,7 @@ export const queries = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
-    kbTopic(topicId: String) : KbTopic
+    kbTopic(topicId: String!, searchString: String) : KbTopic
   }
 `;
 
