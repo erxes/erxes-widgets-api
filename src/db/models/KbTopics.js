@@ -8,8 +8,8 @@ const KbTopicsSchema = mongoose.Schema({
     default: () => Random.id(),
   },
   title: String,
-  // description: String,
-  // brandId: String,
+  brandId: String,
+  description: String,
   // createdDate: Date,
 });
 

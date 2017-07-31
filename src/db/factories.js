@@ -10,6 +10,8 @@ import {
   Messages,
   Users,
   KbTopics,
+  KbCategories,
+  KbArticles,
 } from './models';
 
 export const userFactory = (params = {}) => {
@@ -119,7 +121,7 @@ export function knowledgeBaseTopicFactory(params = {}) {
   const obj = Object.assign(
     {
       title: faker.lorem.sentence,
-      // description: faker.lorem.sentence,
+      description: faker.lorem.sentence,
       // createdDate: faker.date.past(),
     },
     params,
@@ -127,4 +129,33 @@ export function knowledgeBaseTopicFactory(params = {}) {
   const kbTopic = new KbTopics(obj);
 
   return kbTopic.save();
+}
+
+export function knowledgeBaseCategoryFactory(params = {}) {
+  const obj = Object.assign(
+    {
+      title: faker.lorem.sentence,
+      description: faker.lorem.sentence,
+      // createdDate: faker.date.past(),
+    },
+    params,
+  );
+  const kbCategory = new KbCategories(obj);
+
+  return kbCategory.save();
+}
+
+export function knowledgeBaseArticleFactory(params = {}) {
+  const obj = Object.assign(
+    {
+      title: faker.lorem.sentence,
+      summary: faker.lorem.sentence,
+      content: faker.lorem.sentence,
+      // createdDate: faker.date.past(),
+    },
+    params,
+  );
+  const kbArticle = new KbArticles(obj);
+
+  return kbArticle.save();
 }

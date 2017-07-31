@@ -113,9 +113,16 @@ export const types = `
     text: String
   }
 
+  type KbArticle {
+    title: String
+    summary: String
+    content: String
+  }
+
   type KbCategory {
     title: String
     description: String
+    articles: [KbArticle]
   }
 
   type KbTopic {
