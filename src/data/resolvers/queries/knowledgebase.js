@@ -7,7 +7,7 @@ export default {
       _id: topic._id,
       title: topic.title,
       description: topic.description,
-      categories: KbCategories.find({ topicId: topicId }).then(categories => {
+      categories: KbCategories.find({ _id: { $in: topic.categoryIds } }).then(categories => {
         return categories.map(category => {
           if (searchString) {
             return {
@@ -15,7 +15,7 @@ export default {
               title: category.title,
               description: category.description,
               articles: KbArticles.find({
-                categoryId: category._id,
+                _id: { $in: category.articleIds },
                 content: { $regex: '.*' + searchString + '.*' },
               }),
             };
@@ -24,7 +24,7 @@ export default {
               _id: category._id,
               title: category.title,
               description: category.description,
-              articles: KbArticles.find({ categoryId: category._id }),
+              articles: KbArticles.find({ _id: category.articleIds }),
             };
           }
         });

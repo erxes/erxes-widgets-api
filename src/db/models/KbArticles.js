@@ -10,7 +10,6 @@ const KbArticlesSchema = mongoose.Schema({
   title: String,
   summary: String,
   content: String,
-  categoryId: String,
   // createdDate: Date,
 });
 

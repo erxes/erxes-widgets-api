@@ -9,7 +9,10 @@ const KbCategoriesSchema = mongoose.Schema({
   },
   title: String,
   description: String,
-  topicId: String,
+  articleIds: {
+    type: [],
+    required: false,
+  },
   // createdDate: Date,
 });
 

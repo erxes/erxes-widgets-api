@@ -10,6 +10,10 @@ const KbTopicsSchema = mongoose.Schema({
   title: String,
   brandId: String,
   description: String,
+  categoryIds: {
+    type: [],
+    required: false,
+  },
   // createdDate: Date,
 });
 
