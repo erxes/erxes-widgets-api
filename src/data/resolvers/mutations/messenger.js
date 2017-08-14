@@ -14,6 +14,23 @@ export default {
     pubsub.publish('notification');
   },
 
+  /*
+   * End conversation
+   */
+
+  endConversation(root, { brandCode, data }) {
+    // find integration
+    return Integrations.getIntegration(brandCode, 'messenger')
+      .then(integ =>
+        // create customer
+        Customers.createCustomer({ integrationId: integ._id }, data),
+      )
+      .then(({ _id }) => ({ customerId: _id }))
+      .catch(error => {
+        console.log(error); // eslint-disable-line no-console
+      });
+  },
+
   /**
    * Create a new customer or update existing customer info
    * when connection established
