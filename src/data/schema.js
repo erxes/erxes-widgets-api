@@ -100,6 +100,10 @@ export const types = `
     customerId: String!
   }
 
+  type EndConversationResponse {
+    customerId: String!
+  }
+
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
@@ -130,6 +134,8 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
+    endConversation(brandCode: String!, data: JSON): EndConversationResponse
+
     messengerConnect(
       brandCode: String!,
       email: String,
@@ -139,6 +145,7 @@ export const mutations = `
       browserInfo: JSON,
       cachedCustomerId: String
     ): MessengerConnectResponse
+
     insertMessage(
       integrationId: String!,
       customerId: String!,
@@ -146,6 +153,7 @@ export const mutations = `
       message: String,
       attachments: [AttachmentInput]
     ): Message
+
     simulateInsertMessage(messageId: String): Message
     notify: String
     readConversationMessages(conversationId: String): String
