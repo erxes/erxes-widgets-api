@@ -147,6 +147,7 @@ export const queries = `
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
     kbTopic(topicId: String!, searchString: String) : KbTopic
+    kbSearchArticles(topicId: String!, searchString: String) : [KbArticle]
   }
 `;
 
