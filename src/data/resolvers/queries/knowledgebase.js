@@ -40,6 +40,8 @@ export default {
                 authorsArray.push(authors[k]);
               });
 
+              authorsArray.sort((a, b) => a.articleCount - b.articleCount);
+
               console.log('authorsArray: ', authorsArray);
               return {
                 _id: category._id,
@@ -47,6 +49,7 @@ export default {
                 description: category.description,
                 numOfArticles,
                 authors: authorsArray,
+                articles,
               };
             });
           });
