@@ -114,7 +114,7 @@ export const types = `
   }
 
   type KbAuthor {
-    name: String
+    details: UserDetails
     articleCount: String
   }
 
