@@ -13,6 +13,7 @@ const KbCategoriesSchema = mongoose.Schema({
     type: [],
     required: false,
   },
+  icon: String,
   // createdDate: Date,
 });
 

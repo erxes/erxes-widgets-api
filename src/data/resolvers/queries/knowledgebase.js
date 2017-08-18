@@ -42,6 +42,7 @@ export default {
                 _id: category._id,
                 title: category.title,
                 description: category.description,
+                icon: category.icon,
                 numOfArticles,
                 authors: authorsArray,
                 articles,

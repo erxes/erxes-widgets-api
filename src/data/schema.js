@@ -136,6 +136,7 @@ export const types = `
     articles: [KbArticle]
     numOfArticles: String
     authors: [KbAuthor]
+    icon: String
   }
 
   type KbTopic {
