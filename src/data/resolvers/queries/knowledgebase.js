@@ -8,15 +8,16 @@ export default {
       description: topic.description,
       categories: KbCategories.find({ _id: { $in: topic.categoryIds } }).then(categories => {
         return categories.map(category => {
-          return KbArticles.find({ _id: { $in: category.articleIds } }).then(articles => {
+          return KbArticles.find({
+            _id: { $in: category.articleIds },
+            status: 'publish',
+          }).then(articles => {
             let numOfArticles = 0;
             let authors = {};
             let authorsArray = [];
 
             numOfArticles = articles.length;
             articles.forEach(article => {
-              console.log('article: ', article);
-              console.log('article.createdBy: ', article['createdBy']);
               authors[article['createdBy']] = authors[article.createdBy] || {
                 details: {},
                 articleCount: 0,
@@ -24,15 +25,10 @@ export default {
               authors[article.createdBy].articleCount++;
             });
 
-            console.log('authors: ', authors);
-
             let authorIds = Object.keys(authors);
-
-            console.log('authorIds: ', authorIds);
 
             return Users.find({ _id: { $in: authorIds } }).then(users => {
               users.forEach(user => {
-                console.log('user: ', users);
                 authors[user._id].details = user.details;
               });
 
@@ -42,7 +38,6 @@ export default {
 
               authorsArray.sort((a, b) => a.articleCount - b.articleCount);
 
-              console.log('authorsArray: ', authorsArray);
               return {
                 _id: category._id,
                 title: category.title,
@@ -71,6 +66,7 @@ export default {
             $in: articleIds,
             content: { $regex: '.*' + searchString + '.*' },
           },
+          status: 'publish',
         });
       });
     });
