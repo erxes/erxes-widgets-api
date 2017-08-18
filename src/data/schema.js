@@ -113,11 +113,20 @@ export const types = `
     text: String
   }
 
+  type KbAuthor {
+    name: String
+    articleCount: String
+  }
+
   type KbArticle {
     _id: String
     title: String
     summary: String
     content: String
+    createdBy: String
+    createdDate: Date
+    modifiedBy: String
+    modifiedDate: Date
   }
 
   type KbCategory {
@@ -125,6 +134,8 @@ export const types = `
     title: String
     description: String
     articles: [KbArticle]
+    numOfArticles: String
+    authors: [KbAuthor]
   }
 
   type KbTopic {

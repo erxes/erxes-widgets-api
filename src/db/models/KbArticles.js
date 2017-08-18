@@ -10,6 +10,10 @@ const KbArticlesSchema = mongoose.Schema({
   title: String,
   summary: String,
   content: String,
+  createdBy: String,
+  createdDate: Date,
+  modifiedBy: String,
+  modifiedDate: Date,
   // createdDate: Date,
 });
 
