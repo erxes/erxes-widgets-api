@@ -69,9 +69,17 @@ export default {
         return KbArticles.find({
           _id: {
             $in: articleIds,
-            content: { $regex: '.*' + searchString + '.*' },
           },
+          content: { $regex: '.*' + searchString.trim() + '.*', $options: 'i' },
           status: 'publish',
+        }).then(articles => {
+          return articles.map(article => {
+            return Users.findOne({ _id: article.createdBy }).then(user => {
+              article.authorDetails = user.details;
+
+              return article;
+            });
+          });
         });
       });
     });
