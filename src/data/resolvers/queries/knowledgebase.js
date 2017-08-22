@@ -23,6 +23,10 @@ export default {
                 articleCount: 0,
               };
               authors[article.createdBy].articleCount++;
+              Users.findOne({ _id: article.createdBy }).then(user => {
+                console.log('user.details: ', user.details);
+                article.authorDetails = user.details;
+              });
             });
 
             let authorIds = Object.keys(authors);

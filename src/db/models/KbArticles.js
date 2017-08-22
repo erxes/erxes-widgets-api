@@ -15,6 +15,10 @@ const KbArticlesSchema = mongoose.Schema({
   modifiedBy: String,
   modifiedDate: Date,
   status: String,
+  authorDetails: {
+    avatar: String,
+    fullName: String,
+  },
   // createdDate: Date,
 });
 
