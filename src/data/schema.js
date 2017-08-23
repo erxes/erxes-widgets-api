@@ -146,6 +146,10 @@ export const types = `
     description: String
     categories: [KbCategory]
   }
+
+  type KbLoader {
+    loadType: String
+  }
 `;
 
 export const queries = `
@@ -161,6 +165,7 @@ export const queries = `
     form(formId: String): Form
     kbTopic(topicId: String!, searchString: String) : KbTopic
     kbSearchArticles(topicId: String!, searchString: String) : [KbArticle]
+    kbLoader(topicId: String!) : KbLoader
   }
 `;
 

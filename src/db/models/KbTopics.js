@@ -14,6 +14,7 @@ const KbTopicsSchema = mongoose.Schema({
     type: [],
     required: false,
   },
+  loadType: String,
   // createdDate: Date,
 });
 

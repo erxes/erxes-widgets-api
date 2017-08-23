@@ -24,7 +24,6 @@ export default {
               };
               authors[article.createdBy].articleCount++;
               Users.findOne({ _id: article.createdBy }).then(user => {
-                console.log('user.details: ', user.details);
                 article.authorDetails = user.details;
               });
             });
@@ -76,12 +75,16 @@ export default {
           return articles.map(article => {
             return Users.findOne({ _id: article.createdBy }).then(user => {
               article.authorDetails = user.details;
-
               return article;
             });
           });
         });
       });
+    });
+  },
+  kbLoader(root, { topicId }) {
+    return KbTopics.findOne({ _id: topicId }, { loadType: 1 }).then(topic => {
+      return topic;
     });
   },
 };
