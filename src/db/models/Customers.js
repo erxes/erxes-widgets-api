@@ -30,6 +30,8 @@ class Customer {
     if (cachedCustomerId) {
       return Customers.findOne({ _id: cachedCustomerId });
     }
+
+    return Promise.resolve(null);
   }
 
   /**
