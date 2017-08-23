@@ -152,6 +152,9 @@ export default {
                 // Reopen its conversation if it's closed
                 status: Conversations.getConversationStatuses().OPEN,
 
+                // setting conversation's content to last message
+                content: message,
+
                 // Mark as unread
                 readUserIds: [],
               },
