@@ -139,6 +139,7 @@ export const mutations = `
     messengerConnect(
       brandCode: String!,
       email: String,
+      phone: String,
       name: String,
       isUser: Boolean,
       data: JSON,
@@ -158,7 +159,7 @@ export const mutations = `
     notify: String
     readConversationMessages(conversationId: String): String
     readEngageMessage(messageId: String!, customerId: String!): String
-    saveCustomerEmail(customerId: String!, email: String!): String
+    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
     saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
     sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
