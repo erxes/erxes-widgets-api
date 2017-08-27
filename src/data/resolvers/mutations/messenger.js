@@ -45,7 +45,7 @@ export default {
 
     const { remoteAddress } = context || {};
 
-    const { brandCode, email, isUser, name, data, browserInfo, cachedCustomerId } = args;
+    const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
     return (
@@ -56,7 +56,12 @@ export default {
           uiOptions = integ.uiOptions;
           messengerData = integ.messengerData;
 
-          return Customers.getCustomer({ cachedCustomerId, integrationId: integ._id, email });
+          return Customers.getCustomer({
+            cachedCustomerId,
+            integrationId: integ._id,
+            email,
+            phone,
+          });
         })
         .then(customer => {
           const now = new Date();
@@ -91,7 +96,7 @@ export default {
 
           // create new customer
           return Customers.createCustomer(
-            { integrationId: integration._id, email, isUser, name },
+            { integrationId: integration._id, email, phone, isUser, name },
             data,
           );
         })
@@ -198,7 +203,13 @@ export default {
     );
   },
 
-  saveCustomerEmail(root, args) {
-    return Customers.update({ _id: args.customerId }, { email: args.email });
+  saveCustomerGetNotified(root, { customerId, type, value }) {
+    if (type === 'email') {
+      return Customers.update({ _id: customerId }, { email: value });
+    }
+
+    if (type === 'phone') {
+      return Customers.update({ _id: customerId }, { phone: value });
+    }
   },
 };
