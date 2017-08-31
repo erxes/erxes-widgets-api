@@ -1,9 +1,9 @@
 import form from './form';
 import messenger from './messenger';
-import KnowledgeBase from './knowledgebase';
+import knowledgeBase from './knowledgebase';
 
 export default {
   ...form,
   ...messenger,
-  ...KnowledgeBase,
+  ...knowledgeBase,
 };
