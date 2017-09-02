@@ -1,14 +1,11 @@
 import { KbTopics, KbCategories, KbArticles, Users } from '../../../db/models';
 
 export default {
-  kbTopic(root, { topicId }) {
+  getKbTopic(root, { topicId }) {
     return KbTopics.findOne({
       _id: topicId,
-    }).then(topic => ({
-      _id: topic._id,
-      title: topic.title,
-      description: topic.description,
-      categories: KbCategories.find({
+    }).then(topic => {
+      let categories = KbCategories.find({
         _id: { $in: topic.categoryIds },
       }).then(categories => {
         return categories.map(category => {
@@ -61,8 +58,14 @@ export default {
             });
           });
         });
-      }),
-    }));
+      });
+      return {
+        _id: topic._id,
+        title: topic.title,
+        description: topic.description,
+        categories,
+      };
+    });
   },
   kbSearchArticles(root, { topicId, searchString }) {
     return KbTopics.findOne({
