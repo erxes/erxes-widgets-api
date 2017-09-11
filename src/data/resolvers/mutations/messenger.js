@@ -1,19 +1,7 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
-import { pubsub } from '../../subscriptionManager';
 import { createEngageVisitorMessages } from '../utils/engage';
 
 export default {
-  simulateInsertMessage(root, args) {
-    return Messages.findOne({ _id: args.messageId }).then(message => {
-      pubsub.publish('newMessagesChannel', message);
-      pubsub.publish('notification');
-    });
-  },
-
-  notify() {
-    pubsub.publish('notification');
-  },
-
   /*
    * End conversation
    */
@@ -135,8 +123,6 @@ export default {
    * @return {Promise}
    */
   insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
-    // get or create conversation
-    let newMessage;
     return (
       Conversations.getOrCreateConversation({ conversationId, integrationId, customerId, message })
         // create message
@@ -148,9 +134,8 @@ export default {
             attachments,
           }),
         )
-        .then(msg => {
-          newMessage = msg;
-          return Conversations.update(
+        .then(msg =>
+          Conversations.update(
             { _id: msg.conversationId },
             {
               $set: {
@@ -164,15 +149,8 @@ export default {
                 readUserIds: [],
               },
             },
-          );
-        })
-        .then(() => {
-          // publish changes
-          pubsub.publish('newMessagesChannel', newMessage);
-          pubsub.publish('notification');
-
-          return newMessage;
-        })
+          ),
+        )
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
         })
@@ -184,22 +162,14 @@ export default {
    * @return {Promise}
    */
   readConversationMessages(root, args) {
-    return (
-      Messages.update(
-        {
-          conversationId: args.conversationId,
-          userId: { $exists: true },
-          isCustomerRead: { $exists: false },
-        },
-        { isCustomerRead: true },
-        { multi: true },
-      )
-        // notify all notification subscribers that message's read
-        // state changed
-        .then(response => {
-          pubsub.publish('notification');
-          return response;
-        })
+    return Messages.update(
+      {
+        conversationId: args.conversationId,
+        userId: { $exists: true },
+        isCustomerRead: { $exists: false },
+      },
+      { isCustomerRead: true },
+      { multi: true },
     );
   },
 

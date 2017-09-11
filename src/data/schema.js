@@ -165,10 +165,3 @@ export const mutations = `
     sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
   }
 `;
-
-export const subscriptions = `
-  type Subscription {
-    messageInserted(conversationId: String!): Message
-    notification: String
-  }
-`;

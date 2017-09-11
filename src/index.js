@@ -6,11 +6,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { createServer } from 'http';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { connect } from './db/connection';
-import { Customers } from './db/models';
 import schema from './data';
-import { getSubscriptionManager } from './data/subscriptionManager';
 
 // load environment variables
 dotenv.config();
@@ -42,35 +39,6 @@ if (process.env.NODE_ENV === 'development') {
 const server = createServer(app);
 const { PORT } = process.env;
 
-const SUBSCRIPTION_PATH = '/subscriptions';
-
 server.listen(PORT, () => {
-  console.log(`GraphQL server is running on port ${PORT}`);
-  console.log(`Websocket server is running on port ${PORT}${SUBSCRIPTION_PATH}`);
-
-  new SubscriptionServer(
-    {
-      subscriptionManager: getSubscriptionManager(schema),
-      onConnect(connectionParams, webSocket) {
-        webSocket.on('message', message => {
-          const parsedMessage = JSON.parse(message);
-
-          if (parsedMessage.type === 'messengerConnected') {
-            webSocket.messengerData = parsedMessage.value;
-          }
-        });
-      },
-      onDisconnect(webSocket) {
-        const messengerData = webSocket.messengerData;
-
-        if (messengerData) {
-          Customers.markCustomerAsNotActive(messengerData.customerId);
-        }
-      },
-    },
-    {
-      server,
-      path: SUBSCRIPTION_PATH,
-    },
-  );
+  console.log(`Websocket server is running on port ${PORT}`);
 });
