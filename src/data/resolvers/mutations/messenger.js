@@ -134,7 +134,7 @@ export default {
             attachments,
           }),
         )
-        .then(msg =>
+        .then(msg => {
           Conversations.update(
             { _id: msg.conversationId },
             {
@@ -149,8 +149,10 @@ export default {
                 readUserIds: [],
               },
             },
-          ),
-        )
+          );
+
+          return msg;
+        })
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
         })
