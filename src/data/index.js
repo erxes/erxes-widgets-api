@@ -1,8 +1,8 @@
 import { makeExecutableSchema } from 'graphql-tools';
 import resolvers from './resolvers';
-import { types, queries, mutations, subscriptions } from './schema';
+import { types, queries, mutations } from './schema';
 
 export default makeExecutableSchema({
-  typeDefs: [types, queries, mutations, subscriptions],
+  typeDefs: [types, queries, mutations],
   resolvers,
 });
