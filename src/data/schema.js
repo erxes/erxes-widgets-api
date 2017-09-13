@@ -111,6 +111,12 @@ export const types = `
     formData: JSON!
   }
 
+  type SaveFormResponse {
+    status: String!
+    errors: [Error]
+    messageId: String
+  }
+
   type Error {
     fieldId: String
     code: String
@@ -161,14 +167,13 @@ export const mutations = `
     readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
-    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
-  }
-`;
 
-export const subscriptions = `
-  type Subscription {
-    messageInserted(conversationId: String!): Message
-    notification: String
+    saveForm(
+      integrationId: String!,
+      formId: String!,
+      submissions: [FieldValueInput]
+    ): SaveFormResponse
+
+    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
   }
 `;
