@@ -149,6 +149,7 @@ export default {
                 readUserIds: [],
               },
             },
+            () => {},
           );
 
           return msg;
