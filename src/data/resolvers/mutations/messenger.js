@@ -1,17 +1,22 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
-import { pubsub } from '../../subscriptionManager';
 import { createEngageVisitorMessages } from '../utils/engage';
 
 export default {
-  simulateInsertMessage(root, args) {
-    return Messages.findOne({ _id: args.messageId }).then(message => {
-      pubsub.publish('newMessagesChannel', message);
-      pubsub.publish('notification');
-    });
-  },
+  /*
+   * End conversation
+   */
 
-  notify() {
-    pubsub.publish('notification');
+  endConversation(root, { brandCode, data }) {
+    // find integration
+    return Integrations.getIntegration(brandCode, 'messenger')
+      .then(integ =>
+        // create customer
+        Customers.createCustomer({ integrationId: integ._id }, data),
+      )
+      .then(({ _id }) => ({ customerId: _id }))
+      .catch(error => {
+        console.log(error); // eslint-disable-line no-console
+      });
   },
 
   /**
@@ -28,7 +33,7 @@ export default {
 
     const { remoteAddress } = context || {};
 
-    const { brandCode, email, isUser, name, data, browserInfo, cachedCustomerId } = args;
+    const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
     return (
@@ -39,7 +44,12 @@ export default {
           uiOptions = integ.uiOptions;
           messengerData = integ.messengerData;
 
-          return Customers.getCustomer({ cachedCustomerId, integrationId: integ._id, email });
+          return Customers.getCustomer({
+            cachedCustomerId,
+            integrationId: integ._id,
+            email,
+            phone,
+          });
         })
         .then(customer => {
           const now = new Date();
@@ -74,7 +84,7 @@ export default {
 
           // create new customer
           return Customers.createCustomer(
-            { integrationId: integration._id, email, isUser, name },
+            { integrationId: integration._id, email, phone, isUser, name },
             data,
           );
         })
@@ -113,8 +123,6 @@ export default {
    * @return {Promise}
    */
   insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
-    // get or create conversation
-    let newMessage;
     return (
       Conversations.getOrCreateConversation({ conversationId, integrationId, customerId, message })
         // create message
@@ -127,26 +135,23 @@ export default {
           }),
         )
         .then(msg => {
-          newMessage = msg;
-          return Conversations.update(
+          Conversations.update(
             { _id: msg.conversationId },
             {
               $set: {
                 // Reopen its conversation if it's closed
                 status: Conversations.getConversationStatuses().OPEN,
 
+                // setting conversation's content to last message
+                content: message,
+
                 // Mark as unread
                 readUserIds: [],
               },
             },
           );
-        })
-        .then(() => {
-          // publish changes
-          pubsub.publish('newMessagesChannel', newMessage);
-          pubsub.publish('notification');
 
-          return newMessage;
+          return msg;
         })
         .catch(error => {
           console.log(error); // eslint-disable-line no-console
@@ -159,26 +164,24 @@ export default {
    * @return {Promise}
    */
   readConversationMessages(root, args) {
-    return (
-      Messages.update(
-        {
-          conversationId: args.conversationId,
-          userId: { $exists: true },
-          isCustomerRead: { $exists: false },
-        },
-        { isCustomerRead: true },
-        { multi: true },
-      )
-        // notify all notification subscribers that message's read
-        // state changed
-        .then(response => {
-          pubsub.publish('notification');
-          return response;
-        })
+    return Messages.update(
+      {
+        conversationId: args.conversationId,
+        userId: { $exists: true },
+        isCustomerRead: { $exists: false },
+      },
+      { isCustomerRead: true },
+      { multi: true },
     );
   },
 
-  saveCustomerEmail(root, args) {
-    return Customers.update({ _id: args.customerId }, { email: args.email });
+  saveCustomerGetNotified(root, { customerId, type, value }) {
+    if (type === 'email') {
+      return Customers.update({ _id: customerId }, { email: value });
+    }
+
+    if (type === 'phone') {
+      return Customers.update({ _id: customerId }, { phone: value });
+    }
   },
 };

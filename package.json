@@ -1,6 +1,6 @@
 {
   "name": "erxes-api",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "GraphQL API for erxes apps",
   "homepage": "https://erxes.io",
   "repository": {
@@ -39,20 +39,18 @@
     "express": "^4.15.2",
     "graphql": "^0.9.1",
     "graphql-server-express": "^0.6.0",
-    "graphql-subscriptions": "^0.3.1",
     "graphql-tools": "^0.10.1",
     "meteor-random": "0.0.3",
     "mongoose": "^4.9.2",
     "nodemailer": "^4.0.1",
     "requestify": "^0.2.5",
-    "subscriptions-transport-ws": "0.5.3",
     "underscore": "^1.8.3",
     "validator": "^7.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-env": "^1.6.0",
     "chai": "^3.5.0",
     "eslint": "3.19.0",
     "faker": "^4.1.0",

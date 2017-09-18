@@ -100,11 +100,21 @@ export const types = `
     customerId: String!
   }
 
+  type EndConversationResponse {
+    customerId: String!
+  }
+
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
     formId: String!
     formData: JSON!
+  }
+
+  type SaveFormResponse {
+    status: String!
+    errors: [Error]
+    messageId: String
   }
 
   type Error {
@@ -171,15 +181,19 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
+    endConversation(brandCode: String!, data: JSON): EndConversationResponse
+
     messengerConnect(
       brandCode: String!,
       email: String,
+      phone: String,
       name: String,
       isUser: Boolean,
       data: JSON,
       browserInfo: JSON,
       cachedCustomerId: String
     ): MessengerConnectResponse
+
     insertMessage(
       integrationId: String!,
       customerId: String!,
@@ -187,20 +201,20 @@ export const mutations = `
       message: String,
       attachments: [AttachmentInput]
     ): Message
+
     simulateInsertMessage(messageId: String): Message
     notify: String
     readConversationMessages(conversationId: String): String
     readEngageMessage(messageId: String!, customerId: String!): String
-    saveCustomerEmail(customerId: String!, email: String!): String
+    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
-    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
-  }
-`;
 
-export const subscriptions = `
-  type Subscription {
-    messageInserted(conversationId: String!): Message
-    notification: String
+    saveForm(
+      integrationId: String!,
+      formId: String!,
+      submissions: [FieldValueInput]
+    ): SaveFormResponse
+
+    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
   }
 `;
