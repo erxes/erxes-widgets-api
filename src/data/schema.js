@@ -94,10 +94,10 @@ export const types = `
   }
 
   type MessengerConnectResponse {
-    integrationId: String!
+    integrationId: String
     uiOptions: JSON
     messengerData: JSON
-    customerId: String!
+    customerId: String
   }
 
   type EndConversationResponse {

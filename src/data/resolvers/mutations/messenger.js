@@ -25,97 +25,78 @@ export default {
    * @return {Promise}
    */
 
-  messengerConnect(root, args, context) {
-    let customerId;
-    let integration;
-    let uiOptions;
-    let messengerData;
-
+  async messengerConnect(root, args, context) {
     const { remoteAddress } = context || {};
-
     const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
-    return (
-      Integrations.getIntegration(brandCode, 'messenger')
-        // find customer
-        .then(integ => {
-          integration = integ;
-          uiOptions = integ.uiOptions;
-          messengerData = integ.messengerData;
+    const integration = await Integrations.getIntegration(brandCode, 'messenger');
 
-          return Customers.getCustomer({
-            cachedCustomerId,
-            integrationId: integ._id,
-            email,
-            phone,
-          });
-        })
-        .then(customer => {
-          const now = new Date();
+    if (!integration) {
+      return {};
+    }
 
-          // update customer
-          if (customer) {
-            // update messengerData
-            Customers.update(
-              { _id: customer._id },
-              {
-                $set: {
-                  'messengerData.lastSeenAt': now,
-                  'messengerData.isActive': true,
-                  name,
-                  isUser,
-                },
-              },
-              () => {},
-            );
+    let customer = await Customers.getCustomer({
+      cachedCustomerId,
+      integrationId: integration._id,
+      email,
+      phone,
+    });
 
-            if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
-              // update session count
-              Customers.update(
-                { _id: customer._id },
-                { $inc: { 'messengerData.sessionCount': 1 } },
-                () => {},
-              );
-            }
+    const now = new Date();
 
-            return Customers.findOne({ _id: customer._id });
-          }
+    // update customer
+    if (customer) {
+      // update messengerData
+      await Customers.update(
+        { _id: customer._id },
+        {
+          $set: {
+            'messengerData.lastSeenAt': now,
+            'messengerData.isActive': true,
+            name,
+            isUser,
+          },
+        },
+        () => {},
+      );
 
-          // create new customer
-          return Customers.createCustomer(
-            { integrationId: integration._id, email, phone, isUser, name },
-            data,
-          );
-        })
-        // create engage chat auto messages
-        .then(customer => {
-          customerId = customer._id;
+      if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+        // update session count
+        Customers.update(
+          { _id: customer._id },
+          { $inc: { 'messengerData.sessionCount': 1 } },
+          () => {},
+        );
+      }
 
-          if (!customer.email) {
-            return createEngageVisitorMessages({
-              brandCode,
-              customer,
-              integration,
-              remoteAddress,
-              browserInfo,
-            });
-          }
+      customer = await Customers.findOne({ _id: customer._id });
 
-          return Promise.resolve(customer);
-        })
-        // return integrationId, customerId
-        .then(() => ({
-          integrationId: integration._id,
-          uiOptions,
-          messengerData,
-          customerId,
-        }))
-        // catch exception
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
-    );
+      // create new customer
+    } else {
+      customer = await Customers.createCustomer(
+        { integrationId: integration._id, email, phone, isUser, name },
+        data,
+      );
+    }
+
+    // try to create engage chat auto messages
+    if (!customer.email) {
+      createEngageVisitorMessages({
+        brandCode,
+        customer,
+        integration,
+        remoteAddress,
+        browserInfo,
+      });
+    }
+
+    return {
+      integrationId: integration._id,
+      uiOptions: integration.uiOptions,
+      messengerData: integration.messengerData,
+      customerId: customer._id,
+    };
   },
 
   /**
