@@ -1,5 +1,6 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
+import { mutateAppApi } from '../utils/common';
 
 export default {
   /*
@@ -103,42 +104,47 @@ export default {
    * Create a new message
    * @return {Promise}
    */
-  insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
-    return (
-      Conversations.getOrCreateConversation({ conversationId, integrationId, customerId, message })
-        // create message
-        .then(conversation =>
-          Messages.createMessage({
-            conversationId: conversation._id,
-            customerId,
-            content: message,
-            attachments,
-          }),
-        )
-        .then(msg => {
-          Conversations.update(
-            { _id: msg.conversationId },
-            {
-              $set: {
-                // Reopen its conversation if it's closed
-                status: Conversations.getConversationStatuses().OPEN,
+  async insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
+    // get or create conversation
+    const conversation = await Conversations.getOrCreateConversation({
+      conversationId,
+      integrationId,
+      customerId,
+      message,
+    });
 
-                // setting conversation's content to last message
-                content: message,
+    // create message
+    const msg = await Messages.createMessage({
+      conversationId: conversation._id,
+      customerId,
+      content: message,
+      attachments,
+    });
 
-                // Mark as unread
-                readUserIds: [],
-              },
-            },
-            () => {},
-          );
+    Conversations.update(
+      { _id: msg.conversationId },
+      {
+        $set: {
+          // Reopen its conversation if it's closed
+          status: Conversations.getConversationStatuses().OPEN,
 
-          return msg;
-        })
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
+          // setting conversation's content to last message
+          content: message,
+
+          // Mark as unread
+          readUserIds: [],
+        },
+      },
+      () => {},
     );
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationMessageInserted(_id: "${msg._id}")
+      }`);
+
+    return msg;
   },
 
   /**
