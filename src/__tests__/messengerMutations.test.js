@@ -23,68 +23,66 @@ describe('messengerConnect()', () => {
   let _integration;
   let _customer;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Creating test data
-    return brandFactory()
-      .then(brand => {
-        _brand = brand;
-        return integrationFactory({ brandId: brand._id, kind: 'messenger' });
-      })
-      .then(integration => {
-        _integration = integration;
-        return customerFactory({ integrationId: integration._id });
-      })
-      .then(customer => {
-        _customer = customer;
-      });
+    _brand = await brandFactory();
+    _integration = await integrationFactory({ brandId: _brand._id, kind: 'messenger' });
+    _customer = await customerFactory({ integrationId: _integration._id });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Promise.all([Brands.remove({}), Integrations.remove({}), Customers.remove({})]);
+    await Brands.remove({});
+    await Integrations.remove({});
+    await Customers.remove({});
   });
 
-  test('returns proper integrationId', () => {
-    return messengerMutations
-      .messengerConnect({}, { brandCode: _brand.code, email: faker.internet.email() })
-      .then(({ integrationId }) => {
-        expect(integrationId).toBe(_integration._id);
-      });
+  test('returns proper integrationId', async () => {
+    const { integrationId } = await messengerMutations.messengerConnect(
+      {},
+      { brandCode: _brand.code, email: faker.internet.email() },
+    );
+
+    expect(integrationId).toBe(_integration._id);
   });
 
-  test('creates new customer', () => {
+  test('creates new customer', async () => {
     const email = faker.internet.email();
     const now = new Date();
-    return messengerMutations
-      .messengerConnect({}, { brandCode: _brand.code, email })
-      .then(({ customerId }) => {
-        expect(customerId).toBeDefined();
-        return Customers.findById(customerId);
-      })
-      .then(customer => {
-        expect(customer).toBeDefined();
-        expect(customer.email).toBe(email);
-        expect(customer.integrationId).toBe(_integration._id);
-        expect(customer.createdAt >= now).toBeTruthy();
-        expect(customer.messengerData.sessionCount).toBe(1);
-      });
+
+    const { customerId } = await messengerMutations.messengerConnect(
+      {},
+      { brandCode: _brand.code, email },
+    );
+
+    expect(customerId).toBeDefined();
+
+    const customer = await Customers.findById(customerId);
+
+    expect(customer).toBeDefined();
+    expect(customer.email).toBe(email);
+    expect(customer.integrationId).toBe(_integration._id);
+    expect(customer.createdAt >= now).toBeTruthy();
+    expect(customer.messengerData.sessionCount).toBe(1);
   });
 
-  test('updates existing customer', () => {
+  test('updates existing customer', async () => {
     const now = new Date();
-    return messengerMutations
-      .messengerConnect({}, { brandCode: _brand.code, email: _customer.email })
-      .then(({ customerId }) => {
-        expect(customerId).toBeDefined();
-        return Customers.findById(customerId);
-      })
-      .then(customer => {
-        expect(customer).toBeDefined();
-        expect(customer.email).toBe(_customer.email);
-        expect(customer.integrationId).toBe(_integration._id);
-        expect(customer.createdAt < now).toBeTruthy();
-        expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
-      });
+
+    const { customerId } = await messengerMutations.messengerConnect(
+      {},
+      { brandCode: _brand.code, email: _customer.email },
+    );
+
+    expect(customerId).toBeDefined();
+
+    const customer = await Customers.findById(customerId);
+
+    expect(customer).toBeDefined();
+    expect(customer.email).toBe(_customer.email);
+    expect(customer.integrationId).toBe(_integration._id);
+    expect(customer.createdAt < now).toBeTruthy();
+    expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
   });
 });
 
@@ -92,38 +90,32 @@ describe('insertMessage()', () => {
   let _integration;
   let _customer;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Creating test data
-    return integrationFactory({ brandId: Random.id(), kind: 'messenger' })
-      .then(integration => {
-        _integration = integration;
-        return customerFactory({ integrationId: integration._id });
-      })
-      .then(customer => {
-        _customer = customer;
-      });
+    _integration = await integrationFactory({ brandId: Random.id(), kind: 'messenger' });
+    _customer = customerFactory({ integrationId: _integration._id });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Promise.all([Integrations.remove({}), Customers.remove({})]);
+    await Integrations.remove({});
+    await Customers.remove({});
   });
 
-  test('returns a new message', () => {
+  test('returns a new message', async () => {
     const now = new Date();
-    return messengerMutations
-      .insertMessage(
-        {},
-        {
-          integrationId: _integration._id,
-          customerId: _customer._id,
-          message: faker.lorem.sentence(),
-        },
-      )
-      .then(message => {
-        expect(message).toBeDefined();
-        expect(message.createdAt >= now).toBeTruthy();
-      });
+
+    const message = await messengerMutations.insertMessage(
+      {},
+      {
+        integrationId: _integration._id,
+        customerId: _customer._id,
+        message: faker.lorem.sentence(),
+      },
+    );
+
+    expect(message).toBeDefined();
+    expect(message.createdAt >= now).toBeTruthy();
   });
 
   test('updates conversation', async () => {
@@ -143,30 +135,29 @@ describe('insertMessage()', () => {
   });
 });
 
-describe('readConversationMessages()', () => {
+describe('readConversationMessages()', async () => {
   let _conversation;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Creating test data
-    return conversationFactory().then(conversation => {
-      _conversation = conversation;
-      return Promise.all([
-        messageFactory({ conversationId: conversation._id }),
-        messageFactory({ conversationId: conversation._id }),
-      ]);
-    });
+    _conversation = await conversationFactory();
+
+    await messageFactory({ conversationId: _conversation._id });
+    await messageFactory({ conversationId: _conversation._id });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Promise.all([Conversations.remove({}), Messages.remove({})]);
+    await Conversations.remove({});
+    await Messages.remove({});
   });
 
-  test("updates messages' isCustomerRead state", () => {
-    return messengerMutations
-      .readConversationMessages({}, { conversationId: _conversation._id })
-      .then(response => {
-        expect(response.nModified).toBe(2);
-      });
+  test("updates messages' isCustomerRead state", async () => {
+    const response = await messengerMutations.readConversationMessages(
+      {},
+      { conversationId: _conversation._id },
+    );
+
+    expect(response.nModified).toBe(2);
   });
 });
