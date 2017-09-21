@@ -126,21 +126,20 @@ describe('insertMessage()', () => {
       });
   });
 
-  test('updates conversation', () => {
-    return messengerMutations
-      .insertMessage(
-        {},
-        {
-          integrationId: _integration._id,
-          customerId: _customer._id,
-          message: faker.lorem.sentence(),
-        },
-      )
-      .then(message => Conversations.findById(message.conversationId))
-      .then(conversation => {
-        expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
-        expect(conversation.readUserIds.length).toBe(0);
-      });
+  test('updates conversation', async () => {
+    const message = await messengerMutations.insertMessage(
+      {},
+      {
+        integrationId: _integration._id,
+        customerId: _customer._id,
+        message: faker.lorem.sentence(),
+      },
+    );
+
+    const conversation = await Conversations.findById(message.conversationId);
+
+    expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
+    expect(conversation.readUserIds.length).toBe(0);
   });
 });
 

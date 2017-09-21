@@ -61,7 +61,7 @@ export default {
 
       if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
         // update session count
-        Customers.update(
+        await Customers.update(
           { _id: customer._id },
           { $inc: { 'messengerData.sessionCount': 1 } },
           () => {},
@@ -118,7 +118,7 @@ export default {
       attachments,
     });
 
-    Conversations.update(
+    await Conversations.update(
       { _id: msg.conversationId },
       {
         $set: {
@@ -132,7 +132,6 @@ export default {
           readUserIds: [],
         },
       },
-      () => {},
     );
 
     // notify app api
