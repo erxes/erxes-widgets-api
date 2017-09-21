@@ -7,17 +7,14 @@ export default {
    * End conversation
    */
 
-  endConversation(root, { brandCode, data }) {
+  async endConversation(root, { brandCode, data }) {
     // find integration
-    return Integrations.getIntegration(brandCode, 'messenger')
-      .then(integ =>
-        // create customer
-        Customers.createCustomer({ integrationId: integ._id }, data),
-      )
-      .then(({ _id }) => ({ customerId: _id }))
-      .catch(error => {
-        console.log(error); // eslint-disable-line no-console
-      });
+    const integ = await Integrations.getIntegration(brandCode, 'messenger');
+
+    // create customer
+    const customer = await Customers.createCustomer({ integrationId: integ._id }, data);
+
+    return { customerId: customer._id };
   },
 
   /**
