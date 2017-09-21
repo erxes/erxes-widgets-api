@@ -151,8 +151,8 @@ export default {
    * Mark given conversation's messages as read
    * @return {Promise}
    */
-  readConversationMessages(root, args) {
-    return Messages.update(
+  async readConversationMessages(root, args) {
+    const response = await Messages.update(
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
@@ -161,6 +161,14 @@ export default {
       { isCustomerRead: true },
       { multi: true },
     );
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationsChanged(_ids: ["${args.conversationId}"], type: "readState")
+      }`);
+
+    return response;
   },
 
   saveCustomerGetNotified(root, { customerId, type, value }) {
