@@ -10,17 +10,17 @@ const browserLanguageRule = {
 };
 
 describe('checkRules', () => {
-  test('browserLanguage: not matched', () => {
-    return checkRules({
+  test('browserLanguage: not matched', async () => {
+    const response = await checkRules({
       rules: [browserLanguageRule],
       browserInfo: { language: 'mn' },
-    }).then(response => {
-      expect(response).toBe(false);
     });
+
+    expect(response).toBe(false);
   });
 
-  test('browserLanguage: not all rules matched', () => {
-    return checkRules({
+  test('browserLanguage: not all rules matched', async () => {
+    const response = await checkRules({
       rules: [
         browserLanguageRule,
         {
@@ -31,18 +31,18 @@ describe('checkRules', () => {
       ],
 
       browserInfo: { language: 'en' },
-    }).then(response => {
-      expect(response).toBe(false);
     });
+
+    expect(response).toBe(false);
   });
 
-  test('browserLanguage: all rules matched', () => {
-    return checkRules({
+  test('browserLanguage: all rules matched', async () => {
+    const response = await checkRules({
       rules: [browserLanguageRule, browserLanguageRule],
       browserInfo: { language: 'en' },
-    }).then(response => {
-      expect(response).toBe(true);
     });
+
+    expect(response).toBe(true);
   });
 });
 
