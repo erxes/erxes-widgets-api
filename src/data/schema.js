@@ -161,8 +161,6 @@ export const mutations = `
       attachments: [AttachmentInput]
     ): Message
 
-    simulateInsertMessage(messageId: String): Message
-    notify: String
     readConversationMessages(conversationId: String): String
     readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String

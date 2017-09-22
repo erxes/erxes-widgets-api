@@ -37,53 +37,45 @@ describe('createConversation', () => {
   let _customer;
   let _integration;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Creating test data
-    return customerFactory()
-      .then(customer => {
-        _customer = customer;
-        return integrationFactory({});
-      })
-      .then(integration => {
-        _integration = integration;
-      });
+    _customer = await customerFactory();
+    _integration = await integrationFactory({});
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Promise.all([
-      Customers.remove({}),
-      Integrations.remove({}),
-      Conversations.remove({}),
-      Messages.remove({}),
-    ]);
+    await Customers.remove({});
+    await Integrations.remove({});
+    await Conversations.remove({});
+    await Messages.remove({});
   });
 
-  test('must create conversation & message object', () => {
+  test('must create conversation & message object', async () => {
     const user = {
       _id: 'DFFDFDFD',
       fullName: 'Full name',
     };
 
-    return createConversation({
+    const { message, conversation } = await createConversation({
       customer: _customer,
       integration: _integration,
       user,
       engageData: {
         content: 'hi {{ customer.name }} {{ user.fullName }}',
       },
-    }).then(({ message, conversation }) => {
-      // check message fields
-      expect(message._id).toBeDefined();
-      expect(message.content).toBe(`hi ${_customer.name} Full name`);
-      expect(message.userId).toBe(user._id);
-      expect(message.customerId).toBe(_customer._id);
-
-      // check conversation fields
-      expect(conversation._id).toBeDefined();
-      expect(conversation.content).toBe(`hi ${_customer.name} Full name`);
-      expect(conversation.integrationId).toBe(_integration._id);
     });
+
+    // check message fields
+    expect(message._id).toBeDefined();
+    expect(message.content).toBe(`hi ${_customer.name} Full name`);
+    expect(message.userId).toBe(user._id);
+    expect(message.customerId).toBe(_customer._id);
+
+    // check conversation fields
+    expect(conversation._id).toBeDefined();
+    expect(conversation.content).toBe(`hi ${_customer.name} Full name`);
+    expect(conversation.integrationId).toBe(_integration._id);
   });
 });
 
@@ -93,82 +85,65 @@ describe('createEngageVisitorMessages', () => {
   let _customer;
   let _integration;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Creating test data
-    return customerFactory()
-      .then(customer => {
-        _customer = customer;
-        return brandFactory({});
-      })
-      .then(brand => {
-        _brand = brand;
+    _customer = await customerFactory();
+    _brand = await brandFactory({});
+    _integration = await integrationFactory({ brandId: _brand._id });
+    _user = await userFactory({});
 
-        return integrationFactory({ brandId: _brand._id });
-      })
-      .then(integration => {
-        _integration = integration;
-
-        return userFactory({});
-      })
-      .then(user => {
-        _user = user;
-
-        const message = new EngageMessages({
-          title: 'Visitor',
-          fromUserId: _user._id,
-          kind: 'visitorAuto',
-          method: 'messenger',
-          isLive: true,
-          messenger: {
-            brandId: _brand._id,
-            rules: [
-              {
-                kind: 'currentPageUrl',
-                condition: 'is',
-                value: '/page',
-              },
-            ],
-            content: 'hi {{ customer.name }}',
+    const message = new EngageMessages({
+      title: 'Visitor',
+      fromUserId: _user._id,
+      kind: 'visitorAuto',
+      method: 'messenger',
+      isLive: true,
+      messenger: {
+        brandId: _brand._id,
+        rules: [
+          {
+            kind: 'currentPageUrl',
+            condition: 'is',
+            value: '/page',
           },
-        });
+        ],
+        content: 'hi {{ customer.name }}',
+      },
+    });
 
-        return message.save();
-      });
+    return message.save();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Promise.all([
-      Customers.remove({}),
-      Integrations.remove({}),
-      Conversations.remove({}),
-      Messages.remove({}),
-      Brands.remove({}),
-    ]);
+    await Customers.remove({});
+    await Integrations.remove({});
+    await Conversations.remove({});
+    await Messages.remove({});
+    await Brands.remove({});
   });
 
-  test('must create conversation & message object', () => {
-    return createEngageVisitorMessages({
+  test('must create conversation & message object', async () => {
+    await createEngageVisitorMessages({
       brandCode: _brand.code,
       customer: _customer,
       integration: _integration,
       browserInfo: {
         url: '/page',
       },
-    }).then(() => {
-      return Conversations.findOne({}).then(conversation => {
-        const content = `hi ${_customer.name}`;
-
-        expect(conversation._id).toBeDefined();
-        expect(conversation.content).toBe(content);
-        expect(conversation.customerId).toBe(_customer._id);
-        expect(conversation.integrationId).toBe(_integration._id);
-
-        return Messages.findOne({}).then(message => {
-          expect(message._id).toBeDefined();
-          expect(message.content).toBe(content);
-        });
-      });
     });
+
+    const conversation = await Conversations.findOne({});
+    const content = `hi ${_customer.name}`;
+
+    expect(conversation._id).toBeDefined();
+    expect(conversation.content).toBe(content);
+    expect(conversation.customerId).toBe(_customer._id);
+    expect(conversation.integrationId).toBe(_integration._id);
+
+    const message = await Messages.findOne({});
+
+    expect(message._id).toBeDefined();
+    expect(message.content).toBe(content);
   });
 });
