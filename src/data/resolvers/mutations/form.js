@@ -9,6 +9,7 @@ import {
   FormFields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
+import { mutateAppApi } from '../utils/common';
 
 export const validate = async (formId, submissions) => {
   const fields = await FormFields.find({ formId });
@@ -153,6 +154,12 @@ export default {
     }
 
     const message = await saveValues(args);
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationMessageInserted(_id: "${message._id}")
+      }`);
 
     return { status: 'ok', messageId: message._id };
   },

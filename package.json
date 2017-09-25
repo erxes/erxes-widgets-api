@@ -1,6 +1,6 @@
 {
   "name": "erxes-api",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "GraphQL API for erxes apps",
   "homepage": "https://erxes.io",
   "repository": {
@@ -20,7 +20,7 @@
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon src --exec babel-node",
     "test": "mocha src/tests --reporter spec --compilers js:babel-core/register",
-    "jest": "jest",
+    "jest": "NODE_ENV=test jest",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",
     "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",

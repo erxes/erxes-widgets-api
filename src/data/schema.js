@@ -62,7 +62,7 @@ export const types = `
     readUserIds: [String]
   }
 
-  type Message {
+  type ConversationMessage {
     _id: String!
     conversationId: String!
     customerId: String
@@ -94,10 +94,10 @@ export const types = `
   }
 
   type MessengerConnectResponse {
-    integrationId: String!
+    integrationId: String
     uiOptions: JSON
     messengerData: JSON
-    customerId: String!
+    customerId: String
   }
 
   type EndConversationResponse {
@@ -166,9 +166,9 @@ export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
     getMessengerIntegration(brandCode: String!): Integration
-    lastUnreadMessage(integrationId: String!, customerId: String!): Message
+    lastUnreadMessage(integrationId: String!, customerId: String!): ConversationMessage
     totalUnreadCount(integrationId: String!, customerId: String!): Int
-    messages(conversationId: String): [Message]
+    messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
@@ -200,10 +200,8 @@ export const mutations = `
       conversationId: String!,
       message: String,
       attachments: [AttachmentInput]
-    ): Message
+    ): ConversationMessage
 
-    simulateInsertMessage(messageId: String): Message
-    notify: String
     readConversationMessages(conversationId: String): String
     readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String

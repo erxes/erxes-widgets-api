@@ -35,8 +35,16 @@ const getIP = remoteAddress => {
 /*
  * returns requested user's geolocation info
  */
-const getLocationInfo = remoteAddress =>
-  getIP(remoteAddress).then(ip =>
+const getLocationInfo = remoteAddress => {
+  // Don't do anything in test mode
+  if (process.env.NODE_ENV === 'test') {
+    return Promise.resolve({
+      city: 'Ulaanbaatar',
+      country: 'Mongolia',
+    });
+  }
+
+  return getIP(remoteAddress).then(ip =>
     requestify.get(`http://ipinfo.io/${ip}/json`).then(response => {
       const data = JSON.parse(response.body);
 
@@ -46,6 +54,7 @@ const getLocationInfo = remoteAddress =>
       };
     }),
   );
+};
 
 /*
  * checks individual rule
@@ -128,19 +137,23 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits, city, country }) 
  */
 export const checkRules = ({ rules, browserInfo, numberOfVisits, remoteAddress }) =>
   // get country, city info
-  getLocationInfo(remoteAddress).then(({ city, country }) => {
-    let passedAllRules = true;
+  getLocationInfo(remoteAddress)
+    .then(({ city, country }) => {
+      let passedAllRules = true;
 
-    rules.forEach(rule => {
-      // check individual rule
-      if (!checkRule({ rule, browserInfo, city, country, numberOfVisits })) {
-        passedAllRules = false;
-        return;
-      }
+      rules.forEach(rule => {
+        // check individual rule
+        if (!checkRule({ rule, browserInfo, city, country, numberOfVisits })) {
+          passedAllRules = false;
+          return;
+        }
+      });
+
+      return passedAllRules;
+    })
+    .catch(e => {
+      console.log(e); // eslint-disable-line
     });
-
-    return passedAllRules;
-  });
 
 /*
  * Creates conversation & message object using given info

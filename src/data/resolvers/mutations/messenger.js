@@ -1,22 +1,20 @@
 import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
+import { mutateAppApi } from '../utils/common';
 
 export default {
   /*
    * End conversation
    */
 
-  endConversation(root, { brandCode, data }) {
+  async endConversation(root, { brandCode, data }) {
     // find integration
-    return Integrations.getIntegration(brandCode, 'messenger')
-      .then(integ =>
-        // create customer
-        Customers.createCustomer({ integrationId: integ._id }, data),
-      )
-      .then(({ _id }) => ({ customerId: _id }))
-      .catch(error => {
-        console.log(error); // eslint-disable-line no-console
-      });
+    const integ = await Integrations.getIntegration(brandCode, 'messenger');
+
+    // create customer
+    const customer = await Customers.createCustomer({ integrationId: integ._id }, data);
+
+    return { customerId: customer._id };
   },
 
   /**
@@ -25,146 +23,132 @@ export default {
    * @return {Promise}
    */
 
-  messengerConnect(root, args, context) {
-    let customerId;
-    let integration;
-    let uiOptions;
-    let messengerData;
-
+  async messengerConnect(root, args, context) {
     const { remoteAddress } = context || {};
-
     const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
 
     // find integration
-    return (
-      Integrations.getIntegration(brandCode, 'messenger')
-        // find customer
-        .then(integ => {
-          integration = integ;
-          uiOptions = integ.uiOptions;
-          messengerData = integ.messengerData;
+    const integration = await Integrations.getIntegration(brandCode, 'messenger');
 
-          return Customers.getCustomer({
-            cachedCustomerId,
-            integrationId: integ._id,
-            email,
-            phone,
-          });
-        })
-        .then(customer => {
-          const now = new Date();
+    if (!integration) {
+      return {};
+    }
 
-          // update customer
-          if (customer) {
-            // update messengerData
-            Customers.update(
-              { _id: customer._id },
-              {
-                $set: {
-                  'messengerData.lastSeenAt': now,
-                  'messengerData.isActive': true,
-                  name,
-                  isUser,
-                },
-              },
-              () => {},
-            );
+    let customer = await Customers.getCustomer({
+      cachedCustomerId,
+      integrationId: integration._id,
+      email,
+      phone,
+    });
 
-            if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
-              // update session count
-              Customers.update(
-                { _id: customer._id },
-                { $inc: { 'messengerData.sessionCount': 1 } },
-                () => {},
-              );
-            }
+    const now = new Date();
 
-            return Customers.findOne({ _id: customer._id });
-          }
+    // update customer
+    if (customer) {
+      // update messengerData
+      await Customers.update(
+        { _id: customer._id },
+        {
+          $set: {
+            'messengerData.lastSeenAt': now,
+            'messengerData.isActive': true,
+            name,
+            isUser,
+          },
+        },
+        () => {},
+      );
 
-          // create new customer
-          return Customers.createCustomer(
-            { integrationId: integration._id, email, phone, isUser, name },
-            data,
-          );
-        })
-        // create engage chat auto messages
-        .then(customer => {
-          customerId = customer._id;
+      if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+        // update session count
+        await Customers.update(
+          { _id: customer._id },
+          { $inc: { 'messengerData.sessionCount': 1 } },
+          () => {},
+        );
+      }
 
-          if (!customer.email) {
-            return createEngageVisitorMessages({
-              brandCode,
-              customer,
-              integration,
-              remoteAddress,
-              browserInfo,
-            });
-          }
+      customer = await Customers.findOne({ _id: customer._id });
 
-          return Promise.resolve(customer);
-        })
-        // return integrationId, customerId
-        .then(() => ({
-          integrationId: integration._id,
-          uiOptions,
-          messengerData,
-          customerId,
-        }))
-        // catch exception
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
-    );
+      // create new customer
+    } else {
+      customer = await Customers.createCustomer(
+        { integrationId: integration._id, email, phone, isUser, name },
+        data,
+      );
+    }
+
+    // try to create engage chat auto messages
+    if (!customer.email) {
+      createEngageVisitorMessages({
+        brandCode,
+        customer,
+        integration,
+        remoteAddress,
+        browserInfo,
+      });
+    }
+
+    return {
+      integrationId: integration._id,
+      uiOptions: integration.uiOptions,
+      messengerData: integration.messengerData,
+      customerId: customer._id,
+    };
   },
 
   /**
    * Create a new message
    * @return {Promise}
    */
-  insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
-    return (
-      Conversations.getOrCreateConversation({ conversationId, integrationId, customerId, message })
-        // create message
-        .then(conversation =>
-          Messages.createMessage({
-            conversationId: conversation._id,
-            customerId,
-            content: message,
-            attachments,
-          }),
-        )
-        .then(msg => {
-          Conversations.update(
-            { _id: msg.conversationId },
-            {
-              $set: {
-                // Reopen its conversation if it's closed
-                status: Conversations.getConversationStatuses().OPEN,
+  async insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
+    // get or create conversation
+    const conversation = await Conversations.getOrCreateConversation({
+      conversationId,
+      integrationId,
+      customerId,
+      message,
+    });
 
-                // setting conversation's content to last message
-                content: message,
+    // create message
+    const msg = await Messages.createMessage({
+      conversationId: conversation._id,
+      customerId,
+      content: message,
+      attachments,
+    });
 
-                // Mark as unread
-                readUserIds: [],
-              },
-            },
-          );
+    await Conversations.update(
+      { _id: msg.conversationId },
+      {
+        $set: {
+          // Reopen its conversation if it's closed
+          status: Conversations.getConversationStatuses().OPEN,
 
-          return msg;
-        })
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
+          // setting conversation's content to last message
+          content: message,
+
+          // Mark as unread
+          readUserIds: [],
+        },
+      },
     );
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationMessageInserted(_id: "${msg._id}")
+      }`);
+
+    return msg;
   },
 
   /**
    * Mark given conversation's messages as read
    * @return {Promise}
    */
-  readConversationMessages(root, args) {
-    return Messages.update(
+  async readConversationMessages(root, args) {
+    const response = await Messages.update(
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
@@ -173,6 +157,14 @@ export default {
       { isCustomerRead: true },
       { multi: true },
     );
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationsChanged(_ids: ["${args.conversationId}"], type: "readState")
+      }`);
+
+    return response;
   },
 
   saveCustomerGetNotified(root, { customerId, type, value }) {
