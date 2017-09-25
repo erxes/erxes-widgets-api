@@ -7,4 +7,3 @@ static
 npm-debug.log*
 .env
 coverage
-*.orig
