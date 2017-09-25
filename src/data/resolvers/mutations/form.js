@@ -9,171 +9,159 @@ import {
   FormFields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
+import { mutateAppApi } from '../utils/common';
 
-export const validate = (formId, submissions) =>
-  FormFields.find({ formId }).then(fields => {
-    const errors = [];
+export const validate = async (formId, submissions) => {
+  const fields = await FormFields.find({ formId });
+  const errors = [];
 
-    fields.forEach(field => {
-      // find submission object by _id
-      const submission = submissions.find(sub => sub._id === field._id);
-      const value = submission.value || '';
-      const type = field.type;
-      const validation = field.validation;
+  for (let field of fields) {
+    // find submission object by _id
+    const submission = submissions.find(sub => sub._id === field._id);
+    const value = submission.value || '';
+    const type = field.type;
+    const validation = field.validation;
 
-      // required
-      if (field.isRequired && !value) {
+    // required
+    if (field.isRequired && !value) {
+      errors.push({
+        fieldId: field._id,
+        code: 'required',
+        text: 'Required',
+      });
+    }
+
+    if (value) {
+      // email
+      if ((type === 'email' || validation === 'email') && !validator.isEmail(value)) {
         errors.push({
           fieldId: field._id,
-          code: 'required',
-          text: 'Required',
+          code: 'invalidEmail',
+          text: 'Invalid email',
         });
       }
 
-      if (value) {
-        // email
-        if ((type === 'email' || validation === 'email') && !validator.isEmail(value)) {
-          errors.push({
-            fieldId: field._id,
-            code: 'invalidEmail',
-            text: 'Invalid email',
-          });
-        }
-
-        // number
-        if (validation === 'number' && !validator.isNumeric(value.toString())) {
-          errors.push({
-            fieldId: field._id,
-            code: 'invalidNumber',
-            text: 'Invalid number',
-          });
-        }
-
-        // date
-        if (validation === 'date' && !validator.isISO8601(value)) {
-          errors.push({
-            fieldId: field._id,
-            code: 'invalidDate',
-            text: 'Invalid Date',
-          });
-        }
+      // number
+      if (validation === 'number' && !validator.isNumeric(value.toString())) {
+        errors.push({
+          fieldId: field._id,
+          code: 'invalidNumber',
+          text: 'Invalid number',
+        });
       }
-    });
 
-    return errors;
-  });
+      // date
+      if (validation === 'date' && !validator.isISO8601(value)) {
+        errors.push({
+          fieldId: field._id,
+          code: 'invalidDate',
+          text: 'Invalid Date',
+        });
+      }
+    }
+  }
 
-export const getOrCreateCustomer = (integrationId, email, name) =>
-  Customers.getCustomer({ integrationId, email }).then(customer => {
-    if (!email) {
-      return Promise.resolve(null);
+  return errors;
+};
+
+export const getOrCreateCustomer = async (integrationId, email, name) => {
+  const customer = await Customers.getCustomer({ integrationId, email });
+
+  if (!email) {
+    return Promise.resolve(null);
+  }
+
+  // customer found
+  if (customer) {
+    return Promise.resolve(customer._id);
+  }
+
+  // create customer
+  return Customers.createCustomer({ integrationId, email, name }).then(cus =>
+    Promise.resolve(cus._id),
+  );
+};
+
+export const saveValues = async ({ integrationId, submissions, formId }) => {
+  const form = await Forms.findOne({ _id: formId });
+  const content = form.title;
+
+  let email;
+  let firstName = '';
+  let lastName = '';
+
+  submissions.forEach(submission => {
+    if (submission.type === 'email') {
+      email = submission.value;
     }
 
-    // customer found
-    if (customer) {
-      return Promise.resolve(customer._id);
+    if (submission.type === 'firstName') {
+      firstName = submission.value;
     }
 
-    // create customer
-    return Customers.createCustomer({ integrationId, email, name }).then(cus =>
-      Promise.resolve(cus._id),
-    );
+    if (submission.type === 'lastName') {
+      lastName = submission.value;
+    }
   });
 
-export const saveValues = ({ integrationId, submissions, formId }) =>
-  Forms.findOne({ _id: formId }).then(form => {
-    const content = form.title;
+  // get or create customer
+  const customerId = await getOrCreateCustomer(integrationId, email, `${lastName} ${firstName}`);
 
-    let email;
-    let firstName = '';
-    let lastName = '';
-
-    submissions.forEach(submission => {
-      if (submission.type === 'email') {
-        email = submission.value;
-      }
-
-      if (submission.type === 'firstName') {
-        firstName = submission.value;
-      }
-
-      if (submission.type === 'lastName') {
-        lastName = submission.value;
-      }
-    });
-
-    // get or create customer
-    return (
-      getOrCreateCustomer(integrationId, email, `${lastName} ${firstName}`)
-        // create conversation
-        .then(customerId =>
-          Conversations.createConversation({
-            integrationId,
-            customerId,
-            content,
-          }),
-        )
-        // create message
-        .then(conversationId =>
-          Messages.createMessage({
-            conversationId,
-            content,
-            formWidgetData: submissions,
-          }),
-        )
-        // catch exception
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
-    );
+  // create conversation
+  const conversationId = await Conversations.createConversation({
+    integrationId,
+    customerId,
+    content,
   });
+
+  // create message
+  return Messages.createMessage({
+    conversationId,
+    content,
+    formWidgetData: submissions,
+  });
+};
 
 export default {
   // Find integrationId by brandCode
-  formConnect(root, args) {
-    let brandId;
+  async formConnect(root, args) {
+    const brand = await Brands.findOne({ code: args.brandCode });
+    const form = await Forms.findOne({ code: args.formCode });
 
-    // find brand by code
-    return (
-      Brands.findOne({ code: args.brandCode })
-        .then(brand => {
-          brandId = brand._id;
+    // find integration by brandId & formId
+    const integ = await Integrations.findOne({
+      brandId: brand._id,
+      formId: form._id,
+    });
 
-          // find form by code
-          return Forms.findOne({ code: args.formCode });
-        })
-        // find integration by brandId & formId
-        .then(form =>
-          Integrations.findOne({
-            brandId,
-            formId: form._id,
-          }),
-        )
-        // return integration details
-        .then(integ => ({
-          integrationId: integ._id,
-          integrationName: integ.name,
-          formId: integ.formId,
-          formData: integ.formData,
-        }))
-        // catch exception
-        .catch(error => {
-          console.log(error); // eslint-disable-line no-console
-        })
-    );
+    // return integration details
+    return {
+      integrationId: integ._id,
+      integrationName: integ.name,
+      formId: integ.formId,
+      formData: integ.formData,
+    };
   },
 
   // create new conversation using form data
-  saveForm(root, args) {
+  async saveForm(root, args) {
     const { formId, submissions } = args;
 
-    return validate(formId, submissions).then(errors => {
-      if (errors.length > 0) {
-        return errors;
-      }
+    const errors = await validate(formId, submissions);
 
-      return saveValues(args).then(() => []);
-    });
+    if (errors.length > 0) {
+      return { status: 'error', errors };
+    }
+
+    const message = await saveValues(args);
+
+    // notify app api
+    mutateAppApi(`
+      mutation {
+        conversationMessageInserted(_id: "${message._id}")
+      }`);
+
+    return { status: 'ok', messageId: message._id };
   },
 
   // send email

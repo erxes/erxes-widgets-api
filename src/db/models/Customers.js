@@ -9,6 +9,7 @@ const CustomerSchema = mongoose.Schema({
   },
   integrationId: String,
   email: String,
+  phone: String,
   isUser: Boolean,
   name: String,
   createdAt: Date,
@@ -22,9 +23,13 @@ class Customer {
    * @param  {String} email
    * @return {Promise} Existing customer object
    */
-  static getCustomer({ integrationId, email, cachedCustomerId }) {
+  static getCustomer({ integrationId, email, phone, cachedCustomerId }) {
     if (email) {
       return Customers.findOne({ email, integrationId });
+    }
+
+    if (phone) {
+      return Customers.findOne({ phone, integrationId });
     }
 
     if (cachedCustomerId) {

@@ -60,9 +60,11 @@ export const types = `
     createdAt: Date
     participatedUsers: [User]
     readUserIds: [String]
+
+    messages: [ConversationMessage]
   }
 
-  type Message {
+  type ConversationMessage {
     _id: String!
     conversationId: String!
     customerId: String
@@ -94,10 +96,10 @@ export const types = `
   }
 
   type MessengerConnectResponse {
-    integrationId: String!
+    integrationId: String
     uiOptions: JSON
     messengerData: JSON
-    customerId: String!
+    customerId: String
   }
 
   type EndConversationResponse {
@@ -111,6 +113,12 @@ export const types = `
     formData: JSON!
   }
 
+  type SaveFormResponse {
+    status: String!
+    errors: [Error]
+    messageId: String
+  }
+
   type Error {
     fieldId: String
     code: String
@@ -121,10 +129,11 @@ export const types = `
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
+    conversationDetail(_id: String!): Conversation
     getMessengerIntegration(brandCode: String!): Integration
-    lastUnreadMessage(integrationId: String!, customerId: String!): Message
+    lastUnreadMessage(integrationId: String!, customerId: String!): ConversationMessage
     totalUnreadCount(integrationId: String!, customerId: String!): Int
-    messages(conversationId: String): [Message]
+    messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
@@ -139,6 +148,7 @@ export const mutations = `
     messengerConnect(
       brandCode: String!,
       email: String,
+      phone: String,
       name: String,
       isUser: Boolean,
       data: JSON,
@@ -152,22 +162,19 @@ export const mutations = `
       conversationId: String!,
       message: String,
       attachments: [AttachmentInput]
-    ): Message
+    ): ConversationMessage
 
-    simulateInsertMessage(messageId: String): Message
-    notify: String
     readConversationMessages(conversationId: String): String
     readEngageMessage(messageId: String!, customerId: String!): String
-    saveCustomerEmail(customerId: String!, email: String!): String
+    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
-    saveForm(integrationId: String!, formId: String!, submissions: [FieldValueInput]): [Error]
-    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
-  }
-`;
 
-export const subscriptions = `
-  type Subscription {
-    messageInserted(conversationId: String!): Message
-    notification: String
+    saveForm(
+      integrationId: String!,
+      formId: String!,
+      submissions: [FieldValueInput]
+    ): SaveFormResponse
+
+    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
   }
 `;
