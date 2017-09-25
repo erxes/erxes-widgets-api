@@ -6,9 +6,11 @@ import Forms from './Forms';
 import Integrations from './Integrations';
 import Messages from './Messages';
 import Users from './Users';
-import KbTopics from './KbTopics';
-import KbCategories from './KbCategories';
-import KbArticles from './KbArticles';
+import {
+  KnowledgeBaseTopics,
+  KnowledgeBaseCategories,
+  KnowledgeBaseArticles,
+} from './knowledgeBase';
 import { EngageMessages } from './Engages';
 
 export {
@@ -21,7 +23,7 @@ export {
   Messages,
   Users,
   EngageMessages,
-  KbTopics,
-  KbCategories,
-  KbArticles,
+  KnowledgeBaseTopics,
+  KnowledgeBaseCategories,
+  KnowledgeBaseArticles,
 };

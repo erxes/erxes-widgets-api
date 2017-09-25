@@ -12,7 +12,6 @@ export const types = `
     sentAs: String
   }
 
-
   type UserDetails {
     avatar: String
     fullName: String
@@ -123,12 +122,12 @@ export const types = `
     text: String
   }
 
-  type KbAuthor {
+  type KnowledgeBaseAuthor {
     details: UserDetails
     articleCount: String
   }
 
-  type KbArticle {
+  type KnowledgeBaseArticle {
     _id: String
     title: String
     summary: String
@@ -140,24 +139,24 @@ export const types = `
     authorDetails: UserDetails
   }
 
-  type KbCategory {
+  type KnowledgeBaseCategory {
     _id: String
     title: String
     description: String
-    articles: [KbArticle]
+    articles: [KnowledgeBaseArticle]
     numOfArticles: String
-    authors: [KbAuthor]
+    authors: [KnowledgeBaseAuthor]
     icon: String
   }
 
-  type KbTopic {
+  type KnowledgeBaseTopic {
     _id: String
     title: String
     description: String
-    categories: [KbCategory]
+    categories: [KnowledgeBaseCategory]
   }
 
-  type KbLoader {
+  type KnowledgeBaseLoader {
     loadType: String
   }
 `;
@@ -173,9 +172,9 @@ export const queries = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
-    getKbTopic(topicId: String!, searchString: String) : KbTopic
-    kbSearchArticles(topicId: String!, searchString: String) : [KbArticle]
-    kbLoader(topicId: String!) : KbLoader
+    knowledgeBaseTopicsDetail(topicId: String!, searchString: String) : KnowledgeBaseTopic
+    knowledgeBaseArticlesSearch(topicId: String!, searchString: String) : [KnowledgeBaseArticle]
+    knowledgeBaseLoader(topicId: String!) : KnowledgeBaseLoader
   }
 `;
 
