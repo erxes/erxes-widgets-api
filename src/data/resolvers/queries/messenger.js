@@ -57,6 +57,10 @@ export default {
     }).sort({ createdAt: -1 });
   },
 
+  conversationDetail(root, { _id }) {
+    return Conversations.findOne({ _id });
+  },
+
   messages(root, { conversationId }) {
     return Messages.find({
       conversationId,
