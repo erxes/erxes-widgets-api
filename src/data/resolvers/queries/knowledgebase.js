@@ -1,5 +1,6 @@
 import {
   KnowledgeBaseTopics as KnowledgeBaseTopicsModel,
+  KnowledgeBaseCategories as KnowledgeBaseCategoriesModel,
   KnowledgeBaseArticles as KnowledgeBaseArticlesModel,
 } from '../../../db/models';
 
@@ -25,16 +26,18 @@ export default {
     return KnowledgeBaseTopicsModel.findOne({
       _id: topicId,
     }).then(topic => {
-      let articleIds = [];
-      topic.categories.forEach(category => {
-        articleIds = [...articleIds, ...category.articleIds];
-      });
-      return KnowledgeBaseArticlesModel.find({
-        _id: {
-          $in: articleIds,
-        },
-        content: { $regex: `.*${searchString.trim()}.*`, $options: 'i' },
-        status: 'publish',
+      return KnowledgeBaseCategoriesModel.find({ _id: topic.categoryIds }).then(categories => {
+        let articleIds = [];
+        categories.forEach(category => {
+          articleIds = [...articleIds, ...category.articleIds];
+        });
+        return KnowledgeBaseArticlesModel.find({
+          _id: {
+            $in: articleIds,
+          },
+          content: { $regex: `.*${searchString.trim()}.*`, $options: 'i' },
+          status: 'publish',
+        });
       });
     });
   },
