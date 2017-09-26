@@ -10,7 +10,7 @@ import {
   KnowledgeBaseTopics,
   KnowledgeBaseCategories,
   KnowledgeBaseArticles,
-} from './knowledgeBase';
+} from './KnowledgeBase';
 import { EngageMessages } from './Engages';
 
 export {
