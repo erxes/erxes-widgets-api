@@ -122,11 +122,6 @@ export const types = `
     text: String
   }
 
-  type KnowledgeBaseAuthor {
-    details: UserDetails
-    articleCount: String
-  }
-
   type KnowledgeBaseArticle {
     _id: String
     title: String
@@ -136,7 +131,7 @@ export const types = `
     createdDate: Date
     modifiedBy: String
     modifiedDate: Date
-    authorDetails: UserDetails
+    author: User
   }
 
   type KnowledgeBaseCategory {
@@ -145,7 +140,7 @@ export const types = `
     description: String
     articles: [KnowledgeBaseArticle]
     numOfArticles: String
-    authors: [KnowledgeBaseAuthor]
+    authors: [User]
     icon: String
   }
 
@@ -172,7 +167,8 @@ export const queries = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
-    knowledgeBaseTopicsDetail(topicId: String!, searchString: String) : KnowledgeBaseTopic
+    knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
+    knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
     knowledgeBaseArticlesSearch(topicId: String!, searchString: String) : [KnowledgeBaseArticle]
     knowledgeBaseLoader(topicId: String!) : KnowledgeBaseLoader
   }

@@ -6,13 +6,23 @@ import {
 
 export default {
   /**
-   * Find Topic detail data all the way to the articles its categories contain
+   * Find Topic detail data along with its categories
    * @param {Object} args
    * @param {Object} args.topicId
    * @return {Promise} topic detail
    */
   knowledgeBaseTopicsDetail(root, { topicId }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId });
+  },
+
+  /**
+   * Find Category detail data along with its articles
+   * @param {Object} args
+   * @param {Object} args.categoryId
+   * @return {Promise} category detail
+   */
+  knowledgeBaseCategoriesDetail(root, { categoryId }) {
+    return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
   },
 
   /**
@@ -41,6 +51,7 @@ export default {
       });
     });
   },
+
   /**
    * return a KnowledgeBaseLoader object with only `loadType` field in it
    * @param {Object} args
