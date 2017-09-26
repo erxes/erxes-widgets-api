@@ -59,6 +59,8 @@ export const types = `
     createdAt: Date
     participatedUsers: [User]
     readUserIds: [String]
+
+    messages: [ConversationMessage]
   }
 
   type ConversationMessage {
@@ -159,6 +161,7 @@ export const types = `
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
+    conversationDetail(_id: String!): Conversation
     getMessengerIntegration(brandCode: String!): Integration
     lastUnreadMessage(integrationId: String!, customerId: String!): ConversationMessage
     totalUnreadCount(integrationId: String!, customerId: String!): Int
