@@ -5,6 +5,7 @@ import Conversation from './conversation';
 import ConversationMessage from './conversationMessage';
 import Field from './field';
 import Engage from './engage';
+import { KnowledgeBaseArticle, KnowledgeBaseCategory, KnowledgeBaseTopic } from './knowledgeBase';
 
 export default {
   ...customScalars,
@@ -19,4 +20,8 @@ export default {
 
   Query,
   Mutation,
+
+  KnowledgeBaseArticle,
+  KnowledgeBaseCategory,
+  KnowledgeBaseTopic,
 };
