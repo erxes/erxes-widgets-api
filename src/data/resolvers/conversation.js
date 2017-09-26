@@ -6,6 +6,9 @@ export default {
   },
 
   messages(conversation) {
-    return Messages.find({ conversationId: conversation._id });
+    return Messages.find({
+      _id: conversation._id,
+      internal: false,
+    }).sort({ createdAt: 1 });
   },
 };
