@@ -32,23 +32,18 @@ export default {
    * @param {Object} args.topicId
    * @return {Promise} searched articles
    */
-  knowledgeBaseArticlesSearch(root, { topicId, searchString }) {
-    return KnowledgeBaseTopicsModel.findOne({
-      _id: topicId,
-    }).then(topic => {
-      return KnowledgeBaseCategoriesModel.find({ _id: topic.categoryIds }).then(categories => {
-        let articleIds = [];
-        categories.forEach(category => {
-          articleIds = [...articleIds, ...category.articleIds];
-        });
-        return KnowledgeBaseArticlesModel.find({
-          _id: {
-            $in: articleIds,
-          },
-          content: { $regex: `.*${searchString.trim()}.*`, $options: 'i' },
-          status: 'publish',
-        });
-      });
+  async knowledgeBaseArticles(root, { topicId, searchString }) {
+    let articleIds = [];
+    const topic = await KnowledgeBaseTopicsModel.findOne({ _id: topicId });
+    const categories = await KnowledgeBaseCategoriesModel.find({ _id: topic.categoryIds });
+    categories.forEach(category => {
+      articleIds = [...articleIds, ...category.articleIds];
+    });
+
+    return KnowledgeBaseArticlesModel.find({
+      _id: { $in: articleIds },
+      content: { $regex: `.*${searchString.trim()}.*`, $options: 'i' },
+      status: 'publish',
     });
   },
 

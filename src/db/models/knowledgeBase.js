@@ -15,10 +15,6 @@ const KnowledgeBaseArticlesSchema = mongoose.Schema({
   modifiedBy: String,
   modifiedDate: Date,
   status: String,
-  authorDetails: {
-    avatar: String,
-    fullName: String,
-  },
 });
 
 const KnowledgeBaseCategoriesSchema = mongoose.Schema({
@@ -30,7 +26,7 @@ const KnowledgeBaseCategoriesSchema = mongoose.Schema({
   title: String,
   description: String,
   articleIds: {
-    type: [],
+    type: [String],
     required: false,
   },
   icon: String,
@@ -46,7 +42,7 @@ const KnowledgeBaseTopicsSchema = mongoose.Schema({
   brandId: String,
   description: String,
   categoryIds: {
-    type: [],
+    type: [String],
     required: false,
   },
   loadType: String,

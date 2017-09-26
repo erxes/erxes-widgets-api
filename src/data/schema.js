@@ -139,7 +139,7 @@ export const types = `
     title: String
     description: String
     articles: [KnowledgeBaseArticle]
-    numOfArticles: String
+    numOfArticles: Int
     authors: [User]
     icon: String
   }
@@ -169,7 +169,7 @@ export const queries = `
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
     knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
-    knowledgeBaseArticlesSearch(topicId: String!, searchString: String) : [KnowledgeBaseArticle]
+    knowledgeBaseArticles(topicId: String!, searchString: String) : [KnowledgeBaseArticle]
     knowledgeBaseLoader(topicId: String!) : KnowledgeBaseLoader
   }
 `;
