@@ -12,7 +12,6 @@ export const types = `
     sentAs: String
   }
 
-
   type UserDetails {
     avatar: String
     fullName: String
@@ -124,6 +123,39 @@ export const types = `
     code: String
     text: String
   }
+
+  type KnowledgeBaseArticle {
+    _id: String
+    title: String
+    summary: String
+    content: String
+    createdBy: String
+    createdDate: Date
+    modifiedBy: String
+    modifiedDate: Date
+    author: User
+  }
+
+  type KnowledgeBaseCategory {
+    _id: String
+    title: String
+    description: String
+    articles: [KnowledgeBaseArticle]
+    numOfArticles: Int
+    authors: [User]
+    icon: String
+  }
+
+  type KnowledgeBaseTopic {
+    _id: String
+    title: String
+    description: String
+    categories: [KnowledgeBaseCategory]
+  }
+
+  type KnowledgeBaseLoader {
+    loadType: String
+  }
 `;
 
 export const queries = `
@@ -138,6 +170,10 @@ export const queries = `
     conversationLastStaff(_id: String): User
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
+    knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
+    knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
+    knowledgeBaseArticles(topicId: String!, searchString: String) : [KnowledgeBaseArticle]
+    knowledgeBaseLoader(topicId: String!) : KnowledgeBaseLoader
   }
 `;
 
