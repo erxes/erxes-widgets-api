@@ -7,7 +7,7 @@ export default {
 
   messages(conversation) {
     return Messages.find({
-      _id: conversation._id,
+      conversationId: conversation._id,
       internal: false,
     }).sort({ createdAt: 1 });
   },
