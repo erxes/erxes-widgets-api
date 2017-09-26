@@ -38,8 +38,8 @@ export const KnowledgeBaseCategory = {
       _id: { $in: authorIds },
     });
   },
-  async numOfArticles(category) {
-    return await KnowledgeBaseArticlesModel.find({
+  numOfArticles(category) {
+    return KnowledgeBaseArticlesModel.find({
       _id: { $in: category.articleIds },
       status: 'publish',
     }).count();
