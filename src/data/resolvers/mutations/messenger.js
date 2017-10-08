@@ -1,4 +1,4 @@
-import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
+import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { mutateAppApi } from '../utils/common';
 
@@ -25,7 +25,18 @@ export default {
 
   async messengerConnect(root, args, context) {
     const { remoteAddress } = context || {};
-    const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
+
+    const {
+      brandCode,
+      name,
+      email,
+      phone,
+      isUser,
+      companyData,
+      data,
+      browserInfo,
+      cachedCustomerId,
+    } = args;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
@@ -41,34 +52,13 @@ export default {
       phone,
     });
 
-    const now = new Date();
-
     // update customer
     if (customer) {
       // update messengerData
-      await Customers.update(
-        { _id: customer._id },
-        {
-          $set: {
-            'messengerData.lastSeenAt': now,
-            'messengerData.isActive': true,
-            name,
-            isUser,
-          },
-        },
-        () => {},
-      );
+      customer = await Customers.updateMessengerData(customer._id);
 
-      if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
-        // update session count
-        await Customers.update(
-          { _id: customer._id },
-          { $inc: { 'messengerData.sessionCount': 1 } },
-          () => {},
-        );
-      }
-
-      customer = await Customers.findOne({ _id: customer._id });
+      // update name, isUser
+      await Customers.findByIdAndUpdate(customer._id, { $set: { name, isUser } });
 
       // create new customer
     } else {
@@ -78,8 +68,16 @@ export default {
       );
     }
 
+    // get or create company
+    if (companyData) {
+      const company = await Companies.getOrCreate(companyData);
+
+      // add company to customer's companyIds list
+      await Customers.addCompany(customer._id, company._id);
+    }
+
     // try to create engage chat auto messages
-    if (!customer.email) {
+    if (!isUser) {
       createEngageVisitorMessages({
         brandCode,
         customer,

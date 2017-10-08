@@ -18,7 +18,7 @@ beforeAll(() => connect());
 
 afterAll(() => disconnect());
 
-describe('messengerConnect()', () => {
+describe('messenger connect', () => {
   let _brand;
   let _integration;
   let _customer;
@@ -52,7 +52,7 @@ describe('messengerConnect()', () => {
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email },
+      { brandCode: _brand.code, email, companyData: { name: 'company' } },
     );
 
     expect(customerId).toBeDefined();
@@ -63,6 +63,7 @@ describe('messengerConnect()', () => {
     expect(customer.email).toBe(email);
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt >= now).toBeTruthy();
+    expect(customer.companyIds.length).toBe(1);
     expect(customer.messengerData.sessionCount).toBe(1);
   });
 
@@ -71,7 +72,7 @@ describe('messengerConnect()', () => {
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email: _customer.email },
+      { brandCode: _brand.code, email: _customer.email, name: 'name', isUser: true },
     );
 
     expect(customerId).toBeDefined();
@@ -83,6 +84,10 @@ describe('messengerConnect()', () => {
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt < now).toBeTruthy();
     expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
+
+    // name, isUser must be update
+    expect(customer.name).toBe('name');
+    expect(customer.isUser).toBeTruthy();
   });
 });
 

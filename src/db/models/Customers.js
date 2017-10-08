@@ -14,6 +14,7 @@ const CustomerSchema = mongoose.Schema({
   name: String,
   createdAt: Date,
   messengerData: Object,
+  companyIds: [String],
 });
 
 class Customer {
@@ -46,6 +47,7 @@ class Customer {
    */
   static createCustomer(customerObj, messengerCustomData) {
     const now = new Date();
+
     return this.create({
       ...customerObj,
       createdAt: now,
@@ -63,16 +65,16 @@ class Customer {
    * @param  {Object} customerObj Expected customer object
    * @return {Promise} Existing or newly created customer object
    */
-  static getOrCreateCustomer(customerObj) {
+  static async getOrCreateCustomer(customerObj) {
     const { integrationId, email } = customerObj;
 
-    return this.getCustomer({ integrationId, email }).then(customer => {
-      if (customer) {
-        return Promise.resolve(customer);
-      }
+    const customer = await this.getCustomer({ integrationId, email });
 
-      return this.createCustomer(customerObj);
-    });
+    if (customer) {
+      return customer;
+    }
+
+    return this.createCustomer(customerObj);
   }
 
   /**
@@ -91,6 +93,48 @@ class Customer {
       },
       { new: true },
     );
+  }
+
+  /*
+   * Update messenger data
+   * @param {String} customer id
+   * @return {Promise} updated customer
+   */
+  static async updateMessengerData(_id) {
+    const now = new Date();
+    const customer = await this.findOne({ _id });
+
+    // update messengerData
+    const query = {
+      $set: {
+        'messengerData.lastSeenAt': now,
+        'messengerData.isActive': true,
+      },
+    };
+
+    if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+      // update session count
+      query.$inc = { 'messengerData.sessionCount': 1 };
+    }
+
+    // update
+    await this.findByIdAndUpdate(_id, query);
+
+    // updated customer
+    return this.findOne({ _id });
+  }
+
+  /*
+   * Add companyId to companyIds list
+   * @param {String} _id customer id
+   * @param {String} companyId
+   * @return {Promise}
+   */
+  static async addCompany(_id, companyId) {
+    await this.findByIdAndUpdate(_id, { $addToSet: { companyIds: companyId } });
+
+    // updated customer
+    return this.findOne({ _id });
   }
 }
 

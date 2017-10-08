@@ -2,14 +2,16 @@ export const types = `
   scalar Date
   scalar JSON
 
-  type EngageData {
-    messageId: String
-    brandId: String
-    content: String
-    fromUserId: String
-    fromUser: User
-    kind: String
-    sentAs: String
+  type Company {
+    _id: String!
+    name: String
+    size: Int
+    website: String
+    industry: String
+    plan: String
+    lastSeenAt: Date
+    sessionCount: Int
+    tagIds: [String],
   }
 
   type UserDetails {
@@ -20,6 +22,16 @@ export const types = `
   type User {
     _id: String!
     details: UserDetails
+  }
+
+  type EngageData {
+    messageId: String
+    brandId: String
+    content: String
+    fromUserId: String
+    fromUser: User
+    kind: String
+    sentAs: String
   }
 
   type Attachment {
@@ -183,12 +195,15 @@ export const mutations = `
 
     messengerConnect(
       brandCode: String!,
+      name: String,
       email: String,
       phone: String,
-      name: String,
       isUser: Boolean,
+
+      companyData: JSON,
       data: JSON,
       browserInfo: JSON,
+
       cachedCustomerId: String
     ): MessengerConnectResponse
 

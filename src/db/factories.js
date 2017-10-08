@@ -9,6 +9,7 @@ import {
   Conversations,
   Messages,
   Users,
+  Companies,
 } from './models';
 
 export const userFactory = (params = {}) => {
@@ -76,7 +77,7 @@ export function customerFactory(params = {}) {
     name: faker.name.findName(),
     messengerData: {
       lastSeenAt: faker.date.between(createdAt, new Date()),
-      isActive: faker.random.boolean(),
+      isActive: params.isActive || false,
       sessionCount: faker.random.number(),
     },
   });
@@ -112,4 +113,14 @@ export function messageFactory(params = {}) {
   const message = new Messages(obj);
 
   return message.save();
+}
+
+export function companyFactory() {
+  const company = new Companies({
+    name: faker.lorem.sentence,
+    lastSeenAt: faker.date.past(),
+    sessionCount: faker.random.number(),
+  });
+
+  return company.save();
 }

@@ -1,3 +1,4 @@
+import Companies from './Companies';
 import Brands from './Brands';
 import Conversations from './Conversations';
 import Customers from './Customers';
@@ -14,6 +15,7 @@ import {
 import { EngageMessages } from './Engages';
 
 export {
+  Companies,
   Brands,
   Conversations,
   Customers,

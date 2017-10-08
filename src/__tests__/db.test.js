@@ -132,6 +132,30 @@ describe('Customers', () => {
     expect(customer.messengerData.isActive).toBeFalsy();
     expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
   });
+
+  test('updateMessengerData()', async () => {
+    const now = new Date();
+    const customer = await Customers.updateMessengerData(_customer._id);
+
+    expect(customer.messengerData.isActive).toBeTruthy();
+    expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+  });
+
+  test('addCompany()', async () => {
+    const company1Id = 'DFDAFDFFDSF';
+    const company2Id = 'DFFDSFDSFJK';
+
+    let customer = await Customers.addCompany(_customer._id, company1Id);
+
+    // check company in companyIds
+    expect(customer.companyIds.length).toBe(1);
+
+    customer = await Customers.addCompany(_customer._id, company1Id);
+    customer = await Customers.addCompany(_customer._id, company2Id);
+
+    // check company in companyIds
+    expect(customer.companyIds.length).toBe(2);
+  });
 });
 
 /**
