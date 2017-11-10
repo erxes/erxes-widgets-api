@@ -135,7 +135,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationMessageInserted(_id: "${msg._id}")
+        conversationSubscribeMessageCreated(_id: "${msg._id}")
       }`);
 
     return msg;
@@ -159,7 +159,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationsChanged(_ids: ["${args.conversationId}"], type: "readState")
+        conversationSubscribeChanged(_ids: ["${args.conversationId}"], type: "readState")
       }`);
 
     return response;

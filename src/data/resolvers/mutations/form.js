@@ -158,7 +158,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationMessageInserted(_id: "${message._id}")
+        conversationSubscribeMessageCreated(_id: "${message._id}")
       }`);
 
     return { status: 'ok', messageId: message._id };
