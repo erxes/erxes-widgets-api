@@ -6,7 +6,7 @@ import {
   Brands,
   Integrations,
   Forms,
-  FormFields,
+  Fields,
   Conversations,
   Messages,
   Customers,
@@ -32,7 +32,7 @@ describe('Form mutations', () => {
   afterEach(done => {
     const p1 = Integrations.remove({});
     const p2 = Brands.remove({});
-    const p3 = FormFields.remove({});
+    const p3 = Fields.remove({});
     const p4 = Conversations.remove({});
     const p5 = Messages.remove({});
     const p6 = Forms.remove({});
@@ -89,32 +89,32 @@ describe('Form mutations', () => {
 
     beforeEach(done => {
       // create required form field
-      formFieldFactory({ formId, isRequired: true })
+      formFieldFactory({ contentTypeId: formId, isRequired: true })
         .then(field => {
           requiredFieldId = field._id;
         })
         .then(() =>
-          formFieldFactory({ formId, validation: 'email' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, validation: 'email' }).then(field => {
             emailFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, validation: 'number' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, validation: 'number' }).then(field => {
             numberFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, validation: 'number' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, validation: 'number' }).then(field => {
             validNumberFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, validation: 'date' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, validation: 'date' }).then(field => {
             validDateFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, validation: 'date' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, validation: 'date' }).then(field => {
             dateFieldId = field._id;
 
             done();
@@ -178,22 +178,22 @@ describe('Form mutations', () => {
         })
         // create fields
         .then(() =>
-          formFieldFactory({ formId, type: 'emailFieldId' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, type: 'emailFieldId' }).then(field => {
             emailFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, type: 'firstNameFieldId' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, type: 'firstNameFieldId' }).then(field => {
             firstNameFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, type: 'lastNameFieldId' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, type: 'lastNameFieldId' }).then(field => {
             lastNameFieldId = field._id;
           }),
         )
         .then(() =>
-          formFieldFactory({ formId, type: 'input' }).then(field => {
+          formFieldFactory({ contentTypeId: formId, type: 'input' }).then(field => {
             arbitraryFieldId = field._id;
 
             done();
@@ -212,14 +212,18 @@ describe('Form mutations', () => {
       // call function
       expectPromise(done, saveValues({ integrationId, formId, submissions }), () => {
         // must create 1 conversation
-        const p1 = Conversations.find().count().then(count => {
-          expect(count).to.equal(1);
-        });
+        const p1 = Conversations.find()
+          .count()
+          .then(count => {
+            expect(count).to.equal(1);
+          });
 
         // must create 1 message
-        const p2 = Messages.find().count().then(count => {
-          expect(count).to.equal(1);
-        });
+        const p2 = Messages.find()
+          .count()
+          .then(count => {
+            expect(count).to.equal(1);
+          });
 
         // check conversation fields
         const p3 = Conversations.findOne({}).then(conversation => {
@@ -235,9 +239,11 @@ describe('Form mutations', () => {
         });
 
         // must create 1 customer
-        const p5 = Customers.find().count().then(count => {
-          expect(count).to.equal(1);
-        });
+        const p5 = Customers.find()
+          .count()
+          .then(count => {
+            expect(count).to.equal(1);
+          });
 
         // check customer fields
         const p6 = Customers.findOne({}).then(customer => {

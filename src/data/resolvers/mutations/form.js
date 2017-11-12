@@ -6,13 +6,13 @@ import {
   Conversations,
   Messages,
   Forms,
-  FormFields,
+  Fields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
 import { mutateAppApi } from '../utils/common';
 
 export const validate = async (formId, submissions) => {
-  const fields = await FormFields.find({ formId });
+  const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
   for (let field of fields) {
@@ -133,6 +133,10 @@ export default {
       brandId: brand._id,
       formId: form._id,
     });
+
+    if (!integ) {
+      throw new Error('Integration not found');
+    }
 
     // return integration details
     return {

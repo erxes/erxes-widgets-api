@@ -4,7 +4,7 @@ import {
   Integrations,
   Brands,
   Forms,
-  FormFields,
+  Fields,
   Customers,
   Conversations,
   Messages,
@@ -53,8 +53,9 @@ export const formFactory = ({ title, code }) => {
 };
 
 export const formFieldFactory = params => {
-  const field = new FormFields({
-    formId: params.formId || Random.id(),
+  const field = new Fields({
+    contentType: 'form',
+    contentTypeId: params.contentTypeId || Random.id(),
     type: params.type || faker.random.word(),
     name: faker.random.word(),
     validation: params.validation || faker.random.word(),

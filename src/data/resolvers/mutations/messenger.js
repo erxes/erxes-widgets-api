@@ -42,7 +42,7 @@ export default {
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
 
     if (!integration) {
-      return {};
+      throw new Error('Integration not found');
     }
 
     let customer = await Customers.getCustomer({
