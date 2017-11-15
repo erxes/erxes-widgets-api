@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
+import { mutateAppApi } from '../../utils';
 
 const CompanySchema = mongoose.Schema({
   _id: {
@@ -48,8 +49,18 @@ class Company {
    * @param  {Object} companyObj object
    * @return {Promise} Newly created company object
    */
-  static createCompany(doc) {
-    return this.create(doc);
+  static async createCompany(doc) {
+    const company = await this.create(doc);
+
+    // call app api's create customer log
+    mutateAppApi(`
+      mutation {
+        activityLogsAddCompanyLog(_id: "${company._id}") {
+          _id
+        }
+      }`);
+
+    return company;
   }
 
   /**
@@ -64,7 +75,7 @@ class Company {
       return company;
     }
 
-    return this.create(doc);
+    return this.createCompany(doc);
   }
 }
 

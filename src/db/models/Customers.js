@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
+import { mutateAppApi } from '../../utils';
 
 const CustomerSchema = mongoose.Schema({
   _id: {
@@ -45,10 +46,10 @@ class Customer {
    * @param  {Object} customerObj Customer object without computational fields
    * @return {Promise} Newly created customer object
    */
-  static createCustomer(customerObj, messengerCustomData) {
+  static async createCustomer(customerObj, messengerCustomData) {
     const now = new Date();
 
-    return this.create({
+    const customer = await this.create({
       ...customerObj,
       createdAt: now,
       messengerData: {
@@ -58,6 +59,16 @@ class Customer {
         customData: messengerCustomData,
       },
     });
+
+    // call app api's create customer log
+    mutateAppApi(`
+      mutation {
+        activityLogsAddCustomerLog(_id: "${customer._id}") {
+          _id
+        }
+      }`);
+
+    return customer;
   }
 
   /**

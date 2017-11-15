@@ -9,7 +9,7 @@ import {
   Fields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
-import { mutateAppApi } from '../utils/common';
+import { mutateAppApi } from '../../../utils';
 
 export const validate = async (formId, submissions) => {
   const fields = await Fields.find({ contentTypeId: formId });

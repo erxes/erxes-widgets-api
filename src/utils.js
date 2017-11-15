@@ -3,6 +3,10 @@ import requestify from 'requestify';
 export const mutateAppApi = query => {
   const { APP_API_URL } = process.env;
 
+  if (!APP_API_URL) {
+    return;
+  }
+
   requestify
     .request(APP_API_URL, {
       method: 'POST',

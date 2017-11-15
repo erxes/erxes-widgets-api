@@ -1,6 +1,6 @@
 import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
-import { mutateAppApi } from '../utils/common';
+import { mutateAppApi } from '../../../utils';
 
 export default {
   /*
