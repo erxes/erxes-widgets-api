@@ -9,6 +9,7 @@ const ConversationSchema = mongoose.Schema({
     default: () => Random.id(),
   },
   createdAt: Date,
+  updatedAt: Date,
   content: String,
   customerId: String,
   userId: String,

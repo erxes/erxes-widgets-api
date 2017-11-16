@@ -34,26 +34,27 @@ class Message {
    * @param  {Object} messageObj
    * @return {Promise} New message
    */
-  static createMessage(messageObj) {
-    return (
-      Conversations.findOne({ _id: messageObj.conversationId })
-        // increment messageCount
-        .then(conversation =>
-          Conversations.findByIdAndUpdate(
-            conversation._id,
-            { messageCount: conversation.messageCount + 1 },
-            { new: true },
-          ),
-        )
-        // create message
-        .then(() =>
-          this.create({
-            createdAt: new Date(),
-            internal: false,
-            ...messageObj,
-          }),
-        )
+  static async createMessage(messageObj) {
+    const conversation = await Conversations.findOne({
+      _id: messageObj.conversationId,
+    });
+
+    // increment messageCount
+    await Conversations.findByIdAndUpdate(
+      conversation._id,
+      {
+        messageCount: conversation.messageCount + 1,
+        updatedAt: new Date(),
+      },
+      { new: true },
     );
+
+    // create message
+    return this.create({
+      createdAt: new Date(),
+      internal: false,
+      ...messageObj,
+    });
   }
 }
 

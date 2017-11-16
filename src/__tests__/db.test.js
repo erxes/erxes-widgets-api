@@ -240,6 +240,12 @@ describe('Conversations', () => {
 
     const message = await Messages.createMessage(_message);
 
+    const updatedConversation = await Conversations.findOne({
+      _id: _message.conversationId,
+    });
+
+    expect(updatedConversation.updatedAt).toEqual(expect.any(Date));
+
     expect(message).toBeDefined();
     expect(message._id).toBeDefined();
     expect(message.createdAt >= now).toBeTruthy();
