@@ -34,20 +34,6 @@ export const types = `
     sentAs: String
   }
 
-  type Attachment {
-    url: String
-    name: String
-    type: String
-    size: Int
-  }
-
-  input AttachmentInput {
-    url: String
-    name: String
-    type: String
-    size: Int
-  }
-
   input FieldValueInput {
     _id: String!
     type: String
@@ -82,7 +68,7 @@ export const types = `
     user: User
     content: String
     createdAt: Date
-    attachments: [Attachment]
+    attachments: [JSON]
     internal: Boolean
     engageData: EngageData
   }
@@ -212,7 +198,7 @@ export const mutations = `
       customerId: String!,
       conversationId: String!,
       message: String,
-      attachments: [AttachmentInput]
+      attachments: [JSON]
     ): ConversationMessage
 
     readConversationMessages(conversationId: String): String
