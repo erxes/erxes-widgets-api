@@ -196,7 +196,7 @@ export const mutations = `
     insertMessage(
       integrationId: String!,
       customerId: String!,
-      conversationId: String!,
+      conversationId: String,
       message: String,
       attachments: [JSON]
     ): ConversationMessage
