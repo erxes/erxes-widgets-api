@@ -1,4 +1,5 @@
 import requestify from 'requestify';
+import { Customers } from './db/models';
 
 /*
  * returns requested user's ip address
@@ -51,4 +52,10 @@ export const mutateAppApi = query => {
     .catch(e => {
       console.log(e); // eslint-disable-line
     });
+};
+
+export const createCustomer = async (mainInfo, data, remoteAddress) => {
+  const location = await getLocationInfo(remoteAddress);
+
+  return Customers.createCustomer({ ...mainInfo, remoteAddress, location }, data);
 };

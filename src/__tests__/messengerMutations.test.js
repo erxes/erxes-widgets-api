@@ -41,6 +41,7 @@ describe('messenger connect', () => {
     const { integrationId } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email: faker.internet.email() },
+      {},
     );
 
     expect(integrationId).toBe(_integration._id);
@@ -53,6 +54,7 @@ describe('messenger connect', () => {
     const { customerId } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email, companyData: { name: 'company' } },
+      {},
     );
 
     expect(customerId).toBeDefined();
@@ -73,6 +75,7 @@ describe('messenger connect', () => {
     const { customerId } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email: _customer.email, name: 'name', isUser: true },
+      {},
     );
 
     expect(customerId).toBeDefined();
@@ -117,6 +120,7 @@ describe('insertMessage()', () => {
         customerId: _customer._id,
         message: faker.lorem.sentence(),
       },
+      {},
     );
 
     expect(message).toBeDefined();
@@ -131,6 +135,7 @@ describe('insertMessage()', () => {
         customerId: _customer._id,
         message: faker.lorem.sentence(),
       },
+      {},
     );
 
     const conversation = await Conversations.findById(message.conversationId);
@@ -161,6 +166,7 @@ describe('readConversationMessages()', async () => {
     const response = await messengerMutations.readConversationMessages(
       {},
       { conversationId: _conversation._id },
+      {},
     );
 
     expect(response.nModified).toBe(2);

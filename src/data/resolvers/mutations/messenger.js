@@ -1,18 +1,18 @@
 import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
-import { mutateAppApi } from '../../../utils';
+import { mutateAppApi, createCustomer } from '../../../utils';
 
 export default {
   /*
    * End conversation
    */
 
-  async endConversation(root, { brandCode, data }) {
+  async endConversation(root, { brandCode, data }, { remoteAddress }) {
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await Customers.createCustomer({ integrationId: integ._id }, data);
+    const customer = await createCustomer({ integrationId: integ._id }, data, remoteAddress);
 
     return { customerId: customer._id };
   },
@@ -23,9 +23,7 @@ export default {
    * @return {Promise}
    */
 
-  async messengerConnect(root, args, context) {
-    const { remoteAddress } = context || {};
-
+  async messengerConnect(root, args, { remoteAddress }) {
     const {
       brandCode,
       name,
@@ -62,9 +60,10 @@ export default {
 
       // create new customer
     } else {
-      customer = await Customers.createCustomer(
+      customer = await createCustomer(
         { integrationId: integration._id, email, phone, isUser, name },
         data,
+        remoteAddress,
       );
     }
 
