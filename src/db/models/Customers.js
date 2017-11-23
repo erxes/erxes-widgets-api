@@ -14,6 +14,8 @@ const CustomerSchema = mongoose.Schema({
   isUser: Boolean,
   name: String,
   createdAt: Date,
+  ipAddress: String,
+  location: String,
   messengerData: Object,
   companyIds: [String],
 });

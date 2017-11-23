@@ -1,6 +1,5 @@
-import requestify from 'requestify';
-
 import { Users, Integrations, EngageMessages, Conversations, Messages } from '../../../db/models';
+import { getLocationInfo } from '../../../utils';
 
 /*
  * replaces customer & user infos in given content
@@ -19,41 +18,6 @@ export const replaceKeys = ({ content, customer, user }) => {
   result = result.replace(/{{\s?user.email\s?}}/gi, user.email);
 
   return result;
-};
-
-/*
- * returns requested user's ip address
- */
-const getIP = async remoteAddress => {
-  if (process.env.NODE_ENV === 'production') {
-    return remoteAddress;
-  }
-
-  const res = await requestify.get('https://jsonip.com');
-
-  return JSON.parse(res.body).ip;
-};
-
-/*
- * returns requested user's geolocation info
- */
-const getLocationInfo = async remoteAddress => {
-  // Don't do anything in test mode
-  if (process.env.NODE_ENV === 'test') {
-    return {
-      city: 'Ulaanbaatar',
-      country: 'Mongolia',
-    };
-  }
-
-  const ip = await getIP(remoteAddress);
-  const response = await requestify.get(`http://ipinfo.io/${ip}/json`);
-  const data = JSON.parse(response.body);
-
-  return {
-    city: data.city,
-    country: data.country,
-  };
 };
 
 /*
