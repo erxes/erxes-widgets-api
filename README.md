@@ -10,7 +10,7 @@ The GraphQL server shared by the erxes apps and widgets.
 ```Shell
 git clone https://github.com/erxes/erxes-api
 cd erxes-api
-npm install
+yarn install
 ```
 
 #### 3. Create configuration. We use [dotenv](https://github.com/motdotla/dotenv) for this.
@@ -26,14 +26,14 @@ cp .env.sample .env
 For development:
 
 ```Shell
-npm run dev
+yarn dev
 ```
 
 For production:
 
 ```Shell
-npm run build
-npm start
+yarn build
+yarn start
 ```
 
 #### 5. Running servers:
