@@ -2,14 +2,16 @@ export const types = `
   scalar Date
   scalar JSON
 
-  type EngageData {
-    messageId: String
-    brandId: String
-    content: String
-    fromUserId: String
-    fromUser: User
-    kind: String
-    sentAs: String
+  type Company {
+    _id: String!
+    name: String
+    size: Int
+    website: String
+    industry: String
+    plan: String
+    lastSeenAt: Date
+    sessionCount: Int
+    tagIds: [String],
   }
 
   type UserDetails {
@@ -22,18 +24,14 @@ export const types = `
     details: UserDetails
   }
 
-  type Attachment {
-    url: String
-    name: String
-    type: String
-    size: Int
-  }
-
-  input AttachmentInput {
-    url: String
-    name: String
-    type: String
-    size: Int
+  type EngageData {
+    messageId: String
+    brandId: String
+    content: String
+    fromUserId: String
+    fromUser: User
+    kind: String
+    sentAs: String
   }
 
   input FieldValueInput {
@@ -70,7 +68,7 @@ export const types = `
     user: User
     content: String
     createdAt: Date
-    attachments: [Attachment]
+    attachments: [JSON]
     internal: Boolean
     engageData: EngageData
   }
@@ -183,21 +181,24 @@ export const mutations = `
 
     messengerConnect(
       brandCode: String!,
+      name: String,
       email: String,
       phone: String,
-      name: String,
       isUser: Boolean,
+
+      companyData: JSON,
       data: JSON,
       browserInfo: JSON,
+
       cachedCustomerId: String
     ): MessengerConnectResponse
 
     insertMessage(
       integrationId: String!,
       customerId: String!,
-      conversationId: String!,
+      conversationId: String,
       message: String,
-      attachments: [AttachmentInput]
+      attachments: [JSON]
     ): ConversationMessage
 
     readConversationMessages(conversationId: String): String

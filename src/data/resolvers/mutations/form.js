@@ -6,13 +6,13 @@ import {
   Conversations,
   Messages,
   Forms,
-  FormFields,
+  Fields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
-import { mutateAppApi } from '../utils/common';
+import { mutateAppApi, createCustomer } from '../../../utils';
 
 export const validate = async (formId, submissions) => {
-  const fields = await FormFields.find({ formId });
+  const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
   for (let field of fields) {
@@ -64,25 +64,25 @@ export const validate = async (formId, submissions) => {
   return errors;
 };
 
-export const getOrCreateCustomer = async (integrationId, email, name) => {
+export const getOrCreateCustomer = async (integrationId, email, name, remoteAddress) => {
   const customer = await Customers.getCustomer({ integrationId, email });
 
   if (!email) {
-    return Promise.resolve(null);
+    return null;
   }
 
   // customer found
   if (customer) {
-    return Promise.resolve(customer._id);
+    return customer._id;
   }
 
   // create customer
-  return Customers.createCustomer({ integrationId, email, name }).then(cus =>
-    Promise.resolve(cus._id),
-  );
+  const newCustomer = await createCustomer({ integrationId, email, name }, {}, remoteAddress);
+
+  return newCustomer._id;
 };
 
-export const saveValues = async ({ integrationId, submissions, formId }) => {
+export const saveValues = async ({ integrationId, submissions, formId }, remoteAddress) => {
   const form = await Forms.findOne({ _id: formId });
   const content = form.title;
 
@@ -105,7 +105,12 @@ export const saveValues = async ({ integrationId, submissions, formId }) => {
   });
 
   // get or create customer
-  const customerId = await getOrCreateCustomer(integrationId, email, `${lastName} ${firstName}`);
+  const customerId = await getOrCreateCustomer(
+    integrationId,
+    email,
+    `${lastName} ${firstName}`,
+    remoteAddress,
+  );
 
   // create conversation
   const conversationId = await Conversations.createConversation({
@@ -134,6 +139,10 @@ export default {
       formId: form._id,
     });
 
+    if (!integ) {
+      throw new Error('Integration not found');
+    }
+
     // return integration details
     return {
       integrationId: integ._id,
@@ -144,7 +153,7 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(root, args) {
+  async saveForm(root, args, { remoteAddress }) {
     const { formId, submissions } = args;
 
     const errors = await validate(formId, submissions);
@@ -153,12 +162,12 @@ export default {
       return { status: 'error', errors };
     }
 
-    const message = await saveValues(args);
+    const message = await saveValues(args, remoteAddress);
 
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationMessageInserted(_id: "${message._id}")
+        conversationSubscribeMessageCreated(_id: "${message._id}")
       }`);
 
     return { status: 'ok', messageId: message._id };

@@ -1,18 +1,18 @@
-import { Integrations, Conversations, Messages, Customers } from '../../../db/models';
+import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
-import { mutateAppApi } from '../utils/common';
+import { mutateAppApi, createCustomer } from '../../../utils';
 
 export default {
   /*
    * End conversation
    */
 
-  async endConversation(root, { brandCode, data }) {
+  async endConversation(root, { brandCode, data }, { remoteAddress }) {
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await Customers.createCustomer({ integrationId: integ._id }, data);
+    const customer = await createCustomer({ integrationId: integ._id }, data, remoteAddress);
 
     return { customerId: customer._id };
   },
@@ -23,15 +23,24 @@ export default {
    * @return {Promise}
    */
 
-  async messengerConnect(root, args, context) {
-    const { remoteAddress } = context || {};
-    const { brandCode, email, phone, isUser, name, data, browserInfo, cachedCustomerId } = args;
+  async messengerConnect(root, args, { remoteAddress }) {
+    const {
+      brandCode,
+      name,
+      email,
+      phone,
+      isUser,
+      companyData,
+      data,
+      browserInfo,
+      cachedCustomerId,
+    } = args;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
 
     if (!integration) {
-      return {};
+      throw new Error('Integration not found');
     }
 
     let customer = await Customers.getCustomer({
@@ -41,45 +50,33 @@ export default {
       phone,
     });
 
-    const now = new Date();
-
     // update customer
     if (customer) {
       // update messengerData
-      await Customers.update(
-        { _id: customer._id },
-        {
-          $set: {
-            'messengerData.lastSeenAt': now,
-            'messengerData.isActive': true,
-            name,
-            isUser,
-          },
-        },
-        () => {},
-      );
+      customer = await Customers.updateMessengerData(customer._id);
 
-      if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
-        // update session count
-        await Customers.update(
-          { _id: customer._id },
-          { $inc: { 'messengerData.sessionCount': 1 } },
-          () => {},
-        );
-      }
-
-      customer = await Customers.findOne({ _id: customer._id });
+      // update name, isUser
+      await Customers.findByIdAndUpdate(customer._id, { $set: { name, isUser } });
 
       // create new customer
     } else {
-      customer = await Customers.createCustomer(
+      customer = await createCustomer(
         { integrationId: integration._id, email, phone, isUser, name },
         data,
+        remoteAddress,
       );
     }
 
+    // get or create company
+    if (companyData) {
+      const company = await Companies.getOrCreate(companyData);
+
+      // add company to customer's companyIds list
+      await Customers.addCompany(customer._id, company._id);
+    }
+
     // try to create engage chat auto messages
-    if (!customer.email) {
+    if (!isUser) {
       createEngageVisitorMessages({
         brandCode,
         customer,
@@ -137,7 +134,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationMessageInserted(_id: "${msg._id}")
+        conversationSubscribeMessageCreated(_id: "${msg._id}")
       }`);
 
     return msg;
@@ -161,7 +158,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationsChanged(_ids: ["${args.conversationId}"], type: "readState")
+        conversationSubscribeChanged(_ids: ["${args.conversationId}"], type: "readState")
       }`);
 
     return response;

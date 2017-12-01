@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
+import { mutateAppApi } from '../../utils';
 
 const ConversationSchema = mongoose.Schema({
   _id: {
@@ -8,6 +9,7 @@ const ConversationSchema = mongoose.Schema({
     default: () => Random.id(),
   },
   createdAt: Date,
+  updatedAt: Date,
   content: String,
   customerId: String,
   userId: String,
@@ -34,23 +36,36 @@ class Conversation {
    * @param  {Object} conversationObj
    * @return {Promise} Newly created conversation object
    */
-  static createConversation(conversationObj) {
+  static async createConversation(conversationObj) {
     const { integrationId, userId, customerId, content } = conversationObj;
 
-    return this.find({ customerId, integrationId }).count().then(count =>
-      this.create({
-        customerId,
-        userId,
-        integrationId,
-        content,
-        status: this.getConversationStatuses().NEW,
-        createdAt: new Date(),
-        messageCount: 0,
+    const count = await this.find({ customerId, integrationId }).count();
 
-        // Number is used for denormalization of posts count
-        number: count + 1,
-      }),
-    );
+    const conversation = await this.create({
+      customerId,
+      userId,
+      integrationId,
+      content,
+      status: this.getConversationStatuses().NEW,
+      createdAt: new Date(),
+      messageCount: 0,
+
+      // Number is used for denormalization of posts count
+      number: count + 1,
+    });
+
+    // call app api's create conversation log
+    mutateAppApi(`
+      mutation {
+        activityLogsAddConversationLog(
+          conversationId: "${conversation._id}",
+          customerId: "${customerId}",
+        ) {
+          _id
+        }
+      }`);
+
+    return conversation;
   }
 
   /**
