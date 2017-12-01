@@ -25,21 +25,23 @@ class Integration {
    * @param  {Boolean} brandObject: Determines to include brand object
    * @return {Promise} Existing integration object
    */
-  static getIntegration(brandCode, kind, brandObject = false) {
-    return Brands.findOne({ code: brandCode }).then(brand =>
-      this.findOne({
-        brandId: brand._id,
-        kind,
-      }).then(integration => {
-        if (brandObject) {
-          return {
-            integration,
-            brand,
-          };
-        }
-        return integration;
-      }),
-    );
+  static async getIntegration(brandCode, kind, brandObject = false) {
+    const brand = await Brands.findOne({ code: brandCode });
+
+    if (!brand) {
+      throw new Error('Brand not found');
+    }
+
+    const integration = await this.findOne({ brandId: brand._id, kind });
+
+    if (brandObject) {
+      return {
+        integration,
+        brand,
+      };
+    }
+
+    return integration;
   }
 }
 

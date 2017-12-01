@@ -1,7 +1,8 @@
+import Companies from './Companies';
 import Brands from './Brands';
 import Conversations from './Conversations';
 import Customers from './Customers';
-import FormFields from './FormFields';
+import Fields from './Fields';
 import Forms from './Forms';
 import Integrations from './Integrations';
 import Messages from './Messages';
@@ -14,10 +15,11 @@ import {
 import { EngageMessages } from './Engages';
 
 export {
+  Companies,
   Brands,
   Conversations,
   Customers,
-  FormFields,
+  Fields,
   Forms,
   Integrations,
   Messages,

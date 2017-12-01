@@ -1,7 +1,7 @@
 {
   "name": "erxes-api",
-  "version": "0.7.0",
-  "description": "GraphQL API for erxes apps",
+  "version": "0.9.0",
+  "description": "GraphQL API for erxes widgets",
   "homepage": "https://erxes.io",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon src --exec babel-node",
     "test": "mocha src/tests --reporter spec --compilers js:babel-core/register",
-    "jest": "NODE_ENV=test jest",
+    "jest": "NODE_ENV=test jest --runInBand",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",
     "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",

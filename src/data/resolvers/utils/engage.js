@@ -1,6 +1,5 @@
-import requestify from 'requestify';
-
 import { Users, Integrations, EngageMessages, Conversations, Messages } from '../../../db/models';
+import { getLocationInfo } from '../../../utils';
 
 /*
  * replaces customer & user infos in given content
@@ -19,41 +18,6 @@ export const replaceKeys = ({ content, customer, user }) => {
   result = result.replace(/{{\s?user.email\s?}}/gi, user.email);
 
   return result;
-};
-
-/*
- * returns requested user's ip address
- */
-const getIP = remoteAddress => {
-  if (process.env.NODE_ENV === 'production') {
-    return Promise.resolve(remoteAddress);
-  }
-
-  return requestify.get('https://jsonip.com').then(res => JSON.parse(res.body).ip);
-};
-
-/*
- * returns requested user's geolocation info
- */
-const getLocationInfo = remoteAddress => {
-  // Don't do anything in test mode
-  if (process.env.NODE_ENV === 'test') {
-    return Promise.resolve({
-      city: 'Ulaanbaatar',
-      country: 'Mongolia',
-    });
-  }
-
-  return getIP(remoteAddress).then(ip =>
-    requestify.get(`http://ipinfo.io/${ip}/json`).then(response => {
-      const data = JSON.parse(response.body);
-
-      return {
-        city: data.city,
-        country: data.country,
-      };
-    }),
-  );
 };
 
 /*
@@ -135,31 +99,28 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits, city, country }) 
  * satisfying given engage message's rules
  * @return Promise
  */
-export const checkRules = ({ rules, browserInfo, numberOfVisits, remoteAddress }) =>
+export const checkRules = async ({ rules, browserInfo, numberOfVisits, remoteAddress }) => {
   // get country, city info
-  getLocationInfo(remoteAddress)
-    .then(({ city, country }) => {
-      let passedAllRules = true;
+  const { city, country } = await getLocationInfo(remoteAddress);
 
-      rules.forEach(rule => {
-        // check individual rule
-        if (!checkRule({ rule, browserInfo, city, country, numberOfVisits })) {
-          passedAllRules = false;
-          return;
-        }
-      });
+  let passedAllRules = true;
 
-      return passedAllRules;
-    })
-    .catch(e => {
-      console.log(e); // eslint-disable-line
-    });
+  rules.forEach(rule => {
+    // check individual rule
+    if (!checkRule({ rule, browserInfo, city, country, numberOfVisits })) {
+      passedAllRules = false;
+      return;
+    }
+  });
+
+  return passedAllRules;
+};
 
 /*
  * Creates conversation & message object using given info
  * @return Promise
  */
-export const createConversation = ({ customer, integration, user, engageData }) => {
+export const createConversation = async ({ customer, integration, user, engageData }) => {
   // replace keys in content
   const replacedContent = replaceKeys({
     content: engageData.content,
@@ -167,116 +128,87 @@ export const createConversation = ({ customer, integration, user, engageData }) 
     user,
   });
 
-  let conversation;
-
   // create conversation
-  return (
-    Conversations.createConversation({
-      userId: user._id,
-      customerId: customer._id,
-      integrationId: integration._id,
-      content: replacedContent,
-    })
-      // create message
-      .then(_conversation => {
-        conversation = _conversation;
+  const conversation = await Conversations.createConversation({
+    userId: user._id,
+    customerId: customer._id,
+    integrationId: integration._id,
+    content: replacedContent,
+  });
 
-        return Messages.createMessage({
-          engageData,
-          conversationId: _conversation._id,
-          userId: user._id,
-          customerId: customer._id,
-          content: replacedContent,
-        });
-      })
-      .then(message => ({
-        message,
-        conversation,
-      }))
-      // catch exception
-      .catch(error => {
-        console.log(error); // eslint-disable-line no-console
-      })
-  );
+  // create message
+  const message = await Messages.createMessage({
+    engageData,
+    conversationId: conversation._id,
+    userId: user._id,
+    customerId: customer._id,
+    content: replacedContent,
+  });
+
+  return {
+    message,
+    conversation,
+  };
 };
 
 /*
  * this function will be used in messagerConnect and it will create conversations
  * when visitor messenger connect * @return Promise
  */
+export const createEngageVisitorMessages = async params => {
+  const { brandCode, customer, browserInfo, remoteAddress } = params;
 
-export const createEngageVisitorMessages = ({
-  brandCode,
-  customer,
-  integration,
-  browserInfo,
-  remoteAddress,
-}) =>
-  Integrations.getIntegration(brandCode, 'messenger', true)
-    // find engage messages
-    .then(({ brand, integration }) => {
-      const messengerData = integration.messengerData || {};
+  const { brand, integration } = await Integrations.getIntegration(brandCode, 'messenger', true);
 
-      // if integration configured as hide conversations
-      // then do not create any engage messages
-      if (messengerData.hideConversationList) {
-        return Promise.resolve([]);
-      }
+  // find engage messages
+  const messengerData = integration.messengerData || {};
 
-      return EngageMessages.find({
-        'messenger.brandId': brand._id,
-        kind: 'visitorAuto',
-        method: 'messenger',
-        isLive: true,
-        customerIds: { $nin: [customer._id] },
-      });
-    })
-    .then(messages => {
-      const results = [];
+  // if integration configured as hide conversations
+  // then do not create any engage messages
+  if (messengerData.hideConversationList) {
+    return [];
+  }
 
-      messages.forEach(message => {
-        const result = Users.findOne({ _id: message.fromUserId }).then(user =>
-          // check for rules
-          checkRules({
-            rules: message.messenger.rules,
-            browserInfo,
-            remoteAddress,
-            numberOfVisits: customer.messengerData.sessionCount || 0,
-          }).then(isPassedAllRules => {
-            // if given visitor is matched with given condition then create
-            // conversations
-            if (isPassedAllRules) {
-              return (
-                createConversation({
-                  customer,
-                  integration,
-                  user,
-                  engageData: {
-                    ...message.messenger,
-                    messageId: message._id,
-                    fromUserId: message.fromUserId,
-                  },
-                })
-                  // add given customer to customerIds list
-                  .then(() =>
-                    EngageMessages.update(
-                      { _id: message._id },
-                      { $push: { customerIds: customer._id } },
-                      {},
-                      () => {},
-                    ),
-                  )
-              );
-            }
-          }),
-        );
+  const messages = await EngageMessages.find({
+    'messenger.brandId': brand._id,
+    kind: 'visitorAuto',
+    method: 'messenger',
+    isLive: true,
+    customerIds: { $nin: [customer._id] },
+  });
 
-        results.push(result);
-      });
+  for (let message of messages) {
+    const user = await Users.findOne({ _id: message.fromUserId });
 
-      return Promise.all(results);
-    })
-    // catch exception
-    .catch(error => {
-      console.log(error); // eslint-disable-line no-console
+    // check for rules
+    const isPassedAllRules = await checkRules({
+      rules: message.messenger.rules,
+      browserInfo,
+      remoteAddress,
+      numberOfVisits: customer.messengerData.sessionCount || 0,
     });
+
+    // if given visitor is matched with given condition then create
+    // conversations
+    if (isPassedAllRules) {
+      await createConversation({
+        customer,
+        integration,
+        user,
+        engageData: {
+          ...message.messenger,
+          messageId: message._id,
+          fromUserId: message.fromUserId,
+        },
+      });
+
+      // add given customer to customerIds list
+      await EngageMessages.update(
+        { _id: message._id },
+        { $push: { customerIds: customer._id } },
+        {},
+        () => {},
+      );
+    }
+  }
+};

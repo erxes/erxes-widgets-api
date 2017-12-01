@@ -68,15 +68,20 @@ export default {
     }).sort({ createdAt: 1 });
   },
 
-  conversationLastStaff(root, args) {
+  async conversationLastStaff(root, args) {
     const messageQuery = {
       conversationId: args._id,
       userId: { $exists: true },
     };
 
-    return Messages.findOne(messageQuery).then(message =>
-      Users.findOne({ _id: message && message.userId }),
-    );
+    const message = await Messages.findOne(messageQuery);
+
+    if (message) {
+      return Users.findOne({ _id: message && message.userId });
+    }
+
+    // TODO
+    return Users.findOne({});
   },
 
   isMessengerOnline(root, args) {
