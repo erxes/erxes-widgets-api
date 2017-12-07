@@ -1,6 +1,19 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
-import { mutateAppApi } from '../../utils';
+import { mutateAppApi, getLocationInfo } from '../../utils';
+
+const LocationSchema = mongoose.Schema(
+  {
+    remoteAddress: String,
+    country: String,
+    city: String,
+    region: String,
+    hostname: String,
+    language: String,
+    userAgent: String,
+  },
+  { _id: false },
+);
 
 const CustomerSchema = mongoose.Schema({
   _id: {
@@ -14,8 +27,7 @@ const CustomerSchema = mongoose.Schema({
   isUser: Boolean,
   name: String,
   createdAt: Date,
-  remoteAddress: String,
-  location: Object,
+  location: LocationSchema,
   messengerData: Object,
   companyIds: [String],
 });
@@ -43,23 +55,33 @@ class Customer {
     return Promise.resolve(null);
   }
 
+  /*
+   * Generate location info
+   */
+  static async generateLocationInfo(remoteAddress, browserInfo) {
+    const countryAndCity = await getLocationInfo(remoteAddress);
+
+    return {
+      ...countryAndCity,
+      ...browserInfo,
+      remoteAddress,
+    };
+  }
+
   /**
    * Create a new customer
-   * @param  {Object} customerObj Customer object without computational fields
+   * @param  {Object} doc Customer object without computational fields
+   * @param  {String} remoteAddress - IP address
+   * @param  {Object} browserInfo - {hostname, userAgent, language }
    * @return {Promise} Newly created customer object
    */
-  static async createCustomer(customerObj, messengerCustomData) {
-    const now = new Date();
+  static async createCustomer(doc, remoteAddress, browserInfo) {
+    const location = await this.generateLocationInfo(remoteAddress, browserInfo);
 
     const customer = await this.create({
-      ...customerObj,
-      createdAt: now,
-      messengerData: {
-        lastSeenAt: now,
-        isActive: true,
-        sessionCount: 1,
-        customData: messengerCustomData,
-      },
+      ...doc,
+      createdAt: new Date(),
+      location,
     });
 
     // call app api's create customer log
@@ -74,12 +96,55 @@ class Customer {
   }
 
   /**
+   * Create a new messenger customer
+   * @param  {Object} doc - Customer object without computational fields
+   * @param  {Object} customData - plan, domain etc ...
+   * @param  {String} remoteAddress - IP address
+   * @param  {Object} browserInfo - {hostname, userAgent, language }
+   * @return {Promise} Newly created customer object
+   */
+  static async createMessengerCustomer(doc, customData, remoteAddress, browserInfo) {
+    doc.messengerData = {
+      lastSeenAt: new Date(),
+      isActive: true,
+      sessionCount: 1,
+      customData: customData,
+    };
+
+    return this.createCustomer(doc, remoteAddress, browserInfo);
+  }
+
+  /**
+   * Update messenger customer data
+   * @param  {Object} _id - Customer id
+   * @param  {Object} doc - Customer object without computational fields
+   * @param  {Object} customData - plan, domain etc ...
+   * @param  {String} remoteAddress - IP address
+   * @param  {Object} browserInfo - {hostname, userAgent, language }
+   * @return {Promise} - updated customer
+   */
+  static async updateMessengerCustomer(_id, doc, customData, remoteAddress, browserInfo) {
+    const customer = await this.findOne({ _id });
+
+    doc['messengerData.customData'] = customData;
+
+    // check location info
+    if (!customer.location || !customer.location.remoteAddress) {
+      doc.location = await this.generateLocationInfo(remoteAddress, browserInfo);
+    }
+
+    await this.findByIdAndUpdate(_id, { $set: doc });
+
+    return this.findOne({ _id });
+  }
+
+  /**
    * Get or create customer
-   * @param  {Object} customerObj Expected customer object
+   * @param  {Object} doc Expected customer object
    * @return {Promise} Existing or newly created customer object
    */
-  static async getOrCreateCustomer(customerObj) {
-    const { integrationId, email } = customerObj;
+  static async getOrCreateCustomer(doc, remoteAddress, browserInfo) {
+    const { integrationId, email } = doc;
 
     const customer = await this.getCustomer({ integrationId, email });
 
@@ -87,7 +152,7 @@ class Customer {
       return customer;
     }
 
-    return this.createCustomer(customerObj);
+    return this.createCustomer(doc, remoteAddress, browserInfo);
   }
 
   /**
@@ -109,11 +174,11 @@ class Customer {
   }
 
   /*
-   * Update messenger data
+   * Update messenger session data
    * @param {String} customer id
    * @return {Promise} updated customer
    */
-  static async updateMessengerData(_id) {
+  static async updateMessengerSession(_id) {
     const now = new Date();
     const customer = await this.findOne({ _id });
 

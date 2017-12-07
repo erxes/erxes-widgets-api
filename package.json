@@ -19,8 +19,7 @@
   "scripts": {
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon src --exec babel-node",
-    "test": "mocha src/tests --reporter spec --compilers js:babel-core/register",
-    "jest": "NODE_ENV=test jest --runInBand",
+    "test": "NODE_ENV=test jest --runInBand",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",
     "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",
@@ -53,13 +52,11 @@
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
-    "chai": "^3.5.0",
     "eslint": "3.19.0",
     "faker": "^4.1.0",
     "husky": "^0.13.4",
     "jest": "^20.0.4",
     "lint-staged": "^3.6.0",
-    "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "prettier": "^1.4.4"
   }

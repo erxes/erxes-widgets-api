@@ -1,18 +1,22 @@
 import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
-import { mutateAppApi, createCustomer } from '../../../utils';
+import { mutateAppApi } from '../../../utils';
 
 export default {
   /*
    * End conversation
    */
-
-  async endConversation(root, { brandCode, data }, { remoteAddress }) {
+  async endConversation(root, { brandCode, data, browserInfo }, { remoteAddress }) {
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await createCustomer({ integrationId: integ._id }, data, remoteAddress);
+    const customer = await Customers.createMessengerCustomer(
+      { integrationId: integ._id },
+      data,
+      remoteAddress,
+      browserInfo,
+    );
 
     return { customerId: customer._id };
   },
@@ -52,18 +56,31 @@ export default {
 
     // update customer
     if (customer) {
-      // update messengerData
-      customer = await Customers.updateMessengerData(customer._id);
+      // update messenger session data
+      customer = await Customers.updateMessengerSession(customer._id);
 
-      // update name, isUser
-      await Customers.findByIdAndUpdate(customer._id, { $set: { name, isUser } });
+      // update fields
+      await Customers.updateMessengerCustomer(
+        customer._id,
+        { phone, isUser, name },
+        data,
+        remoteAddress,
+        browserInfo,
+      );
 
       // create new customer
     } else {
-      customer = await createCustomer(
-        { integrationId: integration._id, email, phone, isUser, name },
+      customer = await Customers.createMessengerCustomer(
+        {
+          integrationId: integration._id,
+          email,
+          phone,
+          isUser,
+          name,
+        },
         data,
         remoteAddress,
+        browserInfo,
       );
     }
 
@@ -77,7 +94,7 @@ export default {
 
     // try to create engage chat auto messages
     if (!isUser) {
-      createEngageVisitorMessages({
+      await createEngageVisitorMessages({
         brandCode,
         customer,
         integration,
