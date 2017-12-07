@@ -135,9 +135,9 @@ describe('Customers', () => {
     expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
   });
 
-  test('updateMessengerData()', async () => {
+  test('updateMessengerSession()', async () => {
     const now = new Date();
-    const customer = await Customers.updateMessengerData(_customer._id);
+    const customer = await Customers.updateMessengerSession(_customer._id);
 
     expect(customer.messengerData.isActive).toBeTruthy();
     expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();

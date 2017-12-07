@@ -84,7 +84,17 @@ describe('messenger connect', () => {
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email: _customer.email, name: 'name', isUser: true },
+      {
+        brandCode: _brand.code,
+        email: _customer.email,
+        name: 'name',
+        phone: '96221050',
+        isUser: true,
+        // customData
+        data: {
+          plan: 1,
+        },
+      },
       {},
     );
 
@@ -98,9 +108,11 @@ describe('messenger connect', () => {
     expect(customer.createdAt < now).toBeTruthy();
     expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
 
-    // name, isUser must be update
+    // must be updated
     expect(customer.name).toBe('name');
+    expect(customer.phone).toBe('96221050');
     expect(customer.isUser).toBeTruthy();
+    expect(customer.messengerData.customData.plan).toBe(1);
   });
 });
 

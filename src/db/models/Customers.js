@@ -55,6 +55,19 @@ class Customer {
     return Promise.resolve(null);
   }
 
+  /*
+   * Generate location info
+   */
+  static async generateLocationInfo(remoteAddress, browserInfo) {
+    const countryAndCity = await getLocationInfo(remoteAddress);
+
+    return {
+      ...countryAndCity,
+      ...browserInfo,
+      remoteAddress,
+    };
+  }
+
   /**
    * Create a new customer
    * @param  {Object} doc Customer object without computational fields
@@ -63,16 +76,12 @@ class Customer {
    * @return {Promise} Newly created customer object
    */
   static async createCustomer(doc, remoteAddress, browserInfo) {
-    const countryAndCity = await getLocationInfo(remoteAddress);
+    const location = await this.generateLocationInfo(remoteAddress, browserInfo);
 
     const customer = await this.create({
       ...doc,
       createdAt: new Date(),
-      location: {
-        ...countryAndCity,
-        ...browserInfo,
-        remoteAddress,
-      },
+      location,
     });
 
     // call app api's create customer log
@@ -103,6 +112,30 @@ class Customer {
     };
 
     return this.createCustomer(doc, remoteAddress, browserInfo);
+  }
+
+  /**
+   * Update messenger customer data
+   * @param  {Object} _id - Customer id
+   * @param  {Object} doc - Customer object without computational fields
+   * @param  {Object} customData - plan, domain etc ...
+   * @param  {String} remoteAddress - IP address
+   * @param  {Object} browserInfo - {hostname, userAgent, language }
+   * @return {Promise} - updated customer
+   */
+  static async updateMessengerCustomer(_id, doc, customData, remoteAddress, browserInfo) {
+    const customer = await this.findOne({ _id });
+
+    doc['messengerData.customData'] = customData;
+
+    // check location info
+    if (!customer.location || !customer.location.remoteAddress) {
+      doc.location = await this.generateLocationInfo(remoteAddress, browserInfo);
+    }
+
+    await this.findByIdAndUpdate(_id, { $set: doc });
+
+    return this.findOne({ _id });
   }
 
   /**
@@ -141,11 +174,11 @@ class Customer {
   }
 
   /*
-   * Update messenger data
+   * Update messenger session data
    * @param {String} customer id
    * @return {Promise} updated customer
    */
-  static async updateMessengerData(_id) {
+  static async updateMessengerSession(_id) {
     const now = new Date();
     const customer = await this.findOne({ _id });
 

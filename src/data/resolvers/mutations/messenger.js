@@ -56,11 +56,17 @@ export default {
 
     // update customer
     if (customer) {
-      // update messengerData
-      customer = await Customers.updateMessengerData(customer._id);
+      // update messenger session data
+      customer = await Customers.updateMessengerSession(customer._id);
 
-      // update name, isUser
-      await Customers.findByIdAndUpdate(customer._id, { $set: { name, isUser } });
+      // update fields
+      await Customers.updateMessengerCustomer(
+        customer._id,
+        { phone, isUser, name },
+        data,
+        remoteAddress,
+        browserInfo,
+      );
 
       // create new customer
     } else {
