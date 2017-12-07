@@ -6,7 +6,6 @@ export default {
   /*
    * End conversation
    */
-
   async endConversation(root, { brandCode, data, browserInfo }, { remoteAddress }) {
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');

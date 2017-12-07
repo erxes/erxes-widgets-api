@@ -177,7 +177,11 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
-    endConversation(brandCode: String!, data: JSON): EndConversationResponse
+    endConversation(
+      brandCode: String!,
+      browserInfo: JSON!,
+      data: JSON
+    ): EndConversationResponse
 
     messengerConnect(
       brandCode: String!,
