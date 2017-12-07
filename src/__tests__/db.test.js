@@ -54,21 +54,24 @@ describe('Customers', () => {
     return Customers.remove({});
   });
 
-  test('createCustomer() must return a new customer', async () => {
+  test('createMessengerCustomer() must return a new customer', async () => {
     const now = new Date();
 
-    const customer = await Customers.createCustomer({
-      integrationId: _customer.integrationId,
-      email: _customer.email,
-      isUser: _customer.isUser,
-      name: _customer.name,
-    });
+    const customer = await Customers.createMessengerCustomer(
+      {
+        integrationId: _customer.integrationId,
+        email: _customer.email,
+        isUser: _customer.isUser,
+        name: _customer.name,
+      },
+      {},
+    );
 
     expect(customer).toBeDefined();
     expect(customer.email).toBe(_customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.name).toBe(_customer.name);
-    expect(customer.messengerData.lastSeenAt).toBe(customer.createdAt);
+    expect(customer.messengerData.lastSeenAt).toBeDefined();
     expect(customer.messengerData.isActive).toBe(true);
     expect(customer.messengerData.sessionCount).toBe(1);
     expect(customer.createdAt >= now).toBe(true);
@@ -120,8 +123,7 @@ describe('Customers', () => {
     expect(customer.email).toBe(unexistingCustomer.email);
     expect(customer.integrationId).toBe(unexistingCustomer.integrationId);
     expect(customer.createdAt >= now).toBe(true);
-    expect(customer.createdAt).toEqual(customer.messengerData.lastSeenAt);
-    expect(customer.messengerData.sessionCount).toBe(1);
+    expect(customer.createdAt).toBeDefined();
   });
 
   test('markCustomerAsNotActive() must return true', async () => {

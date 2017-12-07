@@ -186,9 +186,9 @@ export const mutations = `
       phone: String,
       isUser: Boolean,
 
+      browserInfo: JSON!,
       companyData: JSON,
       data: JSON,
-      browserInfo: JSON,
 
       cachedCustomerId: String
     ): MessengerConnectResponse
@@ -210,6 +210,7 @@ export const mutations = `
       integrationId: String!,
       formId: String!,
       submissions: [FieldValueInput]
+      browserInfo: JSON!,
     ): SaveFormResponse
 
     sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String

@@ -1,5 +1,4 @@
 import requestify from 'requestify';
-import { Customers } from './db/models';
 
 /*
  * returns requested user's ip address
@@ -21,6 +20,7 @@ export const getLocationInfo = async remoteAddress => {
   // Don't do anything in test mode
   if (process.env.NODE_ENV === 'test') {
     return {
+      region: 'Ulaanbaatar',
       city: 'Ulaanbaatar',
       country: 'Mongolia',
     };
@@ -31,6 +31,7 @@ export const getLocationInfo = async remoteAddress => {
   const data = JSON.parse(response.body);
 
   return {
+    region: data.region,
     city: data.city,
     country: data.country,
   };
@@ -39,7 +40,8 @@ export const getLocationInfo = async remoteAddress => {
 export const mutateAppApi = query => {
   const { APP_API_URL } = process.env;
 
-  if (!APP_API_URL) {
+  // Don't do anything in test mode
+  if (process.env.NODE_ENV === 'test') {
     return;
   }
 
@@ -52,10 +54,4 @@ export const mutateAppApi = query => {
     .catch(e => {
       console.log(e); // eslint-disable-line
     });
-};
-
-export const createCustomer = async (mainInfo, data, remoteAddress) => {
-  const location = await getLocationInfo(remoteAddress);
-
-  return Customers.createCustomer({ ...mainInfo, remoteAddress, location }, data);
 };
