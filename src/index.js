@@ -27,7 +27,7 @@ app.use(
   graphqlExpress(req => ({
     schema,
     context: {
-      remoteAddress: req.connection.remoteAddress,
+      remoteAddress: req.connection.remoteAddress.replace('::ffff:', ''),
     },
   })),
 );
