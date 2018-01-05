@@ -50,6 +50,7 @@ describe('messenger connect', () => {
   test('creates new customer', async () => {
     const email = faker.internet.email();
     const now = new Date();
+
     const browserInfo = {
       url: 'localhost',
       hostname: 'localhost.com',

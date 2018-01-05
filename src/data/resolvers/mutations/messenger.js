@@ -6,7 +6,7 @@ export default {
   /*
    * End conversation
    */
-  async endConversation(root, { brandCode, data, browserInfo }, { remoteAddress }) {
+  async endConversation(root, { brandCode, data, browserInfo }) {
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
@@ -14,7 +14,6 @@ export default {
     const customer = await Customers.createMessengerCustomer(
       { integrationId: integ._id },
       data,
-      remoteAddress,
       browserInfo,
     );
 
@@ -27,7 +26,7 @@ export default {
    * @return {Promise}
    */
 
-  async messengerConnect(root, args, { remoteAddress }) {
+  async messengerConnect(root, args) {
     const {
       brandCode,
       name,
@@ -64,7 +63,6 @@ export default {
         customer._id,
         { phone, isUser, name },
         data,
-        remoteAddress,
         browserInfo,
       );
 
@@ -79,7 +77,6 @@ export default {
           name,
         },
         data,
-        remoteAddress,
         browserInfo,
       );
     }
@@ -98,7 +95,6 @@ export default {
         brandCode,
         customer,
         integration,
-        remoteAddress,
         browserInfo,
       });
     }

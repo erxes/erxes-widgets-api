@@ -64,7 +64,7 @@ export const validate = async (formId, submissions) => {
   return errors;
 };
 
-export const saveValues = async (args, remoteAddress, browserInfo) => {
+export const saveValues = async (args, browserInfo) => {
   const { integrationId, submissions, formId } = args;
   const form = await Forms.findOne({ _id: formId });
   const content = form.title;
@@ -94,7 +94,6 @@ export const saveValues = async (args, remoteAddress, browserInfo) => {
       email,
       name: `${lastName} ${firstName}`,
     },
-    remoteAddress,
     browserInfo,
   );
 
@@ -139,7 +138,7 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(root, args, { remoteAddress }) {
+  async saveForm(root, args) {
     const { formId, submissions, browserInfo } = args;
 
     const errors = await validate(formId, submissions);
@@ -148,7 +147,7 @@ export default {
       return { status: 'error', errors };
     }
 
-    const message = await saveValues(args, remoteAddress, browserInfo);
+    const message = await saveValues(args, browserInfo);
 
     // notify app api
     mutateAppApi(`

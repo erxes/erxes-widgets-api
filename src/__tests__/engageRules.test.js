@@ -100,8 +100,7 @@ describe('checkIndividualRule', () => {
   test('isUnknown: not matching', () => {
     const response = checkRule({
       rule: isUnknownRule,
-      browserInfo: {},
-      city: 'Ulaanbaatar',
+      browserInfo: { city: 'Ulaanbaatar' },
     });
 
     expect(response).toBe(false);
@@ -134,8 +133,7 @@ describe('checkIndividualRule', () => {
   test('hasAnyValue: matching', () => {
     const response = checkRule({
       rule: hasAnyValueRule,
-      browserInfo: {},
-      country: 'MN',
+      browserInfo: { country: 'MN' },
     });
 
     expect(response).toBe(true);

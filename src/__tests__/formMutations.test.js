@@ -126,6 +126,7 @@ describe('Form mutations', () => {
       ];
 
       const browserInfo = {
+        remoteAddress: '127.0.0.1',
         url: 'localhost',
         hostname: 'localhost.com',
         language: 'en',
@@ -134,7 +135,7 @@ describe('Form mutations', () => {
       };
 
       // call function
-      await saveValues({ integrationId, formId, submissions }, '127.0.0.1', browserInfo);
+      await saveValues({ integrationId, formId, submissions }, browserInfo);
 
       // must create 1 conversation
       expect(await Conversations.find().count()).toBe(1);
