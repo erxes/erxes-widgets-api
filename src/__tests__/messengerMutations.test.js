@@ -195,3 +195,31 @@ describe('readConversationMessages()', async () => {
     expect(response.nModified).toBe(2);
   });
 });
+
+describe('common', async () => {
+  let _customer;
+
+  beforeEach(async () => {
+    // Creating test data
+    _customer = await customerFactory();
+  });
+
+  afterEach(async () => {
+    // Clearing test data
+    await Customers.remove({});
+  });
+
+  test('saveCustomerGetNotified', async () => {
+    const response = await messengerMutations.saveCustomerGetNotified(
+      {},
+      {
+        customerId: _customer._id,
+        type: 'email',
+        value: 'test@gmail.com',
+      },
+      {},
+    );
+
+    expect(response.visitorContactInfo.email).toBe('test@gmail.com');
+  });
+});

@@ -15,6 +15,14 @@ const LocationSchema = mongoose.Schema(
   { _id: false },
 );
 
+const VisitorContactSchema = mongoose.Schema(
+  {
+    email: String,
+    phone: String,
+  },
+  { _id: false },
+);
+
 const CustomerSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -27,9 +35,14 @@ const CustomerSchema = mongoose.Schema({
   isUser: Boolean,
   name: String,
   createdAt: Date,
-  location: LocationSchema,
   messengerData: Object,
   companyIds: [String],
+
+  location: LocationSchema,
+
+  // if customer is not a user then we will contact with this visitor using
+  // this information
+  visitorContactInfo: VisitorContactSchema,
 });
 
 class Customer {
@@ -39,20 +52,20 @@ class Customer {
    * @param  {String} email
    * @return {Promise} Existing customer object
    */
-  static getCustomer({ integrationId, email, phone, cachedCustomerId }) {
+  static getCustomer({ email, phone, cachedCustomerId }) {
     if (email) {
-      return Customers.findOne({ email, integrationId });
+      return this.findOne({ email });
     }
 
     if (phone) {
-      return Customers.findOne({ phone, integrationId });
+      return this.findOne({ phone });
     }
 
     if (cachedCustomerId) {
-      return Customers.findOne({ _id: cachedCustomerId });
+      return this.findOne({ _id: cachedCustomerId });
     }
 
-    return Promise.resolve(null);
+    return null;
   }
 
   /**
@@ -120,9 +133,7 @@ class Customer {
    * @return {Promise} Existing or newly created customer object
    */
   static async getOrCreateCustomer(doc, browserInfo) {
-    const { integrationId, email } = doc;
-
-    const customer = await this.getCustomer({ integrationId, email });
+    const customer = await this.getCustomer(doc);
 
     if (customer) {
       return customer;
@@ -189,6 +200,22 @@ class Customer {
 
     // updated customer
     return this.findOne({ _id });
+  }
+
+  /*
+   * If customer is a visitor then we will contact with this customer using
+   * this information later
+   */
+  static async saveVisitorContactInfo({ customerId, type, value }) {
+    if (type === 'email') {
+      await this.update({ _id: customerId }, { 'visitorContactInfo.email': value });
+    }
+
+    if (type === 'phone') {
+      await this.update({ _id: customerId }, { 'visitorContactInfo.phone': value });
+    }
+
+    return this.findOne({ _id: customerId });
   }
 }
 

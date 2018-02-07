@@ -4,39 +4,12 @@
 import faker from 'faker';
 import Random from 'meteor-random';
 import { connect, disconnect } from '../db/connection';
-import {
-  brandFactory,
-  integrationFactory,
-  customerFactory,
-  conversationFactory,
-} from '../db/factories';
-import { Integrations, Customers, Conversations, Messages } from '../db/models';
+import { customerFactory } from '../db/factories';
+import { Customers } from '../db/models';
 
 beforeAll(() => connect());
 
 afterAll(() => disconnect());
-
-describe('Integrations', () => {
-  let _brand;
-  let _integration;
-
-  beforeEach(async () => {
-    // Creating test brand and integration
-    _brand = await brandFactory();
-    _integration = await integrationFactory({ brandId: _brand._id, kind: 'messenger' });
-  });
-
-  afterEach(() => {
-    // Clearing test data
-    return Customers.remove({});
-  });
-
-  test('getIntegration() must return an integration', async () => {
-    const integration = await Integrations.getIntegration(_brand.code, _integration.kind);
-    expect(integration).toBeDefined();
-    expect(integration.kind).toBe(_integration.kind);
-  });
-});
 
 /**
  * Customer related tests
@@ -79,7 +52,6 @@ describe('Customers', () => {
 
   test('getCustomer() must return an existing customer', async () => {
     const customer = await Customers.getCustomer({
-      integrationId: _customer.integrationId,
       email: _customer.email,
     });
 
@@ -158,101 +130,25 @@ describe('Customers', () => {
     // check company in companyIds
     expect(customer.companyIds.length).toBe(2);
   });
-});
 
-/**
- * Conversations related tests
- */
-describe('Conversations', () => {
-  let _conversation;
-
-  beforeEach(async () => {
-    // Creating test conversation
-    _conversation = await conversationFactory();
-  });
-
-  afterEach(() => {
-    // Clearing test data
-    return Conversations.remove({}).then(() => Messages.remove({}));
-  });
-
-  test('createConversation() must return a new conversation', async () => {
-    const now = new Date();
-
-    const conversation = await Conversations.createConversation({
-      integrationId: _conversation.integrationId,
-      customerId: _conversation.customerId,
-      content: _conversation.content,
+  test('saveVisitorContactInfo()', async () => {
+    // email ==========
+    let customer = await Customers.saveVisitorContactInfo({
+      customerId: _customer._id,
+      type: 'email',
+      value: 'test@gmail.com',
     });
 
-    expect(conversation).toBeDefined();
-    expect(conversation.integrationId).toBe(_conversation.integrationId);
-    expect(conversation.customerId).toBe(_conversation.customerId);
-    expect(conversation.content).toBe(_conversation.content);
-    expect(conversation.createdAt >= now).toBe(true);
-    expect(conversation.messageCount).toBe(0);
-    expect(conversation.status).toBe(Conversations.getConversationStatuses().NEW);
-    expect(conversation.number).toBe(2);
-  });
+    expect(customer.visitorContactInfo.email).toBe('test@gmail.com');
 
-  test('getOrCreateConversation() must return an existing conversation', async () => {
-    const now = new Date();
-
-    const conversation = await Conversations.getOrCreateConversation({
-      conversationId: _conversation._id,
-      integrationId: _conversation.integrationId,
-      customerId: _conversation.customerId,
-      message: _conversation.content,
+    // phone ===============
+    customer = await Customers.saveVisitorContactInfo({
+      customerId: _customer._id,
+      type: 'phone',
+      value: '985435353',
     });
 
-    expect(conversation).toBeDefined();
-    expect(conversation._id).toBe(_conversation._id);
-    expect(conversation.createdAt < now).toBe(true);
-    expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
-    expect(conversation.readUserIds.length).toBe(0);
-  });
-
-  test('getOrCreateConversation() must return a new conversation', async () => {
-    const now = new Date();
-
-    const conversation = await Conversations.getOrCreateConversation({
-      integrationId: _conversation.integrationId,
-      customerId: _conversation.customerId,
-      message: _conversation.content,
-    });
-
-    expect(conversation).toBeDefined();
-    expect(conversation._id).not.toBe(_conversation._id);
-    expect(conversation.createdAt >= now).toBe(true);
-    expect(conversation.status).toBe(Conversations.getConversationStatuses().NEW);
-    expect(conversation.messageCount).toBe(0);
-    expect(conversation.content).toBe(_conversation.content);
-    expect(conversation.readUserIds.length).toBe(0);
-    expect(conversation.number).toBe(2);
-  });
-
-  test('createMessage() must return a new message', async () => {
-    const now = new Date();
-
-    const _message = {
-      conversationId: _conversation._id,
-      customerId: Random.id(),
-      content: faker.lorem.sentence(),
-    };
-
-    const message = await Messages.createMessage(_message);
-
-    const updatedConversation = await Conversations.findOne({
-      _id: _message.conversationId,
-    });
-
-    expect(updatedConversation.updatedAt).toEqual(expect.any(Date));
-
-    expect(message).toBeDefined();
-    expect(message._id).toBeDefined();
-    expect(message.createdAt >= now).toBeTruthy();
-    expect(message.userId).toBeUndefined();
-    expect(message.isCustomerRead).toBeUndefined();
-    expect(message.internal).toBeFalsy();
+    // check company in companyIds
+    expect(customer.visitorContactInfo.phone).toBe('985435353');
   });
 });

@@ -25,7 +25,6 @@ export default {
    * when connection established
    * @return {Promise}
    */
-
   async messengerConnect(root, args) {
     const {
       brandCode,
@@ -48,7 +47,6 @@ export default {
 
     let customer = await Customers.getCustomer({
       cachedCustomerId,
-      integrationId: integration._id,
       email,
       phone,
     });
@@ -177,13 +175,7 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(root, { customerId, type, value }) {
-    if (type === 'email') {
-      return Customers.update({ _id: customerId }, { email: value });
-    }
-
-    if (type === 'phone') {
-      return Customers.update({ _id: customerId }, { phone: value });
-    }
+  saveCustomerGetNotified(root, args) {
+    return Customers.saveVisitorContactInfo(args);
   },
 };
