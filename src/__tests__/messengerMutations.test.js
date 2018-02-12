@@ -51,9 +51,17 @@ describe('messenger connect', () => {
     const email = faker.internet.email();
     const now = new Date();
 
+    const browserInfo = {
+      url: 'localhost',
+      hostname: 'localhost.com',
+      language: 'en',
+      userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
+    };
+
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email, companyData: { name: 'company' } },
+      { brandCode: _brand.code, email, companyData: { name: 'company' }, browserInfo },
       {},
     );
 
@@ -67,6 +75,9 @@ describe('messenger connect', () => {
     expect(customer.createdAt >= now).toBeTruthy();
     expect(customer.companyIds.length).toBe(1);
     expect(customer.messengerData.sessionCount).toBe(1);
+    expect(customer.location.hostname).toBe(browserInfo.hostname);
+    expect(customer.location.language).toBe(browserInfo.language);
+    expect(customer.location.userAgent).toBe(browserInfo.userAgent);
   });
 
   test('updates existing customer', async () => {
@@ -74,7 +85,17 @@ describe('messenger connect', () => {
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email: _customer.email, name: 'name', isUser: true },
+      {
+        brandCode: _brand.code,
+        email: _customer.email,
+        name: 'name',
+        phone: '96221050',
+        isUser: true,
+        // customData
+        data: {
+          plan: 1,
+        },
+      },
       {},
     );
 
@@ -88,9 +109,11 @@ describe('messenger connect', () => {
     expect(customer.createdAt < now).toBeTruthy();
     expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
 
-    // name, isUser must be update
+    // must be updated
     expect(customer.name).toBe('name');
+    expect(customer.phone).toBe('96221050');
     expect(customer.isUser).toBeTruthy();
+    expect(customer.messengerData.customData.plan).toBe(1);
   });
 });
 
@@ -170,5 +193,33 @@ describe('readConversationMessages()', async () => {
     );
 
     expect(response.nModified).toBe(2);
+  });
+});
+
+describe('common', async () => {
+  let _customer;
+
+  beforeEach(async () => {
+    // Creating test data
+    _customer = await customerFactory();
+  });
+
+  afterEach(async () => {
+    // Clearing test data
+    await Customers.remove({});
+  });
+
+  test('saveCustomerGetNotified', async () => {
+    const response = await messengerMutations.saveCustomerGetNotified(
+      {},
+      {
+        customerId: _customer._id,
+        type: 'email',
+        value: 'test@gmail.com',
+      },
+      {},
+    );
+
+    expect(response.visitorContactInfo.email).toBe('test@gmail.com');
   });
 });

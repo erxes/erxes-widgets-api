@@ -177,7 +177,11 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
-    endConversation(brandCode: String!, data: JSON): EndConversationResponse
+    endConversation(
+      brandCode: String!,
+      browserInfo: JSON!,
+      data: JSON
+    ): EndConversationResponse
 
     messengerConnect(
       brandCode: String!,
@@ -186,9 +190,9 @@ export const mutations = `
       phone: String,
       isUser: Boolean,
 
+      browserInfo: JSON!,
       companyData: JSON,
       data: JSON,
-      browserInfo: JSON,
 
       cachedCustomerId: String
     ): MessengerConnectResponse
@@ -210,6 +214,7 @@ export const mutations = `
       integrationId: String!,
       formId: String!,
       submissions: [FieldValueInput]
+      browserInfo: JSON!,
     ): SaveFormResponse
 
     sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String

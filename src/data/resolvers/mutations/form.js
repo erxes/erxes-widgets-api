@@ -9,7 +9,7 @@ import {
   Fields,
 } from '../../../db/models';
 import { sendEmail } from '../utils/email';
-import { mutateAppApi, createCustomer } from '../../../utils';
+import { mutateAppApi } from '../../../utils';
 
 export const validate = async (formId, submissions) => {
   const fields = await Fields.find({ contentTypeId: formId });
@@ -64,25 +64,8 @@ export const validate = async (formId, submissions) => {
   return errors;
 };
 
-export const getOrCreateCustomer = async (integrationId, email, name, remoteAddress) => {
-  const customer = await Customers.getCustomer({ integrationId, email });
-
-  if (!email) {
-    return null;
-  }
-
-  // customer found
-  if (customer) {
-    return customer._id;
-  }
-
-  // create customer
-  const newCustomer = await createCustomer({ integrationId, email, name }, {}, remoteAddress);
-
-  return newCustomer._id;
-};
-
-export const saveValues = async ({ integrationId, submissions, formId }, remoteAddress) => {
+export const saveValues = async (args, browserInfo) => {
+  const { integrationId, submissions, formId } = args;
   const form = await Forms.findOne({ _id: formId });
   const content = form.title;
 
@@ -105,17 +88,19 @@ export const saveValues = async ({ integrationId, submissions, formId }, remoteA
   });
 
   // get or create customer
-  const customerId = await getOrCreateCustomer(
-    integrationId,
-    email,
-    `${lastName} ${firstName}`,
-    remoteAddress,
+  const customer = await Customers.getOrCreateCustomer(
+    {
+      integrationId,
+      email,
+      name: `${lastName} ${firstName}`,
+    },
+    browserInfo,
   );
 
   // create conversation
   const conversationId = await Conversations.createConversation({
     integrationId,
-    customerId,
+    customerId: customer._id,
     content,
   });
 
@@ -153,8 +138,8 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(root, args, { remoteAddress }) {
-    const { formId, submissions } = args;
+  async saveForm(root, args) {
+    const { formId, submissions, browserInfo } = args;
 
     const errors = await validate(formId, submissions);
 
@@ -162,7 +147,7 @@ export default {
       return { status: 'error', errors };
     }
 
-    const message = await saveValues(args, remoteAddress);
+    const message = await saveValues(args, browserInfo);
 
     // notify app api
     mutateAppApi(`

@@ -1,5 +1,4 @@
 import { Users, Integrations, EngageMessages, Conversations, Messages } from '../../../db/models';
-import { getLocationInfo } from '../../../utils';
 
 /*
  * replaces customer & user infos in given content
@@ -24,8 +23,8 @@ export const replaceKeys = ({ content, customer, user }) => {
  * checks individual rule
  * @return boolean
  */
-export const checkRule = ({ rule, browserInfo, numberOfVisits, city, country }) => {
-  const { language, url } = browserInfo;
+export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
+  const { language, url, city, country } = browserInfo;
   const { kind, condition } = rule;
   const ruleValue = rule.value;
 
@@ -99,15 +98,12 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits, city, country }) 
  * satisfying given engage message's rules
  * @return Promise
  */
-export const checkRules = async ({ rules, browserInfo, numberOfVisits, remoteAddress }) => {
-  // get country, city info
-  const { city, country } = await getLocationInfo(remoteAddress);
-
+export const checkRules = async ({ rules, browserInfo, numberOfVisits }) => {
   let passedAllRules = true;
 
   rules.forEach(rule => {
     // check individual rule
-    if (!checkRule({ rule, browserInfo, city, country, numberOfVisits })) {
+    if (!checkRule({ rule, browserInfo, numberOfVisits })) {
       passedAllRules = false;
       return;
     }
@@ -156,7 +152,7 @@ export const createConversation = async ({ customer, integration, user, engageDa
  * when visitor messenger connect * @return Promise
  */
 export const createEngageVisitorMessages = async params => {
-  const { brandCode, customer, browserInfo, remoteAddress } = params;
+  const { brandCode, customer, browserInfo } = params;
 
   const { brand, integration } = await Integrations.getIntegration(brandCode, 'messenger', true);
 
@@ -184,7 +180,6 @@ export const createEngageVisitorMessages = async params => {
     const isPassedAllRules = await checkRules({
       rules: message.messenger.rules,
       browserInfo,
-      remoteAddress,
       numberOfVisits: customer.messengerData.sessionCount || 0,
     });
 
