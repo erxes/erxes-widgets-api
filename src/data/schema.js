@@ -149,6 +149,7 @@ export const types = `
     title: String
     description: String
     categories: [KnowledgeBaseCategory]
+    color: String
   }
 
   type KnowledgeBaseLoader {
