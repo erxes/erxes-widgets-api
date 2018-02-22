@@ -110,7 +110,7 @@ describe('messenger connect', () => {
     expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
 
     // must be updated
-    expect(customer.name).toBe('name');
+    expect(customer.firstName).toBe('name');
     expect(customer.phone).toBe('96221050');
     expect(customer.isUser).toBeTruthy();
     expect(customer.messengerData.customData.plan).toBe(1);

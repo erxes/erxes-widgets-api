@@ -92,7 +92,8 @@ export const saveValues = async (args, browserInfo) => {
     {
       integrationId,
       email,
-      name: `${lastName} ${firstName}`,
+      firstName,
+      lastName,
     },
     browserInfo,
   );

@@ -59,7 +59,7 @@ export default {
       // update fields
       await Customers.updateMessengerCustomer(
         customer._id,
-        { phone, isUser, name },
+        { phone, isUser, firstName: name },
         data,
         browserInfo,
       );
@@ -72,7 +72,7 @@ export default {
           email,
           phone,
           isUser,
-          name,
+          firstName: name,
         },
         data,
         browserInfo,
