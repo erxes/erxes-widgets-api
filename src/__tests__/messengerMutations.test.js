@@ -124,7 +124,7 @@ describe('insertMessage()', () => {
   beforeEach(async () => {
     // Creating test data
     _integration = await integrationFactory({ brandId: Random.id(), kind: 'messenger' });
-    _customer = customerFactory({ integrationId: _integration._id });
+    _customer = await customerFactory({ integrationId: _integration._id });
   });
 
   afterEach(async () => {
@@ -133,7 +133,7 @@ describe('insertMessage()', () => {
     await Customers.remove({});
   });
 
-  test('returns a new message', async () => {
+  test('successfull', async () => {
     const now = new Date();
 
     const message = await messengerMutations.insertMessage(
@@ -146,25 +146,19 @@ describe('insertMessage()', () => {
       {},
     );
 
+    // check message ==========
     expect(message).toBeDefined();
     expect(message.createdAt >= now).toBeTruthy();
-  });
 
-  test('updates conversation', async () => {
-    const message = await messengerMutations.insertMessage(
-      {},
-      {
-        integrationId: _integration._id,
-        customerId: _customer._id,
-        message: faker.lorem.sentence(),
-      },
-      {},
-    );
-
+    // check conversation =========
     const conversation = await Conversations.findById(message.conversationId);
 
     expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
     expect(conversation.readUserIds.length).toBe(0);
+
+    // check customer =========
+    const customer = await Customers.findOne({ _id: _customer._id });
+    expect(customer.messengerData.isActive).toBeTruthy();
   });
 });
 

@@ -142,6 +142,9 @@ export default {
       },
     );
 
+    // mark customer as active
+    await Customers.markCustomerAsActive(customerId);
+
     // notify app api
     mutateAppApi(`
       mutation {

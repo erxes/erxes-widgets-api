@@ -98,13 +98,18 @@ describe('Customers', () => {
     expect(customer.createdAt).toBeDefined();
   });
 
-  test('markCustomerAsNotActive() must return true', async () => {
+  test('active state', async () => {
+    // inactive
     const now = new Date();
-    const customer = await Customers.markCustomerAsNotActive(_customer._id);
+    let customer = await Customers.markCustomerAsNotActive(_customer._id);
 
     expect(customer).toBeDefined();
     expect(customer.messengerData.isActive).toBeFalsy();
     expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+
+    // active
+    customer = await Customers.markCustomerAsActive(_customer._id);
+    expect(customer.messengerData.isActive).toBeTruthy();
   });
 
   test('updateMessengerSession()', async () => {

@@ -144,21 +144,33 @@ class Customer {
   }
 
   /**
+   * Mark customer as active
+   * @param  {String} customerId
+   * @return {Promise} Updated customer
+   */
+  static async markCustomerAsActive(customerId) {
+    await this.update({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
+
+    return this.findOne({ _id: customerId });
+  }
+
+  /**
    * Mark customer as inactive
    * @param  {String} customerId
    * @return {Promise} Updated customer
    */
-  static markCustomerAsNotActive(customerId) {
-    return this.findByIdAndUpdate(
-      customerId,
+  static async markCustomerAsNotActive(customerId) {
+    await this.update(
+      { _id: customerId },
       {
         $set: {
           'messengerData.isActive': false,
           'messengerData.lastSeenAt': new Date(),
         },
       },
-      { new: true },
     );
+
+    return this.findOne({ _id: customerId });
   }
 
   /*
