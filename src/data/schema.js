@@ -96,6 +96,7 @@ export const types = `
   type MessengerConnectResponse {
     integrationId: String
     uiOptions: JSON
+    languageCode: String
     messengerData: JSON
     customerId: String
   }
@@ -107,6 +108,7 @@ export const types = `
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
+    integrationNameLanguageCode: String
     formId: String!
     formData: JSON!
   }
