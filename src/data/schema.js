@@ -44,6 +44,7 @@ export const types = `
 
   type Integration {
     _id: String!
+    languageCode: String
     uiOptions: JSON
     messengerData: JSON
   }
@@ -150,6 +151,7 @@ export const types = `
     description: String
     categories: [KnowledgeBaseCategory]
     color: String
+    languageCode: String
   }
 
   type KnowledgeBaseLoader {

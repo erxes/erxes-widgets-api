@@ -133,6 +133,7 @@ export default {
     return {
       integrationId: integ._id,
       integrationName: integ.name,
+      integrationLanguageCode: integ.languageCode,
       formId: integ.formId,
       formData: integ.formData,
     };

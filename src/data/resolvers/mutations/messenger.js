@@ -100,6 +100,7 @@ export default {
     return {
       integrationId: integration._id,
       uiOptions: integration.uiOptions,
+      languageCode: integration.languageCode,
       messengerData: integration.messengerData,
       customerId: customer._id,
     };
