@@ -108,7 +108,7 @@ export const types = `
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
-    integrationNameLanguageCode: String
+    languageCode: String
     formId: String!
     formData: JSON!
   }
