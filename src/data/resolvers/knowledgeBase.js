@@ -23,6 +23,7 @@ export const KnowledgeBaseCategory = {
       status: 'publish',
     });
   },
+
   async authors(category) {
     const articles = await KnowledgeBaseArticlesModel.find(
       {
@@ -38,6 +39,7 @@ export const KnowledgeBaseCategory = {
       _id: { $in: authorIds },
     });
   },
+
   numOfArticles(category) {
     return KnowledgeBaseArticlesModel.find({
       _id: { $in: category.articleIds },

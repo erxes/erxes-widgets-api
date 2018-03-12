@@ -44,6 +44,7 @@ export const types = `
 
   type Integration {
     _id: String!
+    languageCode: String
     uiOptions: JSON
     messengerData: JSON
   }
@@ -95,6 +96,7 @@ export const types = `
   type MessengerConnectResponse {
     integrationId: String
     uiOptions: JSON
+    languageCode: String
     messengerData: JSON
     customerId: String
   }
@@ -106,6 +108,7 @@ export const types = `
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
+    languageCode: String
     formId: String!
     formData: JSON!
   }
@@ -150,6 +153,7 @@ export const types = `
     description: String
     categories: [KnowledgeBaseCategory]
     color: String
+    languageCode: String
   }
 
   type KnowledgeBaseLoader {
