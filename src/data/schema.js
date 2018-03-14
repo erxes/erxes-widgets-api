@@ -183,29 +183,30 @@ export const queries = `
 export const mutations = `
   type Mutation {
     endConversation(
-      brandCode: String!,
-      browserInfo: JSON!,
+      customerId: String
+      brandCode: String!
+      browserInfo: JSON!
       data: JSON
     ): EndConversationResponse
 
     messengerConnect(
-      brandCode: String!,
-      name: String,
-      email: String,
-      phone: String,
-      isUser: Boolean,
+      brandCode: String!
+      name: String
+      email: String
+      phone: String
+      isUser: Boolean
 
-      browserInfo: JSON!,
-      companyData: JSON,
-      data: JSON,
+      browserInfo: JSON!
+      companyData: JSON
+      data: JSON
 
       cachedCustomerId: String
     ): MessengerConnectResponse
 
     insertMessage(
-      integrationId: String!,
-      customerId: String!,
-      conversationId: String,
+      integrationId: String!
+      customerId: String!
+      conversationId: String
       message: String,
       attachments: [JSON]
     ): ConversationMessage
@@ -216,12 +217,17 @@ export const mutations = `
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 
     saveForm(
-      integrationId: String!,
-      formId: String!,
+      integrationId: String!
+      formId: String!
       submissions: [FieldValueInput]
-      browserInfo: JSON!,
+      browserInfo: JSON!
     ): SaveFormResponse
 
-    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
+    sendEmail(
+      toEmails: [String]
+      fromEmail: String
+      title: String
+      content: String
+    ): String
   }
 `;

@@ -6,7 +6,10 @@ export default {
   /*
    * End conversation
    */
-  async endConversation(root, { brandCode, data, browserInfo }) {
+  async endConversation(root, { customerId, brandCode, data, browserInfo }) {
+    // mark old customer as inactive
+    await Customers.markCustomerAsNotActive(customerId);
+
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
