@@ -54,27 +54,29 @@ class Customer {
    * @param  {Object} doc - Customer basic info fields
    * @return {Promise} Updated customer fields
    */
-  static assignFields(customData, doc) {
+  static async assignFields(customData, doc) {
     // Setting customData fields to customer fields
-    if (customData.first_name) {
-      doc.firstName = customData.first_name;
-      delete customData.first_name;
-    }
+    Object.keys(customData).forEach(key => {
+      switch (false) {
+        case /^((?!first).)*$/.test(key):
+          doc.firstName = customData[key];
+          delete customData[key];
+          break;
 
-    if (customData.last_name) {
-      doc.lastName = customData.last_name;
-      delete customData.last_name;
-    }
+        case /^((?!last).)*$/.test(key):
+          doc.lastName = customData[key];
+          delete customData[key];
+          break;
 
-    if (customData.phone) {
-      doc.phone = customData.phone;
-      delete customData.phone;
-    }
+        case /^((?!bio).)*$/.test(key):
+          doc.description = customData[key];
+          delete customData[key];
+          break;
 
-    if (customData.bio) {
-      doc.description = customData.bio;
-      delete customData.bio;
-    }
+        default:
+          break;
+      }
+    });
 
     return doc;
   }
@@ -140,9 +142,11 @@ class Customer {
       customData: customData,
     };
 
-    if (customData) await this.assignFields(customData, doc);
+    let AssignedDoc = doc;
 
-    return this.createCustomer(doc, browserInfo);
+    if (customData) AssignedDoc = await this.assignFields(customData, doc);
+
+    return this.createCustomer(AssignedDoc, browserInfo);
   }
 
   /**
@@ -154,12 +158,14 @@ class Customer {
    * @return {Promise} - updated customer
    */
   static async updateMessengerCustomer(_id, doc, customData, browserInfo) {
-    if (customData) await this.assignFields(customData, doc);
-
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
 
-    await this.findByIdAndUpdate(_id, { $set: doc });
+    let AssignedDoc = doc;
+
+    if (customData) AssignedDoc = await this.assignFields(customData, doc);
+
+    await this.findByIdAndUpdate(_id, { $set: AssignedDoc });
 
     return this.findOne({ _id });
   }
