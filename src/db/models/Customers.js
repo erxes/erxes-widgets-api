@@ -50,6 +50,37 @@ const CustomerSchema = mongoose.Schema({
 class Customer {
   /**
    * Get customer
+   * @param  {Object} customData - Customer customData from widget
+   * @param  {Object} doc - Customer basic info fields
+   * @return {Promise} Updated customer fields
+   */
+  static assignFields(customData, doc) {
+    // Setting customData fields to customer fields
+    if (customData.first_name) {
+      doc.firstName = customData.first_name;
+      delete customData.first_name;
+    }
+
+    if (customData.last_name) {
+      doc.lastName = customData.last_name;
+      delete customData.last_name;
+    }
+
+    if (customData.phone) {
+      doc.phone = customData.phone;
+      delete customData.phone;
+    }
+
+    if (customData.bio) {
+      doc.description = customData.bio;
+      delete customData.bio;
+    }
+
+    return doc;
+  }
+
+  /**
+   * Get customer
    * @param  {String} integrationId
    * @param  {String} email
    * @return {Promise} Existing customer object
@@ -109,28 +140,7 @@ class Customer {
       customData: customData,
     };
 
-    if (customData) {
-      // Setting customData fields to customer fields
-      if (customData.first_name) {
-        doc.firstName = customData.first_name;
-        delete customData.first_name;
-      }
-
-      if (customData.last_name) {
-        doc.lastName = customData.last_name;
-        delete customData.last_name;
-      }
-
-      if (customData.phone) {
-        doc.phone = customData.phone;
-        delete customData.phone;
-      }
-
-      if (customData.bio) {
-        doc.description = customData.bio;
-        delete customData.bio;
-      }
-    }
+    if (customData) await this.assignFields(customData, doc);
 
     return this.createCustomer(doc, browserInfo);
   }
@@ -144,28 +154,7 @@ class Customer {
    * @return {Promise} - updated customer
    */
   static async updateMessengerCustomer(_id, doc, customData, browserInfo) {
-    if (customData) {
-      // Setting customData fields to customer fields
-      if (customData.first_name) {
-        doc.firstName = customData.first_name;
-        delete customData.first_name;
-      }
-
-      if (customData.last_name) {
-        doc.lastName = customData.last_name;
-        delete customData.last_name;
-      }
-
-      if (customData.phone) {
-        doc.phone = customData.phone;
-        delete customData.phone;
-      }
-
-      if (customData.bio) {
-        doc.description = customData.bio;
-        delete customData.bio;
-      }
-    }
+    if (customData) await this.assignFields(customData, doc);
 
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
