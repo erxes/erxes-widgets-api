@@ -140,11 +140,11 @@ class Customer {
       customData: customData,
     };
 
-    let AssignedDoc = doc;
+    let assignedDoc = doc;
 
-    if (customData) AssignedDoc = await this.assignFields(customData, doc);
+    if (customData) assignedDoc = await this.assignFields(customData, doc);
 
-    return this.createCustomer(AssignedDoc, browserInfo);
+    return this.createCustomer(assignedDoc, browserInfo);
   }
 
   /**
@@ -159,11 +159,11 @@ class Customer {
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
 
-    let AssignedDoc = doc;
+    let assignedDoc = doc;
 
-    if (customData) AssignedDoc = await this.assignFields(customData, doc);
+    if (customData) assignedDoc = await this.assignFields(customData, doc);
 
-    await this.findByIdAndUpdate(_id, { $set: AssignedDoc });
+    await this.findByIdAndUpdate(_id, { $set: assignedDoc });
 
     return this.findOne({ _id });
   }
