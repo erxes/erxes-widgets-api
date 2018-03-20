@@ -54,7 +54,7 @@ class Customer {
    * @param  {Object} doc - Customer basic info fields
    * @return {Promise} Updated customer fields
    */
-  static async assignFields(customData, doc) {
+  static assignFields(customData, doc) {
     // Setting customData fields to customer fields
     Object.keys(customData).forEach(key => {
       if (key === 'first_name' || key === 'firstName') {
@@ -140,11 +140,9 @@ class Customer {
       customData: customData,
     };
 
-    let assignedDoc = doc;
+    if (customData) this.assignFields(customData, doc);
 
-    if (customData) assignedDoc = await this.assignFields(customData, doc);
-
-    return this.createCustomer(assignedDoc, browserInfo);
+    return this.createCustomer(doc, browserInfo);
   }
 
   /**
@@ -159,11 +157,9 @@ class Customer {
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
 
-    let assignedDoc = doc;
+    if (customData) this.assignFields(customData, doc);
 
-    if (customData) assignedDoc = await this.assignFields(customData, doc);
-
-    await this.findByIdAndUpdate(_id, { $set: assignedDoc });
+    await this.findByIdAndUpdate(_id, { $set: doc });
 
     return this.findOne({ _id });
   }
