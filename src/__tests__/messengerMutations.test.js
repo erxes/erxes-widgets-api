@@ -88,12 +88,12 @@ describe('messenger connect', () => {
       {
         brandCode: _brand.code,
         email: _customer.email,
-        name: 'name',
         phone: '96221050',
         isUser: true,
         // customData
         data: {
           plan: 1,
+          first_name: 'name',
         },
       },
       {},

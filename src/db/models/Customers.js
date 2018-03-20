@@ -59,14 +59,20 @@ class Customer {
     Object.keys(customData).forEach(key => {
       if (key === 'first_name' || key === 'firstName') {
         doc.firstName = customData[key];
+
+        delete customData[key];
       }
 
       if (key === 'last_name' || key === 'lastName') {
         doc.lastName = customData[key];
+
+        delete customData[key];
       }
 
       if (key === 'bio' || key === 'description') {
         doc.description = customData[key];
+
+        delete customData[key];
       }
     });
 

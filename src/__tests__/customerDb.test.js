@@ -30,15 +30,13 @@ describe('Customers', () => {
   test('createMessengerCustomer() must return a new customer', async () => {
     const now = new Date();
 
-    const first_name = 'test firstname';
-    const last_name = 'test lastname';
-    const phone = 'test phone';
+    const first_name = 'test first name';
+    const last_name = 'test last name';
     const bio = 'test BIO 1231321312';
 
     const customData = {
       first_name,
       last_name,
-      phone,
       bio,
       created_at: '1321313',
     };
@@ -65,11 +63,9 @@ describe('Customers', () => {
 
     expect(customer.firstName).toBe(first_name);
     expect(customer.lastName).toBe(last_name);
-    expect(customer.phone).toBe(phone);
     expect(customer.description).toBe(bio);
     expect(customer.messengerData.customData.first_name).toBeUndefined();
     expect(customer.messengerData.customData.last_name).toBeUndefined();
-    expect(customer.messengerData.customData.phone).toBeUndefined();
     expect(customer.messengerData.customData.bio).toBeUndefined();
     expect(customer.messengerData.customData.created_at).toBe(customData.created_at);
   });
