@@ -140,7 +140,7 @@ export default {
     );
 
     // mark customer as active
-    await Customers.markCustomerAsActive(customerId);
+    await Customers.markCustomerAsActive(conversation.customerId);
 
     // notify app api
     mutateAppApi(`
