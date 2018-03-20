@@ -57,24 +57,16 @@ class Customer {
   static async assignFields(customData, doc) {
     // Setting customData fields to customer fields
     Object.keys(customData).forEach(key => {
-      switch (false) {
-        case /^((?!first).)*$/.test(key):
-          doc.firstName = customData[key];
-          delete customData[key];
-          break;
+      if (key === 'first_name' || 'firstName') {
+        doc.firstName = customData[key];
+      }
 
-        case /^((?!last).)*$/.test(key):
-          doc.lastName = customData[key];
-          delete customData[key];
-          break;
+      if (key === 'last_name' || 'lastName') {
+        doc.lastName = customData[key];
+      }
 
-        case /^((?!bio).)*$/.test(key):
-          doc.description = customData[key];
-          delete customData[key];
-          break;
-
-        default:
-          break;
+      if (key === 'bio' || 'description') {
+        doc.description = customData[key];
       }
     });
 

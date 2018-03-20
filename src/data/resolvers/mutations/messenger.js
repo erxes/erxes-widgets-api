@@ -31,7 +31,6 @@ export default {
   async messengerConnect(root, args) {
     const {
       brandCode,
-      name,
       email,
       phone,
       isUser,
@@ -60,12 +59,7 @@ export default {
       customer = await Customers.updateMessengerSession(customer._id);
 
       // update fields
-      await Customers.updateMessengerCustomer(
-        customer._id,
-        { phone, isUser, firstName: name },
-        data,
-        browserInfo,
-      );
+      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data, browserInfo);
 
       // create new customer
     } else {
@@ -75,7 +69,6 @@ export default {
           email,
           phone,
           isUser,
-          firstName: name,
         },
         data,
         browserInfo,
