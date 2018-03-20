@@ -38,6 +38,7 @@ const CustomerSchema = mongoose.Schema({
   createdAt: Date,
   messengerData: Object,
   companyIds: [String],
+  description: String,
 
   location: LocationSchema,
 
@@ -47,6 +48,37 @@ const CustomerSchema = mongoose.Schema({
 });
 
 class Customer {
+  /**
+   * Get customer
+   * @param  {Object} customData - Customer customData from widget
+   * @param  {Object} doc - Customer basic info fields
+   * @return {Promise} Updated customer fields
+   */
+  static assignFields(customData, doc) {
+    // Setting customData fields to customer fields
+    Object.keys(customData).forEach(key => {
+      if (key === 'first_name' || key === 'firstName') {
+        doc.firstName = customData[key];
+
+        delete customData[key];
+      }
+
+      if (key === 'last_name' || key === 'lastName') {
+        doc.lastName = customData[key];
+
+        delete customData[key];
+      }
+
+      if (key === 'bio' || key === 'description') {
+        doc.description = customData[key];
+
+        delete customData[key];
+      }
+    });
+
+    return doc;
+  }
+
   /**
    * Get customer
    * @param  {String} integrationId
@@ -108,6 +140,8 @@ class Customer {
       customData: customData,
     };
 
+    this.assignFields(customData || {}, doc);
+
     return this.createCustomer(doc, browserInfo);
   }
 
@@ -122,6 +156,8 @@ class Customer {
   static async updateMessengerCustomer(_id, doc, customData, browserInfo) {
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
+
+    this.assignFields(customData || {}, doc);
 
     await this.findByIdAndUpdate(_id, { $set: doc });
 

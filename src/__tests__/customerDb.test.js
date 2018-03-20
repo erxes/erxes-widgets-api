@@ -30,6 +30,17 @@ describe('Customers', () => {
   test('createMessengerCustomer() must return a new customer', async () => {
     const now = new Date();
 
+    const first_name = 'test first name';
+    const last_name = 'test last name';
+    const bio = 'test BIO 1231321312';
+
+    const customData = {
+      first_name,
+      last_name,
+      bio,
+      created_at: '1321313',
+    };
+
     const customer = await Customers.createMessengerCustomer(
       {
         integrationId: _customer.integrationId,
@@ -37,6 +48,7 @@ describe('Customers', () => {
         isUser: _customer.isUser,
         name: _customer.name,
       },
+      customData,
       {},
     );
 
@@ -48,6 +60,14 @@ describe('Customers', () => {
     expect(customer.messengerData.isActive).toBe(true);
     expect(customer.messengerData.sessionCount).toBe(1);
     expect(customer.createdAt >= now).toBe(true);
+
+    expect(customer.firstName).toBe(first_name);
+    expect(customer.lastName).toBe(last_name);
+    expect(customer.description).toBe(bio);
+    expect(customer.messengerData.customData.first_name).toBeUndefined();
+    expect(customer.messengerData.customData.last_name).toBeUndefined();
+    expect(customer.messengerData.customData.bio).toBeUndefined();
+    expect(customer.messengerData.customData.created_at).toBe(customData.created_at);
   });
 
   test('getCustomer() must return an existing customer', async () => {

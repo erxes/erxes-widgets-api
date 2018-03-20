@@ -191,7 +191,6 @@ export const mutations = `
 
     messengerConnect(
       brandCode: String!
-      name: String
       email: String
       phone: String
       isUser: Boolean
