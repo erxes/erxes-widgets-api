@@ -140,7 +140,7 @@ class Customer {
       customData: customData,
     };
 
-    if (customData) this.assignFields(customData, doc);
+    this.assignFields(customData || {}, doc);
 
     return this.createCustomer(doc, browserInfo);
   }
@@ -157,7 +157,7 @@ class Customer {
     doc['messengerData.customData'] = customData;
     doc.location = browserInfo;
 
-    if (customData) this.assignFields(customData, doc);
+    this.assignFields(customData || {}, doc);
 
     await this.findByIdAndUpdate(_id, { $set: doc });
 
