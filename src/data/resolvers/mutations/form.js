@@ -129,6 +129,10 @@ export default {
       throw new Error('Integration not found');
     }
 
+    if (integ.formLoadType !== 'shoutbox') {
+      Forms.increaseViewCount(form._id);
+    }
+
     // return integration details
     return {
       integrationId: integ._id,
@@ -151,6 +155,9 @@ export default {
 
     const message = await saveValues(args, browserInfo);
 
+    // increasing form submitted count
+    await Forms.increaseContactsGathered(formId);
+
     // notify app api
     mutateAppApi(`
       mutation {
@@ -163,5 +170,9 @@ export default {
   // send email
   sendEmail(root, args) {
     sendEmail(args);
+  },
+
+  async increaseViewCount(root, { formId }) {
+    return await Forms.increaseViewCount(formId);
   },
 };

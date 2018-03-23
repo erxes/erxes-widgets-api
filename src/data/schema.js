@@ -228,5 +228,7 @@ export const mutations = `
       title: String
       content: String
     ): String
+
+    increaseViewCount(formId: String!): String
   }
 `;
