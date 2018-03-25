@@ -9,6 +9,8 @@ const FormSchema = mongoose.Schema({
   },
   title: String,
   code: String,
+  viewCount: Number,
+  contactsGathered: Number,
 });
 
 class Form {
