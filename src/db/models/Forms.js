@@ -9,6 +9,9 @@ const FormSchema = mongoose.Schema({
   },
   title: String,
   code: String,
+  buttonText: String,
+  themeColor: String,
+  featuredImage: String,
   viewCount: Number,
   contactsGathered: Number,
 });

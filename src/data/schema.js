@@ -90,6 +90,9 @@ export const types = `
 
   type Form {
     title: String
+    buttonText: String,
+    themeColor: String,
+    featuredImage: String,
     fields: [Field]
   }
 
