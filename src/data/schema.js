@@ -233,6 +233,6 @@ export const mutations = `
       content: String
     ): String
 
-    increaseViewCount(formId: String!): String
+    formIncreaseViewCount(formId: String!): String
   }
 `;

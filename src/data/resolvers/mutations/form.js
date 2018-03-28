@@ -172,7 +172,7 @@ export default {
     sendEmail(args);
   },
 
-  async increaseViewCount(root, { formId }) {
+  async formIncreaseViewCount(root, { formId }) {
     return await Forms.increaseViewCount(formId);
   },
 };
