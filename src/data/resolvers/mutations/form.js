@@ -130,7 +130,7 @@ export default {
     }
 
     if (integ.formLoadType !== 'shoutbox') {
-      Forms.increaseViewCount(form._id);
+      await Forms.increaseViewCount(form._id);
     }
 
     // return integration details
