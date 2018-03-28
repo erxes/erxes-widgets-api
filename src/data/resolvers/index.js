@@ -4,6 +4,7 @@ import Mutation from './mutations';
 import Conversation from './conversation';
 import ConversationMessage from './conversationMessage';
 import Field from './field';
+import Form from './form';
 import Engage from './engage';
 import { KnowledgeBaseArticle, KnowledgeBaseCategory, KnowledgeBaseTopic } from './knowledgeBase';
 
@@ -12,6 +13,7 @@ export default {
 
   Conversation,
   ConversationMessage,
+  Form,
   Field,
 
   EngageData: {
