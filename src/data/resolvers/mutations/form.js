@@ -129,7 +129,7 @@ export default {
       throw new Error('Integration not found');
     }
 
-    if (integ.formLoadType !== 'shoutbox') {
+    if (integ.formLoadType === 'embedded') {
       await Forms.increaseViewCount(form._id);
     }
 
