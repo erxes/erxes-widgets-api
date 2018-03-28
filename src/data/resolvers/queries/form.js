@@ -4,6 +4,7 @@ export default {
   form(root, { formId }) {
     return Forms.findOne({ _id: formId }).then(form => ({
       title: form.title,
+      description: form.description,
       buttonText: form.buttonText,
       featuredImage: form.featuredImage,
       themeColor: form.themeColor,

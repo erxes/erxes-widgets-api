@@ -8,6 +8,7 @@ const FormSchema = mongoose.Schema({
     default: () => Random.id(),
   },
   title: String,
+  description: String,
   code: String,
   buttonText: String,
   themeColor: String,
