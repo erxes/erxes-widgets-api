@@ -90,6 +90,10 @@ export const types = `
 
   type Form {
     title: String
+    description: String
+    buttonText: String
+    themeColor: String
+    featuredImage: String
     fields: [Field]
   }
 
@@ -110,6 +114,7 @@ export const types = `
     integrationName: String!
     languageCode: String
     formId: String!
+    uiOptions: JSON
     formData: JSON!
   }
 
@@ -228,5 +233,7 @@ export const mutations = `
       title: String
       content: String
     ): String
+
+    formIncreaseViewCount(formId: String!): String
   }
 `;

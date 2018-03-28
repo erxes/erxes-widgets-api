@@ -129,6 +129,10 @@ export default {
       throw new Error('Integration not found');
     }
 
+    if (integ.formLoadType === 'embedded') {
+      await Forms.increaseViewCount(form._id);
+    }
+
     // return integration details
     return {
       integrationId: integ._id,
@@ -136,6 +140,11 @@ export default {
       languageCode: integ.languageCode,
       formId: integ.formId,
       formData: integ.formData,
+      uiOptions: {
+        buttonText: form.buttonText,
+        themeColor: form.themeColor,
+        featuredImage: form.featuredImage,
+      },
     };
   },
 
@@ -151,6 +160,9 @@ export default {
 
     const message = await saveValues(args, browserInfo);
 
+    // increasing form submitted count
+    await Forms.increaseContactsGathered(formId);
+
     // notify app api
     mutateAppApi(`
       mutation {
@@ -163,5 +175,9 @@ export default {
   // send email
   sendEmail(root, args) {
     sendEmail(args);
+  },
+
+  async formIncreaseViewCount(root, { formId }) {
+    return await Forms.increaseViewCount(formId);
   },
 };
