@@ -114,6 +114,7 @@ export const types = `
     integrationName: String!
     languageCode: String
     formId: String!
+    uiOptions: JSON
     formData: JSON!
   }
 

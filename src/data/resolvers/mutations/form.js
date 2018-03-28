@@ -140,6 +140,11 @@ export default {
       languageCode: integ.languageCode,
       formId: integ.formId,
       formData: integ.formData,
+      uiOptions: {
+        buttonText: form.buttonText,
+        themeColor: form.themeColor,
+        featuredImage: form.featuredImage,
+      },
     };
   },
 
