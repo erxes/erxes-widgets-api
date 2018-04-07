@@ -141,9 +141,11 @@ export default {
       formId: integ.formId,
       formData: integ.formData,
       uiOptions: {
+        title: form.title,
+        description: form.description,
         buttonText: form.buttonText,
         themeColor: form.themeColor,
-        featuredImage: form.featuredImage,
+        callout: form.callout,
       },
     };
   },
