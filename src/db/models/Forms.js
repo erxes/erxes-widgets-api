@@ -1,6 +1,18 @@
 import mongoose from 'mongoose';
 import Random from 'meteor-random';
 
+// schema for form's callout component
+const CalloutSchema = mongoose.Schema(
+  {
+    title: String,
+    body: String,
+    buttonText: String,
+    featuredImage: String,
+    skip: Boolean,
+  },
+  { _id: false },
+);
+
 const FormSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -12,7 +24,7 @@ const FormSchema = mongoose.Schema({
   code: String,
   buttonText: String,
   themeColor: String,
-  featuredImage: String,
+  callout: CalloutSchema,
   viewCount: Number,
   contactsGathered: Number,
 });

@@ -93,7 +93,7 @@ export const types = `
     description: String
     buttonText: String
     themeColor: String
-    featuredImage: String
+    callout: JSON
     fields: [Field]
   }
 
