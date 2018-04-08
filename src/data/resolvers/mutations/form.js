@@ -139,8 +139,8 @@ export default {
       integrationName: integ.name,
       languageCode: integ.languageCode,
       formId: integ.formId,
-      formData: integ.formData,
-      uiOptions: {
+      formData: {
+        ...integ.formData,
         title: form.title,
         description: form.description,
         buttonText: form.buttonText,
@@ -179,7 +179,7 @@ export default {
     sendEmail(args);
   },
 
-  async formIncreaseViewCount(root, { formId }) {
-    return await Forms.increaseViewCount(formId);
+  formIncreaseViewCount(root, { formId }) {
+    return Forms.increaseViewCount(formId);
   },
 };
