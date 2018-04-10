@@ -93,7 +93,7 @@ export const types = `
     description: String
     buttonText: String
     themeColor: String
-    featuredImage: String
+    callout: JSON
     fields: [Field]
   }
 
@@ -114,7 +114,6 @@ export const types = `
     integrationName: String!
     languageCode: String
     formId: String!
-    uiOptions: JSON
     formData: JSON!
   }
 
