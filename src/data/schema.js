@@ -199,12 +199,13 @@ export const mutations = `
       phone: String
       isUser: Boolean
 
-      browserInfo: JSON!
       companyData: JSON
       data: JSON
 
       cachedCustomerId: String
     ): MessengerConnectResponse
+
+    saveBrowserInfo(customerId: String! browserInfo: JSON!): Boolean
 
     insertMessage(
       integrationId: String!

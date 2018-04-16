@@ -29,16 +29,7 @@ export default {
    * @return {Promise}
    */
   async messengerConnect(root, args) {
-    const {
-      brandCode,
-      email,
-      phone,
-      isUser,
-      companyData,
-      data,
-      browserInfo,
-      cachedCustomerId,
-    } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
@@ -59,7 +50,7 @@ export default {
       customer = await Customers.updateMessengerSession(customer._id);
 
       // update fields
-      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data, browserInfo);
+      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
 
       // create new customer
     } else {
@@ -71,7 +62,6 @@ export default {
           isUser,
         },
         data,
-        browserInfo,
       );
     }
 
@@ -89,7 +79,6 @@ export default {
         brandCode,
         customer,
         integration,
-        browserInfo,
       });
     }
 
@@ -100,6 +89,13 @@ export default {
       messengerData: integration.messengerData,
       customerId: customer._id,
     };
+  },
+
+  /**
+   * Update customer location field
+   */
+  async saveBrowserInfo(root, { customerId, browserInfo }) {
+    await Customers.findByIdAndUpdate({ _id: customerId }, { $set: { location: browserInfo } });
   },
 
   /**
