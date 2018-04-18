@@ -51,17 +51,9 @@ describe('messenger connect', () => {
     const email = faker.internet.email();
     const now = new Date();
 
-    const browserInfo = {
-      url: 'localhost',
-      hostname: 'localhost.com',
-      language: 'en',
-      userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
-    };
-
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email, companyData: { name: 'company' }, browserInfo },
+      { brandCode: _brand.code, email, companyData: { name: 'company' } },
       {},
     );
 
@@ -75,9 +67,6 @@ describe('messenger connect', () => {
     expect(customer.createdAt >= now).toBeTruthy();
     expect(customer.companyIds.length).toBe(1);
     expect(customer.messengerData.sessionCount).toBe(1);
-    expect(customer.location.hostname).toBe(browserInfo.hostname);
-    expect(customer.location.language).toBe(browserInfo.language);
-    expect(customer.location.userAgent).toBe(browserInfo.userAgent);
   });
 
   test('updates existing customer', async () => {

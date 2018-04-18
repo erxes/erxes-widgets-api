@@ -24,6 +24,11 @@ export const types = `
     details: UserDetails
   }
 
+  type Customer {
+    _id: String!
+    location: JSON
+  }
+
   type EngageData {
     messageId: String
     brandId: String
@@ -205,7 +210,7 @@ export const mutations = `
       cachedCustomerId: String
     ): MessengerConnectResponse
 
-    saveBrowserInfo(customerId: String! browserInfo: JSON!): Boolean
+    saveBrowserInfo(customerId: String! browserInfo: JSON!): Customer
 
     insertMessage(
       integrationId: String!
