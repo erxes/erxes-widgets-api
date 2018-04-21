@@ -6,7 +6,7 @@ export default {
   /*
    * End conversation
    */
-  async endConversation(root, { customerId, brandCode, data, browserInfo }) {
+  async endConversation(root, { customerId, brandCode, data }) {
     // mark old customer as inactive
     await Customers.markCustomerAsNotActive(customerId);
 
@@ -14,11 +14,7 @@ export default {
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await Customers.createMessengerCustomer(
-      { integrationId: integ._id },
-      data,
-      browserInfo,
-    );
+    const customer = await Customers.createMessengerCustomer({ integrationId: integ._id }, data);
 
     return { customerId: customer._id };
   },
