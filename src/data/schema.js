@@ -194,7 +194,6 @@ export const mutations = `
     endConversation(
       customerId: String
       brandCode: String!
-      browserInfo: JSON!
       data: JSON
     ): EndConversationResponse
 
