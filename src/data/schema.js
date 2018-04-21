@@ -212,7 +212,7 @@ export const mutations = `
     saveBrowserInfo(
       customerId: String!
       browserInfo: JSON!
-    ): Customer
+    ): [Conversation]
 
     insertMessage(
       integrationId: String!

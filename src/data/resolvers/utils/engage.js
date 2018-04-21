@@ -1,4 +1,4 @@
-import { Users, Integrations, EngageMessages, Conversations, Messages } from '../../../db/models';
+import { Users, EngageMessages, Conversations, Messages } from '../../../db/models';
 
 /*
  * replaces customer & user infos in given content
@@ -116,7 +116,9 @@ export const checkRules = async ({ rules, browserInfo, numberOfVisits }) => {
  * Creates conversation & message object using given info
  * @return Promise
  */
-export const createConversation = async ({ customer, integration, user, engageData }) => {
+export const createConversationAndMessages = async args => {
+  const { customer, integration, user, engageData } = args;
+
   // replace keys in content
   const replacedContent = replaceKeys({
     content: engageData.content,
@@ -142,8 +144,8 @@ export const createConversation = async ({ customer, integration, user, engageDa
   });
 
   return {
-    message,
     conversation,
+    message,
   };
 };
 
@@ -152,9 +154,7 @@ export const createConversation = async ({ customer, integration, user, engageDa
  * when visitor messenger connect * @return Promise
  */
 export const createEngageVisitorMessages = async params => {
-  const { brandCode, customer, browserInfo } = params;
-
-  const { brand, integration } = await Integrations.getIntegration(brandCode, 'messenger', true);
+  const { brand, integration, customer, browserInfo } = params;
 
   // find engage messages
   const messengerData = integration.messengerData || {};
@@ -173,6 +173,8 @@ export const createEngageVisitorMessages = async params => {
     customerIds: { $nin: [customer._id] },
   });
 
+  const conversations = [];
+
   for (let message of messages) {
     const user = await Users.findOne({ _id: message.fromUserId });
 
@@ -186,7 +188,7 @@ export const createEngageVisitorMessages = async params => {
     // if given visitor is matched with given condition then create
     // conversations
     if (isPassedAllRules) {
-      await createConversation({
+      const { conversation } = await createConversationAndMessages({
         customer,
         integration,
         user,
@@ -197,6 +199,9 @@ export const createEngageVisitorMessages = async params => {
         },
       });
 
+      // collect created conversations
+      conversations.push(conversation);
+
       // add given customer to customerIds list
       await EngageMessages.update(
         { _id: message._id },
@@ -206,4 +211,7 @@ export const createEngageVisitorMessages = async params => {
       );
     }
   }
+
+  // newly created conversations
+  return conversations;
 };

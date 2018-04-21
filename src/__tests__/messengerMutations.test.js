@@ -205,4 +205,30 @@ describe('common', async () => {
 
     expect(response.visitorContactInfo.email).toBe('test@gmail.com');
   });
+
+  test('Save browser info', async () => {
+    const integration = await integrationFactory({
+      brandId: Random.id(),
+      kind: 'messenger',
+    });
+
+    const customer = await customerFactory({
+      integrationId: integration._id,
+    });
+
+    const browserInfo = {
+      hostname: 'localhost.com',
+      language: 'en',
+      userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
+    };
+
+    await messengerMutations.saveBrowserInfo({}, { customerId: customer._id, browserInfo });
+
+    const updatedCustomer = await Customers.findOne({ _id: customer._id });
+
+    expect(updatedCustomer.location.hostname).toBe(browserInfo.hostname);
+    expect(updatedCustomer.location.language).toBe(browserInfo.language);
+    expect(updatedCustomer.location.userAgent).toBe(browserInfo.userAgent);
+  });
 });

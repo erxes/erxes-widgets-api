@@ -1,4 +1,11 @@
-import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
+import {
+  Integrations,
+  Brands,
+  Conversations,
+  Messages,
+  Customers,
+  Companies,
+} from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { mutateAppApi } from '../../../utils';
 
@@ -67,15 +74,6 @@ export default {
 
       // add company to customer's companyIds list
       await Customers.addCompany(customer._id, company._id);
-    }
-
-    // try to create engage chat auto messages
-    if (!isUser) {
-      await createEngageVisitorMessages({
-        brandCode,
-        customer,
-        integration,
-      });
     }
 
     return {
@@ -162,5 +160,26 @@ export default {
 
   saveCustomerGetNotified(root, args) {
     return Customers.saveVisitorContactInfo(args);
+  },
+
+  /**
+   * Update customer location field
+   */
+  async saveBrowserInfo(root, { customerId, browserInfo }) {
+    const customer = await Customers.updateLocation(customerId, browserInfo);
+    const integration = await Integrations.findOne({ _id: customer.integrationId });
+    const brand = await Brands.findOne({ _id: integration.brandId });
+
+    // try to create engage chat auto messages
+    if (!customer.email) {
+      return createEngageVisitorMessages({
+        brand,
+        integration,
+        customer,
+        browserInfo,
+      });
+    }
+
+    return [];
   },
 };
