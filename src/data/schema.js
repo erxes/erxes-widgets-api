@@ -210,7 +210,10 @@ export const mutations = `
       cachedCustomerId: String
     ): MessengerConnectResponse
 
-    saveBrowserInfo(customerId: String! browserInfo: JSON!): Customer
+    saveBrowserInfo(
+      customerId: String!
+      browserInfo: JSON!
+    ): Customer
 
     insertMessage(
       integrationId: String!
