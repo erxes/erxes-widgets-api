@@ -24,6 +24,11 @@ export const types = `
     details: UserDetails
   }
 
+  type Customer {
+    _id: String!
+    location: JSON
+  }
+
   type EngageData {
     messageId: String
     brandId: String
@@ -189,7 +194,6 @@ export const mutations = `
     endConversation(
       customerId: String
       brandCode: String!
-      browserInfo: JSON!
       data: JSON
     ): EndConversationResponse
 
@@ -199,12 +203,16 @@ export const mutations = `
       phone: String
       isUser: Boolean
 
-      browserInfo: JSON!
       companyData: JSON
       data: JSON
 
       cachedCustomerId: String
     ): MessengerConnectResponse
+
+    saveBrowserInfo(
+      customerId: String!
+      browserInfo: JSON!
+    ): Customer
 
     insertMessage(
       integrationId: String!

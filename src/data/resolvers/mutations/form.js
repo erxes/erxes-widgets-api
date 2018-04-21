@@ -88,15 +88,14 @@ export const saveValues = async (args, browserInfo) => {
   });
 
   // get or create customer
-  const customer = await Customers.getOrCreateCustomer(
-    {
-      integrationId,
-      email,
-      firstName,
-      lastName,
-    },
-    browserInfo,
-  );
+  const customer = await Customers.getOrCreateCustomer({
+    integrationId,
+    email,
+    firstName,
+    lastName,
+  });
+
+  await Customers.updateLocation(customer._id, browserInfo);
 
   // create conversation
   const conversationId = await Conversations.createConversation({

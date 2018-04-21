@@ -6,7 +6,7 @@ export default {
   /*
    * End conversation
    */
-  async endConversation(root, { customerId, brandCode, data, browserInfo }) {
+  async endConversation(root, { customerId, brandCode, data }) {
     // mark old customer as inactive
     await Customers.markCustomerAsNotActive(customerId);
 
@@ -14,11 +14,7 @@ export default {
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await Customers.createMessengerCustomer(
-      { integrationId: integ._id },
-      data,
-      browserInfo,
-    );
+    const customer = await Customers.createMessengerCustomer({ integrationId: integ._id }, data);
 
     return { customerId: customer._id };
   },
@@ -29,16 +25,7 @@ export default {
    * @return {Promise}
    */
   async messengerConnect(root, args) {
-    const {
-      brandCode,
-      email,
-      phone,
-      isUser,
-      companyData,
-      data,
-      browserInfo,
-      cachedCustomerId,
-    } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
@@ -59,7 +46,7 @@ export default {
       customer = await Customers.updateMessengerSession(customer._id);
 
       // update fields
-      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data, browserInfo);
+      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
 
       // create new customer
     } else {
@@ -71,7 +58,6 @@ export default {
           isUser,
         },
         data,
-        browserInfo,
       );
     }
 
@@ -89,7 +75,6 @@ export default {
         brandCode,
         customer,
         integration,
-        browserInfo,
       });
     }
 

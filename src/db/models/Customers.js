@@ -104,14 +104,12 @@ class Customer {
   /**
    * Create a new customer
    * @param  {Object} doc Customer object without computational fields
-   * @param  {Object} browserInfo - {hostname, userAgent, language }
    * @return {Promise} Newly created customer object
    */
-  static async createCustomer(doc, browserInfo) {
+  static async createCustomer(doc) {
     const customer = await this.create({
       ...doc,
       createdAt: new Date(),
-      location: browserInfo,
     });
 
     // call app api's create customer log
@@ -129,10 +127,9 @@ class Customer {
    * Create a new messenger customer
    * @param  {Object} doc - Customer object without computational fields
    * @param  {Object} customData - plan, domain etc ...
-   * @param  {Object} browserInfo - {hostname, userAgent, language }
    * @return {Promise} Newly created customer object
    */
-  static async createMessengerCustomer(doc, customData, browserInfo) {
+  static async createMessengerCustomer(doc, customData) {
     doc.messengerData = {
       lastSeenAt: new Date(),
       isActive: true,
@@ -142,7 +139,7 @@ class Customer {
 
     this.assignFields(customData || {}, doc);
 
-    return this.createCustomer(doc, browserInfo);
+    return this.createCustomer(doc);
   }
 
   /**
@@ -150,12 +147,10 @@ class Customer {
    * @param  {Object} _id - Customer id
    * @param  {Object} doc - Customer object without computational fields
    * @param  {Object} customData - plan, domain etc ...
-   * @param  {Object} browserInfo - {hostname, userAgent, language }
    * @return {Promise} - updated customer
    */
-  static async updateMessengerCustomer(_id, doc, customData, browserInfo) {
+  static async updateMessengerCustomer(_id, doc, customData) {
     doc['messengerData.customData'] = customData;
-    doc.location = browserInfo;
 
     this.assignFields(customData || {}, doc);
 
@@ -169,14 +164,14 @@ class Customer {
    * @param  {Object} doc Expected customer object
    * @return {Promise} Existing or newly created customer object
    */
-  static async getOrCreateCustomer(doc, browserInfo) {
+  static async getOrCreateCustomer(doc) {
     const customer = await this.getCustomer(doc);
 
     if (customer) {
       return customer;
     }
 
-    return this.createCustomer(doc, browserInfo);
+    return this.createCustomer(doc);
   }
 
   /**
@@ -235,6 +230,20 @@ class Customer {
     await this.findByIdAndUpdate(_id, query);
 
     // updated customer
+    return this.findOne({ _id });
+  }
+
+  /*
+   * Update customer's location info
+   */
+  static async updateLocation(_id, browserInfo) {
+    await this.findByIdAndUpdate(
+      { _id },
+      {
+        $set: { location: browserInfo },
+      },
+    );
+
     return this.findOne({ _id });
   }
 
