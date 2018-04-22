@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { connect, disconnect } from '../db/connection';
-import { formFactory } from '../db/factories';
+import { formFactory, customerFactory } from '../db/factories';
 import { Forms } from '../db/models';
 
 beforeAll(() => connect());
@@ -59,5 +59,15 @@ describe('Forms', () => {
 
     formObj = await Forms.findOne({ _id: formObj._id });
     expect(formObj.contactsGathered).toBe(1);
+  });
+
+  test('update submitted customer ids', async () => {
+    const customer = await customerFactory({});
+
+    await Forms.updateSubmittedCustomer(_form._id, customer._id);
+
+    const formObj = await Forms.findOne({ _id: _form._id });
+
+    expect(formObj.submittedCustomerIds).toContain(customer._id);
   });
 });
