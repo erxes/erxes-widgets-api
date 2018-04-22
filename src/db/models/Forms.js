@@ -27,6 +27,7 @@ const FormSchema = mongoose.Schema({
   callout: CalloutSchema,
   viewCount: Number,
   contactsGathered: Number,
+  submittedCustomerIds: [String],
 });
 
 class Form {
@@ -68,6 +69,18 @@ class Form {
     contactsGathered++;
 
     await this.update({ _id: formId }, { contactsGathered });
+
+    return formId;
+  }
+
+  /**
+   * Add customer to submitted customer ids
+   * @param  {String} formId - id of a form to update
+   * @param  {String} customerId - id of a customer who submitted
+   * @return {Promise} Existing form object
+   */
+  static async updateSubmittedCustomer(formId, customerId) {
+    await this.update({ _id: formId }, { $addToSet: { submittedCustomerIds: customerId } });
 
     return formId;
   }
