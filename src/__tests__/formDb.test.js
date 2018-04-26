@@ -68,6 +68,12 @@ describe('Forms', () => {
 
     const formObj = await Forms.findOne({ _id: _form._id });
 
-    expect(formObj.submittedCustomerIds).toContain(customer._id);
+    expect(formObj.submissions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          customerId: customer._id,
+        }),
+      ]),
+    );
   });
 });
