@@ -97,6 +97,9 @@ export const saveValues = async (args, browserInfo) => {
 
   await Customers.updateLocation(customer._id, browserInfo);
 
+  // Inserting customer id into submitted customer ids
+  Forms.addSubmission(formId, customer._id);
+
   // create conversation
   const conversationId = await Conversations.createConversation({
     integrationId,

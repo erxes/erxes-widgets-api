@@ -13,6 +13,14 @@ const CalloutSchema = mongoose.Schema(
   { _id: false },
 );
 
+const SubmissionSchema = mongoose.Schema(
+  {
+    customerId: String,
+    submittedAt: Date,
+  },
+  { _id: false },
+);
+
 const FormSchema = mongoose.Schema({
   _id: {
     type: String,
@@ -27,6 +35,7 @@ const FormSchema = mongoose.Schema({
   callout: CalloutSchema,
   viewCount: Number,
   contactsGathered: Number,
+  submissions: [SubmissionSchema],
 });
 
 class Form {
@@ -68,6 +77,20 @@ class Form {
     contactsGathered++;
 
     await this.update({ _id: formId }, { contactsGathered });
+
+    return formId;
+  }
+
+  /**
+   * Add customer to submitted customer ids
+   * @param  {String} formId - id of a form to update
+   * @param  {String} customerId - id of a customer who submitted
+   * @return {Promise} Existing form object
+   */
+  static async addSubmission(formId, customerId) {
+    const submittedAt = new Date();
+
+    await this.update({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
 
     return formId;
   }
