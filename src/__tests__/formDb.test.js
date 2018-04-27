@@ -64,7 +64,7 @@ describe('Forms', () => {
   test('update submitted customer ids', async () => {
     const customer = await customerFactory({});
 
-    await Forms.updateSubmittedCustomer(_form._id, customer._id);
+    await Forms.addSubmission(_form._id, customer._id);
 
     const formObj = await Forms.findOne({ _id: _form._id });
 

@@ -87,7 +87,7 @@ class Form {
    * @param  {String} customerId - id of a customer who submitted
    * @return {Promise} Existing form object
    */
-  static async updateSubmittedCustomer(formId, customerId) {
+  static async addSubmission(formId, customerId) {
     const submittedAt = new Date();
 
     await this.update({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
