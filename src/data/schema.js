@@ -179,7 +179,7 @@ export const queries = `
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
-    conversationLastStaff(_id: String): User
+    messengerSupporters(integrationId: String!): [User]
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
