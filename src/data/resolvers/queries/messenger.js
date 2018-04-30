@@ -70,10 +70,10 @@ export default {
 
   async messengerSupporters(root, { integrationId }) {
     const integration = await Integrations.findOne({ _id: integrationId });
+    const messengerData = integration.messengerData || {};
 
-    return Users.find({ _id: { $in: integration.messengerData.supporterIds } });
+    return Users.find({ _id: { $in: messengerData.supporterIds || [] } });
   },
-
 
   isMessengerOnline(root, args) {
     return Integrations.findOne({ _id: args.integrationId }).then(integration => {
