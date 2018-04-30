@@ -51,17 +51,9 @@ describe('messenger connect', () => {
     const email = faker.internet.email();
     const now = new Date();
 
-    const browserInfo = {
-      url: 'localhost',
-      hostname: 'localhost.com',
-      language: 'en',
-      userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
-    };
-
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email, companyData: { name: 'company' }, browserInfo },
+      { brandCode: _brand.code, email, companyData: { name: 'company' } },
       {},
     );
 
@@ -75,9 +67,6 @@ describe('messenger connect', () => {
     expect(customer.createdAt >= now).toBeTruthy();
     expect(customer.companyIds.length).toBe(1);
     expect(customer.messengerData.sessionCount).toBe(1);
-    expect(customer.location.hostname).toBe(browserInfo.hostname);
-    expect(customer.location.language).toBe(browserInfo.language);
-    expect(customer.location.userAgent).toBe(browserInfo.userAgent);
   });
 
   test('updates existing customer', async () => {
@@ -88,12 +77,12 @@ describe('messenger connect', () => {
       {
         brandCode: _brand.code,
         email: _customer.email,
-        name: 'name',
         phone: '96221050',
         isUser: true,
         // customData
         data: {
           plan: 1,
+          first_name: 'name',
         },
       },
       {},
@@ -110,7 +99,7 @@ describe('messenger connect', () => {
     expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
 
     // must be updated
-    expect(customer.name).toBe('name');
+    expect(customer.firstName).toBe('name');
     expect(customer.phone).toBe('96221050');
     expect(customer.isUser).toBeTruthy();
     expect(customer.messengerData.customData.plan).toBe(1);
@@ -124,7 +113,7 @@ describe('insertMessage()', () => {
   beforeEach(async () => {
     // Creating test data
     _integration = await integrationFactory({ brandId: Random.id(), kind: 'messenger' });
-    _customer = customerFactory({ integrationId: _integration._id });
+    _customer = await customerFactory({ integrationId: _integration._id });
   });
 
   afterEach(async () => {
@@ -133,7 +122,7 @@ describe('insertMessage()', () => {
     await Customers.remove({});
   });
 
-  test('returns a new message', async () => {
+  test('successfull', async () => {
     const now = new Date();
 
     const message = await messengerMutations.insertMessage(
@@ -146,25 +135,19 @@ describe('insertMessage()', () => {
       {},
     );
 
+    // check message ==========
     expect(message).toBeDefined();
     expect(message.createdAt >= now).toBeTruthy();
-  });
 
-  test('updates conversation', async () => {
-    const message = await messengerMutations.insertMessage(
-      {},
-      {
-        integrationId: _integration._id,
-        customerId: _customer._id,
-        message: faker.lorem.sentence(),
-      },
-      {},
-    );
-
+    // check conversation =========
     const conversation = await Conversations.findById(message.conversationId);
 
     expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
     expect(conversation.readUserIds.length).toBe(0);
+
+    // check customer =========
+    const customer = await Customers.findOne({ _id: _customer._id });
+    expect(customer.messengerData.isActive).toBeTruthy();
   });
 });
 
@@ -221,5 +204,31 @@ describe('common', async () => {
     );
 
     expect(response.visitorContactInfo.email).toBe('test@gmail.com');
+  });
+
+  test('Save browser info', async () => {
+    const integration = await integrationFactory({
+      brandId: Random.id(),
+      kind: 'messenger',
+    });
+
+    const customer = await customerFactory({
+      integrationId: integration._id,
+    });
+
+    const browserInfo = {
+      hostname: 'localhost.com',
+      language: 'en',
+      userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
+    };
+
+    await messengerMutations.saveBrowserInfo({}, { customerId: customer._id, browserInfo });
+
+    const updatedCustomer = await Customers.findOne({ _id: customer._id });
+
+    expect(updatedCustomer.location.hostname).toBe(browserInfo.hostname);
+    expect(updatedCustomer.location.language).toBe(browserInfo.language);
+    expect(updatedCustomer.location.userAgent).toBe(browserInfo.userAgent);
   });
 });

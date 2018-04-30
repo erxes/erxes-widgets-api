@@ -45,6 +45,8 @@ const KnowledgeBaseTopicsSchema = mongoose.Schema({
     type: [String],
     required: false,
   },
+  color: String,
+  languageCode: String,
   loadType: String,
 });
 

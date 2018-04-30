@@ -10,6 +10,7 @@ const IntegrationSchema = mongoose.Schema({
   },
   name: String,
   brandId: String,
+  languageCode: String,
   formId: String,
   kind: String,
   formData: Object,

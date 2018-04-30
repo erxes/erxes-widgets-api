@@ -24,6 +24,11 @@ export const types = `
     details: UserDetails
   }
 
+  type Customer {
+    _id: String!
+    location: JSON
+  }
+
   type EngageData {
     messageId: String
     brandId: String
@@ -44,6 +49,7 @@ export const types = `
 
   type Integration {
     _id: String!
+    languageCode: String
     uiOptions: JSON
     messengerData: JSON
   }
@@ -89,12 +95,17 @@ export const types = `
 
   type Form {
     title: String
+    description: String
+    buttonText: String
+    themeColor: String
+    callout: JSON
     fields: [Field]
   }
 
   type MessengerConnectResponse {
     integrationId: String
     uiOptions: JSON
+    languageCode: String
     messengerData: JSON
     customerId: String
   }
@@ -106,6 +117,7 @@ export const types = `
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
+    languageCode: String
     formId: String!
     formData: JSON!
   }
@@ -149,6 +161,8 @@ export const types = `
     title: String
     description: String
     categories: [KnowledgeBaseCategory]
+    color: String
+    languageCode: String
   }
 
   type KnowledgeBaseLoader {
@@ -165,7 +179,7 @@ export const queries = `
     totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
-    conversationLastStaff(_id: String): User
+    messengerSupporters(integrationId: String!): [User]
     isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
@@ -178,29 +192,32 @@ export const queries = `
 export const mutations = `
   type Mutation {
     endConversation(
-      brandCode: String!,
-      browserInfo: JSON!,
+      customerId: String
+      brandCode: String!
       data: JSON
     ): EndConversationResponse
 
     messengerConnect(
-      brandCode: String!,
-      name: String,
-      email: String,
-      phone: String,
-      isUser: Boolean,
+      brandCode: String!
+      email: String
+      phone: String
+      isUser: Boolean
 
-      browserInfo: JSON!,
-      companyData: JSON,
-      data: JSON,
+      companyData: JSON
+      data: JSON
 
       cachedCustomerId: String
     ): MessengerConnectResponse
 
+    saveBrowserInfo(
+      customerId: String!
+      browserInfo: JSON!
+    ): [Conversation]
+
     insertMessage(
-      integrationId: String!,
-      customerId: String!,
-      conversationId: String,
+      integrationId: String!
+      customerId: String!
+      conversationId: String
       message: String,
       attachments: [JSON]
     ): ConversationMessage
@@ -211,12 +228,19 @@ export const mutations = `
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 
     saveForm(
-      integrationId: String!,
-      formId: String!,
+      integrationId: String!
+      formId: String!
       submissions: [FieldValueInput]
-      browserInfo: JSON!,
+      browserInfo: JSON!
     ): SaveFormResponse
 
-    sendEmail(toEmails: [String], fromEmail: String, title: String, content: String): String
+    sendEmail(
+      toEmails: [String]
+      fromEmail: String
+      title: String
+      content: String
+    ): String
+
+    formIncreaseViewCount(formId: String!): String
   }
 `;

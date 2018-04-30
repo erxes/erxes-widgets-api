@@ -68,21 +68,12 @@ export default {
     }).sort({ createdAt: 1 });
   },
 
-  async conversationLastStaff(root, args) {
-    const messageQuery = {
-      conversationId: args._id,
-      userId: { $exists: true },
-    };
+  async messengerSupporters(root, { integrationId }) {
+    const integration = await Integrations.findOne({ _id: integrationId });
 
-    const message = await Messages.findOne(messageQuery);
-
-    if (message) {
-      return Users.findOne({ _id: message && message.userId });
-    }
-
-    // TODO
-    return Users.findOne({});
+    return Users.find({ _id: { $in: integration.messengerData.supporterIds } });
   },
+
 
   isMessengerOnline(root, args) {
     return Integrations.findOne({ _id: args.integrationId }).then(integration => {

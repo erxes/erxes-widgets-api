@@ -88,14 +88,17 @@ export const saveValues = async (args, browserInfo) => {
   });
 
   // get or create customer
-  const customer = await Customers.getOrCreateCustomer(
-    {
-      integrationId,
-      email,
-      name: `${lastName} ${firstName}`,
-    },
-    browserInfo,
-  );
+  const customer = await Customers.getOrCreateCustomer({
+    integrationId,
+    email,
+    firstName,
+    lastName,
+  });
+
+  await Customers.updateLocation(customer._id, browserInfo);
+
+  // Inserting customer id into submitted customer ids
+  Forms.addSubmission(formId, customer._id);
 
   // create conversation
   const conversationId = await Conversations.createConversation({
@@ -128,12 +131,24 @@ export default {
       throw new Error('Integration not found');
     }
 
+    if (integ.formLoadType === 'embedded') {
+      await Forms.increaseViewCount(form._id);
+    }
+
     // return integration details
     return {
       integrationId: integ._id,
       integrationName: integ.name,
+      languageCode: integ.languageCode,
       formId: integ.formId,
-      formData: integ.formData,
+      formData: {
+        ...integ.formData,
+        title: form.title,
+        description: form.description,
+        buttonText: form.buttonText,
+        themeColor: form.themeColor,
+        callout: form.callout,
+      },
     };
   },
 
@@ -149,6 +164,9 @@ export default {
 
     const message = await saveValues(args, browserInfo);
 
+    // increasing form submitted count
+    await Forms.increaseContactsGathered(formId);
+
     // notify app api
     mutateAppApi(`
       mutation {
@@ -161,5 +179,9 @@ export default {
   // send email
   sendEmail(root, args) {
     sendEmail(args);
+  },
+
+  formIncreaseViewCount(root, { formId }) {
+    return Forms.increaseViewCount(formId);
   },
 };

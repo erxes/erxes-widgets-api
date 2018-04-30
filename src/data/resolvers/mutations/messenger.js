@@ -1,4 +1,11 @@
-import { Integrations, Conversations, Messages, Customers, Companies } from '../../../db/models';
+import {
+  Integrations,
+  Brands,
+  Conversations,
+  Messages,
+  Customers,
+  Companies,
+} from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { mutateAppApi } from '../../../utils';
 
@@ -6,16 +13,15 @@ export default {
   /*
    * End conversation
    */
-  async endConversation(root, { brandCode, data, browserInfo }) {
+  async endConversation(root, { customerId, brandCode, data }) {
+    // mark old customer as inactive
+    await Customers.markCustomerAsNotActive(customerId);
+
     // find integration
     const integ = await Integrations.getIntegration(brandCode, 'messenger');
 
     // create customer
-    const customer = await Customers.createMessengerCustomer(
-      { integrationId: integ._id },
-      data,
-      browserInfo,
-    );
+    const customer = await Customers.createMessengerCustomer({ integrationId: integ._id }, data);
 
     return { customerId: customer._id };
   },
@@ -26,17 +32,7 @@ export default {
    * @return {Promise}
    */
   async messengerConnect(root, args) {
-    const {
-      brandCode,
-      name,
-      email,
-      phone,
-      isUser,
-      companyData,
-      data,
-      browserInfo,
-      cachedCustomerId,
-    } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
@@ -57,12 +53,7 @@ export default {
       customer = await Customers.updateMessengerSession(customer._id);
 
       // update fields
-      await Customers.updateMessengerCustomer(
-        customer._id,
-        { phone, isUser, name },
-        data,
-        browserInfo,
-      );
+      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
 
       // create new customer
     } else {
@@ -72,10 +63,8 @@ export default {
           email,
           phone,
           isUser,
-          name,
         },
         data,
-        browserInfo,
       );
     }
 
@@ -87,19 +76,10 @@ export default {
       await Customers.addCompany(customer._id, company._id);
     }
 
-    // try to create engage chat auto messages
-    if (!isUser) {
-      await createEngageVisitorMessages({
-        brandCode,
-        customer,
-        integration,
-        browserInfo,
-      });
-    }
-
     return {
       integrationId: integration._id,
       uiOptions: integration.uiOptions,
+      languageCode: integration.languageCode,
       messengerData: integration.messengerData,
       customerId: customer._id,
     };
@@ -142,6 +122,9 @@ export default {
       },
     );
 
+    // mark customer as active
+    await Customers.markCustomerAsActive(conversation.customerId);
+
     // notify app api
     mutateAppApi(`
       mutation {
@@ -177,5 +160,26 @@ export default {
 
   saveCustomerGetNotified(root, args) {
     return Customers.saveVisitorContactInfo(args);
+  },
+
+  /**
+   * Update customer location field
+   */
+  async saveBrowserInfo(root, { customerId, browserInfo }) {
+    const customer = await Customers.updateLocation(customerId, browserInfo);
+    const integration = await Integrations.findOne({ _id: customer.integrationId });
+    const brand = await Brands.findOne({ _id: integration.brandId });
+
+    // try to create engage chat auto messages
+    if (!customer.email) {
+      return createEngageVisitorMessages({
+        brand,
+        integration,
+        customer,
+        browserInfo,
+      });
+    }
+
+    return [];
   },
 };

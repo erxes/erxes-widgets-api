@@ -3,7 +3,7 @@
 
 import {
   replaceKeys,
-  createConversation,
+  createConversationAndMessages,
   createEngageVisitorMessages,
 } from '../data/resolvers/utils/engage';
 import { integrationFactory, customerFactory, brandFactory, userFactory } from '../db/factories';
@@ -57,7 +57,7 @@ describe('createConversation', () => {
       fullName: 'Full name',
     };
 
-    const { message, conversation } = await createConversation({
+    const { message, conversation } = await createConversationAndMessages({
       customer: _customer,
       integration: _integration,
       user,
@@ -125,7 +125,7 @@ describe('createEngageVisitorMessages', () => {
 
   test('must create conversation & message object', async () => {
     await createEngageVisitorMessages({
-      brandCode: _brand.code,
+      brand: _brand,
       customer: _customer,
       integration: _integration,
       browserInfo: {
