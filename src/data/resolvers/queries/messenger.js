@@ -1,14 +1,18 @@
 import { Integrations, Conversations, Messages, Users } from '../../../db/models';
 import { isOnline as isStaffsOnline } from '../utils/messengerStatus';
 
+const unreadMessagesSelector = {
+  userId: { $exists: true },
+  internal: false,
+  isCustomerRead: { $ne: true },
+};
+
 const unreadMessagesQuery = conversations => {
   const conversationIds = conversations.map(c => c._id);
 
   return {
     conversationId: { $in: conversationIds },
-    userId: { $exists: true },
-    internal: false,
-    isCustomerRead: { $exists: false },
+    ...unreadMessagesSelector,
   };
 };
 
@@ -17,37 +21,36 @@ export default {
     return Integrations.getIntegration(args.brandCode, 'messenger');
   },
 
-  lastUnreadMessage(root, args) {
+  async lastUnreadMessage(root, args) {
     const { integrationId, customerId } = args;
 
     // find conversations
-    return Conversations.find({
+    const convs = await Conversations.find({
       integrationId,
       customerId,
+    });
 
-      // find read messages count
-    }).then(convs => Messages.findOne(unreadMessagesQuery(convs)));
+    // find unread messages count
+    return Messages.findOne(unreadMessagesQuery(convs));
   },
 
   unreadCount(root, { conversationId }) {
     return Messages.count({
       conversationId,
-      userId: { $exists: true },
-      internal: false,
-      isCustomerRead: { $exists: false },
+      ...unreadMessagesSelector,
     });
   },
 
-  totalUnreadCount(root, args) {
+  async totalUnreadCount(root, args) {
     const { integrationId, customerId } = args;
 
     // find conversations
-    return Conversations.find({
+    const convs = await Conversations.find({
       integrationId,
       customerId,
+    });
 
-      // find read messages count
-    }).then(convs => Messages.count(unreadMessagesQuery(convs)));
+    return Messages.count(unreadMessagesQuery(convs));
   },
 
   conversations(root, { integrationId, customerId }) {

@@ -113,11 +113,33 @@ export const checkRules = async ({ rules, browserInfo, numberOfVisits }) => {
 };
 
 /*
- * Creates conversation & message object using given info
+ * Creates or update conversation & message object using given info
  * @return Promise
  */
-export const createConversationAndMessages = async args => {
+export const createOrUpdateConversationAndMessages = async args => {
   const { customer, integration, user, engageData } = args;
+
+  const prevMessage = await Messages.findOne({
+    customerId: customer._id,
+    'engageData.messageId': engageData.messageId,
+  });
+
+  // if previously created conversation for this customer
+  if (prevMessage) {
+    const messages = await Messages.find({
+      conversationId: prevMessage.conversationId,
+    });
+
+    // leave conversations with responses alone
+    if (messages.length > 1) {
+      return null;
+    }
+
+    // mark as unread again
+    await Messages.update({ _id: prevMessage._id }, { $set: { isCustomerRead: false } });
+
+    return null;
+  }
 
   // replace keys in content
   const replacedContent = replaceKeys({
@@ -135,18 +157,13 @@ export const createConversationAndMessages = async args => {
   });
 
   // create message
-  const message = await Messages.createMessage({
+  return Messages.createMessage({
     engageData,
     conversationId: conversation._id,
     userId: user._id,
     customerId: customer._id,
     content: replacedContent,
   });
-
-  return {
-    conversation,
-    message,
-  };
 };
 
 /*
@@ -170,10 +187,9 @@ export const createEngageVisitorMessages = async params => {
     kind: 'visitorAuto',
     method: 'messenger',
     isLive: true,
-    customerIds: { $nin: [customer._id] },
   });
 
-  const conversations = [];
+  const conversationMessages = [];
 
   for (let message of messages) {
     const user = await Users.findOne({ _id: message.fromUserId });
@@ -188,7 +204,7 @@ export const createEngageVisitorMessages = async params => {
     // if given visitor is matched with given condition then create
     // conversations
     if (isPassedAllRules) {
-      const { conversation } = await createConversationAndMessages({
+      const conversationMessage = await createOrUpdateConversationAndMessages({
         customer,
         integration,
         user,
@@ -199,19 +215,21 @@ export const createEngageVisitorMessages = async params => {
         },
       });
 
-      // collect created conversations
-      conversations.push(conversation);
+      if (conversationMessage) {
+        // collect created messages
+        conversationMessages.push(conversationMessage);
 
-      // add given customer to customerIds list
-      await EngageMessages.update(
-        { _id: message._id },
-        { $push: { customerIds: customer._id } },
-        {},
-        () => {},
-      );
+        // add given customer to customerIds list
+        await EngageMessages.update(
+          { _id: message._id },
+          { $push: { customerIds: customer._id } },
+          {},
+          () => {},
+        );
+      }
     }
   }
 
-  // newly created conversations
-  return conversations;
+  // newly created conversation messages
+  return conversationMessages;
 };

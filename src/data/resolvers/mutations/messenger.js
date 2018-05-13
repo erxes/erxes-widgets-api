@@ -143,7 +143,7 @@ export default {
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
-        isCustomerRead: { $exists: false },
+        isCustomerRead: { $ne: true },
       },
       { isCustomerRead: true },
       { multi: true },

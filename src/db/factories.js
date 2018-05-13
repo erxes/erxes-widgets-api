@@ -101,17 +101,14 @@ export function conversationFactory() {
 }
 
 export function messageFactory(params = {}) {
-  const obj = Object.assign(
-    {
-      userId: Random.id(),
-      conversationId: Random.id(),
-      customerId: Random.id(),
-      content: faker.lorem.sentence,
-      createdAt: faker.date.past(),
-    },
-    params,
-  );
-  const message = new Messages(obj);
+  const message = new Messages({
+    userId: Random.id(),
+    conversationId: Random.id(),
+    customerId: Random.id(),
+    content: faker.lorem.sentence,
+    createdAt: faker.date.past(),
+    ...params,
+  });
 
   return message.save();
 }

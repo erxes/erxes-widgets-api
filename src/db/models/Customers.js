@@ -36,6 +36,7 @@ const CustomerSchema = mongoose.Schema({
   firstName: String,
   lastName: String,
   createdAt: Date,
+  lastSeenAt: Date,
   messengerData: Object,
   companyIds: [String],
   description: String,

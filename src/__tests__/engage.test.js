@@ -3,11 +3,20 @@
 
 import {
   replaceKeys,
-  createConversationAndMessages,
+  createOrUpdateConversationAndMessages,
   createEngageVisitorMessages,
 } from '../data/resolvers/utils/engage';
-import { integrationFactory, customerFactory, brandFactory, userFactory } from '../db/factories';
+
+import {
+  integrationFactory,
+  messageFactory,
+  customerFactory,
+  brandFactory,
+  userFactory,
+} from '../db/factories';
+
 import { connect, disconnect } from '../db/connection';
+
 import {
   Conversations,
   Messages,
@@ -51,20 +60,28 @@ describe('createConversation', () => {
     await Messages.remove({});
   });
 
-  test('must create conversation & message object', async () => {
+  test('createOrUpdateConversationAndMessages', async () => {
     const user = {
       _id: 'DFFDFDFD',
       fullName: 'Full name',
     };
 
-    const { message, conversation } = await createConversationAndMessages({
+    const kwargs = {
       customer: _customer,
       integration: _integration,
       user,
       engageData: {
         content: 'hi {{ customer.name }} {{ user.fullName }}',
+        messageId: '_id',
       },
-    });
+    };
+
+    // create ==========================
+    const message = await createOrUpdateConversationAndMessages(kwargs);
+    const conversation = await Conversations.findOne({ _id: message.conversationId });
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(1);
 
     // check message fields
     expect(message._id).toBeDefined();
@@ -76,6 +93,46 @@ describe('createConversation', () => {
     expect(conversation._id).toBeDefined();
     expect(conversation.content).toBe(`hi ${_customer.name} Full name`);
     expect(conversation.integrationId).toBe(_integration._id);
+
+    // second time ==========================
+    // must not create new conversation & messages update
+    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+
+    let response = await createOrUpdateConversationAndMessages(kwargs);
+
+    expect(response).toBe(null);
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(1);
+
+    const updatedMessage = await Messages.findOne({
+      conversationId: conversation._id,
+    });
+
+    expect(updatedMessage.isCustomerRead).toBe(false);
+
+    // do not mark as unread for conversations that
+    // have more than one messages =====================
+    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+
+    await messageFactory({
+      conversationId: conversation._id,
+      isCustomerRead: true,
+    });
+
+    response = await createOrUpdateConversationAndMessages(kwargs);
+
+    expect(response).toBe(null);
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(2);
+
+    const [message1, message2] = await Messages.find({
+      conversationId: conversation._id,
+    });
+
+    expect(message1.isCustomerRead).toBe(true);
+    expect(message2.isCustomerRead).toBe(true);
   });
 });
 

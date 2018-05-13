@@ -223,7 +223,6 @@ export const mutations = `
     ): ConversationMessage
 
     readConversationMessages(conversationId: String): String
-    readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 
