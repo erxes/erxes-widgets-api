@@ -193,7 +193,7 @@ describe('checkIndividualRule', () => {
   const greaterThanRule = {
     kind: 'numberOfVisits',
     condition: 'greaterThan',
-    value: 1,
+    value: '1',
   };
 
   test('greaterThan: not matching', () => {
@@ -220,7 +220,7 @@ describe('checkIndividualRule', () => {
   const lessThanRule = {
     kind: 'numberOfVisits',
     condition: 'lessThan',
-    value: 1,
+    value: '1',
   };
 
   test('lessThan: not matching', () => {

@@ -81,12 +81,11 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
   }
 
   // greaterThan
-  if (condition === 'greaterThan' && valueToTest < ruleValue) {
+  if (condition === 'greaterThan' && valueToTest < parseInt(ruleValue)) {
     return false;
   }
 
-  // lessThan
-  if (condition === 'lessThan' && valueToTest > ruleValue) {
+  if (condition === 'lessThan' && valueToTest > parseInt(ruleValue)) {
     return false;
   }
 
@@ -167,8 +166,10 @@ export const createOrUpdateConversationAndMessages = async args => {
 };
 
 /*
- * this function will be used in messagerConnect and it will create conversations
- * when visitor messenger connect * @return Promise
+ * This function will be used in messagerConnect and it will create conversations
+ * when visitor messenger connect
+ *
+ * @return Promise
  */
 export const createEngageVisitorMessages = async params => {
   const { brand, integration, customer, browserInfo } = params;
@@ -194,11 +195,13 @@ export const createEngageVisitorMessages = async params => {
   for (let message of messages) {
     const user = await Users.findOne({ _id: message.fromUserId });
 
-    // check for rules
+    // check for rules ===
+    const urlVisits = customer.urlVisits || {};
+
     const isPassedAllRules = await checkRules({
       rules: message.messenger.rules,
       browserInfo,
-      numberOfVisits: customer.messengerData.sessionCount || 0,
+      numberOfVisits: urlVisits[browserInfo.url] || 0,
     });
 
     // if given visitor is matched with given condition then create

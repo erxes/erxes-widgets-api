@@ -144,7 +144,10 @@ describe('createEngageVisitorMessages', () => {
 
   beforeEach(async () => {
     // Creating test data
-    _customer = await customerFactory();
+    _customer = await customerFactory({
+      urlVisits: { '/page': 11 },
+    });
+
     _brand = await brandFactory({});
     _integration = await integrationFactory({ brandId: _brand._id });
     _user = await userFactory({});
@@ -162,6 +165,11 @@ describe('createEngageVisitorMessages', () => {
             kind: 'currentPageUrl',
             condition: 'is',
             value: '/page',
+          },
+          {
+            kind: 'numberOfVisits',
+            condition: 'greaterThan',
+            value: 10,
           },
         ],
         content: 'hi {{ customer.name }}',

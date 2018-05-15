@@ -81,6 +81,7 @@ export function customerFactory(params = {}) {
       isActive: params.isActive || false,
       sessionCount: faker.random.number(),
     },
+    urlVisits: params.urlVisits,
   });
 
   return customer.save();

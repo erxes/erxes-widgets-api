@@ -46,6 +46,8 @@ const CustomerSchema = mongoose.Schema({
   // if customer is not a user then we will contact with this visitor using
   // this information
   visitorContactInfo: VisitorContactSchema,
+
+  urlVisits: Object,
 });
 
 class Customer {
@@ -210,21 +212,27 @@ class Customer {
    * @param {String} customer id
    * @return {Promise} updated customer
    */
-  static async updateMessengerSession(_id) {
+  static async updateMessengerSession({ _id, url }) {
     const now = new Date();
     const customer = await this.findOne({ _id });
 
-    // update messengerData
     const query = {
       $set: {
+        // update messengerData
         'messengerData.lastSeenAt': now,
         'messengerData.isActive': true,
       },
     };
 
-    if (now - customer.messengerData.lastSeenAt > 30 * 60 * 1000) {
+    if (now - customer.messengerData.lastSeenAt > 6 * 1000) {
       // update session count
       query.$inc = { 'messengerData.sessionCount': 1 };
+
+      // save access history by location.pathname
+      const urlVisits = customer.urlVisits || {};
+      urlVisits[url] = (urlVisits[url] || 0) + 1;
+
+      query.urlVisits = urlVisits;
     }
 
     // update

@@ -47,11 +47,7 @@ export default {
       phone,
     });
 
-    // update customer
     if (customer) {
-      // update messenger session data
-      customer = await Customers.updateMessengerSession(customer._id);
-
       // update fields
       await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
 
@@ -166,7 +162,15 @@ export default {
    * Update customer location field
    */
   async saveBrowserInfo(root, { customerId, browserInfo }) {
-    const customer = await Customers.updateLocation(customerId, browserInfo);
+    // update location
+    await Customers.updateLocation(customerId, browserInfo);
+
+    // update messenger session data
+    const customer = await Customers.updateMessengerSession({
+      _id: customerId,
+      url: browserInfo.url,
+    });
+
     const integration = await Integrations.findOne({ _id: customer.integrationId });
     const brand = await Brands.findOne({ _id: integration.brandId });
 
