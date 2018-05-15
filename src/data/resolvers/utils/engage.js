@@ -80,6 +80,11 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
     return false;
   }
 
+  // contains
+  if (condition === 'contains' && valueToTest && !valueToTest.includes(ruleValue)) {
+    return false;
+  }
+
   // greaterThan
   if (condition === 'greaterThan' && valueToTest < parseInt(ruleValue)) {
     return false;

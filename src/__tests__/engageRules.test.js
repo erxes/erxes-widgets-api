@@ -242,4 +242,29 @@ describe('checkIndividualRule', () => {
 
     expect(response).toBe(true);
   });
+
+  // contains ======
+  const containsRule = {
+    kind: 'currentPageUrl',
+    condition: 'contains',
+    value: 'page',
+  };
+
+  test('contains: not matching', () => {
+    const response = checkRule({
+      rule: containsRule,
+      browserInfo: { url: '/test' },
+    });
+
+    expect(response).toBe(false);
+  });
+
+  test('contains: matching', () => {
+    const response = checkRule({
+      rule: containsRule,
+      browserInfo: { url: '/page' },
+    });
+
+    expect(response).toBe(true);
+  });
 });
