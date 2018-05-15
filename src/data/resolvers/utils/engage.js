@@ -183,6 +183,17 @@ export const createEngageVisitorMessages = async params => {
     return [];
   }
 
+  // force read previous unread engage messages ============
+  await Messages.update(
+    {
+      customerId: customer._id,
+      engageData: { $exists: true },
+      isCustomerRead: false,
+    },
+    { $set: { isCustomerRead: true } },
+    { multi: true },
+  );
+
   const messages = await EngageMessages.find({
     'messenger.brandId': brand._id,
     kind: 'visitorAuto',
@@ -223,12 +234,7 @@ export const createEngageVisitorMessages = async params => {
         conversationMessages.push(conversationMessage);
 
         // add given customer to customerIds list
-        await EngageMessages.update(
-          { _id: message._id },
-          { $push: { customerIds: customer._id } },
-          {},
-          () => {},
-        );
+        await EngageMessages.update({ _id: message._id }, { $push: { customerIds: customer._id } });
       }
     }
   }

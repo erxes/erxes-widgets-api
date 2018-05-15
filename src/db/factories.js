@@ -108,6 +108,8 @@ export function messageFactory(params = {}) {
     customerId: Random.id(),
     content: faker.lorem.sentence,
     createdAt: faker.date.past(),
+    isCustomerRead: params.isCustomerRead,
+    engageData: params.engageData,
     ...params,
   });
 
