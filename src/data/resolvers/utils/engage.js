@@ -139,8 +139,11 @@ export const createOrUpdateConversationAndMessages = async args => {
       return null;
     }
 
-    // mark as unread again
-    await Messages.update({ _id: prevMessage._id }, { $set: { isCustomerRead: false } });
+    // mark as unread again && reset engageData
+    await Messages.update(
+      { _id: prevMessage._id },
+      { $set: { engageData, isCustomerRead: false } },
+    );
 
     return null;
   }
