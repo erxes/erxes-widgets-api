@@ -10,22 +10,6 @@ import { createEngageVisitorMessages } from '../utils/engage';
 import { mutateAppApi } from '../../../utils';
 
 export default {
-  /*
-   * End conversation
-   */
-  async endConversation(root, { customerId, brandCode, data }) {
-    // mark old customer as inactive
-    await Customers.markCustomerAsNotActive(customerId);
-
-    // find integration
-    const integ = await Integrations.getIntegration(brandCode, 'messenger');
-
-    // create customer
-    const customer = await Customers.createMessengerCustomer({ integrationId: integ._id }, data);
-
-    return { customerId: customer._id };
-  },
-
   /**
    * Create a new customer or update existing customer info
    * when connection established

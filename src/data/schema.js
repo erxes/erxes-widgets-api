@@ -110,10 +110,6 @@ export const types = `
     customerId: String
   }
 
-  type EndConversationResponse {
-    customerId: String!
-  }
-
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
@@ -191,12 +187,6 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
-    endConversation(
-      customerId: String
-      brandCode: String!
-      data: JSON
-    ): EndConversationResponse
-
     messengerConnect(
       brandCode: String!
       email: String
