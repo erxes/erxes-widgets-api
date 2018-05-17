@@ -182,15 +182,6 @@ export const createOrUpdateConversationAndMessages = async args => {
 export const createEngageVisitorMessages = async params => {
   const { brand, integration, customer, browserInfo } = params;
 
-  // find engage messages
-  const messengerData = integration.messengerData || {};
-
-  // if integration configured as hide conversations
-  // then do not create any engage messages
-  if (messengerData.hideConversationList) {
-    return [];
-  }
-
   // force read previous unread engage messages ============
   await Messages.update(
     {
