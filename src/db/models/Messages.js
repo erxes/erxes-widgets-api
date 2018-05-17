@@ -56,6 +56,19 @@ class Message {
       ...messageObj,
     });
   }
+
+  // force read previous unread engage messages ============
+  static forceReadCustomerPreviousEngageMessages(customerId) {
+    return this.update(
+      {
+        customerId,
+        engageData: { $exists: true },
+        isCustomerRead: { $ne: true },
+      },
+      { $set: { isCustomerRead: true } },
+      { multi: true },
+    );
+  }
 }
 
 MessageSchema.loadClass(Message);

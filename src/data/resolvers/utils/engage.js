@@ -183,15 +183,7 @@ export const createEngageVisitorMessages = async params => {
   const { brand, integration, customer, browserInfo } = params;
 
   // force read previous unread engage messages ============
-  await Messages.update(
-    {
-      customerId: customer._id,
-      engageData: { $exists: true },
-      isCustomerRead: false,
-    },
-    { $set: { isCustomerRead: true } },
-    { multi: true },
-  );
+  await Messages.forceReadCustomerPreviousEngageMessages(customer._id);
 
   const messages = await EngageMessages.find({
     'messenger.brandId': brand._id,
