@@ -43,7 +43,6 @@
     "graphql-tools": "^1.0.0",
     "meteor-random": "0.0.3",
     "mongoose": "^4.9.2",
-    "newrelic": "^4.1.5",
     "nodemailer": "^4.0.1",
     "requestify": "^0.2.5",
     "underscore": "^1.8.3",

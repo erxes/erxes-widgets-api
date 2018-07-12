@@ -21,7 +21,7 @@ export default {
     return Integrations.getIntegration(args.brandCode, 'messenger');
   },
 
-  async lastUnreadMessage(root, args) {
+  async unreadInfo(root, args) {
     const { integrationId, customerId } = args;
 
     // find conversations
@@ -30,8 +30,10 @@ export default {
       customerId,
     });
 
-    // find unread messages count
-    return Messages.findOne(unreadMessagesQuery(convs));
+    return {
+      lastUnreadMessage: await Messages.findOne(unreadMessagesQuery(convs)),
+      totalCount: await Messages.count(unreadMessagesQuery(convs)),
+    };
   },
 
   unreadCount(root, { conversationId }) {
@@ -39,18 +41,6 @@ export default {
       conversationId,
       ...unreadMessagesSelector,
     });
-  },
-
-  async totalUnreadCount(root, args) {
-    const { integrationId, customerId } = args;
-
-    // find conversations
-    const convs = await Conversations.find({
-      integrationId,
-      customerId,
-    });
-
-    return Messages.count(unreadMessagesQuery(convs));
   },
 
   conversations(root, { integrationId, customerId }) {

@@ -110,6 +110,11 @@ export const types = `
     customerId: String
   }
 
+  type MessengerUnreadInfo {
+    lastUnreadMessage: ConversationMessage
+    totalCount: Int
+  }
+
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
@@ -171,8 +176,7 @@ export const queries = `
     conversations(integrationId: String!, customerId: String!): [Conversation]
     conversationDetail(_id: String!): Conversation
     getMessengerIntegration(brandCode: String!): Integration
-    lastUnreadMessage(integrationId: String!, customerId: String!): ConversationMessage
-    totalUnreadCount(integrationId: String!, customerId: String!): Int
+    unreadInfo(integrationId: String!, customerId: String!): MessengerUnreadInfo
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     messengerSupporters(integrationId: String!): [User]
