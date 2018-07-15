@@ -7,6 +7,7 @@ import {
   Companies,
 } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
+import { unreadMessagesQuery } from '../utils/messenger';
 import { mutateAppApi } from '../../../utils';
 
 export default {
@@ -108,7 +109,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationSubscribeMessageCreated(_id: "${msg._id}")
+        conversationPublishClientMessage(_id: "${msg._id}")
       }`);
 
     return msg;
@@ -128,12 +129,6 @@ export default {
       { isCustomerRead: true },
       { multi: true },
     );
-
-    // notify app api
-    mutateAppApi(`
-      mutation {
-        conversationSubscribeChanged(_ids: ["${args.conversationId}"], type: "readState")
-      }`);
 
     return response;
   },
@@ -160,7 +155,7 @@ export default {
 
     // try to create engage chat auto messages
     if (!customer.email) {
-      return createEngageVisitorMessages({
+      await createEngageVisitorMessages({
         brand,
         integration,
         customer,
@@ -168,6 +163,12 @@ export default {
       });
     }
 
-    return [];
+    // find conversations
+    const convs = await Conversations.find({
+      integrationId: integration._id,
+      customerId: customer._id,
+    });
+
+    return Messages.findOne(unreadMessagesQuery(convs));
   },
 };
