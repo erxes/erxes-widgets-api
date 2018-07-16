@@ -54,6 +54,7 @@ export const isOnline = (integration, now = new Date()) => {
 
   // check by regular day config
   const dayConf = integration.onlineHours.find(c => c.day === day);
+
   if (dayConf) {
     return isTimeInBetween(now, dayConf.from, dayConf.to);
   }

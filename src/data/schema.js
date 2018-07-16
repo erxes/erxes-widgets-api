@@ -110,6 +110,12 @@ export const types = `
     customerId: String
   }
 
+  type ConversationDetailResponse {
+    messages: [ConversationMessage]
+    isOnline: Boolean
+    supporters: [User]
+  }
+
   type FormConnectResponse {
     integrationId: String!
     integrationName: String!
@@ -169,13 +175,11 @@ export const types = `
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
-    conversationDetail(_id: String!): Conversation
+    conversationDetail(_id: String, integrationId: String!): ConversationDetailResponse
     getMessengerIntegration(brandCode: String!): Integration
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     totalUnreadCount(integrationId: String!, customerId: String!): Int
-    messengerSupporters(integrationId: String!): [User]
-    isMessengerOnline(integrationId: String!): Boolean
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
     knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
