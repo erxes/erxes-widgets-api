@@ -3,11 +3,20 @@
 
 import {
   replaceKeys,
-  createConversationAndMessages,
+  createOrUpdateConversationAndMessages,
   createEngageVisitorMessages,
 } from '../data/resolvers/utils/engage';
-import { integrationFactory, customerFactory, brandFactory, userFactory } from '../db/factories';
+
+import {
+  integrationFactory,
+  messageFactory,
+  customerFactory,
+  brandFactory,
+  userFactory,
+} from '../db/factories';
+
 import { connect, disconnect } from '../db/connection';
+
 import {
   Conversations,
   Messages,
@@ -51,20 +60,28 @@ describe('createConversation', () => {
     await Messages.remove({});
   });
 
-  test('must create conversation & message object', async () => {
+  test('createOrUpdateConversationAndMessages', async () => {
     const user = {
       _id: 'DFFDFDFD',
       fullName: 'Full name',
     };
 
-    const { message, conversation } = await createConversationAndMessages({
+    const kwargs = {
       customer: _customer,
       integration: _integration,
       user,
       engageData: {
         content: 'hi {{ customer.name }} {{ user.fullName }}',
+        messageId: '_id',
       },
-    });
+    };
+
+    // create ==========================
+    const message = await createOrUpdateConversationAndMessages(kwargs);
+    const conversation = await Conversations.findOne({ _id: message.conversationId });
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(1);
 
     // check message fields
     expect(message._id).toBeDefined();
@@ -76,6 +93,46 @@ describe('createConversation', () => {
     expect(conversation._id).toBeDefined();
     expect(conversation.content).toBe(`hi ${_customer.name} Full name`);
     expect(conversation.integrationId).toBe(_integration._id);
+
+    // second time ==========================
+    // must not create new conversation & messages update
+    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+
+    let response = await createOrUpdateConversationAndMessages(kwargs);
+
+    expect(response).toBe(null);
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(1);
+
+    const updatedMessage = await Messages.findOne({
+      conversationId: conversation._id,
+    });
+
+    expect(updatedMessage.isCustomerRead).toBe(false);
+
+    // do not mark as unread for conversations that
+    // have more than one messages =====================
+    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+
+    await messageFactory({
+      conversationId: conversation._id,
+      isCustomerRead: true,
+    });
+
+    response = await createOrUpdateConversationAndMessages(kwargs);
+
+    expect(response).toBe(null);
+
+    expect(await Conversations.find().count()).toBe(1);
+    expect(await Messages.find().count()).toBe(2);
+
+    const [message1, message2] = await Messages.find({
+      conversationId: conversation._id,
+    });
+
+    expect(message1.isCustomerRead).toBe(true);
+    expect(message2.isCustomerRead).toBe(true);
   });
 });
 
@@ -87,7 +144,10 @@ describe('createEngageVisitorMessages', () => {
 
   beforeEach(async () => {
     // Creating test data
-    _customer = await customerFactory();
+    _customer = await customerFactory({
+      urlVisits: { '/page': 11 },
+    });
+
     _brand = await brandFactory({});
     _integration = await integrationFactory({ brandId: _brand._id });
     _user = await userFactory({});
@@ -105,6 +165,11 @@ describe('createEngageVisitorMessages', () => {
             kind: 'currentPageUrl',
             condition: 'is',
             value: '/page',
+          },
+          {
+            kind: 'numberOfVisits',
+            condition: 'greaterThan',
+            value: 10,
           },
         ],
         content: 'hi {{ customer.name }}',
@@ -124,6 +189,24 @@ describe('createEngageVisitorMessages', () => {
   });
 
   test('must create conversation & message object', async () => {
+    // previous unread conversation messages created by engage
+    await messageFactory({
+      customerId: _customer._id,
+      isCustomerRead: false,
+      engageData: {
+        messageId: '_id2',
+      },
+    });
+
+    await messageFactory({
+      customerId: _customer._id,
+      isCustomerRead: false,
+      engageData: {
+        messageId: '_id2',
+      },
+    });
+
+    // main call
     await createEngageVisitorMessages({
       brand: _brand,
       customer: _customer,
@@ -141,9 +224,20 @@ describe('createEngageVisitorMessages', () => {
     expect(conversation.customerId).toBe(_customer._id);
     expect(conversation.integrationId).toBe(_integration._id);
 
-    const message = await Messages.findOne({});
+    const message = await Messages.findOne({
+      conversationId: conversation._id,
+    });
 
     expect(message._id).toBeDefined();
     expect(message.content).toBe(content);
+
+    // count of unread conversation messages created by engage must be zero
+    const convEngageMessages = await Messages.find({
+      customerId: _customer._id,
+      isCustomerRead: false,
+      engageData: { $exists: true },
+    });
+
+    expect(convEngageMessages.length).toBe(0);
   });
 });

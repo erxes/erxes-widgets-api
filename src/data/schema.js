@@ -110,8 +110,10 @@ export const types = `
     customerId: String
   }
 
-  type EndConversationResponse {
-    customerId: String!
+  type ConversationDetailResponse {
+    messages: [ConversationMessage]
+    isOnline: Boolean
+    supporters: [User]
   }
 
   type FormConnectResponse {
@@ -173,14 +175,11 @@ export const types = `
 export const queries = `
   type Query {
     conversations(integrationId: String!, customerId: String!): [Conversation]
-    conversationDetail(_id: String!): Conversation
+    conversationDetail(_id: String, integrationId: String!): ConversationDetailResponse
     getMessengerIntegration(brandCode: String!): Integration
-    lastUnreadMessage(integrationId: String!, customerId: String!): ConversationMessage
-    totalUnreadCount(integrationId: String!, customerId: String!): Int
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
-    messengerSupporters(integrationId: String!): [User]
-    isMessengerOnline(integrationId: String!): Boolean
+    totalUnreadCount(integrationId: String!, customerId: String!): Int
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
     knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
@@ -191,12 +190,6 @@ export const queries = `
 
 export const mutations = `
   type Mutation {
-    endConversation(
-      customerId: String
-      brandCode: String!
-      data: JSON
-    ): EndConversationResponse
-
     messengerConnect(
       brandCode: String!
       email: String
@@ -212,7 +205,7 @@ export const mutations = `
     saveBrowserInfo(
       customerId: String!
       browserInfo: JSON!
-    ): [Conversation]
+    ): ConversationMessage
 
     insertMessage(
       integrationId: String!
@@ -223,7 +216,6 @@ export const mutations = `
     ): ConversationMessage
 
     readConversationMessages(conversationId: String): String
-    readEngageMessage(messageId: String!, customerId: String!): String
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 

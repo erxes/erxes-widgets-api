@@ -4,10 +4,10 @@ import Random from 'meteor-random';
 import Conversations from './Conversations';
 
 const AttachmentSchema = mongoose.Schema({
-  url: String,
-  name: String,
-  size: Number,
-  type: String,
+  url: { type: String, required: true },
+  name: { type: String, required: true },
+  size: { type: Number, required: true },
+  type: { type: String, required: true },
 });
 
 const MessageSchema = mongoose.Schema({
@@ -55,6 +55,19 @@ class Message {
       internal: false,
       ...messageObj,
     });
+  }
+
+  // force read previous unread engage messages ============
+  static forceReadCustomerPreviousEngageMessages(customerId) {
+    return this.update(
+      {
+        customerId,
+        engageData: { $exists: true },
+        isCustomerRead: { $ne: true },
+      },
+      { $set: { isCustomerRead: true } },
+      { multi: true },
+    );
   }
 }
 

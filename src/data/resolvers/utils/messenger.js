@@ -1,23 +1,23 @@
 const daysAsString = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-export function isTimeInBetween(date, startTime, closeTime) {
+export const isTimeInBetween = (date, startTime, closeTime) => {
   // concatnating time ranges with today's date
   const dateString = date.toLocaleDateString();
   const startDate = new Date(`${dateString} ${startTime}`);
   const closeDate = new Date(`${dateString} ${closeTime}`);
 
   return startDate <= date && date <= closeDate;
-}
+};
 
-function isWeekday(day) {
+const isWeekday = day => {
   return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
-}
+};
 
-function isWeekend(day) {
+const isWeekend = day => {
   return ['saturday', 'sunday'].includes(day);
-}
+};
 
-export function isOnline(integration, now = new Date()) {
+export const isOnline = (integration, now = new Date()) => {
   /**
    * Manual: We can determine state from isOnline field value when method is manual
    */
@@ -54,9 +54,25 @@ export function isOnline(integration, now = new Date()) {
 
   // check by regular day config
   const dayConf = integration.onlineHours.find(c => c.day === day);
+
   if (dayConf) {
     return isTimeInBetween(now, dayConf.from, dayConf.to);
   }
 
   return false;
-}
+};
+
+export const unreadMessagesSelector = {
+  userId: { $exists: true },
+  internal: false,
+  isCustomerRead: { $ne: true },
+};
+
+export const unreadMessagesQuery = conversations => {
+  const conversationIds = conversations.map(c => c._id);
+
+  return {
+    conversationId: { $in: conversationIds },
+    ...unreadMessagesSelector,
+  };
+};

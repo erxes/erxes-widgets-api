@@ -7,25 +7,10 @@ import {
   Companies,
 } from '../../../db/models';
 import { createEngageVisitorMessages } from '../utils/engage';
+import { unreadMessagesQuery } from '../utils/messenger';
 import { mutateAppApi } from '../../../utils';
 
 export default {
-  /*
-   * End conversation
-   */
-  async endConversation(root, { customerId, brandCode, data }) {
-    // mark old customer as inactive
-    await Customers.markCustomerAsNotActive(customerId);
-
-    // find integration
-    const integ = await Integrations.getIntegration(brandCode, 'messenger');
-
-    // create customer
-    const customer = await Customers.createMessengerCustomer({ integrationId: integ._id }, data);
-
-    return { customerId: customer._id };
-  },
-
   /**
    * Create a new customer or update existing customer info
    * when connection established
@@ -47,11 +32,7 @@ export default {
       phone,
     });
 
-    // update customer
     if (customer) {
-      // update messenger session data
-      customer = await Customers.updateMessengerSession(customer._id);
-
       // update fields
       await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
 
@@ -128,7 +109,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationSubscribeMessageCreated(_id: "${msg._id}")
+        conversationPublishClientMessage(_id: "${msg._id}")
       }`);
 
     return msg;
@@ -143,17 +124,11 @@ export default {
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
-        isCustomerRead: { $exists: false },
+        isCustomerRead: { $ne: true },
       },
       { isCustomerRead: true },
       { multi: true },
     );
-
-    // notify app api
-    mutateAppApi(`
-      mutation {
-        conversationSubscribeChanged(_ids: ["${args.conversationId}"], type: "readState")
-      }`);
 
     return response;
   },
@@ -166,13 +141,21 @@ export default {
    * Update customer location field
    */
   async saveBrowserInfo(root, { customerId, browserInfo }) {
-    const customer = await Customers.updateLocation(customerId, browserInfo);
+    // update location
+    await Customers.updateLocation(customerId, browserInfo);
+
+    // update messenger session data
+    const customer = await Customers.updateMessengerSession({
+      _id: customerId,
+      url: browserInfo.url,
+    });
+
     const integration = await Integrations.findOne({ _id: customer.integrationId });
     const brand = await Brands.findOne({ _id: integration.brandId });
 
     // try to create engage chat auto messages
     if (!customer.email) {
-      return createEngageVisitorMessages({
+      await createEngageVisitorMessages({
         brand,
         integration,
         customer,
@@ -180,6 +163,12 @@ export default {
       });
     }
 
-    return [];
+    // find conversations
+    const convs = await Conversations.find({
+      integrationId: integration._id,
+      customerId: customer._id,
+    });
+
+    return Messages.findOne(unreadMessagesQuery(convs));
   },
 };

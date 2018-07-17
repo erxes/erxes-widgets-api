@@ -96,7 +96,6 @@ describe('messenger connect', () => {
     expect(customer.email).toBe(_customer.email);
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt < now).toBeTruthy();
-    expect(customer.messengerData.sessionCount).toBe(_customer.messengerData.sessionCount + 1);
 
     // must be updated
     expect(customer.firstName).toBe('name');
@@ -214,6 +213,7 @@ describe('common', async () => {
 
     const customer = await customerFactory({
       integrationId: integration._id,
+      urlVisits: { '/career/open': 5 },
     });
 
     const browserInfo = {
@@ -221,6 +221,7 @@ describe('common', async () => {
       language: 'en',
       userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
+      url: '/career/open',
     };
 
     await messengerMutations.saveBrowserInfo({}, { customerId: customer._id, browserInfo });
@@ -230,5 +231,9 @@ describe('common', async () => {
     expect(updatedCustomer.location.hostname).toBe(browserInfo.hostname);
     expect(updatedCustomer.location.language).toBe(browserInfo.language);
     expect(updatedCustomer.location.userAgent).toBe(browserInfo.userAgent);
+    expect(updatedCustomer.messengerData.sessionCount).toBe(
+      customer.messengerData.sessionCount + 1,
+    );
+    expect(updatedCustomer.urlVisits['/career/open']).toBe(6);
   });
 });

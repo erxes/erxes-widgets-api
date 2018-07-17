@@ -4,7 +4,7 @@
 import faker from 'faker';
 import Random from 'meteor-random';
 import { connect, disconnect } from '../db/connection';
-import { conversationFactory } from '../db/factories';
+import { conversationFactory, messageFactory } from '../db/factories';
 import { Conversations, Messages } from '../db/models';
 
 beforeAll(() => connect());
@@ -105,5 +105,44 @@ describe('Conversations', () => {
     expect(message.userId).toBeUndefined();
     expect(message.isCustomerRead).toBeUndefined();
     expect(message.internal).toBeFalsy();
+  });
+
+  test('forceReadCustomerPreviousEngageMessages', async () => {
+    const customerId = '_id';
+
+    // isCustomRead is defined ===============
+    await messageFactory({
+      customerId,
+      engageData: { messageId: '_id' },
+      isCustomerRead: false,
+    });
+
+    await Messages.forceReadCustomerPreviousEngageMessages(customerId);
+
+    let messages = await Messages.find({
+      customerId,
+      engageData: { $exists: true },
+      isCustomerRead: true,
+    });
+
+    expect(messages.length).toBe(1);
+
+    // isCustomRead is undefined ===============
+    await Messages.remove({});
+
+    await messageFactory({
+      customerId,
+      engageData: { messageId: '_id' },
+    });
+
+    await Messages.forceReadCustomerPreviousEngageMessages(customerId);
+
+    messages = await Messages.find({
+      customerId,
+      engageData: { $exists: true },
+      isCustomerRead: true,
+    });
+
+    expect(messages.length).toBe(1);
   });
 });

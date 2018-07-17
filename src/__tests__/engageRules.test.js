@@ -193,7 +193,7 @@ describe('checkIndividualRule', () => {
   const greaterThanRule = {
     kind: 'numberOfVisits',
     condition: 'greaterThan',
-    value: 1,
+    value: '1',
   };
 
   test('greaterThan: not matching', () => {
@@ -220,7 +220,7 @@ describe('checkIndividualRule', () => {
   const lessThanRule = {
     kind: 'numberOfVisits',
     condition: 'lessThan',
-    value: 1,
+    value: '1',
   };
 
   test('lessThan: not matching', () => {
@@ -238,6 +238,31 @@ describe('checkIndividualRule', () => {
       rule: lessThanRule,
       browserInfo: {},
       numberOfVisits: 0,
+    });
+
+    expect(response).toBe(true);
+  });
+
+  // contains ======
+  const containsRule = {
+    kind: 'currentPageUrl',
+    condition: 'contains',
+    value: 'page',
+  };
+
+  test('contains: not matching', () => {
+    const response = checkRule({
+      rule: containsRule,
+      browserInfo: { url: '/test' },
+    });
+
+    expect(response).toBe(false);
+  });
+
+  test('contains: matching', () => {
+    const response = checkRule({
+      rule: containsRule,
+      browserInfo: { url: '/page' },
     });
 
     expect(response).toBe(true);

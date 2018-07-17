@@ -121,6 +121,10 @@ export default {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
+    if (!brand || !form) {
+      throw new Error('Invalid configuration');
+    }
+
     // find integration by brandId & formId
     const integ = await Integrations.findOne({
       brandId: brand._id,
@@ -170,7 +174,7 @@ export default {
     // notify app api
     mutateAppApi(`
       mutation {
-        conversationSubscribeMessageCreated(_id: "${message._id}")
+        conversationPublishClientMessage(_id: "${message._id}")
       }`);
 
     return { status: 'ok', messageId: message._id };

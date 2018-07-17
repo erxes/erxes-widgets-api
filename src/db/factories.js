@@ -81,6 +81,7 @@ export function customerFactory(params = {}) {
       isActive: params.isActive || false,
       sessionCount: faker.random.number(),
     },
+    urlVisits: params.urlVisits,
   });
 
   return customer.save();
@@ -101,17 +102,16 @@ export function conversationFactory() {
 }
 
 export function messageFactory(params = {}) {
-  const obj = Object.assign(
-    {
-      userId: Random.id(),
-      conversationId: Random.id(),
-      customerId: Random.id(),
-      content: faker.lorem.sentence,
-      createdAt: faker.date.past(),
-    },
-    params,
-  );
-  const message = new Messages(obj);
+  const message = new Messages({
+    userId: Random.id(),
+    conversationId: Random.id(),
+    customerId: Random.id(),
+    content: faker.lorem.sentence,
+    createdAt: faker.date.past(),
+    isCustomerRead: params.isCustomerRead,
+    engageData: params.engageData,
+    ...params,
+  });
 
   return message.save();
 }

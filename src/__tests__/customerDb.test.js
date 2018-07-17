@@ -134,10 +134,15 @@ describe('Customers', () => {
 
   test('updateMessengerSession()', async () => {
     const now = new Date();
-    const customer = await Customers.updateMessengerSession(_customer._id);
+
+    const customer = await Customers.updateMessengerSession({
+      _id: _customer._id,
+      url: '/career/open',
+    });
 
     expect(customer.messengerData.isActive).toBeTruthy();
     expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+    expect(customer.urlVisits['/career/open']).toBe(1);
   });
 
   test('addCompany()', async () => {
