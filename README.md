@@ -2,6 +2,10 @@
 
 The GraphQL server shared by the erxes apps and widgets.
 
+## Status  <br>
+
+![Build Status](https://travis-ci.org/erxes/erxes-widgets-api.svg?branch=master)
+
 ## Running the server
 
 #### 1. Node (version >= 4) and NPM need to be installed.
