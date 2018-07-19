@@ -19,7 +19,7 @@
   "scripts": {
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon src --exec babel-node",
-    "test": "NODE_ENV=test jest --runInBand",
+    "test": "NODE_ENV=test jest --coverage --runInBand",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "eslint src",
     "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.js'",
