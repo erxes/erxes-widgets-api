@@ -14,6 +14,11 @@ const CompanySchema = mongoose.Schema({
     optional: true,
   },
 
+  names: {
+    type: [String],
+    optional: true,
+  },
+
   size: {
     type: Number,
     optional: true,
@@ -69,7 +74,7 @@ class Company {
    * @return {Promise} previously saved company or newly created company object
    */
   static async getOrCreate(doc) {
-    const company = await this.findOne({ name: doc.name });
+    const company = await this.findOne({ names: { $in: [doc.name] } });
 
     if (company) {
       return company;
