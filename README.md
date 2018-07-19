@@ -7,6 +7,7 @@ The GraphQL server shared by the erxes apps and widgets
 ## Status  <br>
 
 ![Build Status](https://travis-ci.org/erxes/erxes-widgets-api.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/erxes/erxes-widgets-api/badge.svg?branch=master)](https://coveralls.io/github/erxes/erxes-widgets-api?branch=master)
 
 ## Running the server
 
