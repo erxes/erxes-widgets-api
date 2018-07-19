@@ -1,4 +1,4 @@
-# erxes WIDGETS-API
+# erxes Widgets-API
 
 The GraphQL server shared by the erxes apps and widgets.
 
@@ -12,18 +12,25 @@ The GraphQL server shared by the erxes apps and widgets.
 #### 2. Clone and install dependencies.
 
 ```Shell
-git clone https://github.com/erxes/erxes-widgets-api
+git clone https://github.com/erxes/erxes-widgets-api.git
 cd erxes-widgets-api
 yarn install
 ```
 
-#### 3. Create configuration. We use [dotenv](https://github.com/motdotla/dotenv) for this.
+#### 3. Create configuration from sample file. We use [dotenv](https://github.com/motdotla/dotenv) for this.
 
 ```Shell
 cp .env.sample .env
 ```
 
-`MONGO_URL` in the `.env` file points to the mongo database instance of the [erxes](https://github.com/erxes/erxes) meteor app. So we need to run [erxes](https://github.com/erxes/erxes) app first.
+.env file description
+
+```env
+NODE_ENV=development                        (Node environment: development | production)
+PORT=3100                                   (Server port)
+MAIN_API_URL=http://localhost:3300/graphql  (erxes-api project url)
+MONGO_URL=mongodb://localhost/erxes         (MongoDB url)
+```
 
 #### 4. Start the server.
 
