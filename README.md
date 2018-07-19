@@ -1,4 +1,4 @@
-# erxes API
+# erxes WIDGETS-API
 
 The GraphQL server shared by the erxes apps and widgets.
 
