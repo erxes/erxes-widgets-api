@@ -1,6 +1,6 @@
 # erxes Inc - erxes Widgets API
 
-The GraphQL server shared by the erxes apps and widgets
+erxes is an AI meets open source messaging platform for sales and marketing
 
 <a href="https://demohome.erxes.io/">View demo</a> <b>| </b> <a href="https://github.com/erxes/erxes-widgets-api/archive/master.zip">Download ZIP </a> <b> | </b> <a href="https://gitter.im/erxes/Lobby">Join us on Gitter</a>
 
