@@ -164,7 +164,8 @@ describe('Customers', () => {
     const customer = await Customers.getOrCreateCustomer(unexistingCustomer);
 
     expect(customer).toBeDefined();
-    expect(customer.primaryEmail).toBe(unexistingCustomer.primaryEmail);
+    expect(customer.primaryEmail).toBe(unexistingCustomer.email);
+    expect(customer.emails).toContain(unexistingCustomer.email);
     expect(customer.integrationId).toBe(unexistingCustomer.integrationId);
     expect(customer.createdAt >= now).toBe(true);
     expect(customer.createdAt).toBeDefined();

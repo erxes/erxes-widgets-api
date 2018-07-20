@@ -34,15 +34,21 @@ export default {
 
     if (customer) {
       // update fields
-      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
+      await Customers.updateMessengerCustomer(
+        customer._id,
+        { primaryPhone: phone, phones: [phone], isUser },
+        data,
+      );
 
       // create new customer
     } else {
       customer = await Customers.createMessengerCustomer(
         {
           integrationId: integration._id,
-          email,
-          phone,
+          primaryEmail: email,
+          emails: [email],
+          primaryPhone: phone,
+          phones: [phone],
           isUser,
         },
         data,
@@ -154,7 +160,7 @@ export default {
     const brand = await Brands.findOne({ _id: integration.brandId });
 
     // try to create engage chat auto messages
-    if (!customer.email) {
+    if (!customer.primaryEmail) {
       await createEngageVisitorMessages({
         brand,
         integration,

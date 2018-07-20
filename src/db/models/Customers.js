@@ -176,14 +176,14 @@ class Customer {
    * @param  {Object} doc Expected customer object
    * @return {Promise} Existing or newly created customer object
    */
-  static async getOrCreateCustomer(doc) {
-    const customer = await this.getCustomer(doc);
+  static async getOrCreateCustomer({ email, ...doc }) {
+    const customer = await this.getCustomer({ email, ...doc });
 
     if (customer) {
       return customer;
     }
 
-    return this.createCustomer(doc);
+    return this.createCustomer({ primaryEmail: email, emails: [email], ...doc });
   }
 
   /**

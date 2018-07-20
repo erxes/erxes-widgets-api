@@ -161,7 +161,8 @@ describe('Form mutations', () => {
       // check customer fields
       const customer = await Customers.findOne({});
 
-      expect(customer.email).toBe('email@gmail.com');
+      expect(customer.primaryEmail).toBe('email@gmail.com');
+      expect(customer.emails).toContain('email@gmail.com');
       expect(customer.firstName).toBe('first name');
       expect(customer.lastName).toBe('last name');
       expect(customer.location.hostname).toBe(browserInfo.hostname);
