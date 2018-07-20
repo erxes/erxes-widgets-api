@@ -1,6 +1,10 @@
-# erxes API
+# erxes WIDGETS-API
 
 The GraphQL server shared by the erxes apps and widgets.
+
+## Status  <br>
+
+![Build Status](https://travis-ci.org/erxes/erxes-widgets-api.svg?branch=master)
 
 ## Running the server
 
@@ -8,8 +12,8 @@ The GraphQL server shared by the erxes apps and widgets.
 #### 2. Clone and install dependencies.
 
 ```Shell
-git clone https://github.com/erxes/erxes-api
-cd erxes-api
+git clone https://github.com/erxes/erxes-widgets-api
+cd erxes-widgets-api
 yarn install
 ```
 
