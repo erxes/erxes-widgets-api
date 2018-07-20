@@ -32,6 +32,8 @@ const CustomerSchema = mongoose.Schema({
   integrationId: String,
   email: String,
   phone: String,
+  emails: [String],
+  phones: [String],
   isUser: Boolean,
   firstName: String,
   lastName: String,
@@ -90,11 +92,11 @@ class Customer {
    */
   static getCustomer({ email, phone, cachedCustomerId }) {
     if (email) {
-      return this.findOne({ email });
+      return this.findOne({ emails: { $in: email } });
     }
 
     if (phone) {
-      return this.findOne({ phone });
+      return this.findOne({ phones: { $in: phone } });
     }
 
     if (cachedCustomerId) {
