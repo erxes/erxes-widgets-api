@@ -70,10 +70,14 @@ export const formFieldFactory = params => {
 
 export function customerFactory(params = {}) {
   const createdAt = faker.date.past();
+  const email = faker.internet.email();
+
   const customer = new Customers({
     integrationId: params.integrationId || Random.id(),
     createdAt,
-    email: faker.internet.email(),
+    email,
+    primaryEmail: email,
+    emails: [email],
     isUser: faker.random.boolean(),
     name: faker.name.findName(),
     messengerData: {

@@ -92,11 +92,11 @@ class Customer {
    */
   static getCustomer({ email, phone, cachedCustomerId }) {
     if (email) {
-      return this.findOne({ emails: { $in: email } });
+      return this.findOne({ emails: { $in: [email] } });
     }
 
     if (phone) {
-      return this.findOne({ phones: { $in: phone } });
+      return this.findOne({ phones: { $in: [phone] } });
     }
 
     if (cachedCustomerId) {

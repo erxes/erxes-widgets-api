@@ -72,11 +72,11 @@ describe('Customers', () => {
 
   test('getCustomer() must return an existing customer', async () => {
     const customer = await Customers.getCustomer({
-      email: _customer.email,
+      email: _customer.emails[0],
     });
 
     expect(customer).toBeDefined();
-    expect(customer.email).toBe(_customer.email);
+    expect(_customer.emails).toContain(customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
@@ -91,7 +91,7 @@ describe('Customers', () => {
     const customer = await Customers.getOrCreateCustomer(_customer);
 
     expect(customer).toBeDefined();
-    expect(customer.email).toBe(_customer.email);
+    expect(customer.emails).toContain(_customer.email);
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
