@@ -54,7 +54,7 @@ describe('messenger connect', () => {
   });
 
   test('creates new customer', async () => {
-    const email = 'test@gmail.com';
+    const email = 'newCustomer@gmail.com';
     const now = new Date();
 
     const { customerId } = await messengerMutations.messengerConnect(
