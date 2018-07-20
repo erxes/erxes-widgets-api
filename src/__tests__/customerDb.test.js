@@ -19,7 +19,10 @@ describe('Customers', () => {
 
   beforeEach(async () => {
     // Creating test customer
-    _customer = await customerFactory();
+    _customer = await customerFactory({
+      primaryEmail: 'email@gmail.com',
+      emails: ['email@gmail.com', 'anotheremail@gmail.com'],
+    });
   });
 
   afterEach(() => {
@@ -70,13 +73,57 @@ describe('Customers', () => {
     expect(customer.messengerData.customData.created_at).toBe(customData.created_at);
   });
 
-  test('getCustomer() must return an existing customer', async () => {
-    const customer = await Customers.getCustomer({
-      email: _customer.emails[0],
+  test('getCustomer(): emails, primaryEmail', async () => {
+    let customer = await Customers.getCustomer({
+      email: 'anotheremail@gmail.com',
     });
 
-    expect(customer).toBeDefined();
-    expect(_customer.emails).toContain(customer.email);
+    expect(customer._id).toBeDefined();
+
+    // check primaryEmail
+    customer = await customerFactory({
+      primaryEmail: 'customer@gmail.com',
+      emails: ['main@gmail.com'],
+    });
+
+    customer = await Customers.getCustomer({
+      email: 'customer@gmail.com',
+    });
+
+    expect(customer._id).toBeDefined();
+  });
+
+  test('getCustomer(): phones, primaryPhone', async () => {
+    // check phones
+    let customer = await customerFactory({
+      phones: ['911111'],
+    });
+
+    customer = await Customers.getCustomer({
+      phone: '911111',
+    });
+
+    expect(customer._id).toBeDefined();
+
+    // check primaryPhone
+    customer = await customerFactory({
+      primaryPhone: '24244242',
+    });
+
+    customer = await Customers.getCustomer({
+      phone: '24244242',
+    });
+
+    expect(customer._id).toBeDefined();
+  });
+
+  test('getCustomer() must return an existing customer', async () => {
+    const customer = await Customers.getCustomer({
+      email: 'email@gmail.com',
+    });
+
+    expect(customer._id).toBeDefined();
+    expect(_customer.emails).toContain(customer.primaryEmail);
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
@@ -88,10 +135,15 @@ describe('Customers', () => {
   test('getOrCreateCustomer() must return an existing customer', async () => {
     const now = new Date();
 
-    const customer = await Customers.getOrCreateCustomer(_customer);
+    const doc = {
+      ..._customer,
+      email: 'email@gmail.com',
+    };
+
+    const customer = await Customers.getOrCreateCustomer(doc);
 
     expect(customer).toBeDefined();
-    expect(customer.emails).toContain(_customer.email);
+    expect(customer.emails).toContain('email@gmail.com');
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
@@ -112,7 +164,7 @@ describe('Customers', () => {
     const customer = await Customers.getOrCreateCustomer(unexistingCustomer);
 
     expect(customer).toBeDefined();
-    expect(customer.email).toBe(unexistingCustomer.email);
+    expect(customer.primaryEmail).toBe(unexistingCustomer.primaryEmail);
     expect(customer.integrationId).toBe(unexistingCustomer.integrationId);
     expect(customer.createdAt >= now).toBe(true);
     expect(customer.createdAt).toBeDefined();

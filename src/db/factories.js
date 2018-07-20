@@ -75,9 +75,13 @@ export function customerFactory(params = {}) {
   const customer = new Customers({
     integrationId: params.integrationId || Random.id(),
     createdAt,
-    email,
-    primaryEmail: email,
-    emails: [email],
+
+    primaryEmail: params.primaryEmail || email,
+    emails: params.emails || [email],
+
+    primaryPhone: params.primaryPhone || '244244',
+    phones: params.phones || ['244244'],
+
     isUser: faker.random.boolean(),
     name: faker.name.findName(),
     messengerData: {
