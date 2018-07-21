@@ -27,7 +27,13 @@ describe('messenger connect', () => {
     // Creating test data
     _brand = await brandFactory();
     _integration = await integrationFactory({ brandId: _brand._id, kind: 'messenger' });
-    _customer = await customerFactory({ integrationId: _integration._id });
+    _customer = await customerFactory({
+      integrationId: _integration._id,
+      primaryEmail: 'test@gmail.com',
+      emails: ['test@gmail.com'],
+      primaryPhone: '96221050',
+      phone: ['96221050'],
+    });
   });
 
   afterEach(async () => {
@@ -48,7 +54,7 @@ describe('messenger connect', () => {
   });
 
   test('creates new customer', async () => {
-    const email = faker.internet.email();
+    const email = 'newCustomer@gmail.com';
     const now = new Date();
 
     const { customerId } = await messengerMutations.messengerConnect(
@@ -61,8 +67,9 @@ describe('messenger connect', () => {
 
     const customer = await Customers.findById(customerId);
 
-    expect(customer).toBeDefined();
-    expect(customer.email).toBe(email);
+    expect(customer._id).toBeDefined();
+    expect(customer.primaryEmail).toBe(email);
+    expect(customer.emails).toContain(email);
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt >= now).toBeTruthy();
     expect(customer.companyIds.length).toBe(1);
@@ -76,8 +83,7 @@ describe('messenger connect', () => {
       {},
       {
         brandCode: _brand.code,
-        email: _customer.email,
-        phone: '96221050',
+        email: _customer.primaryEmail,
         isUser: true,
         // customData
         data: {
@@ -93,13 +99,11 @@ describe('messenger connect', () => {
     const customer = await Customers.findById(customerId);
 
     expect(customer).toBeDefined();
-    expect(customer.email).toBe(_customer.email);
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt < now).toBeTruthy();
 
     // must be updated
     expect(customer.firstName).toBe('name');
-    expect(customer.phone).toBe('96221050');
     expect(customer.isUser).toBeTruthy();
     expect(customer.messengerData.customData.plan).toBe(1);
   });

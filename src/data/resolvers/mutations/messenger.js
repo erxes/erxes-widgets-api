@@ -34,7 +34,7 @@ export default {
 
     if (customer) {
       // update fields
-      await Customers.updateMessengerCustomer(customer._id, { phone, isUser }, data);
+      await Customers.updateMessengerCustomer(customer._id, { isUser }, data);
 
       // create new customer
     } else {
@@ -154,7 +154,7 @@ export default {
     const brand = await Brands.findOne({ _id: integration.brandId });
 
     // try to create engage chat auto messages
-    if (!customer.email) {
+    if (!customer.primaryEmail) {
       await createEngageVisitorMessages({
         brand,
         integration,

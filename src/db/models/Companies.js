@@ -9,8 +9,13 @@ const CompanySchema = mongoose.Schema({
     default: () => Random.id(),
   },
 
-  name: {
+  primaryName: {
     type: String,
+    optional: true,
+  },
+
+  names: {
+    type: [String],
     optional: true,
   },
 
@@ -50,7 +55,13 @@ class Company {
    * @return {Promise} Newly created company object
    */
   static async createCompany(doc) {
-    const company = await this.create(doc);
+    const { name, ...restDoc } = doc;
+
+    const company = await this.create({
+      primaryName: name,
+      names: [name],
+      ...restDoc,
+    });
 
     // call app api's create customer log
     mutateAppApi(`
@@ -69,7 +80,9 @@ class Company {
    * @return {Promise} previously saved company or newly created company object
    */
   static async getOrCreate(doc) {
-    const company = await this.findOne({ name: doc.name });
+    const company = await this.findOne({
+      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
+    });
 
     if (company) {
       return company;

@@ -30,8 +30,13 @@ const CustomerSchema = mongoose.Schema({
     default: () => Random.id(),
   },
   integrationId: String,
-  email: String,
-  phone: String,
+
+  primaryPhone: String,
+  phones: { type: [String], optional: true },
+
+  primaryEmail: String,
+  emails: { type: [String], optional: true },
+
   isUser: Boolean,
   firstName: String,
   lastName: String,
@@ -90,11 +95,15 @@ class Customer {
    */
   static getCustomer({ email, phone, cachedCustomerId }) {
     if (email) {
-      return this.findOne({ email });
+      return this.findOne({
+        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
+      });
     }
 
     if (phone) {
-      return this.findOne({ phone });
+      return this.findOne({
+        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
+      });
     }
 
     if (cachedCustomerId) {
@@ -110,10 +119,24 @@ class Customer {
    * @return {Promise} Newly created customer object
    */
   static async createCustomer(doc) {
-    const customer = await this.create({
-      ...doc,
+    const { email, phone, ...restDoc } = doc;
+
+    const modifier = {
+      ...restDoc,
       createdAt: new Date(),
-    });
+    };
+
+    if (email) {
+      modifier.primaryEmail = email;
+      modifier.emails = [email];
+    }
+
+    if (phone) {
+      modifier.primaryPhone = phone;
+      modifier.phones = [phone];
+    }
+
+    const customer = await this.create(modifier);
 
     // call app api's create customer log
     mutateAppApi(`
