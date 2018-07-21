@@ -55,7 +55,13 @@ class Company {
    * @return {Promise} Newly created company object
    */
   static async createCompany(doc) {
-    const company = await this.create(doc);
+    const { name, ...restDoc } = doc;
+
+    const company = await this.create({
+      primaryName: name,
+      names: [name],
+      ...restDoc,
+    });
 
     // call app api's create customer log
     mutateAppApi(`
