@@ -119,10 +119,24 @@ class Customer {
    * @return {Promise} Newly created customer object
    */
   static async createCustomer(doc) {
-    const customer = await this.create({
-      ...doc,
+    const { email, phone, ...restDoc } = doc;
+
+    const modifier = {
+      ...restDoc,
       createdAt: new Date(),
-    });
+    };
+
+    if (email) {
+      modifier.primaryEmail = email;
+      modifier.emails = [email];
+    }
+
+    if (phone) {
+      modifier.primaryPhone = phone;
+      modifier.phones = [phone];
+    }
+
+    const customer = await this.create(modifier);
 
     // call app api's create customer log
     mutateAppApi(`
@@ -176,14 +190,14 @@ class Customer {
    * @param  {Object} doc Expected customer object
    * @return {Promise} Existing or newly created customer object
    */
-  static async getOrCreateCustomer({ email, ...doc }) {
-    const customer = await this.getCustomer({ email, ...doc });
+  static async getOrCreateCustomer(doc) {
+    const customer = await this.getCustomer(doc);
 
     if (customer) {
       return customer;
     }
 
-    return this.createCustomer({ primaryEmail: email, emails: [email], ...doc });
+    return this.createCustomer(doc);
   }
 
   /**

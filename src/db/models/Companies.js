@@ -9,7 +9,13 @@ const CompanySchema = mongoose.Schema({
     default: () => Random.id(),
   },
 
+  // TODO: remove
   name: {
+    type: String,
+    optional: true,
+  },
+
+  primaryName: {
     type: String,
     optional: true,
   },
@@ -74,7 +80,9 @@ class Company {
    * @return {Promise} previously saved company or newly created company object
    */
   static async getOrCreate(doc) {
-    const company = await this.findOne({ names: { $in: [doc.name] } });
+    const company = await this.findOne({
+      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
+    });
 
     if (company) {
       return company;

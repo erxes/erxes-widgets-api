@@ -36,6 +36,8 @@ describe('Customers', () => {
     const first_name = 'test first name';
     const last_name = 'test last name';
     const bio = 'test BIO 1231321312';
+    const email = 'email@gmail.com';
+    const phone = '422999';
 
     const customData = {
       first_name,
@@ -47,7 +49,8 @@ describe('Customers', () => {
     const customer = await Customers.createMessengerCustomer(
       {
         integrationId: _customer.integrationId,
-        email: _customer.email,
+        email,
+        phone,
         isUser: _customer.isUser,
         name: _customer.name,
       },
@@ -56,9 +59,14 @@ describe('Customers', () => {
     );
 
     expect(customer).toBeDefined();
-    expect(customer.email).toBe(_customer.email);
+
+    expect(customer.primaryEmail).toBe(email);
+    expect(customer.emails).toContain(email);
+
+    expect(customer.primaryPhone).toBe(phone);
+    expect(customer.phones).toContain(phone);
+
     expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
     expect(customer.messengerData.lastSeenAt).toBeDefined();
     expect(customer.messengerData.isActive).toBe(true);
     expect(customer.messengerData.sessionCount).toBe(1);
@@ -115,21 +123,6 @@ describe('Customers', () => {
     });
 
     expect(customer._id).toBeDefined();
-  });
-
-  test('getCustomer() must return an existing customer', async () => {
-    const customer = await Customers.getCustomer({
-      email: 'email@gmail.com',
-    });
-
-    expect(customer._id).toBeDefined();
-    expect(_customer.emails).toContain(customer.primaryEmail);
-    expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
-    expect(customer._id).toBe(_customer._id);
-    expect(customer.integrationId).toBe(_customer.integrationId);
-    expect(customer.createdAt).toEqual(_customer.createdAt);
-    expect(customer.messengerData).toEqual(_customer.messengerData);
   });
 
   test('getOrCreateCustomer() must return an existing customer', async () => {
