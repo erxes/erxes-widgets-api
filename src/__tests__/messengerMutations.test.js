@@ -84,7 +84,6 @@ describe('messenger connect', () => {
       {
         brandCode: _brand.code,
         email: _customer.primaryEmail,
-        phone: '96221050',
         isUser: true,
         // customData
         data: {
@@ -100,15 +99,11 @@ describe('messenger connect', () => {
     const customer = await Customers.findById(customerId);
 
     expect(customer).toBeDefined();
-    expect(customer.primary).toBe(_customer.email);
-    expect(customer.emails).toContain(customer.primaryEmail);
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt < now).toBeTruthy();
 
     // must be updated
     expect(customer.firstName).toBe('name');
-    expect(customer.primaryPhone).toBe('96221050');
-    expect(customer.phones).toContain('96221050');
     expect(customer.isUser).toBeTruthy();
     expect(customer.messengerData.customData.plan).toBe(1);
   });

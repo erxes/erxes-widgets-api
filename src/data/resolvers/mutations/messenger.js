@@ -34,21 +34,15 @@ export default {
 
     if (customer) {
       // update fields
-      await Customers.updateMessengerCustomer(
-        customer._id,
-        { primaryPhone: phone, phones: [phone], isUser },
-        data,
-      );
+      await Customers.updateMessengerCustomer(customer._id, { isUser }, data);
 
       // create new customer
     } else {
       customer = await Customers.createMessengerCustomer(
         {
           integrationId: integration._id,
-          primaryEmail: email,
-          emails: [email],
-          primaryPhone: phone,
-          phones: [phone],
+          email,
+          phone,
           isUser,
         },
         data,
