@@ -9,12 +9,6 @@ const CompanySchema = mongoose.Schema({
     default: () => Random.id(),
   },
 
-  // TODO: remove
-  name: {
-    type: String,
-    optional: true,
-  },
-
   primaryName: {
     type: String,
     optional: true,
