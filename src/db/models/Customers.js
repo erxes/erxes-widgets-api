@@ -32,10 +32,10 @@ const CustomerSchema = mongoose.Schema({
   integrationId: String,
 
   primaryPhone: String,
-  phones: [String],
+  phones: { type: [String], optional: true },
 
   primaryEmail: String,
-  emails: [String],
+  emails: { type: [String], optional: true },
 
   isUser: Boolean,
   firstName: String,
