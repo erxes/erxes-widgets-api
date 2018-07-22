@@ -1,59 +1,56 @@
-import * as mongoose from 'mongoose';
+import { Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
+import { ICustomerDocument, CustomerSchema } from './definations/customers';
 
-const LocationSchema = new mongoose.Schema(
-  {
-    remoteAddress: String,
-    country: String,
-    city: String,
-    region: String,
-    hostname: String,
-    language: String,
-    userAgent: String,
-  },
-  { _id: false },
-);
+interface ICustomerModel extends Model<ICustomerDocument> {
+  getCustomer({
+    email,
+    phone,
+    cachedCustomerId
+  } : {
+    email: string,
+    phone?: string,
+    cachedCustomerId?: string
+  }): Promise<ICustomerDocument>
 
-const VisitorContactSchema = new mongoose.Schema(
-  {
-    email: String,
-    phone: String,
-  },
-  { _id: false },
-);
+  createMessengerCustomer(
+    {
+      integrationId,
+      email,
+      phone,
+      isUser,
+    } : {
+      integrationId: string,
+      email: string,
+      isUser: boolean,
+      phone?: string,
+    },
+    data: object,
+  ): Promise<ICustomerDocument>
 
-const CustomerSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  integrationId: String,
+  updateMessengerCustomer(
+    _id: string,
+    doc: object,
+    customData: object
+  ): Promise<ICustomerDocument>
 
-  primaryPhone: String,
-  phones: { type: [String], optional: true },
-
-  primaryEmail: String,
-  emails: { type: [String], optional: true },
-
-  isUser: Boolean,
-  firstName: String,
-  lastName: String,
-  createdAt: Date,
-  lastSeenAt: Date,
-  messengerData: Object,
-  companyIds: [String],
-  description: String,
-
-  location: LocationSchema,
-
-  // if customer is not a user then we will contact with this visitor using
-  // this information
-  visitorContactInfo: VisitorContactSchema,
-
-  urlVisits: Object,
-});
+  getOrCreateCustomer(doc): Promise<ICustomerDocument>
+  markCustomerAsActive(customerId: string): Promise<ICustomerDocument>
+  markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>
+  updateMessengerSession({ _id, url } : { _id: string, url: string }): Promise<ICustomerDocument>
+  updateLocation(_id: string, browserInfo: object): Promise<ICustomerDocument>
+  addCompany(_id: string, companyId: string): Promise<ICustomerDocument>
+  saveVisitorContactInfo({
+    customerId,
+    type,
+    value
+  } : {
+    customerId: string,
+    type: string,
+    value: string
+  }): Promise<ICustomerDocument>
+}
 
 class Customer {
   /**
@@ -239,7 +236,7 @@ class Customer {
     const now = new Date();
     const customer = await Customers.findOne({ _id });
 
-    // TODO: remove
+    // TODO: check any
     const query: any = {
       $set: {
         // update messengerData
@@ -313,6 +310,6 @@ class Customer {
 
 CustomerSchema.loadClass(Customer);
 
-const Customers = mongoose.model('customers', CustomerSchema);
+const Customers = model<ICustomerDocument, ICustomerModel>('customers', CustomerSchema);
 
 export default Customers;

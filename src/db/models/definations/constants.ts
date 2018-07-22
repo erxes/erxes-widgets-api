@@ -1,3 +1,42 @@
+export const CUSTOMER_LEAD_STATUS_TYPES = [
+  '',
+  'New',
+  'Open',
+  'In Progress',
+  'Open Deal',
+  'Unqualified',
+  'Attempted to Contact',
+  'Connected',
+  'Bad Timing',
+];
+
+export const CUSTOMER_LIFECYCLE_STATE_TYPES = [
+  '',
+  'Subscriber',
+  'Lead',
+  'Marketing Qualified Lead',
+  'Sales Qualified Lead',
+  'Opportunity',
+  'Customer',
+  'Evangelist',
+  'Other',
+];
+
+export const CUSTOMER_BASIC_INFOS = [
+  'firstName',
+  'lastName',
+  'primaryEmail',
+  'primaryPhone',
+  'ownerId',
+  'position',
+  'department',
+  'leadStatus',
+  'lifecycleState',
+  'hasAuthority',
+  'description',
+  'doNotDisturb',
+];
+
 export const COMPANY_LEAD_STATUS_TYPES = [
   '',
   'New',
