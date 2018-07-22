@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 
-const ConversationSchema = mongoose.Schema({
+const ConversationSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -39,9 +39,9 @@ class Conversation {
   static async createConversation(conversationObj) {
     const { integrationId, userId, customerId, content } = conversationObj;
 
-    const count = await this.find({ customerId, integrationId }).count();
+    const count = await Conversations.find({ customerId, integrationId }).count();
 
-    const conversation = await this.create({
+    const conversation = await Conversations.create({
       customerId,
       userId,
       integrationId,
@@ -79,7 +79,7 @@ class Conversation {
     // customer can write a message
     // to the closed conversation even if it's closed
     if (conversationId) {
-      return this.findByIdAndUpdate(
+      return Conversations.findByIdAndUpdate(
         conversationId,
         {
           // mark this conversation as unread

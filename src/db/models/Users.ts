@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,

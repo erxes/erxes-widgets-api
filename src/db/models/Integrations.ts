@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 import Brands from './Brands';
 
-const IntegrationSchema = mongoose.Schema({
+const IntegrationSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -33,7 +33,7 @@ class Integration {
       throw new Error('Brand not found');
     }
 
-    const integration = await this.findOne({ brandId: brand._id, kind });
+    const integration = await Integrations.findOne({ brandId: brand._id, kind });
 
     if (brandObject) {
       return {

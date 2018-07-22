@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 
 // schema for form's callout component
-const CalloutSchema = mongoose.Schema(
+const CalloutSchema = new mongoose.Schema(
   {
     title: String,
     body: String,
@@ -13,7 +13,7 @@ const CalloutSchema = mongoose.Schema(
   { _id: false },
 );
 
-const SubmissionSchema = mongoose.Schema(
+const SubmissionSchema = new mongoose.Schema(
   {
     customerId: String,
     submittedAt: Date,
@@ -21,7 +21,7 @@ const SubmissionSchema = mongoose.Schema(
   { _id: false },
 );
 
-const FormSchema = mongoose.Schema({
+const FormSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -45,7 +45,7 @@ class Form {
    * @return {Promise} Existing form object
    */
   static async increaseViewCount(formId) {
-    const formObj = await this.findOne({ _id: formId });
+    const formObj = await Forms.findOne({ _id: formId });
 
     let viewCount = 0;
 
@@ -55,7 +55,7 @@ class Form {
 
     viewCount++;
 
-    await this.update({ _id: formId }, { viewCount });
+    await Forms.update({ _id: formId }, { viewCount });
 
     return formId;
   }
@@ -66,7 +66,7 @@ class Form {
    * @return {Promise} Existing form object
    */
   static async increaseContactsGathered(formId) {
-    const formObj = await this.findOne({ _id: formId });
+    const formObj = await Forms.findOne({ _id: formId });
 
     let contactsGathered = 0;
 
@@ -76,7 +76,7 @@ class Form {
 
     contactsGathered++;
 
-    await this.update({ _id: formId }, { contactsGathered });
+    await Forms.update({ _id: formId }, { contactsGathered });
 
     return formId;
   }
@@ -90,7 +90,7 @@ class Form {
   static async addSubmission(formId, customerId) {
     const submittedAt = new Date();
 
-    await this.update({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
+    await Forms.update({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
 
     return formId;
   }

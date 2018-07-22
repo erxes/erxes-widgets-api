@@ -2,10 +2,10 @@
  * Extra fields for form, customer, company
  */
 
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 
-const FieldSchema = mongoose.Schema({
+const FieldSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,

@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 
-const KnowledgeBaseArticlesSchema = mongoose.Schema({
+const KnowledgeBaseArticlesSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -17,7 +17,7 @@ const KnowledgeBaseArticlesSchema = mongoose.Schema({
   status: String,
 });
 
-const KnowledgeBaseCategoriesSchema = mongoose.Schema({
+const KnowledgeBaseCategoriesSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -32,7 +32,7 @@ const KnowledgeBaseCategoriesSchema = mongoose.Schema({
   icon: String,
 });
 
-const KnowledgeBaseTopicsSchema = mongoose.Schema({
+const KnowledgeBaseTopicsSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,

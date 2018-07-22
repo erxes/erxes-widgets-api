@@ -8,7 +8,8 @@ import {
 const isMessengerOnline = async ({ integrationId }) => {
   const integration = await Integrations.findOne({ _id: integrationId });
 
-  const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {};
+  const messengerData = integration.messengerData || {};
+  const { availabilityMethod, isOnline, onlineHours } = messengerData;
 
   const modifiedIntegration = Object.assign({}, integration, {
     availabilityMethod,

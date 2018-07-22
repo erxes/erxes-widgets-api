@@ -1,16 +1,16 @@
-import mongoose from 'mongoose';
-import Random from 'meteor-random';
+import * as mongoose from 'mongoose';
+import * as Random from 'meteor-random';
 
 import Conversations from './Conversations';
 
-const AttachmentSchema = mongoose.Schema({
+const AttachmentSchema = new mongoose.Schema({
   url: { type: String, required: true },
   name: { type: String, required: true },
   size: { type: Number, required: true },
   type: { type: String, required: true },
 });
 
-const MessageSchema = mongoose.Schema({
+const MessageSchema = new mongoose.Schema({
   _id: {
     type: String,
     unique: true,
@@ -50,7 +50,7 @@ class Message {
     );
 
     // create message
-    return this.create({
+    return Messages.create({
       createdAt: new Date(),
       internal: false,
       ...messageObj,
@@ -59,7 +59,7 @@ class Message {
 
   // force read previous unread engage messages ============
   static forceReadCustomerPreviousEngageMessages(customerId) {
-    return this.update(
+    return Messages.update(
       {
         customerId,
         engageData: { $exists: true },
