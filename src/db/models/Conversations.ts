@@ -1,34 +1,47 @@
-import * as mongoose from 'mongoose';
+import { Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
+import { IConversationDocument, ConversationSchema } from './definations/conversations';
+import { CONVERSATION_STATUSES } from './definations/constants';
 
-const ConversationSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  createdAt: Date,
-  updatedAt: Date,
-  content: String,
-  customerId: String,
-  userId: String,
-  integrationId: String,
-  number: Number,
-  messageCount: Number,
-  status: String,
-  readUserIds: [String],
-  participatedUserIds: [String],
-});
+interface STATUSES {
+  NEW: 'new',
+  OPEN: 'open',
+  CLOSED: 'closed',
+  ALL_LIST: ['new', 'open', 'closed'],
+};
+
+interface IConversationModel extends Model<IConversationDocument> {
+  getConversationStatuses(): STATUSES
+
+  createConversation({
+    integrationId,
+    userId,
+    customerId,
+    content
+  } : {
+    integrationId: string,
+    userId?: string,
+    customerId: string,
+    content: string
+  }): Promise<IConversationDocument>
+
+  getOrCreateConversation({
+    conversationId,
+    integrationId,
+    customerId,
+    message
+  } : {
+    conversationId?: string,
+    integrationId: string,
+    customerId: string,
+    message: string
+  }): Promise<IConversationDocument>
+}
 
 class Conversation {
   static getConversationStatuses() {
-    return {
-      NEW: 'new',
-      OPEN: 'open',
-      CLOSED: 'closed',
-      ALL_LIST: ['new', 'open', 'closed'],
-    };
+    return CONVERSATION_STATUSES;
   }
 
   /**
@@ -103,6 +116,8 @@ class Conversation {
 
 ConversationSchema.loadClass(Conversation);
 
-const Conversations = mongoose.model('conversations', ConversationSchema);
+const Conversations = model<IConversationDocument, IConversationModel>(
+  'conversations', ConversationSchema
+);
 
 export default Conversations;
