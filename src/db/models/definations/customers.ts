@@ -27,7 +27,7 @@ interface IMessengerData {
   lastSeenAt: number,
   sessionCount: number,
   isActive: boolean,
-  customData?: object,
+  customData?: any,
 }
 
 interface ITwitterData {
@@ -57,10 +57,10 @@ export interface ICustomerDocument extends Document {
   firstName?: string,
   lastName?: string,
   primaryEmail?: string,
-  emails?: [string],
+  emails?: string[],
 
   primaryPhone?: string,
-  phones?: [string],
+  phones?: string[],
 
   ownerId?: string,
   position?: string,
@@ -74,15 +74,15 @@ export interface ICustomerDocument extends Document {
   isUser?: boolean,
   createdAt: Date,
   integrationId: string,
-  tagIds?: [string],
-  companyIds?: [string],
-  customFieldsData?: object,
+  tagIds?: string[],
+  companyIds?: string[],
+  customFieldsData?: any,
   messengerData?: IMessengerData,
   twitterData?: ITwitterData,
   facebookData?: IFacebookData,
   location?: ILocation,
   visitorContactInfo?: IVisitorContact,
-  urlVisits: object,
+  urlVisits: any,
 }
 
 /* location schema */

@@ -27,7 +27,7 @@ export interface IFormDocument extends Document {
   callout: ICallout,
   viewCount: number,
   contactsGathered: number,
-  submissions: [ISubmission],
+  submissions: ISubmission[],
 }
 
 // schema for form's callout component

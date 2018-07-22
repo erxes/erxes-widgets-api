@@ -1,8 +1,5 @@
-/* eslint-env jest */
-/* eslint-disable no-underscore-dangle */
-
-import faker from 'faker';
-import Random from 'meteor-random';
+import * as faker from 'faker';
+import * as Random from 'meteor-random';
 import { connect, disconnect } from '../db/connection';
 import { conversationFactory, messageFactory } from '../db/factories';
 import { Conversations, Messages } from '../db/models';

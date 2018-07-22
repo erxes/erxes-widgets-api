@@ -1,6 +1,3 @@
-/* eslint-env jest */
-/* eslint-disable no-underscore-dangle */
-
 import { checkRules, checkRule } from '../data/resolvers/utils/engage';
 
 const browserLanguageRule = {

@@ -1,6 +1,3 @@
-/* eslint-env jest */
-/* eslint-disable no-underscore-dangle */
-
 import {
   replaceKeys,
   createOrUpdateConversationAndMessages,

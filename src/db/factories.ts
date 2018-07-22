@@ -94,13 +94,13 @@ export const formFieldFactory = (params: IFormFieldParams={}) => {
 interface ICustomerParams {
   integrationId?: string,
   primaryEmail?: string,
-  emails?: [string],
-  phones?: [string],
+  emails?: string[],
+  phones?: string[],
   primaryPhone?: string,
   isActive?: boolean,
   urlVisits?: object,
 }
-export function customerFactory(params: ICustomerParams = {}) {
+export function customerFactory(params: ICustomerParams) {
   const createdAt = faker.date.past();
   const email = faker.internet.email();
 
@@ -164,7 +164,7 @@ export function messageFactory(params: IConversationMessageParams={}) {
 
 interface ICompanyParams {
   primaryName?: string,
-  names?: [string],
+  names?: string[],
 }
 export function companyFactory(params: ICompanyParams) {
   const company = new Companies({

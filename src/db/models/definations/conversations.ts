@@ -9,9 +9,9 @@ interface ITwitterResponse {
   isDirectMessage: boolean,
 
   // media content
-  entities?: object,
-  extended_entities?: object,
-  extended_tweet?: object,
+  entities?: any,
+  extended_entities?: any,
+  extended_tweet?: any,
 
   // direct message
   sender_id: number,
@@ -54,8 +54,8 @@ export interface IConversationDocument extends Document {
   customerId: string,
   userId: string,
   assignedUserId: string,
-  participatedUserIds: [string],
-  readUserIds: [string],
+  participatedUserIds: string[],
+  readUserIds: string[],
   createdAt: Date,
   updatedAt: Date,
 

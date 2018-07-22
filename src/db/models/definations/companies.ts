@@ -23,7 +23,7 @@ interface ILink {
 export interface ICompanyDocument extends Document {
   _id: string,
   primaryName: string,
-  names?: [string]
+  names?: string[]
   size?: number,
   industry?: string,
   website?: string,
@@ -41,8 +41,8 @@ export interface ICompanyDocument extends Document {
   links?: ILink,
   lastSeenAt?: Date,
   sessionCount: number,
-  tagIds?: [string],
-  customFieldsData?: object,
+  tagIds?: string[],
+  customFieldsData?: any,
 }
 
 const LinkSchema = new Schema(

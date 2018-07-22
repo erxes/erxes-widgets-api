@@ -1,5 +1,3 @@
-/* eslint-env jest */
-
 import formMutations, { validate, saveValues } from '../data/resolvers/mutations/form';
 import {
   Brands,

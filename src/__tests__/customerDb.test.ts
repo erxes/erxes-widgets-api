@@ -1,8 +1,5 @@
-/* eslint-env jest */
-/* eslint-disable no-underscore-dangle */
-
-import faker from 'faker';
-import Random from 'meteor-random';
+import * as faker from 'faker';
+import * as Random from 'meteor-random';
 import { connect, disconnect } from '../db/connection';
 import { customerFactory } from '../db/factories';
 import { Customers } from '../db/models';
@@ -52,10 +49,8 @@ describe('Customers', () => {
         email,
         phone,
         isUser: _customer.isUser,
-        name: _customer.name,
       },
       customData,
-      {},
     );
 
     expect(customer).toBeDefined();
@@ -138,11 +133,10 @@ describe('Customers', () => {
     expect(customer).toBeDefined();
     expect(customer.emails).toContain('email@gmail.com');
     expect(customer.isUser).toBe(_customer.isUser);
-    expect(customer.name).toBe(_customer.name);
     expect(customer._id).toBe(_customer._id);
     expect(customer.integrationId).toBe(_customer.integrationId);
     expect(customer.createdAt).toEqual(_customer.createdAt);
-    expect(customer.messengerData).toEqual(_customer.messengerData);
+    expect(customer.messengerData.toString()).toEqual(_customer.messengerData.toString());
     expect(customer.createdAt < now).toBe(true);
   });
 
@@ -171,7 +165,7 @@ describe('Customers', () => {
 
     expect(customer).toBeDefined();
     expect(customer.messengerData.isActive).toBeFalsy();
-    expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+    expect(customer.messengerData.lastSeenAt >= now.getTime()).toBeTruthy();
 
     // active
     customer = await Customers.markCustomerAsActive(_customer._id);
@@ -187,7 +181,7 @@ describe('Customers', () => {
     });
 
     expect(customer.messengerData.isActive).toBeTruthy();
-    expect(customer.messengerData.lastSeenAt >= now).toBeTruthy();
+    expect(customer.messengerData.lastSeenAt >= now.getTime()).toBeTruthy();
     expect(customer.urlVisits['/career/open']).toBe(1);
   });
 

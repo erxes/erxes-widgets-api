@@ -9,7 +9,7 @@ interface ICustomerModel extends Model<ICustomerDocument> {
     phone,
     cachedCustomerId
   } : {
-    email: string,
+    email?: string,
     phone?: string,
     cachedCustomerId?: string
   }): Promise<ICustomerDocument>
