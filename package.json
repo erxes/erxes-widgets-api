@@ -32,6 +32,7 @@
     ]
   },
   "dependencies": {
+    "@types/mongoose": "^5.2.1",
     "body-parser": "^1.17.1",
     "cors": "^2.8.1",
     "dotenv": "^4.0.0",
@@ -52,10 +53,6 @@
   "devDependencies": {
     "@types/jest": "^23.3.0",
     "@types/mongodb": "^3.1.2",
-    "babel-cli": "^6.24.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-env": "^1.6.0",
-    "eslint": "3.19.0",
     "faker": "^4.1.0",
     "husky": "^0.13.4",
     "jest": "^20.0.4",
