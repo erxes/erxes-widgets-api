@@ -1,32 +1,32 @@
-import * as mongoose from 'mongoose';
+import { Schema, Model, model } from 'mongoose';
 import * as Random from 'meteor-random';
 
+import { IMessageDocument, MessageSchema } from './definations/conversationMessages';
 import Conversations from './Conversations';
 
-const AttachmentSchema = new mongoose.Schema({
-  url: { type: String, required: true },
-  name: { type: String, required: true },
-  size: { type: Number, required: true },
-  type: { type: String, required: true },
-});
+interface IMessageModel extends Model<IMessageDocument> {
+  createMessage({
+    conversationId,
+    customerId,
+    userId,
+    content: message,
+    attachments,
+    engageData,
+    formWidgetData,
+  } : {
+    conversationId: string,
+    content: string,
+    customerId?: string,
+    userId?: string,
+    attachments?: object[],
+    engageData?: object,
+    formWidgetData?: object[],
+  }): Promise<IMessageDocument>
 
-const MessageSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  userId: String,
-  conversationId: String,
-  customerId: String,
-  content: String,
-  attachments: [AttachmentSchema],
-  createdAt: Date,
-  isCustomerRead: Boolean,
-  internal: Boolean,
-  engageData: Object,
-  formWidgetData: Object,
-});
+  forceReadCustomerPreviousEngageMessages(
+    customerId: string
+  ): Promise<IMessageDocument>
+}
 
 class Message {
   /**
@@ -73,6 +73,8 @@ class Message {
 
 MessageSchema.loadClass(Message);
 
-const Messages = mongoose.model('conversation_messages', MessageSchema);
+const Messages = model<IMessageDocument, IMessageModel>(
+  'conversation_messages', MessageSchema
+);
 
 export default Messages;

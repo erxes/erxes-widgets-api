@@ -2,7 +2,7 @@ import { Schema, Document } from 'mongoose';
 import { field } from '../utils';
 import { CONVERSATION_STATUSES, FACEBOOK_DATA_KINDS } from './constants';
 
-interface ITwitterResponse {
+export interface ITwitterResponse {
   id?: number,
   id_str: string,
   created_at?: string,
@@ -79,7 +79,7 @@ export interface IConversationDocument extends Document {
  * like twitter response so that we can use it in findParentTweets helper to
  * not send extra request to twitter
  */
-const TwitterResponseSchema = new Schema(
+export const TwitterResponseSchema = new Schema(
   {
     id: field({ type: Number, optional: true }),
     id_str: field({ type: String }),
