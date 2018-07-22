@@ -1,6 +1,3 @@
-/* eslint-env jest */
-/* eslint-disable no-underscore-dangle */
-
 import { connect, disconnect } from '../db/connection';
 import { companyFactory } from '../db/factories';
 import { Companies } from '../db/models';
@@ -37,6 +34,7 @@ describe('Companies', () => {
     });
 
     expect(company._id).toBeDefined();
+    expect(company.names).toContain('911111');
 
     // check primaryName
     company = await companyFactory({
@@ -48,5 +46,6 @@ describe('Companies', () => {
     });
 
     expect(company._id).toBeDefined();
+    expect(company.primaryName).toBe('24244242');
   });
 });

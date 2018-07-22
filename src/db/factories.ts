@@ -1,5 +1,6 @@
-import Random from 'meteor-random';
-import faker from 'faker';
+import * as Random from 'meteor-random';
+import * as faker from 'faker';
+
 import {
   Integrations,
   Brands,
@@ -12,7 +13,10 @@ import {
   Companies,
 } from './models';
 
-export const userFactory = (params = {}) => {
+interface IUserParams {
+  fullName?: string,
+}
+export const userFactory = (params: IUserParams={}) => {
   const user = new Users({
     details: {
       fullName: params.fullName || faker.random.word(),
@@ -22,9 +26,13 @@ export const userFactory = (params = {}) => {
   return user.save();
 };
 
-export const brandFactory = (params = {}) => {
+interface IBrandParams {
+  name?: string,
+  code?: string,
+}
+export const brandFactory = (params: IBrandParams={}) => {
   const brand = new Brands({
-    name: faker.random.word(),
+    name: params.name || faker.random.word(),
     code: params.code || faker.random.word(),
     userId: Random.id(),
   });
@@ -32,7 +40,12 @@ export const brandFactory = (params = {}) => {
   return brand.save();
 };
 
-export const integrationFactory = params => {
+interface IIntegrationParams {
+  kind?: string,
+  brandId?: string,
+  formId?: string,
+}
+export const integrationFactory = (params: IIntegrationParams={}) => {
   const integration = new Integrations({
     name: faker.random.word(),
     kind: params.kind || 'messenger',
@@ -43,16 +56,26 @@ export const integrationFactory = params => {
   return integration.save();
 };
 
-export const formFactory = ({ title, code }) => {
+interface IFormParams {
+  title?: string,
+  code?: string,
+}
+export const formFactory = (params: IFormParams={}) => {
   const form = new Forms({
-    title: title || faker.random.word(),
-    code: code || Random.id(),
+    title: params.title || faker.random.word(),
+    code: params.code || Random.id(),
   });
 
   return form.save();
 };
 
-export const formFieldFactory = params => {
+interface IFormFieldParams {
+  contentTypeId?: string,
+  type?: string,
+  validation?: string,
+  isRequired?: boolean,
+}
+export const formFieldFactory = (params: IFormFieldParams={}) => {
   const field = new Fields({
     contentType: 'form',
     contentTypeId: params.contentTypeId || Random.id(),
@@ -68,7 +91,16 @@ export const formFieldFactory = params => {
   return field.save();
 };
 
-export function customerFactory(params = {}) {
+interface ICustomerParams {
+  integrationId?: string,
+  primaryEmail?: string,
+  emails?: [string],
+  phones?: [string],
+  primaryPhone?: string,
+  isActive?: boolean,
+  urlVisits?: object,
+}
+export function customerFactory(params: ICustomerParams = {}) {
   const createdAt = faker.date.past();
   const email = faker.internet.email();
 
@@ -109,7 +141,13 @@ export function conversationFactory() {
   return conversation.save();
 }
 
-export function messageFactory(params = {}) {
+interface IConversationMessageParams {
+  customerId?: string,
+  conversationId?: string,
+  engageData?: object,
+  isCustomerRead?: boolean,
+}
+export function messageFactory(params: IConversationMessageParams={}) {
   const message = new Messages({
     userId: Random.id(),
     conversationId: Random.id(),
@@ -124,9 +162,14 @@ export function messageFactory(params = {}) {
   return message.save();
 }
 
-export function companyFactory() {
+interface ICompanyParams {
+  primaryName?: string,
+  names?: [string],
+}
+export function companyFactory(params: ICompanyParams) {
   const company = new Companies({
-    name: faker.lorem.sentence,
+    primaryName: params.primaryName || faker.lorem.sentence,
+    names: params.names || [faker.lorem.sentence],
     lastSeenAt: faker.date.past(),
     sessionCount: faker.random.number(),
   });

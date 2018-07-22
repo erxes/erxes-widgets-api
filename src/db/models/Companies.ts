@@ -1,52 +1,12 @@
-import * as mongoose from 'mongoose';
+import { Document, Model, Schema, model } from 'mongoose';
 import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
+import { ICompanyDocument, CompanySchema } from './definations/companies';
 
-const CompanySchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-
-  primaryName: {
-    type: String,
-    optional: true,
-  },
-
-  names: {
-    type: [String],
-    optional: true,
-  },
-
-  size: {
-    type: Number,
-    optional: true,
-  },
-
-  industry: {
-    type: String,
-    optional: true,
-  },
-
-  website: {
-    type: String,
-    optional: true,
-  },
-
-  plan: {
-    type: String,
-    optional: true,
-  },
-
-  lastSeenAt: Date,
-  sessionCount: Number,
-
-  tagIds: {
-    type: [String],
-    optional: true,
-  },
-});
+interface ICompanyModel extends Model<ICompanyDocument> {
+  getOrCreate(doc: object): ICompanyDocument
+  createCompany(doc: object): ICompanyDocument
+}
 
 class Company {
   /**
@@ -94,6 +54,6 @@ class Company {
 
 CompanySchema.loadClass(Company);
 
-const Companies = mongoose.model('companies', CompanySchema);
+const Companies = model<ICompanyDocument, ICompanyModel>('companies', CompanySchema);
 
 export default Companies;
