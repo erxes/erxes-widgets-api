@@ -29,7 +29,6 @@ describe('messenger connect', () => {
       primaryEmail: 'test@gmail.com',
       emails: ['test@gmail.com'],
       primaryPhone: '96221050',
-      phone: ['96221050'],
     });
   });
 
@@ -44,7 +43,6 @@ describe('messenger connect', () => {
     const { integrationId } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email: faker.internet.email() },
-      {},
     );
 
     expect(integrationId).toBe(_integration._id);
@@ -57,7 +55,6 @@ describe('messenger connect', () => {
     const { customerId } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email, companyData: { name: 'company' } },
-      {},
     );
 
     expect(customerId).toBeDefined();
@@ -88,7 +85,6 @@ describe('messenger connect', () => {
           first_name: 'name',
         },
       },
-      {},
     );
 
     expect(customerId).toBeDefined();
@@ -132,7 +128,6 @@ describe('insertMessage()', () => {
         customerId: _customer._id,
         message: faker.lorem.sentence(),
       },
-      {},
     );
 
     // check message ==========
@@ -172,7 +167,6 @@ describe('readConversationMessages()', async () => {
     const response = await messengerMutations.readConversationMessages(
       {},
       { conversationId: _conversation._id },
-      {},
     );
 
     expect(response.nModified).toBe(2);
@@ -200,7 +194,6 @@ describe('common', async () => {
         type: 'email',
         value: 'test@gmail.com',
       },
-      {},
     );
 
     expect(response.visitorContactInfo.email).toBe('test@gmail.com');

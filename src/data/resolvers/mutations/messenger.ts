@@ -70,7 +70,9 @@ export default {
    * Create a new message
    * @return {Promise}
    */
-  async insertMessage(root, { integrationId, customerId, conversationId, message, attachments }) {
+  async insertMessage(root, args) {
+    const { integrationId, customerId, conversationId, message, attachments } = args;
+
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
