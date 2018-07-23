@@ -1,4 +1,7 @@
-const daysAsString = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const daysAsString = [
+  'sunday', 'monday', 'tuesday',
+  'wednesday', 'thursday', 'friday', 'saturday'
+];
 
 export const isTimeInBetween = (date, startTime, closeTime) => {
   // concatnating time ranges with today's date

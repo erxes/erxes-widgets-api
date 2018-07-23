@@ -8,8 +8,8 @@ import {
 const isMessengerOnline = async ({ integrationId }) => {
   const integration = await Integrations.findOne({ _id: integrationId });
 
-  const messengerData = integration.messengerData || {};
-  const { availabilityMethod, isOnline, onlineHours } = messengerData;
+  const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {
+    availabilityMethod: '', isOnline: false, onlineHours: [] }
 
   const modifiedIntegration = Object.assign({}, integration, {
     availabilityMethod,
@@ -22,9 +22,9 @@ const isMessengerOnline = async ({ integrationId }) => {
 
 const messengerSupporters = async ({ integrationId }) => {
   const integration = await Integrations.findOne({ _id: integrationId });
-  const messengerData = integration.messengerData || {};
+  const messengerData = integration.messengerData || { supporterIds: [] };
 
-  return Users.find({ _id: { $in: messengerData.supporterIds || [] } });
+  return Users.find({ _id: { $in: messengerData.supporterIds } });
 };
 
 export default {
