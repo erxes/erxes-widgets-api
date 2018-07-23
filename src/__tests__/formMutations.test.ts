@@ -51,46 +51,46 @@ describe('Form mutations', () => {
     const formId = 'DFDFDAFD';
     const contentTypeId = formId;
 
-    const requiredFieldId = await formFieldFactory({ contentTypeId, isRequired: true })._id;
-    const emailFieldId = await formFieldFactory({ contentTypeId, validation: 'email' })._id;
-    const numberFieldId = await formFieldFactory({ contentTypeId, validation: 'number' })._id;
-    const validNumberFieldId = await formFieldFactory({ contentTypeId, validation: 'number' })._id;
-    const validDateFieldId = await formFieldFactory({ contentTypeId, validation: 'date' })._id;
-    const dateFieldId = await formFieldFactory({ contentTypeId, validation: 'date' })._id;
+    const requiredField = await formFieldFactory({ contentTypeId, isRequired: true });
+    const emailField = await formFieldFactory({ contentTypeId, validation: 'email' });
+    const numberField = await formFieldFactory({ contentTypeId, validation: 'number' });
+    const validNumberField = await formFieldFactory({ contentTypeId, validation: 'number' });
+    const validDateField = await formFieldFactory({ contentTypeId, validation: 'date' });
+    const dateField = await formFieldFactory({ contentTypeId, validation: 'date' });
 
     it('validate', async () => {
       const submissions = [
-        { _id: requiredFieldId, value: null },
-        { _id: emailFieldId, value: 'email', validation: 'email' },
-        { _id: numberFieldId, value: 'number', validation: 'number' },
-        { _id: validNumberFieldId, value: 10, validation: 'number' },
-        { _id: dateFieldId, value: 'date', validation: 'date' },
-        { _id: validDateFieldId, value: '2012-09-01', validation: 'date' },
+        { _id: requiredField._id, value: null },
+        { _id: emailField._id, value: 'email', validation: 'email' },
+        { _id: numberField._id, value: 'number', validation: 'number' },
+        { _id: validNumberField._id, value: 10, validation: 'number' },
+        { _id: dateField._id, value: 'date', validation: 'date' },
+        { _id: validDateField._id, value: '2012-09-01', validation: 'date' },
       ];
 
       // call function
       const errors = await validate(formId, submissions);
 
       // must be 4 error
-      expect(errors.length).equal(4);
+      expect(errors.length).toEqual(4);
 
       const [requiredError, emailError, numberError, dateError] = errors;
 
       // required
-      expect(requiredError.fieldId).equal(requiredFieldId);
-      expect(requiredError.code).equal('required');
+      expect(requiredError.fieldId).toEqual(requiredField);
+      expect(requiredError.code).toEqual('required');
 
       // email
-      expect(emailError.fieldId).equal(emailFieldId);
-      expect(emailError.code).equal('invalidEmail');
+      expect(emailError.fieldId).toEqual(emailField);
+      expect(emailError.code).toEqual('invalidEmail');
 
       // number
-      expect(numberError.fieldId).equal(numberFieldId);
-      expect(numberError.code).equal('invalidNumber');
+      expect(numberError.fieldId).toEqual(numberField);
+      expect(numberError.code).toEqual('invalidNumber');
 
       // date
-      expect(dateError.fieldId).equal(dateFieldId);
-      expect(dateError.code).equal('invalidDate');
+      expect(dateError.fieldId).toEqual(dateField);
+      expect(dateError.code).toEqual('invalidDate');
     });
   });
 
@@ -99,28 +99,28 @@ describe('Form mutations', () => {
     const formTitle = 'Form';
 
     let formId;
-    let emailFieldId;
-    let firstNameFieldId;
-    let lastNameFieldId;
-    let arbitraryFieldId;
+    let emailField;
+    let firstNameField;
+    let lastNameField;
+    let arbitraryField;
 
     beforeEach(async () => {
       formId = (await formFactory({ title: formTitle }))._id;
 
       const contentTypeId = formId;
 
-      emailFieldId = (await formFieldFactory({ contentTypeId, type: 'emailFieldId' }))._id;
-      firstNameFieldId = (await formFieldFactory({ contentTypeId, type: 'firstNameFieldId' }))._id;
-      lastNameFieldId = (await formFieldFactory({ contentTypeId, type: 'lastNameFieldId' }))._id;
-      arbitraryFieldId = (await formFieldFactory({ contentTypeId, type: 'input' }))._id;
+      emailField = await formFieldFactory({ contentTypeId, type: 'emailFieldId' });
+      firstNameField = await formFieldFactory({ contentTypeId, type: 'firstNameFieldId' });
+      lastNameField = await formFieldFactory({ contentTypeId, type: 'lastNameFieldId' });
+      arbitraryField = await formFieldFactory({ contentTypeId, type: 'input' });
     });
 
     test('saveValues', async () => {
       const submissions = [
-        { _id: arbitraryFieldId, value: 'Value', type: 'input' },
-        { _id: emailFieldId, value: 'email@gmail.com', type: 'email' },
-        { _id: firstNameFieldId, value: 'first name', type: 'firstName' },
-        { _id: lastNameFieldId, value: 'last name', type: 'lastName' },
+        { _id: arbitraryField._id, value: 'Value', type: 'input' },
+        { _id: emailField._id, value: 'email@gmail.com', type: 'email' },
+        { _id: firstNameField._id, value: 'first name', type: 'firstName' },
+        { _id: lastNameField._id, value: 'last name', type: 'lastName' },
       ];
 
       const browserInfo = {

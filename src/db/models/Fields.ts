@@ -1,41 +1,9 @@
-/*
- * Extra fields for form, customer, company
- */
+import { model, Model } from 'mongoose';
+import { FieldSchema, IFieldDocument } from './definations/fields';
 
-import * as mongoose from 'mongoose';
-import * as Random from 'meteor-random';
+interface IFieldModel extends Model<IFieldDocument> {
+}
 
-const FieldSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-
-  // form, customer, company
-  contentType: String,
-
-  // formId when contentType is form
-  contentTypeId: String,
-
-  type: String,
-  validation: {
-    type: String,
-    optional: true,
-  },
-  text: String,
-  description: {
-    type: String,
-    optional: true,
-  },
-  options: {
-    type: [String],
-    optional: true,
-  },
-  isRequired: Boolean,
-  order: Number,
-});
-
-const Fields = mongoose.model('fields', FieldSchema);
+const Fields = model<IFieldDocument, IFieldModel>('fields', FieldSchema);
 
 export default Fields;

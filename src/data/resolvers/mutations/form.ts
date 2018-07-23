@@ -101,7 +101,7 @@ export const saveValues = async (args, browserInfo) => {
   Forms.addSubmission(formId, customer._id);
 
   // create conversation
-  const conversationId = await Conversations.createConversation({
+  const conversation = await Conversations.createConversation({
     integrationId,
     customerId: customer._id,
     content,
@@ -109,7 +109,7 @@ export const saveValues = async (args, browserInfo) => {
 
   // create message
   return Messages.createMessage({
-    conversationId,
+    conversationId: conversation._id,
     content,
     formWidgetData: submissions,
   });
@@ -135,7 +135,7 @@ export default {
       throw new Error('Integration not found');
     }
 
-    if (integ.formLoadType === 'embedded') {
+    if (integ.formData && integ.formData.loadType === 'embedded') {
       await Forms.increaseViewCount(form._id);
     }
 

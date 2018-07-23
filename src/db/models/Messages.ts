@@ -18,9 +18,9 @@ interface IMessageModel extends Model<IMessageDocument> {
     content: string,
     customerId?: string,
     userId?: string,
-    attachments?: object[],
-    engageData?: object,
-    formWidgetData?: object[],
+    attachments?: any,
+    engageData?: any,
+    formWidgetData?: any,
   }): Promise<IMessageDocument>
 
   forceReadCustomerPreviousEngageMessages(
