@@ -2,7 +2,7 @@ import { isOnline, isTimeInBetween } from '../data/resolvers/utils/messenger';
 
 describe('Manual mode', () => {
   test('isOnline() must return status as it is', () => {
-    const integration = { availabilityMethod: 'manual' };
+    const integration = { availabilityMethod: 'manual' } as any;
 
     // online
     integration.isOnline = true;
