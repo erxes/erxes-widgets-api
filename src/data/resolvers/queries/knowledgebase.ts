@@ -34,8 +34,10 @@ export default {
    */
   async knowledgeBaseArticles(root, { topicId, searchString }) {
     let articleIds = [];
+
     const topic = await KnowledgeBaseTopicsModel.findOne({ _id: topicId });
     const categories = await KnowledgeBaseCategoriesModel.find({ _id: topic.categoryIds });
+
     categories.forEach(category => {
       articleIds = [...articleIds, ...category.articleIds];
     });

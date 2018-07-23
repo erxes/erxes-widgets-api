@@ -1,64 +1,22 @@
-import * as mongoose from 'mongoose';
-import * as Random from 'meteor-random';
+import { Model, model } from 'mongoose';
+import {
+  ArticleSchema,
+  IArticleDocument,
+  CategorySchema,
+  ICategoryDocument,
+  TopicSchema,
+  ITopicDocument,
+} from './definations/knowledgebase';
 
-const KnowledgeBaseArticlesSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  title: String,
-  summary: String,
-  content: String,
-  createdBy: String,
-  createdDate: Date,
-  modifiedBy: String,
-  modifiedDate: Date,
-  status: String,
-});
+interface IArticleModel extends Model<IArticleDocument> {}
+interface ICategoryModel extends Model<ICategoryDocument> {}
+interface ITopicModel extends Model<ITopicDocument> {}
 
-const KnowledgeBaseCategoriesSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  title: String,
-  description: String,
-  articleIds: {
-    type: [String],
-    required: false,
-  },
-  icon: String,
-});
+export const KnowledgeBaseArticles = model<IArticleDocument, IArticleModel>(
+  'knowledgebase_articles', ArticleSchema);
 
-const KnowledgeBaseTopicsSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  title: String,
-  brandId: String,
-  description: String,
-  categoryIds: {
-    type: [String],
-    required: false,
-  },
-  color: String,
-  languageCode: String,
-  loadType: String,
-});
+export const KnowledgeBaseCategories = model<ICategoryDocument, ICategoryModel>(
+  'knowledgebase_categories', CategorySchema);
 
-export const KnowledgeBaseArticles = mongoose.model(
-  'knowledgebase_articles',
-  KnowledgeBaseArticlesSchema,
-);
-export const KnowledgeBaseCategories = mongoose.model(
-  'knowledgebase_categories',
-  KnowledgeBaseCategoriesSchema,
-);
-export const KnowledgeBaseTopics = mongoose.model(
-  'knowledgebase_topics',
-  KnowledgeBaseTopicsSchema,
-);
+export const KnowledgeBaseTopics = model<ITopicDocument, ITopicModel>(
+  'knowledgebase_topics', TopicSchema);
