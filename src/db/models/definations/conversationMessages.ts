@@ -2,7 +2,7 @@ import { Schema, Document } from 'mongoose';
 import { field } from '../utils';
 import { TwitterResponseSchema, ITwitterResponse } from './conversations';
 
-interface IFacebook {
+interface IFacebook extends Document {
   postId?: string,
   commentId?: string,
   parentId?: string,
@@ -16,7 +16,7 @@ interface IFacebook {
   senderName?: string,
 }
 
-interface IAttachment {
+interface IAttachment extends Document {
   url: string,
   name: string,
   size: number,

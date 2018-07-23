@@ -8,7 +8,7 @@ import {
 
 import { field } from '../utils';
 
-interface ILocation {
+interface ILocation extends Document {
   remoteAddress: string,
   country: string,
   city: string,
@@ -18,19 +18,19 @@ interface ILocation {
   userAgent: string,
 }
 
-interface IVisitorContact {
+interface IVisitorContact extends Document {
   email: string,
   phone: string,
 }
 
-interface IMessengerData {
+interface IMessengerData extends Document {
   lastSeenAt: number,
   sessionCount: number,
   isActive: boolean,
   customData?: any,
 }
 
-interface ITwitterData {
+interface ITwitterData extends Document {
   id: number,
   id_str: string,
   name: string
@@ -38,12 +38,12 @@ interface ITwitterData {
   profile_image_url: string,
 }
 
-interface IFacebookData {
+interface IFacebookData extends Document {
   id: string,
   profilePic?: string,
 }
 
-interface ILink {
+interface ILink extends Document {
   linkedIn?: string,
   twitter?: string,
   facebook?: string,

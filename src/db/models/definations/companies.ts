@@ -11,7 +11,7 @@ import {
 
 import { field } from '../utils';
 
-interface ILink {
+interface ILink extends Document {
   linkedIn?: string,
   twitter?: string,
   facebook?: string,

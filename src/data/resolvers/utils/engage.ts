@@ -23,10 +23,27 @@ export const replaceKeys = ({ content, customer, user }) => {
  * checks individual rule
  * @return boolean
  */
-export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
+interface IBrowserInfo {
+  language?: string,
+  url?: string,
+  city?: string,
+  country?: string,
+}
+interface IRule {
+  value?: string,
+  kind: string,
+  condition: string,
+}
+interface ICheckRuleParams {
+  rule: IRule,
+  browserInfo: IBrowserInfo,
+  numberOfVisits?: number,
+}
+export const checkRule = (params: ICheckRuleParams) => {
+  const { rule, browserInfo, numberOfVisits } = params;
   const { language, url, city, country } = browserInfo;
-  const { kind, condition } = rule;
-  const ruleValue = rule.value;
+  const { value, kind, condition } = rule;
+  const ruleValue = value;
 
   let valueToTest;
 
@@ -102,7 +119,14 @@ export const checkRule = ({ rule, browserInfo, numberOfVisits }) => {
  * satisfying given engage message's rules
  * @return Promise
  */
-export const checkRules = async ({ rules, browserInfo, numberOfVisits }) => {
+interface ICheckRulesParams {
+  rules: IRule[],
+  browserInfo: IBrowserInfo,
+  numberOfVisits?: number,
+}
+export const checkRules = async (params: ICheckRulesParams) => {
+  const { rules, browserInfo, numberOfVisits } = params;
+
   let passedAllRules = true;
 
   rules.forEach(rule => {
@@ -195,13 +219,15 @@ export const createEngageVisitorMessages = async params => {
   const conversationMessages = [];
 
   for (let message of messages) {
+    const messenger = message.messenger ? message.messenger.toJSON() : {};
+
     const user = await Users.findOne({ _id: message.fromUserId });
 
     // check for rules ===
     const urlVisits = customer.urlVisits || {};
 
     const isPassedAllRules = await checkRules({
-      rules: message.messenger.rules,
+      rules: messenger.rules,
       browserInfo,
       numberOfVisits: urlVisits[browserInfo.url] || 0,
     });
@@ -214,7 +240,7 @@ export const createEngageVisitorMessages = async params => {
         integration,
         user,
         engageData: {
-          ...message.messenger,
+          ...messenger,
           messageId: message._id,
           fromUserId: message.fromUserId,
         },
@@ -225,7 +251,10 @@ export const createEngageVisitorMessages = async params => {
         conversationMessages.push(conversationMessage);
 
         // add given customer to customerIds list
-        await EngageMessages.update({ _id: message._id }, { $push: { customerIds: customer._id } });
+        await EngageMessages.update(
+          { _id: message._id },
+          { $push: { customerIds: customer._id } }
+        );
       }
     }
   }

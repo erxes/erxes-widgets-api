@@ -100,7 +100,7 @@ interface ICustomerParams {
   isActive?: boolean,
   urlVisits?: object,
 }
-export function customerFactory(params: ICustomerParams) {
+export function customerFactory(params: ICustomerParams={}) {
   const createdAt = faker.date.past();
   const email = faker.internet.email();
 
@@ -166,7 +166,7 @@ interface ICompanyParams {
   primaryName?: string,
   names?: string[],
 }
-export function companyFactory(params: ICompanyParams) {
+export function companyFactory(params: ICompanyParams={}) {
   const company = new Companies({
     primaryName: params.primaryName || faker.lorem.sentence,
     names: params.names || [faker.lorem.sentence],

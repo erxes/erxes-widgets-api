@@ -136,7 +136,7 @@ describe('Customers', () => {
     expect(customer._id).toBe(_customer._id);
     expect(customer.integrationId).toBe(_customer.integrationId);
     expect(customer.createdAt).toEqual(_customer.createdAt);
-    expect(customer.messengerData.toString()).toEqual(_customer.messengerData.toString());
+    expect(customer.messengerData.toJSON()).toEqual(_customer.messengerData.toJSON());
     expect(customer.createdAt < now).toBe(true);
   });
 

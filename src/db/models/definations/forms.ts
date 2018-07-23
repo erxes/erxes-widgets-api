@@ -2,7 +2,7 @@ import { Schema, Document } from 'mongoose';
 import * as Random from 'meteor-random';
 import { field } from '../utils';
 
-interface ICallout {
+interface ICallout extends Document {
   title?: string,
   body?: string,
   buttonText?: string,
@@ -10,7 +10,7 @@ interface ICallout {
   skip?: boolean,
 }
 
-interface ISubmission {
+interface ISubmission extends Document {
   customerId: string,
   submittedAt: Date,
 }
