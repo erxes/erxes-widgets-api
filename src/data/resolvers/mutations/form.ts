@@ -8,10 +8,17 @@ import {
   Forms,
   Fields,
 } from '../../../db/models';
-import { sendEmail } from '../utils/email';
+import { sendEmail, IEmail } from '../utils/email';
 import { mutateAppApi } from '../../../utils';
 
-export const validate = async (formId, submissions) => {
+interface ISubmission {
+  _id: string,
+  value: any,
+  type?: string,
+  validation?: string,
+}
+
+export const validate = async (formId: string, submissions: ISubmission[]) => {
   const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
@@ -64,8 +71,14 @@ export const validate = async (formId, submissions) => {
   return errors;
 };
 
-export const saveValues = async (args, browserInfo) => {
-  const { integrationId, submissions, formId } = args;
+export const saveValues = async (args: {
+    integrationId: string,
+    submissions: ISubmission[],
+    formId: string,
+    browserInfo: any
+  }) => {
+
+  const { integrationId, submissions, formId, browserInfo } = args;
   const form = await Forms.findOne({ _id: formId });
   const content = form.title;
 
@@ -117,7 +130,7 @@ export const saveValues = async (args, browserInfo) => {
 
 export default {
   // Find integrationId by brandCode
-  async formConnect(root, args) {
+  async formConnect(root, args: { brandCode: string, formCode: string }) {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
@@ -157,7 +170,13 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(root, args) {
+  async saveForm(root, args: {
+    integrationId: string,
+    formId: string,
+    submissions: ISubmission[],
+    browserInfo: any,
+  }) {
+
     const { formId, submissions, browserInfo } = args;
 
     const errors = await validate(formId, submissions);
@@ -166,7 +185,7 @@ export default {
       return { status: 'error', errors };
     }
 
-    const message = await saveValues(args, browserInfo);
+    const message = await saveValues(args);
 
     // increasing form submitted count
     await Forms.increaseContactsGathered(formId);
@@ -181,11 +200,11 @@ export default {
   },
 
   // send email
-  sendEmail(root, args) {
+  sendEmail(root, args: IEmail) {
     sendEmail(args);
   },
 
-  formIncreaseViewCount(root, { formId }) {
+  formIncreaseViewCount(root, { formId }: { formId: string }) {
     return Forms.increaseViewCount(formId);
   },
 };

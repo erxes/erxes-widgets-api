@@ -4,7 +4,9 @@ import { Users, EngageMessages, Conversations, Messages } from '../../../db/mode
  * replaces customer & user infos in given content
  * @return String
  */
-export const replaceKeys = ({ content, customer, user }) => {
+export const replaceKeys = (params: { content: string, customer, user }) => {
+  const { content, customer, user } = params;
+
   let result = content;
 
   // replace customer fields

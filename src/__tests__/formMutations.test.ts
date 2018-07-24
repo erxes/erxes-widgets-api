@@ -133,7 +133,7 @@ describe('Form mutations', () => {
       };
 
       // call function
-      await saveValues({ integrationId, formId, submissions }, browserInfo);
+      await saveValues({ integrationId, formId, submissions, browserInfo });
 
       // must create 1 conversation
       expect(await Conversations.find().count()).toBe(1);

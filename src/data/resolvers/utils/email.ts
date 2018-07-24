@@ -1,6 +1,14 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = ({ toEmails, fromEmail, title, content }) => {
+export interface IEmail {
+  toEmails: string[],
+  fromEmail: string,
+  title: string,
+  content: string
+}
+
+export const sendEmail = (args: IEmail) => {
+  const { toEmails, fromEmail, title, content } = args
   const { MAIL_SERVICE, MAIL_USER, MAIL_PASS } = process.env;
 
   const transporter = nodemailer.createTransport({

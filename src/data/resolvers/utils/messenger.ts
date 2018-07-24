@@ -3,7 +3,7 @@ const daysAsString = [
   'wednesday', 'thursday', 'friday', 'saturday'
 ];
 
-export const isTimeInBetween = (date, startTime, closeTime) => {
+export const isTimeInBetween = (date: Date, startTime: string, closeTime: string) => {
   // concatnating time ranges with today's date
   const dateString = date.toLocaleDateString();
   const startDate = new Date(`${dateString} ${startTime}`);
@@ -16,7 +16,7 @@ const isWeekday = day => {
   return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
 };
 
-const isWeekend = day => {
+const isWeekend = (day: string) => {
   return ['saturday', 'sunday'].includes(day);
 };
 

@@ -11,7 +11,7 @@ export default {
    * @param {Object} args.topicId
    * @return {Promise} topic detail
    */
-  knowledgeBaseTopicsDetail(root, { topicId }) {
+  knowledgeBaseTopicsDetail(root, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId });
   },
 
@@ -21,7 +21,7 @@ export default {
    * @param {Object} args.categoryId
    * @return {Promise} category detail
    */
-  knowledgeBaseCategoriesDetail(root, { categoryId }) {
+  knowledgeBaseCategoriesDetail(root, { categoryId }: { categoryId: string }) {
     return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
   },
 
@@ -32,7 +32,9 @@ export default {
    * @param {Object} args.topicId
    * @return {Promise} searched articles
    */
-  async knowledgeBaseArticles(root, { topicId, searchString }) {
+  async knowledgeBaseArticles(root, args: { topicId: string, searchString: string}) {
+    const { topicId, searchString } = args;
+
     let articleIds = [];
 
     const topic = await KnowledgeBaseTopicsModel.findOne({ _id: topicId });
@@ -55,7 +57,7 @@ export default {
    * @param {Object} args.topicId
    * @return {Promise} KnowledgeBaseLoader
    */
-  knowledgeBaseLoader(root, { topicId }) {
+  knowledgeBaseLoader(root, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId }, { loadType: 1 });
   },
 };
