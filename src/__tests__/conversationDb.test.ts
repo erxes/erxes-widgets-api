@@ -2,7 +2,7 @@ const faker: any = require('faker');
 const Random: any = require('meteor-random');
 
 import { connect, disconnect } from '../db/connection';
-import { conversationFactory, messageFactory } from '../db/factories';
+import { conversationFactory, messageFactory, engageDataFactory } from '../db/factories';
 import { Conversations, IConversationDocument, Messages } from '../db/models';
 
 beforeAll(() => connect());
@@ -113,7 +113,7 @@ describe('Conversations', () => {
     // isCustomRead is defined ===============
     await messageFactory({
       customerId,
-      engageData: { messageId: '_id' },
+      engageData: engageDataFactory({ messageId: '_id' }),
       isCustomerRead: false,
     });
 
@@ -132,7 +132,7 @@ describe('Conversations', () => {
 
     await messageFactory({
       customerId,
-      engageData: { messageId: '_id' },
+      engageData: engageDataFactory({ messageId: '_id' }),
     });
 
     await Messages.forceReadCustomerPreviousEngageMessages(customerId);

@@ -7,6 +7,7 @@ import {
   IIntegrationDocument,
   Messages,
   IUserDocument,
+  IMessageEngageData,
 } from '../../../db/models';
 
 import { IBrowserInfo } from '../../../db/models/Customers';
@@ -153,7 +154,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
   customer: ICustomerDocument,
   integration: IIntegrationDocument,
   user: IUserDocument,
-  engageData: any,
+  engageData: IMessageEngageData,
 }) => {
 
   const { customer, integration, user, engageData } = args;

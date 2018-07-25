@@ -19,9 +19,15 @@ import { ICustomerDocument } from './definations/customers';
 import { IUserDocument } from './definations/users';
 import { IIntegrationDocument } from './definations/integrations';
 import { IConversationDocument } from './definations/conversations';
-import { IMessageDocument } from './definations/conversationMessages';
+
+import {
+  IMessageDocument,
+  IEngageData as IMessageEngageData,
+} from './definations/conversationMessages';
+
 import { IFieldDocument } from './definations/fields';
 import { IFormDocument } from './definations/forms';
+
 import {
   ITopicDocument as IKbTopicDocument,
   ICategoryDocument as IKbCategoryDocument,
@@ -51,6 +57,7 @@ export {
 
   Messages,
   IMessageDocument,
+  IMessageEngageData,
 
   Users,
   IUserDocument,

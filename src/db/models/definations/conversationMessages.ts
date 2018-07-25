@@ -23,6 +23,15 @@ interface IAttachment extends Document {
   type: string,
 }
 
+export interface IEngageData {
+  messageId: string
+  brandId: string
+  content: string
+  fromUserId: string
+  kind: string
+  sentAs: string
+}
+
 export interface IMessageDocument extends Document {
   _id: string,
   content: string,
@@ -34,8 +43,8 @@ export interface IMessageDocument extends Document {
   userId: string,
   createdAt: Date,
   isCustomerRead: boolean,
-  engageData: any,
   formWidgetData: any,
+  engageData: IEngageData,
   facebookData: IFacebook,
   twitterData: ITwitterResponse,
 };
@@ -111,6 +120,15 @@ const FacebookSchema = new Schema(
   { _id: false },
 );
 
+const EngageDataSchema = new Schema({
+  messageId: field({ type: String }),
+  brandId: field({ type: String }),
+  content: field({ type: String }),
+  fromUserId: field({ type: String }),
+  kind: field({ type: String }),
+  sentAs: field({ type: String }),
+});
+
 export const MessageSchema = new Schema({
   _id: field({ pkey: true }),
   content: field({ type: String }),
@@ -122,8 +140,8 @@ export const MessageSchema = new Schema({
   userId: field({ type: String }),
   createdAt: field({ type: Date }),
   isCustomerRead: field({ type: Boolean }),
-  engageData: field({ type: Object }),
   formWidgetData: field({ type: Object }),
+  engageData: field({ type: EngageDataSchema }),
   facebookData: field({ type: FacebookSchema }),
   twitterData: field({ type: TwitterResponseSchema }),
 });

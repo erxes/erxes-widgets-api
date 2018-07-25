@@ -10,6 +10,7 @@ import {
   customerFactory,
   brandFactory,
   userFactory,
+  engageDataFactory,
 } from '../db/factories';
 
 import { connect, disconnect } from '../db/connection';
@@ -71,10 +72,10 @@ describe('createConversation', () => {
       customer: _customer,
       integration: _integration,
       user,
-      engageData: {
+      engageData: engageDataFactory({
         content: 'hi {{ customer.name }} {{ user.fullName }}',
         messageId: '_id',
-      },
+      }),
     };
 
     // create ==========================
@@ -207,17 +208,17 @@ describe('createEngageVisitorMessages', () => {
     await messageFactory({
       customerId: _customer._id,
       isCustomerRead: false,
-      engageData: {
+      engageData: engageDataFactory({
         messageId: '_id2',
-      },
+      }),
     });
 
     await messageFactory({
       customerId: _customer._id,
       isCustomerRead: false,
-      engageData: {
+      engageData: engageDataFactory({
         messageId: '_id2',
-      },
+      }),
     });
 
     // main call

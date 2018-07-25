@@ -12,6 +12,7 @@ import {
   Messages,
   Users,
   Companies,
+  IMessageEngageData,
 } from './models';
 
 interface IUserParams {
@@ -152,7 +153,7 @@ export function conversationFactory() {
 interface IConversationMessageParams {
   customerId?: string,
   conversationId?: string,
-  engageData?: object,
+  engageData?: IMessageEngageData,
   isCustomerRead?: boolean,
 }
 export function messageFactory(params: IConversationMessageParams={}) {
@@ -183,4 +184,23 @@ export function companyFactory(params: ICompanyParams={}) {
   });
 
   return company.save();
+}
+
+interface IMessageEngageDataParams {
+  messageId?: string,
+  brandId?: string,
+  content?: string,
+  fromUserId?: string,
+  kind?: string,
+  sentAs?: string,
+}
+export function engageDataFactory(params: IMessageEngageDataParams) {
+  return {
+    messageId: params.messageId || Random.id(),
+    brandId: params.brandId || Random.id(),
+    content: params.content || faker.lorem.sentence(),
+    fromUserId: params.fromUserId || Random.id(),
+    kind: params.kind || 'popup',
+    sentAs: params.sentAs || 'post'
+  }
 }
