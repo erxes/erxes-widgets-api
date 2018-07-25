@@ -9,6 +9,8 @@ import {
   IUserDocument,
 } from '../../../db/models';
 
+import { IBrowserInfo } from '../../../db/models/Customers';
+
 /*
  * Replaces customer & user infos in given content
  */
@@ -34,12 +36,6 @@ export const replaceKeys = (params: { content: string, customer: ICustomerDocume
 /*
  * Checks individual rule
  */
-interface IBrowserInfo {
-  language?: string,
-  url?: string,
-  city?: string,
-  country?: string,
-}
 interface IRule {
   value?: string,
   kind: string,

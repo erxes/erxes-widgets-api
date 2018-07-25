@@ -6,6 +6,12 @@ import {
   Customers,
   Companies,
 } from '../../../db/models';
+
+import {
+  IVisitorContactInfoParams,
+  IBrowserInfo,
+} from '../../../db/models/Customers';
+
 import { createEngageVisitorMessages } from '../utils/engage';
 import { unreadMessagesQuery } from '../utils/messenger';
 import { mutateAppApi } from '../../../utils';
@@ -158,21 +164,21 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(root: any, args: { customerId: string, type: string, value: string }) {
+  saveCustomerGetNotified(root: any, args: IVisitorContactInfoParams) {
     return Customers.saveVisitorContactInfo(args);
   },
 
-  /**
+  /*
    * Update customer location field
    */
-  async saveBrowserInfo(root: any, { customerId, browserInfo }: { customerId: string, browserInfo: any }) {
+  async saveBrowserInfo(root: any, { customerId, browserInfo }: { customerId: string, browserInfo: IBrowserInfo }) {
     // update location
     await Customers.updateLocation(customerId, browserInfo);
 
     // update messenger session data
     const customer = await Customers.updateMessengerSession({
       _id: customerId,
-      url: browserInfo.url,
+      url: browserInfo.url || '',
     });
 
     const integration = await Integrations.findOne({ _id: customer.integrationId });

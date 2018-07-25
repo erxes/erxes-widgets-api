@@ -29,6 +29,19 @@ export interface IUpdateMessengerCustomerParams {
   customData?: any,
 };
 
+export interface IVisitorContactInfoParams {
+  customerId: string,
+  type: string,
+  value: string
+}
+
+export interface IBrowserInfo {
+  language?: string,
+  url?: string,
+  city?: string,
+  country?: string,
+}
+
 interface ICustomerModel extends Model<ICustomerDocument> {
   getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>
 
@@ -51,9 +64,9 @@ interface ICustomerModel extends Model<ICustomerDocument> {
 
   updateMessengerSession(doc : { _id: string, url: string }): Promise<ICustomerDocument>
 
-  updateLocation(_id: string, browserInfo: any): Promise<ICustomerDocument>
+  updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>
-  saveVisitorContactInfo(doc: { customerId: string, type: string, value: string }): Promise<ICustomerDocument>
+  saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>
 }
 
 class Customer {
@@ -277,7 +290,7 @@ class Customer {
   /*
    * Update customer's location info
    */
-  static async updateLocation(_id: string, browserInfo: any) {
+  static async updateLocation(_id: string, browserInfo: IBrowserInfo) {
     await Customers.findByIdAndUpdate(
       { _id },
       {
@@ -302,7 +315,7 @@ class Customer {
    * If customer is a visitor then we will contact with this customer using
    * this information later
    */
-  static async saveVisitorContactInfo(args: { customerId: string, type: string, value: string }) {
+  static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
     const { customerId, type, value } = args;
 
     if (type === 'email') {

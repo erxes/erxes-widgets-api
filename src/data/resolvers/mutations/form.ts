@@ -8,6 +8,9 @@ import {
   Forms,
   Fields,
 } from '../../../db/models';
+
+import { IBrowserInfo } from '../../../db/models/Customers';
+
 import { sendEmail, IEmail } from '../utils/email';
 import { mutateAppApi } from '../../../utils';
 
@@ -81,7 +84,7 @@ export const saveValues = async (args: {
     integrationId: string,
     submissions: ISubmission[],
     formId: string,
-    browserInfo: any
+    browserInfo: IBrowserInfo
   }) => {
 
   const { integrationId, submissions, formId, browserInfo } = args;
