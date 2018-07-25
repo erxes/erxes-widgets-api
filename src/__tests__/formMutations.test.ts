@@ -1,4 +1,7 @@
-import formMutations, { validate, saveValues } from '../data/resolvers/mutations/form';
+import formMutations, {
+  validate,
+  saveValues
+} from "../data/resolvers/mutations/form";
 import {
   Brands,
   Integrations,
@@ -8,15 +11,20 @@ import {
   Messages,
   Customers,
   IFieldDocument
-} from '../db/models';
-import { connect, disconnect } from '../db/connection';
-import { brandFactory, integrationFactory, formFieldFactory, formFactory } from '../db/factories';
+} from "../db/models";
+import { connect, disconnect } from "../db/connection";
+import {
+  brandFactory,
+  integrationFactory,
+  formFieldFactory,
+  formFactory
+} from "../db/factories";
 
 beforeAll(() => connect());
 
 afterAll(() => disconnect());
 
-describe('Form mutations', () => {
+describe("Form mutations", () => {
   // remove previous datas
   afterEach(async () => {
     await Integrations.remove({});
@@ -28,9 +36,9 @@ describe('Form mutations', () => {
     await Customers.remove({});
   });
 
-  describe('formConnect', () => {
-    const brandCode = 'brandCode';
-    const formCode = 'formCode';
+  describe("formConnect", () => {
+    const brandCode = "brandCode";
+    const formCode = "formCode";
 
     beforeEach(async () => {
       const brand = await brandFactory({ code: brandCode });
@@ -39,7 +47,7 @@ describe('Form mutations', () => {
       await integrationFactory({ brandId: brand._id, formId: form._id });
     });
 
-    test('connect', async () => {
+    test("connect", async () => {
       const res = await formMutations.formConnect({}, { brandCode, formCode });
 
       // must return integrationId and formId
@@ -48,25 +56,43 @@ describe('Form mutations', () => {
     });
   });
 
-  test('validate', async () => {
-    const formId = 'DFDFDAFD';
+  test("validate", async () => {
+    const formId = "DFDFDAFD";
     const contentTypeId = formId;
 
-    const requiredField = await formFieldFactory({ contentTypeId, isRequired: true });
-    const emailField = await formFieldFactory({ contentTypeId, validation: 'email' });
-    const numberField = await formFieldFactory({ contentTypeId, validation: 'number' });
-    const validNumberField = await formFieldFactory({ contentTypeId, validation: 'number' });
-    const validDateField = await formFieldFactory({ contentTypeId, validation: 'date' });
-    const dateField = await formFieldFactory({ contentTypeId, validation: 'date' });
+    const requiredField = await formFieldFactory({
+      contentTypeId,
+      isRequired: true
+    });
+    const emailField = await formFieldFactory({
+      contentTypeId,
+      validation: "email"
+    });
+    const numberField = await formFieldFactory({
+      contentTypeId,
+      validation: "number"
+    });
+    const validNumberField = await formFieldFactory({
+      contentTypeId,
+      validation: "number"
+    });
+    const validDateField = await formFieldFactory({
+      contentTypeId,
+      validation: "date"
+    });
+    const dateField = await formFieldFactory({
+      contentTypeId,
+      validation: "date"
+    });
 
-    it('validate', async () => {
+    it("validate", async () => {
       const submissions = [
         { _id: requiredField._id, value: null },
-        { _id: emailField._id, value: 'email', validation: 'email' },
-        { _id: numberField._id, value: 'number', validation: 'number' },
-        { _id: validNumberField._id, value: 10, validation: 'number' },
-        { _id: dateField._id, value: 'date', validation: 'date' },
-        { _id: validDateField._id, value: '2012-09-01', validation: 'date' },
+        { _id: emailField._id, value: "email", validation: "email" },
+        { _id: numberField._id, value: "number", validation: "number" },
+        { _id: validNumberField._id, value: 10, validation: "number" },
+        { _id: dateField._id, value: "date", validation: "date" },
+        { _id: validDateField._id, value: "2012-09-01", validation: "date" }
       ];
 
       // call function
@@ -79,25 +105,25 @@ describe('Form mutations', () => {
 
       // required
       expect(requiredError.fieldId).toEqual(requiredField);
-      expect(requiredError.code).toEqual('required');
+      expect(requiredError.code).toEqual("required");
 
       // email
       expect(emailError.fieldId).toEqual(emailField);
-      expect(emailError.code).toEqual('invalidEmail');
+      expect(emailError.code).toEqual("invalidEmail");
 
       // number
       expect(numberError.fieldId).toEqual(numberField);
-      expect(numberError.code).toEqual('invalidNumber');
+      expect(numberError.code).toEqual("invalidNumber");
 
       // date
       expect(dateError.fieldId).toEqual(dateField);
-      expect(dateError.code).toEqual('invalidDate');
+      expect(dateError.code).toEqual("invalidDate");
     });
   });
 
-  describe('saveValues', () => {
-    const integrationId = 'DFDFDAFD';
-    const formTitle = 'Form';
+  describe("saveValues", () => {
+    const integrationId = "DFDFDAFD";
+    const formTitle = "Form";
 
     let formId: string;
 
@@ -111,27 +137,36 @@ describe('Form mutations', () => {
 
       const contentTypeId = formId;
 
-      emailField = await formFieldFactory({ contentTypeId, type: 'emailFieldId' });
-      firstNameField = await formFieldFactory({ contentTypeId, type: 'firstNameFieldId' });
-      lastNameField = await formFieldFactory({ contentTypeId, type: 'lastNameFieldId' });
-      arbitraryField = await formFieldFactory({ contentTypeId, type: 'input' });
+      emailField = await formFieldFactory({
+        contentTypeId,
+        type: "emailFieldId"
+      });
+      firstNameField = await formFieldFactory({
+        contentTypeId,
+        type: "firstNameFieldId"
+      });
+      lastNameField = await formFieldFactory({
+        contentTypeId,
+        type: "lastNameFieldId"
+      });
+      arbitraryField = await formFieldFactory({ contentTypeId, type: "input" });
     });
 
-    test('saveValues', async () => {
+    test("saveValues", async () => {
       const submissions = [
-        { _id: arbitraryField._id, value: 'Value', type: 'input' },
-        { _id: emailField._id, value: 'email@gmail.com', type: 'email' },
-        { _id: firstNameField._id, value: 'first name', type: 'firstName' },
-        { _id: lastNameField._id, value: 'last name', type: 'lastName' },
+        { _id: arbitraryField._id, value: "Value", type: "input" },
+        { _id: emailField._id, value: "email@gmail.com", type: "email" },
+        { _id: firstNameField._id, value: "first name", type: "firstName" },
+        { _id: lastNameField._id, value: "last name", type: "lastName" }
       ];
 
       const browserInfo = {
-        remoteAddress: '127.0.0.1',
-        url: 'localhost',
-        hostname: 'localhost.com',
-        language: 'en',
+        remoteAddress: "127.0.0.1",
+        url: "localhost",
+        hostname: "localhost.com",
+        language: "en",
         userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
-          AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
+          AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`
       };
 
       // call function
@@ -146,7 +181,9 @@ describe('Form mutations', () => {
       // check conversation fields
       const conversation = await Conversations.findOne({});
 
-      if (!conversation) { throw new Error('conversation not found') };
+      if (!conversation) {
+        throw new Error("conversation not found");
+      }
 
       expect(conversation.content).toBe(formTitle);
       expect(conversation.integrationId).toBe(integrationId);
@@ -155,7 +192,9 @@ describe('Form mutations', () => {
       // check message fields
       const message = await Messages.findOne({});
 
-      if (!message) { throw new Error('message not found') };
+      if (!message) {
+        throw new Error("message not found");
+      }
 
       expect(message.conversationId).not.toBe(null);
       expect(message.content).toBe(formTitle);
@@ -167,14 +206,18 @@ describe('Form mutations', () => {
       // check customer fields
       const customer = await Customers.findOne({});
 
-      if (!customer) { throw new Error('customer not found') };
+      if (!customer) {
+        throw new Error("customer not found");
+      }
 
-      expect(customer.primaryEmail).toBe('email@gmail.com');
-      expect(customer.emails).toContain('email@gmail.com');
-      expect(customer.firstName).toBe('first name');
-      expect(customer.lastName).toBe('last name');
+      expect(customer.primaryEmail).toBe("email@gmail.com");
+      expect(customer.emails).toContain("email@gmail.com");
+      expect(customer.firstName).toBe("first name");
+      expect(customer.lastName).toBe("last name");
 
-      if (!customer.location) { throw new Error('location is null') };
+      if (!customer.location) {
+        throw new Error("location is null");
+      }
 
       expect(customer.location.hostname).toBe(browserInfo.hostname);
       expect(customer.location.language).toBe(browserInfo.language);

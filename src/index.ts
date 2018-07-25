@@ -1,11 +1,11 @@
-import * as dotenv from 'dotenv';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
-import { createServer } from 'http';
-import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
-import { connect } from './db/connection';
-import schema from './data';
+import * as dotenv from "dotenv";
+import * as express from "express";
+import * as bodyParser from "body-parser";
+import * as cors from "cors";
+import { createServer } from "http";
+import { graphqlExpress, graphiqlExpress } from "graphql-server-express";
+import { connect } from "./db/connection";
+import schema from "./data";
 
 // load environment variables
 dotenv.config();
@@ -20,10 +20,10 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-app.use('/graphql', graphqlExpress(() => ({ schema })));
+app.use("/graphql", graphqlExpress(() => ({ schema })));
 
-if (process.env.NODE_ENV === 'development') {
-  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+if (process.env.NODE_ENV === "development") {
+  app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
 }
 
 const { PORT } = process.env;

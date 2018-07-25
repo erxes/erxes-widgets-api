@@ -4,48 +4,61 @@ import {
   Conversations,
   Messages,
   Customers,
-  Companies,
-} from '../../../db/models';
+  Companies
+} from "../../../db/models";
 
 import {
   IVisitorContactInfoParams,
-  IBrowserInfo,
-} from '../../../db/models/Customers';
+  IBrowserInfo
+} from "../../../db/models/Customers";
 
-import { createEngageVisitorMessages } from '../utils/engage';
-import { unreadMessagesQuery } from '../utils/messenger';
-import { mutateAppApi } from '../../../utils';
+import { createEngageVisitorMessages } from "../utils/engage";
+import { unreadMessagesQuery } from "../utils/messenger";
+import { mutateAppApi } from "../../../utils";
 
 export default {
   /*
    * Create a new customer or update existing customer info
    * when connection established
    */
-  async messengerConnect(root: any, args: {
-      brandCode: string,
-      email?: string,
-      phone?: string,
-      isUser?: boolean,
-      companyData?: any,
-      data?: any,
-      cachedCustomerId?: string,
-    }) {
-
-    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
+  async messengerConnect(
+    root: any,
+    args: {
+      brandCode: string;
+      email?: string;
+      phone?: string;
+      isUser?: boolean;
+      companyData?: any;
+      data?: any;
+      cachedCustomerId?: string;
+    }
+  ) {
+    const {
+      brandCode,
+      email,
+      phone,
+      isUser,
+      companyData,
+      data,
+      cachedCustomerId
+    } = args;
 
     const customData = data;
 
     // find integration
-    const integration = await Integrations.getIntegration(brandCode, 'messenger');
+    const integration = await Integrations.getIntegration(
+      brandCode,
+      "messenger"
+    );
 
     if (!integration) {
-      throw new Error('Integration not found');
+      throw new Error("Integration not found");
     }
 
     let customer = await Customers.getCustomer({
       cachedCustomerId,
       email,
-      phone,
+      phone
     });
 
     if (customer) {
@@ -55,21 +68,21 @@ export default {
         doc: {
           email,
           phone,
-          isUser,
+          isUser
         },
-        customData,
+        customData
       });
 
-    // create new customer
+      // create new customer
     } else {
       customer = await Customers.createMessengerCustomer(
         {
           integrationId: integration._id,
           email,
           phone,
-          isUser,
+          isUser
         },
-        customData,
+        customData
       );
     }
 
@@ -86,29 +99,37 @@ export default {
       uiOptions: integration.uiOptions,
       languageCode: integration.languageCode,
       messengerData: integration.messengerData,
-      customerId: customer._id,
+      customerId: customer._id
     };
   },
 
   /*
    * Create a new message
    */
-  async insertMessage(root: any, args: {
-    integrationId: string,
-    customerId: string,
-    conversationId?: string,
-    message: string,
-    attachments?: any[]
-  }) {
-
-    const { integrationId, customerId, conversationId, message, attachments } = args;
+  async insertMessage(
+    root: any,
+    args: {
+      integrationId: string;
+      customerId: string;
+      conversationId?: string;
+      message: string;
+      attachments?: any[];
+    }
+  ) {
+    const {
+      integrationId,
+      customerId,
+      conversationId,
+      message,
+      attachments
+    } = args;
 
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
       integrationId,
       customerId,
-      content: message,
+      content: message
     });
 
     // create message
@@ -116,7 +137,7 @@ export default {
       conversationId: conversation._id,
       customerId,
       content: message,
-      attachments,
+      attachments
     });
 
     await Conversations.update(
@@ -130,9 +151,9 @@ export default {
           content: message,
 
           // Mark as unread
-          readUserIds: [],
-        },
-      },
+          readUserIds: []
+        }
+      }
     );
 
     // mark customer as active
@@ -155,10 +176,10 @@ export default {
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
-        isCustomerRead: { $ne: true },
+        isCustomerRead: { $ne: true }
       },
       { isCustomerRead: true },
-      { multi: true },
+      { multi: true }
     );
 
     return response;
@@ -171,17 +192,25 @@ export default {
   /*
    * Update customer location field
    */
-  async saveBrowserInfo(root: any, { customerId, browserInfo }: { customerId: string, browserInfo: IBrowserInfo }) {
+  async saveBrowserInfo(
+    root: any,
+    {
+      customerId,
+      browserInfo
+    }: { customerId: string; browserInfo: IBrowserInfo }
+  ) {
     // update location
     await Customers.updateLocation(customerId, browserInfo);
 
     // update messenger session data
     const customer = await Customers.updateMessengerSession({
       _id: customerId,
-      url: browserInfo.url || '',
+      url: browserInfo.url || ""
     });
 
-    const integration = await Integrations.findOne({ _id: customer.integrationId });
+    const integration = await Integrations.findOne({
+      _id: customer.integrationId
+    });
 
     if (!integration) {
       return null;
@@ -199,16 +228,16 @@ export default {
         brand,
         integration,
         customer,
-        browserInfo,
+        browserInfo
       });
     }
 
     // find conversations
     const convs = await Conversations.find({
       integrationId: integration._id,
-      customerId: customer._id,
+      customerId: customer._id
     });
 
     return Messages.findOne(unreadMessagesQuery(convs));
-  },
+  }
 };

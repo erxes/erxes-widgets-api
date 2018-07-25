@@ -1,97 +1,107 @@
-import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
-import { ICustomerDocument, CustomerSchema } from './definations/customers';
+import { Model, model } from "mongoose";
+import { mutateAppApi } from "../../utils";
+import { ICustomerDocument, CustomerSchema } from "./definations/customers";
 
 interface IGetCustomerParams {
-  email?: string,
-  phone?: string,
-  cachedCustomerId?: string,
+  email?: string;
+  phone?: string;
+  cachedCustomerId?: string;
 }
 
 interface ICreateCustomerParams {
-  integrationId: string,
-  email?: string,
-  phone?: string,
-  isUser?: boolean,
-  firstName?: string,
-  lastName?: string,
-  description?: string,
-  messengerData?: any,
+  integrationId: string;
+  email?: string;
+  phone?: string;
+  isUser?: boolean;
+  firstName?: string;
+  lastName?: string;
+  description?: string;
+  messengerData?: any;
 }
 
 export interface IUpdateMessengerCustomerParams {
-  _id: string,
+  _id: string;
   doc: {
-    email?: string,
-    phone?: string,
-    isUser?: boolean,
-  },
-  customData?: any,
-};
+    email?: string;
+    phone?: string;
+    isUser?: boolean;
+  };
+  customData?: any;
+}
 
 export interface IVisitorContactInfoParams {
-  customerId: string,
-  type: string,
-  value: string
+  customerId: string;
+  type: string;
+  value: string;
 }
 
 export interface IBrowserInfo {
-  language?: string,
-  url?: string,
-  city?: string,
-  country?: string,
+  language?: string;
+  url?: string;
+  city?: string;
+  country?: string;
 }
 
 interface ICustomerModel extends Model<ICustomerDocument> {
-  getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>
+  getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>;
 
   getOrCreateCustomer(
     getParams: IGetCustomerParams,
     createParams: ICreateCustomerParams
-  ): Promise<ICustomerDocument>
+  ): Promise<ICustomerDocument>;
 
   createMessengerCustomer(
     doc: ICreateCustomerParams,
     customData: any
-  ): Promise<ICustomerDocument>
+  ): Promise<ICustomerDocument>;
 
   updateMessengerCustomer(
     param: IUpdateMessengerCustomerParams
-  ): Promise<ICustomerDocument>
+  ): Promise<ICustomerDocument>;
 
-  markCustomerAsActive(customerId: string): Promise<ICustomerDocument>
-  markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>
+  markCustomerAsActive(customerId: string): Promise<ICustomerDocument>;
+  markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>;
 
-  updateMessengerSession(doc : { _id: string, url: string }): Promise<ICustomerDocument>
+  updateMessengerSession(doc: {
+    _id: string;
+    url: string;
+  }): Promise<ICustomerDocument>;
 
-  updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>
-  addCompany(_id: string, companyId: string): Promise<ICustomerDocument>
-  saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>
+  updateLocation(
+    _id: string,
+    browserInfo: IBrowserInfo
+  ): Promise<ICustomerDocument>;
+  addCompany(_id: string, companyId: string): Promise<ICustomerDocument>;
+  saveVisitorContactInfo(
+    doc: IVisitorContactInfoParams
+  ): Promise<ICustomerDocument>;
 }
 
 class Customer {
   /*
    * Fix firstName, lastName, description abbriviations
    */
-  static fixCustomData(customData: any): { extractedInfo: any, updatedCustomData: any } {
+  static fixCustomData(
+    customData: any
+  ): { extractedInfo: any; updatedCustomData: any } {
     const extractedInfo: any = {};
     const updatedCustomData = { ...customData };
 
     // Setting customData fields to customer fields
     Object.keys(updatedCustomData).forEach(key => {
-      if (key === 'first_name' || key === 'firstName') {
+      if (key === "first_name" || key === "firstName") {
         extractedInfo.firstName = updatedCustomData[key];
 
         delete updatedCustomData[key];
       }
 
-      if (key === 'last_name' || key === 'lastName') {
+      if (key === "last_name" || key === "lastName") {
         extractedInfo.lastName = updatedCustomData[key];
 
         delete updatedCustomData[key];
       }
 
-      if (key === 'bio' || key === 'description') {
+      if (key === "bio" || key === "description") {
         extractedInfo.description = updatedCustomData[key];
 
         delete updatedCustomData[key];
@@ -109,13 +119,13 @@ class Customer {
 
     if (email) {
       return Customers.findOne({
-        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
+        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }]
       });
     }
 
     if (phone) {
       return Customers.findOne({
-        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
+        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }]
       });
     }
 
@@ -134,7 +144,7 @@ class Customer {
 
     const modifier: any = {
       ...restDoc,
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
     if (email) {
@@ -155,8 +165,7 @@ class Customer {
         activityLogsAddCustomerLog(_id: "${customer._id}") {
           _id
         }
-      }`
-    );
+      }`);
 
     return customer;
   }
@@ -164,8 +173,13 @@ class Customer {
   /*
    * Create a new messenger customer
    */
-  static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+  static async createMessengerCustomer(
+    doc: ICreateCustomerParams,
+    customData: any
+  ) {
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(
+      customData || {}
+    );
 
     return this.createCustomer({
       ...doc,
@@ -174,7 +188,7 @@ class Customer {
         lastSeenAt: new Date(),
         isActive: true,
         sessionCount: 1,
-        customData: updatedCustomData,
+        customData: updatedCustomData
       }
     });
   }
@@ -187,17 +201,21 @@ class Customer {
 
     const customer = await Customers.findOne({ _id });
 
-    if (!customer) { throw new Error('Customer not found') };
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
 
     const messengerData = customer.messengerData;
 
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(
+      customData || {}
+    );
 
     const modifier = {
       ...doc,
       ...extractedInfo,
-      'messengerData.customData': updatedCustomData,
-    }
+      "messengerData.customData": updatedCustomData
+    };
 
     await Customers.update({ _id }, { $set: modifier });
 
@@ -207,7 +225,10 @@ class Customer {
   /**
    * Get or create customer
    */
-  static async getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams) {
+  static async getOrCreateCustomer(
+    getParams: IGetCustomerParams,
+    createParams: ICreateCustomerParams
+  ) {
     const customer = await this.getCustomer(getParams);
 
     if (customer) {
@@ -221,7 +242,10 @@ class Customer {
    * Mark customer as active
    */
   static async markCustomerAsActive(customerId: string) {
-    await Customers.update({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
+    await Customers.update(
+      { _id: customerId },
+      { $set: { "messengerData.isActive": true } }
+    );
 
     return Customers.findOne({ _id: customerId });
   }
@@ -234,10 +258,10 @@ class Customer {
       { _id: customerId },
       {
         $set: {
-          'messengerData.isActive': false,
-          'messengerData.lastSeenAt': new Date(),
-        },
-      },
+          "messengerData.isActive": false,
+          "messengerData.lastSeenAt": new Date()
+        }
+      }
     );
 
     return Customers.findOne({ _id: customerId });
@@ -246,7 +270,7 @@ class Customer {
   /*
    * Update messenger session data
    */
-  static async updateMessengerSession(doc: { _id: string, url: string }) {
+  static async updateMessengerSession(doc: { _id: string; url: string }) {
     const { _id, url } = doc;
 
     const now = new Date();
@@ -260,9 +284,9 @@ class Customer {
     const query: any = {
       $set: {
         // update messengerData
-        'messengerData.lastSeenAt': now,
-        'messengerData.isActive': true,
-      },
+        "messengerData.lastSeenAt": now,
+        "messengerData.isActive": true
+      }
     };
 
     const messengerData = customer.messengerData;
@@ -270,7 +294,7 @@ class Customer {
     // TODO: check getTime
     if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
       // update session count
-      query.$inc = { 'messengerData.sessionCount': 1 };
+      query.$inc = { "messengerData.sessionCount": 1 };
 
       // save access history by location.pathname
       const urlVisits = customer.urlVisits || {};
@@ -294,8 +318,8 @@ class Customer {
     await Customers.findByIdAndUpdate(
       { _id },
       {
-        $set: { location: browserInfo },
-      },
+        $set: { location: browserInfo }
+      }
     );
 
     return Customers.findOne({ _id });
@@ -305,7 +329,9 @@ class Customer {
    * Add companyId to companyIds list
    */
   static async addCompany(_id: string, companyId: string) {
-    await Customers.findByIdAndUpdate(_id, { $addToSet: { companyIds: companyId } });
+    await Customers.findByIdAndUpdate(_id, {
+      $addToSet: { companyIds: companyId }
+    });
 
     // updated customer
     return Customers.findOne({ _id });
@@ -318,12 +344,18 @@ class Customer {
   static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
     const { customerId, type, value } = args;
 
-    if (type === 'email') {
-      await Customers.update({ _id: customerId }, { 'visitorContactInfo.email': value });
+    if (type === "email") {
+      await Customers.update(
+        { _id: customerId },
+        { "visitorContactInfo.email": value }
+      );
     }
 
-    if (type === 'phone') {
-      await Customers.update({ _id: customerId }, { 'visitorContactInfo.phone': value });
+    if (type === "phone") {
+      await Customers.update(
+        { _id: customerId },
+        { "visitorContactInfo.phone": value }
+      );
     }
 
     return Customers.findOne({ _id: customerId });
@@ -332,6 +364,9 @@ class Customer {
 
 CustomerSchema.loadClass(Customer);
 
-const Customers = model<ICustomerDocument, ICustomerModel>('customers', CustomerSchema);
+const Customers = model<ICustomerDocument, ICustomerModel>(
+  "customers",
+  CustomerSchema
+);
 
 export default Customers;

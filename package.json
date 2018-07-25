@@ -22,12 +22,12 @@
     "test": "NODE_ENV=test jest --runInBand",
     "build": "babel src --out-dir dist --ignore __tests__,tests --copy-files",
     "lint": "tslint 'src/**/*.ts'",
-    "format": "prettier --write --print-width 100 --single-quote --trailing-comma all 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write --print-width 100 --single-quote --trailing-comma all",
+    "*.ts": [
+      "prettier --write",
       "git add"
     ]
   },
@@ -62,11 +62,12 @@
     "jest": "^20.0.4",
     "lint-staged": "^3.6.0",
     "nodemon": "^1.11.0",
-    "prettier": "^1.4.4",
+    "prettier": "^1.13.7",
     "ts-jest": "^23.0.1",
     "ts-node": "^7.0.0",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.14.0",
+    "tslint": "^5.8.0",
+    "tslint-config-prettier": "^1.1.0",
+    "tslint-config-standard": "^7.0.0",
     "typescript": "^2.9.2"
   }
 }

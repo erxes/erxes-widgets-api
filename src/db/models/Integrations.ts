@@ -1,32 +1,42 @@
-import { Document, Model, model } from 'mongoose';
-import { IntegrationSchema, IIntegrationDocument } from './definations/integrations';
-import Brands from './Brands';
+import { Document, Model, model } from "mongoose";
+import {
+  IntegrationSchema,
+  IIntegrationDocument
+} from "./definations/integrations";
+import Brands from "./Brands";
 
 interface IIntegrationModel extends Model<IIntegrationDocument> {
   getIntegration(
     brandCode: string,
     kind: string,
     brandObject?: boolean
-  ): IIntegrationDocument
+  ): IIntegrationDocument;
 }
 
 class Integration {
   /*
    * Get integration
    */
-  static async getIntegration(brandCode: string, kind: string, brandObject = false) {
+  static async getIntegration(
+    brandCode: string,
+    kind: string,
+    brandObject = false
+  ) {
     const brand = await Brands.findOne({ code: brandCode });
 
     if (!brand) {
-      throw new Error('Brand not found');
+      throw new Error("Brand not found");
     }
 
-    const integration = await Integrations.findOne({ brandId: brand._id, kind });
+    const integration = await Integrations.findOne({
+      brandId: brand._id,
+      kind
+    });
 
     if (brandObject) {
       return {
         integration,
-        brand,
+        brand
       };
     }
 
@@ -37,7 +47,7 @@ class Integration {
 IntegrationSchema.loadClass(Integration);
 
 const Integrations = model<IIntegrationDocument, IIntegrationModel>(
-  'integrations',
+  "integrations",
   IntegrationSchema
 );
 

@@ -1,13 +1,16 @@
-import { Model, model } from 'mongoose';
-import { IEngageMessageDocument, EngageMessageSchema } from './definations/engages';
+import { Model, model } from "mongoose";
+import {
+  IEngageMessageDocument,
+  EngageMessageSchema
+} from "./definations/engages";
 
-interface IEngageMessageModel extends Model<IEngageMessageDocument> {
-}
+interface IEngageMessageModel extends Model<IEngageMessageDocument> {}
 
 class EngageMessage {}
 
 EngageMessageSchema.loadClass(EngageMessage);
 
-export const EngageMessages = model<IEngageMessageDocument, IEngageMessageModel>(
-  'engage_messages', EngageMessageSchema
-);
+export const EngageMessages = model<
+  IEngageMessageDocument,
+  IEngageMessageModel
+>("engage_messages", EngageMessageSchema);

@@ -1,32 +1,32 @@
-import { Schema, Document } from 'mongoose';
-import { field } from '../utils';
+import { Schema, Document } from "mongoose";
+import { field } from "../utils";
 
 interface ICallout extends Document {
-  title?: string,
-  body?: string,
-  buttonText?: string,
-  featuredImage?: string,
-  skip?: boolean,
+  title?: string;
+  body?: string;
+  buttonText?: string;
+  featuredImage?: string;
+  skip?: boolean;
 }
 
 interface ISubmission extends Document {
-  customerId: string,
-  submittedAt: Date,
+  customerId: string;
+  submittedAt: Date;
 }
 
 export interface IFormDocument extends Document {
-  _id: string,
-  title: string,
-  code: string,
-  description?: string,
-  buttonText?: string,
-  themeColor?: string,
-  createdUserId: string,
-  createdDate: Date,
-  callout: ICallout,
-  viewCount: number,
-  contactsGathered: number,
-  submissions: ISubmission[],
+  _id: string;
+  title: string;
+  code: string;
+  description?: string;
+  buttonText?: string;
+  themeColor?: string;
+  createdUserId: string;
+  createdDate: Date;
+  callout: ICallout;
+  viewCount: number;
+  contactsGathered: number;
+  submissions: ISubmission[];
 }
 
 // schema for form's callout component
@@ -36,18 +36,18 @@ const CalloutSchema = new Schema(
     body: field({ type: String, optional: true }),
     buttonText: field({ type: String, optional: true }),
     featuredImage: field({ type: String, optional: true }),
-    skip: field({ type: Boolean, optional: true }),
+    skip: field({ type: Boolean, optional: true })
   },
-  { _id: false },
+  { _id: false }
 );
 
 // schema for form submission details
 const SubmissionSchema = new Schema(
   {
     customerId: field({ type: String }),
-    submittedAt: field({ type: Date }),
+    submittedAt: field({ type: Date })
   },
-  { _id: false },
+  { _id: false }
 );
 
 // schema for form document
@@ -56,7 +56,7 @@ export const FormSchema = new Schema({
   title: field({ type: String }),
   description: field({
     type: String,
-    optional: true,
+    optional: true
   }),
   buttonText: field({ type: String, optional: true }),
   themeColor: field({ type: String, optional: true }),
@@ -64,10 +64,10 @@ export const FormSchema = new Schema({
   createdUserId: field({ type: String }),
   createdDate: field({
     type: Date,
-    default: Date.now,
+    default: Date.now
   }),
   callout: field({ type: CalloutSchema, default: {} }),
   viewCount: field({ type: Number }),
   contactsGathered: field({ type: Number }),
-  submissions: field({ type: [SubmissionSchema] }),
+  submissions: field({ type: [SubmissionSchema] })
 });

@@ -1,71 +1,71 @@
-import { Schema, Document } from 'mongoose';
-import { field } from '../utils';
-import { MESSENGER_KINDS, SENT_AS_CHOICES, METHODS } from './constants';
+import { Schema, Document } from "mongoose";
+import { field } from "../utils";
+import { MESSENGER_KINDS, SENT_AS_CHOICES, METHODS } from "./constants";
 
 interface IEmail extends Document {
-  templateId?: string,
-  subject: string,
-  content: string,
+  templateId?: string;
+  subject: string;
+  content: string;
 }
 
 interface IRule extends Document {
-  _id: string,
-  kind: string,
-  text: string,
-  condition: string,
-  value: string,
+  _id: string;
+  kind: string;
+  text: string;
+  condition: string;
+  value: string;
 }
 
 interface IMessenger extends Document {
-  brandId: string,
-  kind: string,
-  sentAs: string,
-  content: string,
-  rules: IRule[],
+  brandId: string;
+  kind: string;
+  sentAs: string;
+  content: string;
+  rules: IRule[];
 }
 
 interface IStats {
-  open: number,
-  click: number,
-  complaint: number,
-  delivery: number,
-  bounce: number,
-  reject: number,
-  send: number,
-  renderingfailure: number,
+  open: number;
+  click: number;
+  complaint: number;
+  delivery: number;
+  bounce: number;
+  reject: number;
+  send: number;
+  renderingfailure: number;
 }
 
 export interface IEngageMessageDocument extends Document {
-  _id: string,
-  kind: string,
-  segmentId?: string,
-  customerIds: string[],
-  title: string,
-  fromUserId: string,
-  method: string,
-  isDraft: boolean,
-  isLive: boolean,
-  stopDate: Date,
-  createdDate: Date,
-  tagIds: string[],
-  messengerReceivedCustomerIds: string[],
-  email: IEmail,
-  messenger: IMessenger,
-  deliveryReports: any,
-  stats: IStats,
-};
+  _id: string;
+  kind: string;
+  segmentId?: string;
+  customerIds: string[];
+  title: string;
+  fromUserId: string;
+  method: string;
+  isDraft: boolean;
+  isLive: boolean;
+  stopDate: Date;
+  createdDate: Date;
+  tagIds: string[];
+  messengerReceivedCustomerIds: string[];
+  email: IEmail;
+  messenger: IMessenger;
+  deliveryReports: any;
+  stats: IStats;
+}
 
 // Mongoose schemas =======================
 const EmailSchema = new Schema(
   {
     templateId: field({
       type: String,
-      optional: true,
+      optional: true
     }),
     subject: field({ type: String }),
-    content: field({ type: String }),
+    content: field({ type: String })
   },
-  { _id: false },
+  { _id: false }
 );
 
 const RuleSchema = new Schema(
@@ -81,9 +81,9 @@ const RuleSchema = new Schema(
     // is, isNot, startsWith
     condition: field({ type: String }),
 
-    value: field({ type: String }),
+    value: field({ type: String })
   },
-  { _id: false },
+  { _id: false }
 );
 
 const MessengerSchema = new Schema(
@@ -91,16 +91,16 @@ const MessengerSchema = new Schema(
     brandId: field({ type: String }),
     kind: field({
       type: String,
-      enum: MESSENGER_KINDS.ALL,
+      enum: MESSENGER_KINDS.ALL
     }),
     sentAs: field({
       type: String,
-      enum: SENT_AS_CHOICES.ALL,
+      enum: SENT_AS_CHOICES.ALL
     }),
     content: field({ type: String }),
-    rules: field({ type: [RuleSchema] }),
+    rules: field({ type: [RuleSchema] })
   },
-  { _id: false },
+  { _id: false }
 );
 
 const StatsSchema = new Schema(
@@ -112,9 +112,9 @@ const StatsSchema = new Schema(
     bounce: field({ type: Number }),
     reject: field({ type: Number }),
     send: field({ type: Number }),
-    renderingfailure: field({ type: Number }),
+    renderingfailure: field({ type: Number })
   },
-  { _id: false },
+  { _id: false }
 );
 
 export const EngageMessageSchema = new Schema({
@@ -122,14 +122,14 @@ export const EngageMessageSchema = new Schema({
   kind: field({ type: String }),
   segmentId: field({
     type: String,
-    optional: true,
+    optional: true
   }),
   customerIds: field({ type: [String] }),
   title: field({ type: String }),
   fromUserId: field({ type: String }),
   method: field({
     type: String,
-    enum: METHODS.ALL,
+    enum: METHODS.ALL
   }),
   isDraft: field({ type: Boolean }),
   isLive: field({ type: Boolean }),
@@ -141,5 +141,5 @@ export const EngageMessageSchema = new Schema({
   email: field({ type: EmailSchema }),
   messenger: field({ type: MessengerSchema }),
   deliveryReports: field({ type: Object }),
-  stats: field({ type: StatsSchema, default: {} }),
+  stats: field({ type: StatsSchema, default: {} })
 });

@@ -1,27 +1,32 @@
-import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
-import { IConversationDocument, ConversationSchema } from './definations/conversations';
-import { CONVERSATION_STATUSES } from './definations/constants';
+import { Model, model } from "mongoose";
+import { mutateAppApi } from "../../utils";
+import {
+  IConversationDocument,
+  ConversationSchema
+} from "./definations/conversations";
+import { CONVERSATION_STATUSES } from "./definations/constants";
 
 interface STATUSES {
-  NEW: 'new',
-  OPEN: 'open',
-  CLOSED: 'closed',
-  ALL_LIST: ['new', 'open', 'closed'],
-};
+  NEW: "new";
+  OPEN: "open";
+  CLOSED: "closed";
+  ALL_LIST: ["new", "open", "closed"];
+}
 
 interface IConversationParams {
-  conversationId?: string,
-  userId?: string,
-  integrationId: string,
-  customerId: string,
-  content: string
+  conversationId?: string;
+  userId?: string;
+  integrationId: string;
+  customerId: string;
+  content: string;
 }
 
 interface IConversationModel extends Model<IConversationDocument> {
-  getConversationStatuses(): STATUSES
-  createConversation(doc : IConversationParams): Promise<IConversationDocument>
-  getOrCreateConversation(doc : IConversationParams): Promise<IConversationDocument>
+  getConversationStatuses(): STATUSES;
+  createConversation(doc: IConversationParams): Promise<IConversationDocument>;
+  getOrCreateConversation(
+    doc: IConversationParams
+  ): Promise<IConversationDocument>;
 }
 
 class Conversation {
@@ -35,7 +40,10 @@ class Conversation {
   static async createConversation(doc: IConversationParams) {
     const { integrationId, userId, customerId, content } = doc;
 
-    const count = await Conversations.find({ customerId, integrationId }).count();
+    const count = await Conversations.find({
+      customerId,
+      integrationId
+    }).count();
 
     const conversation = await Conversations.create({
       customerId,
@@ -47,7 +55,7 @@ class Conversation {
       messageCount: 0,
 
       // Number is used for denormalization of posts count
-      number: count + 1,
+      number: count + 1
     });
 
     // call app api's create conversation log
@@ -80,9 +88,9 @@ class Conversation {
           readUserIds: [],
 
           // reopen this conversation if it's closed
-          status: this.getConversationStatuses().OPEN,
+          status: this.getConversationStatuses().OPEN
         },
-        { new: true },
+        { new: true }
       );
     }
 
@@ -90,7 +98,7 @@ class Conversation {
     return this.createConversation({
       customerId,
       integrationId,
-      content,
+      content
     });
   }
 }
@@ -98,7 +106,8 @@ class Conversation {
 ConversationSchema.loadClass(Conversation);
 
 const Conversations = model<IConversationDocument, IConversationModel>(
-  'conversations', ConversationSchema
+  "conversations",
+  ConversationSchema
 );
 
 export default Conversations;

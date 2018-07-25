@@ -1,22 +1,22 @@
-const nodemailer: any = require('nodemailer');
+const nodemailer: any = require("nodemailer");
 
 export interface IEmail {
-  toEmails: string[],
-  fromEmail: string,
-  title: string,
-  content: string
+  toEmails: string[];
+  fromEmail: string;
+  title: string;
+  content: string;
 }
 
 export const sendEmail = (args: IEmail) => {
-  const { toEmails, fromEmail, title, content } = args
+  const { toEmails, fromEmail, title, content } = args;
   const { MAIL_SERVICE, MAIL_USER, MAIL_PASS } = process.env;
 
   const transporter = nodemailer.createTransport({
     service: MAIL_SERVICE,
     auth: {
       user: MAIL_USER,
-      pass: MAIL_PASS,
-    },
+      pass: MAIL_PASS
+    }
   });
 
   toEmails.forEach(toEmail => {
@@ -24,7 +24,7 @@ export const sendEmail = (args: IEmail) => {
       from: fromEmail,
       to: toEmail,
       subject: title,
-      text: content,
+      text: content
     };
 
     transporter.sendMail(mailOptions, (error: Error, info: any) => {

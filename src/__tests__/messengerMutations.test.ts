@@ -1,7 +1,7 @@
-const faker: any = require('faker');
-const Random: any = require('meteor-random');
+const faker: any = require("faker");
+const Random: any = require("meteor-random");
 
-import { connect, disconnect } from '../db/connection';
+import { connect, disconnect } from "../db/connection";
 import {
   Customers,
   Integrations,
@@ -12,21 +12,21 @@ import {
   IIntegrationDocument,
   ICustomerDocument,
   IConversationDocument
-} from '../db/models';
+} from "../db/models";
 import {
   brandFactory,
   integrationFactory,
   customerFactory,
   conversationFactory,
-  messageFactory,
-} from '../db/factories';
-import messengerMutations from '../data/resolvers/mutations/messenger';
+  messageFactory
+} from "../db/factories";
+import messengerMutations from "../data/resolvers/mutations/messenger";
 
 beforeAll(() => connect());
 
 afterAll(() => disconnect());
 
-describe('messenger connect', () => {
+describe("messenger connect", () => {
   let _brand: IBrandDocument;
   let _integration: IIntegrationDocument;
   let _customer: ICustomerDocument;
@@ -34,12 +34,15 @@ describe('messenger connect', () => {
   beforeEach(async () => {
     // Creating test data
     _brand = await brandFactory();
-    _integration = await integrationFactory({ brandId: _brand._id, kind: 'messenger' });
+    _integration = await integrationFactory({
+      brandId: _brand._id,
+      kind: "messenger"
+    });
     _customer = await customerFactory({
       integrationId: _integration._id,
-      primaryEmail: 'test@gmail.com',
-      emails: ['test@gmail.com'],
-      primaryPhone: '96221050',
+      primaryEmail: "test@gmail.com",
+      emails: ["test@gmail.com"],
+      primaryPhone: "96221050"
     });
   });
 
@@ -50,29 +53,31 @@ describe('messenger connect', () => {
     await Customers.remove({});
   });
 
-  test('returns proper integrationId', async () => {
+  test("returns proper integrationId", async () => {
     const { integrationId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email: faker.internet.email() },
+      { brandCode: _brand.code, email: faker.internet.email() }
     );
 
     expect(integrationId).toBe(_integration._id);
   });
 
-  test('creates new customer', async () => {
-    const email = 'newCustomer@gmail.com';
+  test("creates new customer", async () => {
+    const email = "newCustomer@gmail.com";
     const now = new Date();
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email, companyData: { name: 'company' } },
+      { brandCode: _brand.code, email, companyData: { name: "company" } }
     );
 
     expect(customerId).toBeDefined();
 
     const customer = await Customers.findById(customerId);
 
-    if (!customer) { throw new Error('customer not found') }
+    if (!customer) {
+      throw new Error("customer not found");
+    }
 
     expect(customer._id).toBeDefined();
     expect(customer.primaryEmail).toBe(email);
@@ -80,10 +85,12 @@ describe('messenger connect', () => {
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt >= now).toBeTruthy();
     expect((customer.companyIds || []).length).toBe(1);
-    expect((customer.messengerData || { sessionCount: 0 }).sessionCount).toBe(1);
+    expect((customer.messengerData || { sessionCount: 0 }).sessionCount).toBe(
+      1
+    );
   });
 
-  test('updates existing customer', async () => {
+  test("updates existing customer", async () => {
     const now = new Date();
 
     const { customerId } = await messengerMutations.messengerConnect(
@@ -95,39 +102,48 @@ describe('messenger connect', () => {
         // customData
         data: {
           plan: 1,
-          first_name: 'name',
-        },
-      },
+          first_name: "name"
+        }
+      }
     );
 
     expect(customerId).toBeDefined();
 
     const customer = await Customers.findById(customerId);
 
-    if (!customer) { throw new Error('customer not found') }
+    if (!customer) {
+      throw new Error("customer not found");
+    }
 
     expect(customer).toBeDefined();
     expect(customer.integrationId).toBe(_integration._id);
     expect(customer.createdAt < now).toBeTruthy();
 
     // must be updated
-    expect(customer.firstName).toBe('name');
+    expect(customer.firstName).toBe("name");
     expect(customer.isUser).toBeTruthy();
 
-    if (!customer.messengerData) { throw new Error('messengerData is null') }
-    if (!customer.messengerData.customData) { throw new Error('customData is null') }
+    if (!customer.messengerData) {
+      throw new Error("messengerData is null");
+    }
+    if (!customer.messengerData.customData) {
+      throw new Error("customData is null");
+    }
 
     expect(customer.messengerData.customData.plan).toBe(1);
   });
 });
 
-describe('insertMessage()', () => {
+describe("insertMessage()", () => {
   let _integration: IIntegrationDocument;
   let _customer: ICustomerDocument;
 
   beforeEach(async () => {
     // Creating test data
-    _integration = await integrationFactory({ brandId: Random.id(), kind: 'messenger' });
+    _integration = await integrationFactory({
+      brandId: Random.id(),
+      kind: "messenger"
+    });
     _customer = await customerFactory({ integrationId: _integration._id });
   });
 
@@ -137,7 +153,7 @@ describe('insertMessage()', () => {
     await Customers.remove({});
   });
 
-  test('successfull', async () => {
+  test("successfull", async () => {
     const now = new Date();
 
     const message = await messengerMutations.insertMessage(
@@ -145,8 +161,8 @@ describe('insertMessage()', () => {
       {
         integrationId: _integration._id,
         customerId: _customer._id,
-        message: faker.lorem.sentence(),
-      },
+        message: faker.lorem.sentence()
+      }
     );
 
     // check message ==========
@@ -156,22 +172,30 @@ describe('insertMessage()', () => {
     // check conversation =========
     const conversation = await Conversations.findById(message.conversationId);
 
-    if (!conversation) { throw new Error('conversation is not found') }
+    if (!conversation) {
+      throw new Error("conversation is not found");
+    }
 
-    expect(conversation.status).toBe(Conversations.getConversationStatuses().OPEN);
+    expect(conversation.status).toBe(
+      Conversations.getConversationStatuses().OPEN
+    );
     expect(conversation.readUserIds.length).toBe(0);
 
     // check customer =========
     const customer = await Customers.findOne({ _id: _customer._id });
 
-    if (!customer) { throw new Error('customer is not found') }
-    if (!customer.messengerData) { throw new Error('messengerData is null') }
+    if (!customer) {
+      throw new Error("customer is not found");
+    }
+    if (!customer.messengerData) {
+      throw new Error("messengerData is null");
+    }
 
     expect(customer.messengerData.isActive).toBeTruthy();
   });
 });
 
-describe('readConversationMessages()', async () => {
+describe("readConversationMessages()", async () => {
   let _conversation: IConversationDocument;
 
   beforeEach(async () => {
@@ -191,14 +215,14 @@ describe('readConversationMessages()', async () => {
   test("updates messages' isCustomerRead state", async () => {
     const response = await messengerMutations.readConversationMessages(
       {},
-      { conversationId: _conversation._id },
+      { conversationId: _conversation._id }
     );
 
     expect(response.nModified).toBe(2);
   });
 });
 
-describe('common', async () => {
+describe("common", async () => {
   let _customer: ICustomerDocument;
 
   beforeEach(async () => {
@@ -211,57 +235,70 @@ describe('common', async () => {
     await Customers.remove({});
   });
 
-  test('saveCustomerGetNotified', async () => {
+  test("saveCustomerGetNotified", async () => {
     const response = await messengerMutations.saveCustomerGetNotified(
       {},
       {
         customerId: _customer._id,
-        type: 'email',
-        value: 'test@gmail.com',
-      },
+        type: "email",
+        value: "test@gmail.com"
+      }
     );
 
-    if (!response.visitorContactInfo) { throw new Error('visitorContactInfo is null') }
+    if (!response.visitorContactInfo) {
+      throw new Error("visitorContactInfo is null");
+    }
 
-    expect(response.visitorContactInfo.email).toBe('test@gmail.com');
+    expect(response.visitorContactInfo.email).toBe("test@gmail.com");
   });
 
-  test('Save browser info', async () => {
+  test("Save browser info", async () => {
     const brand = await brandFactory({});
 
     const integration = await integrationFactory({
       brandId: brand._id,
-      kind: 'messenger',
+      kind: "messenger"
     });
 
     const customer = await customerFactory({
       integrationId: integration._id,
-      urlVisits: { '/career/open': 5 },
+      urlVisits: { "/career/open": 5 }
     });
 
     const browserInfo = {
-      hostname: 'localhost.com',
-      language: 'en',
+      hostname: "localhost.com",
+      language: "en",
       userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5)
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36`,
-      url: '/career/open',
+      url: "/career/open"
     };
 
-    await messengerMutations.saveBrowserInfo({}, { customerId: customer._id, browserInfo });
+    await messengerMutations.saveBrowserInfo(
+      {},
+      { customerId: customer._id, browserInfo }
+    );
 
     const updatedCustomer = await Customers.findOne({ _id: customer._id });
 
-    if (!updatedCustomer) { throw new Error('customer not found') }
-    if (!updatedCustomer.location) { throw new Error('location is null') }
-    if (!updatedCustomer.messengerData) { throw new Error('messengerData is null') }
-    if (!customer.messengerData) { throw new Error('messengerData is null') }
+    if (!updatedCustomer) {
+      throw new Error("customer not found");
+    }
+    if (!updatedCustomer.location) {
+      throw new Error("location is null");
+    }
+    if (!updatedCustomer.messengerData) {
+      throw new Error("messengerData is null");
+    }
+    if (!customer.messengerData) {
+      throw new Error("messengerData is null");
+    }
 
     expect(updatedCustomer.location.hostname).toBe(browserInfo.hostname);
     expect(updatedCustomer.location.language).toBe(browserInfo.language);
     expect(updatedCustomer.location.userAgent).toBe(browserInfo.userAgent);
     expect(updatedCustomer.messengerData.sessionCount).toBe(
-      customer.messengerData.sessionCount + 1,
+      customer.messengerData.sessionCount + 1
     );
-    expect(updatedCustomer.urlVisits['/career/open']).toBe(6);
+    expect(updatedCustomer.urlVisits["/career/open"]).toBe(6);
   });
 });

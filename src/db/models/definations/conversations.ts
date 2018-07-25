@@ -1,75 +1,75 @@
-import { Schema, Document } from 'mongoose';
-import { field } from '../utils';
-import { CONVERSATION_STATUSES, FACEBOOK_DATA_KINDS } from './constants';
+import { Schema, Document } from "mongoose";
+import { field } from "../utils";
+import { CONVERSATION_STATUSES, FACEBOOK_DATA_KINDS } from "./constants";
 
 export interface ITwitterResponse extends Document {
-  id?: number,
-  id_str: string,
-  created_at?: string,
-  isDirectMessage: boolean,
+  id?: number;
+  id_str: string;
+  created_at?: string;
+  isDirectMessage: boolean;
 
   // media content
-  entities?: any,
-  extended_entities?: any,
-  extended_tweet?: any,
+  entities?: any;
+  extended_entities?: any;
+  extended_tweet?: any;
 
   // direct message
-  sender_id: number,
-  sender_id_str: string,
-  recipient_id: number,
-  recipient_id_str: string,
+  sender_id: number;
+  sender_id_str: string;
+  recipient_id: number;
+  recipient_id_str: string;
 
   // timeline
-  in_reply_to_status_id?: number,
-  in_reply_to_status_id_str?: string,
-  in_reply_to_user_id?: number,
-  in_reply_to_user_id_str?: string,
-  in_reply_to_screen_name?: string,
-  is_quote_status: boolean,
-  favorited: boolean,
-  retweeted: boolean,
-  quote_count?: number,
-  reply_count?: number,
-  retweet_count?: number,
-  favorite_count?: number,
+  in_reply_to_status_id?: number;
+  in_reply_to_status_id_str?: string;
+  in_reply_to_user_id?: number;
+  in_reply_to_user_id_str?: string;
+  in_reply_to_screen_name?: string;
+  is_quote_status: boolean;
+  favorited: boolean;
+  retweeted: boolean;
+  quote_count?: number;
+  reply_count?: number;
+  retweet_count?: number;
+  favorite_count?: number;
 }
 
 interface IFacebook extends Document {
-  kind: string,
-  senderName: string,
-  senderId: string,
-  recipientId: string,
+  kind: string;
+  senderName: string;
+  senderId: string;
+  recipientId: string;
 
   // when wall post
-  postId: string,
+  postId: string;
 
-  pageId: string,
+  pageId: string;
 }
 
 // Conversation schema
 export interface IConversationDocument extends Document {
-  _id: string,
-  content: string,
-  integrationId: string,
-  customerId: string,
-  userId: string,
-  assignedUserId: string,
-  participatedUserIds: string[],
-  readUserIds: string[],
-  createdAt: Date,
-  updatedAt: Date,
+  _id: string;
+  content: string;
+  integrationId: string;
+  customerId: string;
+  userId: string;
+  assignedUserId: string;
+  participatedUserIds: string[];
+  readUserIds: string[];
+  createdAt: Date;
+  updatedAt: Date;
 
-  closedAt?: Date,
-  closedUserId?: string,
+  closedAt?: Date;
+  closedUserId?: string;
 
-  status: string,
-  messageCount: number,
-  tagIds: [string],
+  status: string;
+  messageCount: number;
+  tagIds: [string];
 
   // number of total conversations
-  number: number,
-  twitterData: ITwitterResponse,
-  facebookData: IFacebook,
+  number: number;
+  twitterData: ITwitterResponse;
+  facebookData: IFacebook;
 }
 
 /*
@@ -109,9 +109,9 @@ export const TwitterResponseSchema = new Schema(
     quote_count: field({ type: Number, optional: true }),
     reply_count: field({ type: Number, optional: true }),
     retweet_count: field({ type: Number, optional: true }),
-    favorite_count: field({ type: Number, optional: true }),
+    favorite_count: field({ type: Number, optional: true })
   },
-  { _id: false },
+  { _id: false }
 );
 
 // facebook schema
@@ -119,28 +119,28 @@ const FacebookSchema = new Schema(
   {
     kind: field({
       type: String,
-      enum: FACEBOOK_DATA_KINDS.ALL,
+      enum: FACEBOOK_DATA_KINDS.ALL
     }),
     senderName: field({
-      type: String,
+      type: String
     }),
     senderId: field({
-      type: String,
+      type: String
     }),
     recipientId: field({
-      type: String,
+      type: String
     }),
 
     // when wall post
     postId: field({
-      type: String,
+      type: String
     }),
 
     pageId: field({
-      type: String,
-    }),
+      type: String
+    })
   },
-  { _id: false },
+  { _id: false }
 );
 
 // Conversation schema
@@ -158,17 +158,17 @@ export const ConversationSchema = new Schema({
 
   closedAt: field({
     type: Date,
-    optional: true,
+    optional: true
   }),
 
   closedUserId: field({
     type: String,
-    optional: true,
+    optional: true
   }),
 
   status: field({
     type: String,
-    enum: CONVERSATION_STATUSES.ALL,
+    enum: CONVERSATION_STATUSES.ALL
   }),
   messageCount: field({ type: Number }),
   tagIds: field({ type: [String] }),
@@ -176,5 +176,5 @@ export const ConversationSchema = new Schema({
   // number of total conversations
   number: field({ type: Number }),
   twitterData: field({ type: TwitterResponseSchema }),
-  facebookData: field({ type: FacebookSchema }),
+  facebookData: field({ type: FacebookSchema })
 });

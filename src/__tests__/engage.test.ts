@@ -1,8 +1,8 @@
 import {
   replaceKeys,
   createOrUpdateConversationAndMessages,
-  createEngageVisitorMessages,
-} from '../data/resolvers/utils/engage';
+  createEngageVisitorMessages
+} from "../data/resolvers/utils/engage";
 
 import {
   integrationFactory,
@@ -10,10 +10,10 @@ import {
   customerFactory,
   brandFactory,
   userFactory,
-  engageDataFactory,
-} from '../db/factories';
+  engageDataFactory
+} from "../db/factories";
 
-import { connect, disconnect } from '../db/connection';
+import { connect, disconnect } from "../db/connection";
 
 import {
   Conversations,
@@ -25,29 +25,32 @@ import {
   ICustomerDocument,
   IIntegrationDocument,
   IUserDocument,
-  IBrandDocument,
-} from '../db/models';
+  IBrandDocument
+} from "../db/models";
 
 beforeAll(() => connect());
 
 afterAll(() => disconnect());
 
-describe('replace keys', () => {
-  test('must replace customer, user placeholders', async () => {
-    const customer = await customerFactory({ firstName: 'firstName', lastName: 'lastName' });
-    const user = await userFactory({ fullName: 'fullName' });
+describe("replace keys", () => {
+  test("must replace customer, user placeholders", async () => {
+    const customer = await customerFactory({
+      firstName: "firstName",
+      lastName: "lastName"
+    });
+    const user = await userFactory({ fullName: "fullName" });
 
     const response = replaceKeys({
-      content: 'hi {{ customer.name }} - {{ user.fullName }}',
+      content: "hi {{ customer.name }} - {{ user.fullName }}",
       customer,
-      user,
+      user
     });
 
-    expect(response).toBe('hi firstName lastName - fullName');
+    expect(response).toBe("hi firstName lastName - fullName");
   });
 });
 
-describe('createConversation', () => {
+describe("createConversation", () => {
   let _customer: ICustomerDocument;
   let _integration: IIntegrationDocument;
 
@@ -65,30 +68,32 @@ describe('createConversation', () => {
     await Messages.remove({});
   });
 
-  test('createOrUpdateConversationAndMessages', async () => {
-    const user = await userFactory({ fullName: 'Full name' });
+  test("createOrUpdateConversationAndMessages", async () => {
+    const user = await userFactory({ fullName: "Full name" });
 
     const kwargs = {
       customer: _customer,
       integration: _integration,
       user,
       engageData: engageDataFactory({
-        content: 'hi {{ customer.name }} {{ user.fullName }}',
-        messageId: '_id',
-      }),
+        content: "hi {{ customer.name }} {{ user.fullName }}",
+        messageId: "_id"
+      })
     };
 
     // create ==========================
     const message = await createOrUpdateConversationAndMessages(kwargs);
 
     if (!message) {
-      throw new Error('message is null')
+      throw new Error("message is null");
     }
 
-    const conversation = await Conversations.findOne({ _id: message.conversationId });
+    const conversation = await Conversations.findOne({
+      _id: message.conversationId
+    });
 
     if (!conversation) {
-      throw new Error('conversation not found')
+      throw new Error("conversation not found");
     }
 
     expect(await Conversations.find().count()).toBe(1);
@@ -109,7 +114,10 @@ describe('createConversation', () => {
 
     // second time ==========================
     // must not create new conversation & messages update
-    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+    await Messages.update(
+      { conversationId: conversation._id },
+      { $set: { isCustomerRead: true } }
+    );
 
     let response = await createOrUpdateConversationAndMessages(kwargs);
 
@@ -119,20 +127,25 @@ describe('createConversation', () => {
     expect(await Messages.find().count()).toBe(1);
 
     const updatedMessage = await Messages.findOne({
-      conversationId: conversation._id,
+      conversationId: conversation._id
     });
 
-    if (!updatedMessage) { throw new Error('message not found') }
+    if (!updatedMessage) {
+      throw new Error("message not found");
+    }
 
     expect(updatedMessage.isCustomerRead).toBe(false);
 
     // do not mark as unread for conversations that
     // have more than one messages =====================
-    await Messages.update({ conversationId: conversation._id }, { $set: { isCustomerRead: true } });
+    await Messages.update(
+      { conversationId: conversation._id },
+      { $set: { isCustomerRead: true } }
+    );
 
     await messageFactory({
       conversationId: conversation._id,
-      isCustomerRead: true,
+      isCustomerRead: true
     });
 
     response = await createOrUpdateConversationAndMessages(kwargs);
@@ -143,7 +156,7 @@ describe('createConversation', () => {
     expect(await Messages.find().count()).toBe(2);
 
     const [message1, message2] = await Messages.find({
-      conversationId: conversation._id,
+      conversationId: conversation._id
     });
 
     expect(message1.isCustomerRead).toBe(true);
@@ -151,7 +164,7 @@ describe('createConversation', () => {
   });
 });
 
-describe('createEngageVisitorMessages', () => {
+describe("createEngageVisitorMessages", () => {
   let _user: IUserDocument;
   let _brand: IBrandDocument;
   let _customer: ICustomerDocument;
@@ -160,7 +173,7 @@ describe('createEngageVisitorMessages', () => {
   beforeEach(async () => {
     // Creating test data
     _customer = await customerFactory({
-      urlVisits: { '/page': 11 },
+      urlVisits: { "/page": 11 }
     });
 
     _brand = await brandFactory({});
@@ -168,27 +181,27 @@ describe('createEngageVisitorMessages', () => {
     _user = await userFactory({});
 
     const message = new EngageMessages({
-      title: 'Visitor',
+      title: "Visitor",
       fromUserId: _user._id,
-      kind: 'visitorAuto',
-      method: 'messenger',
+      kind: "visitorAuto",
+      method: "messenger",
       isLive: true,
       messenger: {
         brandId: _brand._id,
         rules: [
           {
-            kind: 'currentPageUrl',
-            condition: 'is',
-            value: '/page',
+            kind: "currentPageUrl",
+            condition: "is",
+            value: "/page"
           },
           {
-            kind: 'numberOfVisits',
-            condition: 'greaterThan',
-            value: 10,
-          },
+            kind: "numberOfVisits",
+            condition: "greaterThan",
+            value: 10
+          }
         ],
-        content: 'hi {{ customer.name }}',
-      },
+        content: "hi {{ customer.name }}"
+      }
     });
 
     return message.save();
@@ -203,22 +216,22 @@ describe('createEngageVisitorMessages', () => {
     await Brands.remove({});
   });
 
-  test('must create conversation & message object', async () => {
+  test("must create conversation & message object", async () => {
     // previous unread conversation messages created by engage
     await messageFactory({
       customerId: _customer._id,
       isCustomerRead: false,
       engageData: engageDataFactory({
-        messageId: '_id2',
-      }),
+        messageId: "_id2"
+      })
     });
 
     await messageFactory({
       customerId: _customer._id,
       isCustomerRead: false,
       engageData: engageDataFactory({
-        messageId: '_id2',
-      }),
+        messageId: "_id2"
+      })
     });
 
     // main call
@@ -227,13 +240,15 @@ describe('createEngageVisitorMessages', () => {
       customer: _customer,
       integration: _integration,
       browserInfo: {
-        url: '/page',
-      },
+        url: "/page"
+      }
     });
 
     const conversation = await Conversations.findOne({});
 
-    if (!conversation) { throw new Error('conversation not found') };
+    if (!conversation) {
+      throw new Error("conversation not found");
+    }
 
     const content = `hi ${_customer.firstName} ${_customer.lastName}`;
 
@@ -243,10 +258,12 @@ describe('createEngageVisitorMessages', () => {
     expect(conversation.integrationId).toBe(_integration._id);
 
     const message = await Messages.findOne({
-      conversationId: conversation._id,
+      conversationId: conversation._id
     });
 
-    if (!message) { throw new Error('message not found') };
+    if (!message) {
+      throw new Error("message not found");
+    }
 
     expect(message._id).toBeDefined();
     expect(message.content).toBe(content);
@@ -255,7 +272,7 @@ describe('createEngageVisitorMessages', () => {
     const convEngageMessages = await Messages.find({
       customerId: _customer._id,
       isCustomerRead: false,
-      engageData: { $exists: true },
+      engageData: { $exists: true }
     });
 
     expect(convEngageMessages.length).toBe(0);

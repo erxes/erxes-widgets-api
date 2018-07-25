@@ -1,39 +1,39 @@
-import { Schema, Document } from 'mongoose';
-import { field } from '../utils';
-import { PUBLISH_STATUSES, LANGUAGE_CHOICES } from './constants';
+import { Schema, Document } from "mongoose";
+import { field } from "../utils";
+import { PUBLISH_STATUSES, LANGUAGE_CHOICES } from "./constants";
 
 interface CommonFields {
-  createdBy: string,
-  createdDate: Date,
-  modifiedBy: string,
-  modifiedDate: Date,
-};
+  createdBy: string;
+  createdDate: Date;
+  modifiedBy: string;
+  modifiedDate: Date;
+}
 
 export interface IArticleDocument extends CommonFields, Document {
-  _id: string,
-  title: string,
-  summary: string,
-  content: string,
-  status: string,
-};
+  _id: string;
+  title: string;
+  summary: string;
+  content: string;
+  status: string;
+}
 
 export interface ICategoryDocument extends CommonFields, Document {
-  _id: string,
-  title: string,
-  description: string,
-  articleIds: string[],
-  icon: string,
-};
+  _id: string;
+  title: string;
+  description: string;
+  articleIds: string[];
+  icon: string;
+}
 
 export interface ITopicDocument extends CommonFields, Document {
-  _id: string,
-  title: string,
-  description: string,
-  brandId: string,
-  categoryIds: string[]
-  color: string,
-  languageCode?: string,
-};
+  _id: string;
+  title: string;
+  description: string;
+  brandId: string;
+  categoryIds: string[];
+  color: string;
+  languageCode?: string;
+}
 
 // Mongoose schemas ==================
 
@@ -41,12 +41,12 @@ export interface ITopicDocument extends CommonFields, Document {
 const commonFields = {
   createdBy: field({ type: String }),
   createdDate: field({
-    type: Date,
+    type: Date
   }),
   modifiedBy: field({ type: String }),
   modifiedDate: field({
-    type: Date,
-  }),
+    type: Date
+  })
 };
 
 export const ArticleSchema = new Schema({
@@ -57,9 +57,9 @@ export const ArticleSchema = new Schema({
   status: field({
     type: String,
     enum: PUBLISH_STATUSES.ALL,
-    default: PUBLISH_STATUSES.DRAFT,
+    default: PUBLISH_STATUSES.DRAFT
   }),
-  ...commonFields,
+  ...commonFields
 });
 
 export const CategorySchema = new Schema({
@@ -68,7 +68,7 @@ export const CategorySchema = new Schema({
   description: field({ type: String }),
   articleIds: field({ type: [String] }),
   icon: field({ type: String }),
-  ...commonFields,
+  ...commonFields
 });
 
 export const TopicSchema = new Schema({
@@ -79,7 +79,7 @@ export const TopicSchema = new Schema({
 
   categoryIds: field({
     type: [String],
-    required: false,
+    required: false
   }),
 
   color: field({ type: String }),
@@ -87,8 +87,8 @@ export const TopicSchema = new Schema({
   languageCode: field({
     type: String,
     enum: LANGUAGE_CHOICES,
-    optional: true,
+    optional: true
   }),
 
-  ...commonFields,
+  ...commonFields
 });

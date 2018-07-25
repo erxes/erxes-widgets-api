@@ -1,34 +1,34 @@
-import { Document, Schema } from 'mongoose';
-import { field } from '../utils';
-import { FIELD_CONTENT_TYPES, FIELDS_GROUPS_CONTENT_TYPES } from './constants';
+import { Document, Schema } from "mongoose";
+import { field } from "../utils";
+import { FIELD_CONTENT_TYPES, FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
 
 export interface IFieldDocument extends Document {
-  _id: string,
-  contentType: string,
-  contentTypeId: string,
-  type: string,
-  validation?: string,
-  text: string,
-  description?: string,
-  options?: string[],
-  isRequired: boolean,
-  isDefinedByErxes: boolean,
-  order: number,
-  groupId: string,
-  isVisible: boolean,
-  lastUpdatedUserId: string,
-};
+  _id: string;
+  contentType: string;
+  contentTypeId: string;
+  type: string;
+  validation?: string;
+  text: string;
+  description?: string;
+  options?: string[];
+  isRequired: boolean;
+  isDefinedByErxes: boolean;
+  order: number;
+  groupId: string;
+  isVisible: boolean;
+  lastUpdatedUserId: string;
+}
 
 export interface IFieldGroupDocument extends Document {
-  _id: string,
-  name: string,
-  contentType: string,
-  order: number,
-  isDefinedByErxes: boolean,
-  description: string,
-  lastUpdatedUserId: string,
-  isVisible: boolean,
-};
+  _id: string;
+  name: string;
+  contentType: string;
+  order: number;
+  isDefinedByErxes: boolean;
+  description: string;
+  lastUpdatedUserId: string;
+  isVisible: boolean;
+}
 
 // Mongoose schemas =============
 export const FieldSchema = new Schema({
@@ -41,23 +41,23 @@ export const FieldSchema = new Schema({
   type: field({ type: String }),
   validation: field({
     type: String,
-    optional: true,
+    optional: true
   }),
   text: field({ type: String }),
   description: field({
     type: String,
-    optional: true,
+    optional: true
   }),
   options: field({
     type: [String],
-    optional: true,
+    optional: true
   }),
   isRequired: field({ type: Boolean }),
   isDefinedByErxes: field({ type: Boolean }),
   order: field({ type: Number }),
   groupId: field({ type: String }),
   isVisible: field({ type: Boolean, default: true }),
-  lastUpdatedUserId: field({ type: String }),
+  lastUpdatedUserId: field({ type: String })
 });
 
 export const FieldGroupSchema = new Schema({
@@ -68,9 +68,9 @@ export const FieldGroupSchema = new Schema({
   order: field({ type: Number }),
   isDefinedByErxes: field({ type: Boolean, default: false }),
   description: field({
-    type: String,
+    type: String
   }),
   // Id of user who updated the group
   lastUpdatedUserId: field({ type: String }),
-  isVisible: field({ type: Boolean, default: true }),
+  isVisible: field({ type: Boolean, default: true })
 });

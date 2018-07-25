@@ -1,19 +1,19 @@
-import { Schema, Document } from 'mongoose';
-import { field } from '../utils';
+import { Schema, Document } from "mongoose";
+import { field } from "../utils";
 
 interface IBrandEmailConfig extends Document {
-  type: string,
-  template: string,
+  type: string;
+  template: string;
 }
 
 export interface IBrandDocument extends Document {
-  _id: string,
-  code: string,
-  name: string,
-  description: string,
-  userId: string,
-  createdAt: Date,
-  emailConfig: IBrandEmailConfig,
+  _id: string;
+  code: string;
+  name: string;
+  description: string;
+  userId: string;
+  createdAt: Date;
+  emailConfig: IBrandEmailConfig;
 }
 
 // Mongoose schemas ===========
@@ -21,9 +21,9 @@ const BrandEmailConfigSchema = new Schema({
   _id: field({ pkey: true }),
   type: field({
     type: String,
-    enum: ['simple', 'custom'],
+    enum: ["simple", "custom"]
   }),
-  template: field({ type: String }),
+  template: field({ type: String })
 });
 
 export const BrandSchema = new Schema({
@@ -32,5 +32,5 @@ export const BrandSchema = new Schema({
   description: field({ type: String }),
   userId: field({ type: String }),
   createdAt: field({ type: Date }),
-  emailConfig: field({ type: BrandEmailConfigSchema }),
+  emailConfig: field({ type: BrandEmailConfigSchema })
 });

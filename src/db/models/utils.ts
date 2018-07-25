@@ -1,4 +1,4 @@
-const Random: any = require('meteor-random');
+const Random: any = require("meteor-random");
 
 /*
  * Mongoose field options wrapper

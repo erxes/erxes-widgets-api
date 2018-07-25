@@ -1,16 +1,16 @@
-import { Document, Model, Schema, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
-import { ICompanyDocument, CompanySchema } from './definations/companies';
+import { Document, Model, Schema, model } from "mongoose";
+import { mutateAppApi } from "../../utils";
+import { ICompanyDocument, CompanySchema } from "./definations/companies";
 
 interface ICompanyDoc {
-  id?: string,
-  name: string,
-  plan?: string,
+  id?: string;
+  name: string;
+  plan?: string;
 }
 
 interface ICompanyModel extends Model<ICompanyDocument> {
-  getOrCreate(doc: ICompanyDoc): ICompanyDocument
-  createCompany(doc: ICompanyDoc): ICompanyDocument
+  getOrCreate(doc: ICompanyDoc): ICompanyDocument;
+  createCompany(doc: ICompanyDoc): ICompanyDocument;
 }
 
 class Company {
@@ -23,7 +23,7 @@ class Company {
     const company = await Companies.create({
       primaryName: name,
       names: [name],
-      ...restDoc,
+      ...restDoc
     });
 
     // call app api's create customer log
@@ -42,7 +42,7 @@ class Company {
    */
   static async getOrCreate(doc: ICompanyDoc) {
     const company = await Companies.findOne({
-      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
+      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }]
     });
 
     if (company) {
@@ -55,6 +55,9 @@ class Company {
 
 CompanySchema.loadClass(Company);
 
-const Companies = model<ICompanyDocument, ICompanyModel>('companies', CompanySchema);
+const Companies = model<ICompanyDocument, ICompanyModel>(
+  "companies",
+  CompanySchema
+);
 
 export default Companies;

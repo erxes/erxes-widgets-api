@@ -1,9 +1,14 @@
-import { Integrations, Conversations, Messages, Users } from '../../../db/models';
+import {
+  Integrations,
+  Conversations,
+  Messages,
+  Users
+} from "../../../db/models";
 import {
   isOnline as isStaffsOnline,
   unreadMessagesSelector,
-  unreadMessagesQuery,
-} from '../utils/messenger';
+  unreadMessagesQuery
+} from "../utils/messenger";
 
 const isMessengerOnline = async (integrationId: string) => {
   const integration = await Integrations.findOne({ _id: integrationId });
@@ -12,13 +17,20 @@ const isMessengerOnline = async (integrationId: string) => {
     return false;
   }
 
-  const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {
-    availabilityMethod: '', isOnline: false, onlineHours: [] }
+  const {
+    availabilityMethod,
+    isOnline,
+    onlineHours
+  } = integration.messengerData || {
+    availabilityMethod: "",
+    isOnline: false,
+    onlineHours: []
+  };
 
   const modifiedIntegration = Object.assign({}, integration, {
     availabilityMethod,
     isOnline,
-    onlineHours,
+    onlineHours
   });
 
   return isStaffsOnline(modifiedIntegration);
@@ -38,25 +50,31 @@ const messengerSupporters = async (integrationId: string) => {
 
 export default {
   getMessengerIntegration(root: any, args: { brandCode: string }) {
-    return Integrations.getIntegration(args.brandCode, 'messenger');
+    return Integrations.getIntegration(args.brandCode, "messenger");
   },
 
-  conversations(root: any, args: { integrationId: string, customerId: string }) {
-    const { integrationId, customerId } = args
+  conversations(
+    root: any,
+    args: { integrationId: string; customerId: string }
+  ) {
+    const { integrationId, customerId } = args;
 
     return Conversations.find({
       integrationId,
-      customerId,
+      customerId
     }).sort({ createdAt: -1 });
   },
 
-  async conversationDetail(root: any, args: { _id: string, integrationId: string }) {
-    const { _id, integrationId } = args
+  async conversationDetail(
+    root: any,
+    args: { _id: string; integrationId: string }
+  ) {
+    const { _id, integrationId } = args;
 
     return {
       messages: await Messages.find({ conversationId: _id }),
       isOnline: await isMessengerOnline(integrationId),
-      supporters: await messengerSupporters(integrationId),
+      supporters: await messengerSupporters(integrationId)
     };
   },
 
@@ -65,7 +83,7 @@ export default {
 
     return Messages.find({
       conversationId,
-      internal: false,
+      internal: false
     }).sort({ createdAt: 1 });
   },
 
@@ -74,11 +92,14 @@ export default {
 
     return Messages.count({
       conversationId,
-      ...unreadMessagesSelector,
+      ...unreadMessagesSelector
     });
   },
 
-  async totalUnreadCount(root: any, args: { integrationId: string, customerId: string }) {
+  async totalUnreadCount(
+    root: any,
+    args: { integrationId: string; customerId: string }
+  ) {
     const { integrationId, customerId } = args;
 
     // find conversations
@@ -86,5 +107,5 @@ export default {
 
     // find read messages count
     return Messages.count(unreadMessagesQuery(convs));
-  },
+  }
 };
