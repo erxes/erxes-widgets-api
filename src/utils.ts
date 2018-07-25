@@ -1,6 +1,6 @@
-import * as requestify from 'requestify';
+const requestify: any = require('requestify');
 
-export const mutateAppApi = query => {
+export const mutateAppApi = (query: string) => {
   const { MAIN_API_URL } = process.env;
 
   // Don't do anything in test mode
@@ -14,7 +14,7 @@ export const mutateAppApi = query => {
       headers: { 'Content-Type': 'application/json' },
       body: { query },
     })
-    .catch(e => {
+    .catch((e: Error) => {
       console.log(e); // eslint-disable-line
     });
 };

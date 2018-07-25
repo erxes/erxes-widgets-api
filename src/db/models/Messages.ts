@@ -1,43 +1,33 @@
 import { Schema, Model, model } from 'mongoose';
-import * as Random from 'meteor-random';
 
 import { IMessageDocument, MessageSchema } from './definations/conversationMessages';
 import Conversations from './Conversations';
 
-interface IMessageModel extends Model<IMessageDocument> {
-  createMessage({
-    conversationId,
-    customerId,
-    userId,
-    content: message,
-    attachments,
-    engageData,
-    formWidgetData,
-  } : {
-    conversationId: string,
-    content: string,
-    customerId?: string,
-    userId?: string,
-    attachments?: any,
-    engageData?: any,
-    formWidgetData?: any,
-  }): Promise<IMessageDocument>
+interface IMessageParams {
+  conversationId: string,
+  content: string,
+  customerId?: string,
+  userId?: string,
+  attachments?: any,
+  engageData?: any,
+  formWidgetData?: any,
+}
 
-  forceReadCustomerPreviousEngageMessages(
-    customerId: string
-  ): Promise<IMessageDocument>
+interface IMessageModel extends Model<IMessageDocument> {
+  createMessage(doc: IMessageParams): Promise<IMessageDocument>
+  forceReadCustomerPreviousEngageMessages(customerId: string): Promise<IMessageDocument>
 }
 
 class Message {
-  /**
+  /*
    * Create new message
-   * @param  {Object} messageObj
-   * @return {Promise} New message
    */
-  static async createMessage(messageObj) {
-    const conversation = await Conversations.findOne({
-      _id: messageObj.conversationId,
-    });
+  static async createMessage(doc: IMessageParams) {
+    const conversation = await Conversations.findOne({ _id: doc.conversationId });
+
+    if (!conversation) {
+      throw new Error('Conversation not found');
+    }
 
     // increment messageCount
     await Conversations.findByIdAndUpdate(
@@ -53,12 +43,12 @@ class Message {
     return Messages.create({
       createdAt: new Date(),
       internal: false,
-      ...messageObj,
+      ...doc,
     });
   }
 
   // force read previous unread engage messages ============
-  static forceReadCustomerPreviousEngageMessages(customerId) {
+  static forceReadCustomerPreviousEngageMessages(customerId: string) {
     return Messages.update(
       {
         customerId,

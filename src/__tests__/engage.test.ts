@@ -21,6 +21,10 @@ import {
   Customers,
   Brands,
   EngageMessages,
+  ICustomerDocument,
+  IIntegrationDocument,
+  IUserDocument,
+  IBrandDocument,
 } from '../db/models';
 
 beforeAll(() => connect());
@@ -28,20 +32,23 @@ beforeAll(() => connect());
 afterAll(() => disconnect());
 
 describe('replace keys', () => {
-  test('must replace customer, user placeholders', () => {
+  test('must replace customer, user placeholders', async () => {
+    const customer = await customerFactory({ firstName: 'firstName', lastName: 'lastName' });
+    const user = await userFactory({ fullName: 'fullName' });
+
     const response = replaceKeys({
       content: 'hi {{ customer.name }} - {{ user.fullName }}',
-      customer: { name: 'name' },
-      user: { fullName: 'fullName' },
+      customer,
+      user,
     });
 
-    expect(response).toBe('hi name - fullName');
+    expect(response).toBe('hi firstName lastName - fullName');
   });
 });
 
 describe('createConversation', () => {
-  let _customer;
-  let _integration;
+  let _customer: ICustomerDocument;
+  let _integration: IIntegrationDocument;
 
   beforeEach(async () => {
     // Creating test data
@@ -58,10 +65,7 @@ describe('createConversation', () => {
   });
 
   test('createOrUpdateConversationAndMessages', async () => {
-    const user = {
-      _id: 'DFFDFDFD',
-      fullName: 'Full name',
-    };
+    const user = await userFactory({ fullName: 'Full name' });
 
     const kwargs = {
       customer: _customer,
@@ -75,20 +79,31 @@ describe('createConversation', () => {
 
     // create ==========================
     const message = await createOrUpdateConversationAndMessages(kwargs);
+
+    if (!message) {
+      throw new Error('message is null')
+    }
+
     const conversation = await Conversations.findOne({ _id: message.conversationId });
+
+    if (!conversation) {
+      throw new Error('conversation not found')
+    }
 
     expect(await Conversations.find().count()).toBe(1);
     expect(await Messages.find().count()).toBe(1);
 
+    const customerName = `${_customer.firstName} ${_customer.lastName}`;
+
     // check message fields
     expect(message._id).toBeDefined();
-    expect(message.content).toBe(`hi ${_customer.name} Full name`);
+    expect(message.content).toBe(`hi ${customerName} Full name`);
     expect(message.userId).toBe(user._id);
     expect(message.customerId).toBe(_customer._id);
 
     // check conversation fields
     expect(conversation._id).toBeDefined();
-    expect(conversation.content).toBe(`hi ${_customer.name} Full name`);
+    expect(conversation.content).toBe(`hi ${customerName} Full name`);
     expect(conversation.integrationId).toBe(_integration._id);
 
     // second time ==========================
@@ -105,6 +120,8 @@ describe('createConversation', () => {
     const updatedMessage = await Messages.findOne({
       conversationId: conversation._id,
     });
+
+    if (!updatedMessage) { throw new Error('message not found') }
 
     expect(updatedMessage.isCustomerRead).toBe(false);
 
@@ -134,10 +151,10 @@ describe('createConversation', () => {
 });
 
 describe('createEngageVisitorMessages', () => {
-  let _user;
-  let _brand;
-  let _customer;
-  let _integration;
+  let _user: IUserDocument;
+  let _brand: IBrandDocument;
+  let _customer: ICustomerDocument;
+  let _integration: IIntegrationDocument;
 
   beforeEach(async () => {
     // Creating test data
@@ -214,7 +231,10 @@ describe('createEngageVisitorMessages', () => {
     });
 
     const conversation = await Conversations.findOne({});
-    const content = `hi ${_customer.name}`;
+
+    if (!conversation) { throw new Error('conversation not found') };
+
+    const content = `hi ${_customer.firstName} ${_customer.lastName}`;
 
     expect(conversation._id).toBeDefined();
     expect(conversation.content).toBe(content);
@@ -224,6 +244,8 @@ describe('createEngageVisitorMessages', () => {
     const message = await Messages.findOne({
       conversationId: conversation._id,
     });
+
+    if (!message) { throw new Error('message not found') };
 
     expect(message._id).toBeDefined();
     expect(message.content).toBe(content);

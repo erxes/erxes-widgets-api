@@ -1,20 +1,23 @@
 import { Document, Model, Schema, model } from 'mongoose';
-import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 import { ICompanyDocument, CompanySchema } from './definations/companies';
 
+interface ICompanyDoc {
+  id?: string,
+  name: string,
+  plan?: string,
+}
+
 interface ICompanyModel extends Model<ICompanyDocument> {
-  getOrCreate(doc: object): ICompanyDocument
-  createCompany(doc: object): ICompanyDocument
+  getOrCreate(doc: ICompanyDoc): ICompanyDocument
+  createCompany(doc: ICompanyDoc): ICompanyDocument
 }
 
 class Company {
   /**
    * Create a company
-   * @param  {Object} companyObj object
-   * @return {Promise} Newly created company object
    */
-  static async createCompany(doc) {
+  static async createCompany(doc: ICompanyDoc) {
     const { name, ...restDoc } = doc;
 
     const company = await Companies.create({
@@ -36,10 +39,8 @@ class Company {
 
   /**
    * Get or create company
-   * @param  {Object} company parameters
-   * @return {Promise} previously saved company or newly created company object
    */
-  static async getOrCreate(doc) {
+  static async getOrCreate(doc: ICompanyDoc) {
     const company = await Companies.findOne({
       $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
     });

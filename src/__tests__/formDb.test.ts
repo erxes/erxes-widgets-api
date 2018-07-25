@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../db/connection';
 import { formFactory, customerFactory } from '../db/factories';
-import { Forms } from '../db/models';
+import { Forms, IFormDocument } from '../db/models';
 
 beforeAll(() => connect());
 
@@ -10,7 +10,7 @@ afterAll(() => disconnect());
  * Form related tests
  */
 describe('Forms', () => {
-  let _form;
+  let _form: IFormDocument;
 
   beforeEach(async () => {
     // Creating test form
@@ -23,49 +23,28 @@ describe('Forms', () => {
   });
 
   test('Increase view count of form', async () => {
-    await Forms.increaseViewCount(_form._id);
-    _form = await Forms.findOne({ _id: _form._id });
+    let updatedForm = await Forms.increaseViewCount(_form._id);
+    expect(updatedForm.viewCount).toBe(1);
 
-    expect(_form.viewCount).toBe(1);
-
-    await Forms.increaseViewCount(_form._id);
-    _form = await Forms.findOne({ _id: _form._id });
-
-    expect(_form.viewCount).toBe(2);
-
-    let formObj = await formFactory({});
-    await Forms.increaseViewCount(formObj._id);
-
-    formObj = await Forms.findOne({ _id: formObj._id });
-    expect(formObj.viewCount).toBe(1);
+    updatedForm = await Forms.increaseViewCount(_form._id);
+    expect(updatedForm.viewCount).toBe(2);
   });
 
   test('Increase contacts gathered', async () => {
-    await Forms.increaseContactsGathered(_form._id);
-    _form = await Forms.findOne({ _id: _form._id });
+    let updatedForm = await Forms.increaseContactsGathered(_form._id);
 
-    expect(_form.contactsGathered).toBe(1);
+    expect(updatedForm.contactsGathered).toBe(1);
 
-    await Forms.increaseContactsGathered(_form._id);
-    _form = await Forms.findOne({ _id: _form._id });
-
-    expect(_form.contactsGathered).toBe(2);
-
-    let formObj = await formFactory({});
-    await Forms.increaseContactsGathered(formObj._id);
-
-    formObj = await Forms.findOne({ _id: formObj._id });
-    expect(formObj.contactsGathered).toBe(1);
+    updatedForm = await Forms.increaseContactsGathered(_form._id);
+    expect(updatedForm.contactsGathered).toBe(2);
   });
 
   test('update submitted customer ids', async () => {
     const customer = await customerFactory({});
 
-    await Forms.addSubmission(_form._id, customer._id);
+    const updatedForm = await Forms.addSubmission(_form._id, customer._id);
 
-    const formObj = await Forms.findOne({ _id: _form._id });
-
-    expect(formObj.submissions).toEqual(
+    expect(updatedForm.submissions).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           customerId: customer._id,

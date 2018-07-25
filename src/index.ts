@@ -26,9 +26,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 }
 
-const server = createServer(app);
 const { PORT } = process.env;
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Websocket server is running on port ${PORT}`);
 });

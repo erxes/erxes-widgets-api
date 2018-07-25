@@ -1,5 +1,6 @@
-import * as Random from 'meteor-random';
-import * as faker from 'faker';
+// TODO: resolve below
+const faker: any = require('faker');
+const Random: any = require('meteor-random');
 
 import {
   Integrations,
@@ -44,6 +45,7 @@ interface IIntegrationParams {
   kind?: string,
   brandId?: string,
   formId?: string,
+  messengerData?: any,
 }
 export const integrationFactory = (params: IIntegrationParams={}) => {
   const integration = new Integrations({
@@ -51,6 +53,7 @@ export const integrationFactory = (params: IIntegrationParams={}) => {
     kind: params.kind || 'messenger',
     brandId: params.brandId || Random.id(),
     formId: params.formId || Random.id(),
+    messengerData: params.messengerData,
   });
 
   return integration.save();
@@ -93,6 +96,8 @@ export const formFieldFactory = (params: IFormFieldParams={}) => {
 
 interface ICustomerParams {
   integrationId?: string,
+  firstName?: string,
+  lastName?: string,
   primaryEmail?: string,
   emails?: string[],
   phones?: string[],
@@ -107,6 +112,9 @@ export function customerFactory(params: ICustomerParams={}) {
   const customer = new Customers({
     integrationId: params.integrationId || Random.id(),
     createdAt,
+
+    firstName: params.firstName,
+    lastName: params.lastName,
 
     primaryEmail: params.primaryEmail || email,
     emails: params.emails || [email],

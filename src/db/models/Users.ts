@@ -1,18 +1,9 @@
-import * as mongoose from 'mongoose';
-import * as Random from 'meteor-random';
+import { Model, model } from 'mongoose';
+import { UserSchema, IUserDocument } from './definations/users';
 
-const UserSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    unique: true,
-    default: () => Random.id(),
-  },
-  details: {
-    avatar: String,
-    fullName: String,
-  },
-});
+interface IUserModel extends Model<IUserDocument> {
+}
 
-const Users = mongoose.model('users', UserSchema);
+const Users = model<IUserDocument, IUserModel>('users', UserSchema);
 
 export default Users;

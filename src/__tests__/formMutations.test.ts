@@ -7,6 +7,7 @@ import {
   Conversations,
   Messages,
   Customers,
+  IFieldDocument
 } from '../db/models';
 import { connect, disconnect } from '../db/connection';
 import { brandFactory, integrationFactory, formFieldFactory, formFactory } from '../db/factories';
@@ -98,11 +99,12 @@ describe('Form mutations', () => {
     const integrationId = 'DFDFDAFD';
     const formTitle = 'Form';
 
-    let formId;
-    let emailField;
-    let firstNameField;
-    let lastNameField;
-    let arbitraryField;
+    let formId: string;
+
+    let emailField: IFieldDocument;
+    let firstNameField: IFieldDocument;
+    let lastNameField: IFieldDocument;
+    let arbitraryField: IFieldDocument;
 
     beforeEach(async () => {
       formId = (await formFactory({ title: formTitle }))._id;
@@ -143,12 +145,18 @@ describe('Form mutations', () => {
 
       // check conversation fields
       const conversation = await Conversations.findOne({});
+
+      if (!conversation) { throw new Error('conversation not found') };
+
       expect(conversation.content).toBe(formTitle);
       expect(conversation.integrationId).toBe(integrationId);
       expect(conversation.customerId).toEqual(expect.any(String));
 
       // check message fields
       const message = await Messages.findOne({});
+
+      if (!message) { throw new Error('message not found') };
+
       expect(message.conversationId).not.toBe(null);
       expect(message.content).toBe(formTitle);
       expect(message.formWidgetData).toEqual(submissions);
@@ -159,10 +167,15 @@ describe('Form mutations', () => {
       // check customer fields
       const customer = await Customers.findOne({});
 
+      if (!customer) { throw new Error('customer not found') };
+
       expect(customer.primaryEmail).toBe('email@gmail.com');
       expect(customer.emails).toContain('email@gmail.com');
       expect(customer.firstName).toBe('first name');
       expect(customer.lastName).toBe('last name');
+
+      if (!customer.location) { throw new Error('location is null') };
+
       expect(customer.location.hostname).toBe(browserInfo.hostname);
       expect(customer.location.language).toBe(browserInfo.language);
       expect(customer.location.userAgent).toBe(browserInfo.userAgent);

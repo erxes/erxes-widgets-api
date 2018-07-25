@@ -1,11 +1,11 @@
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 
-function jSONidentity(value) {
+function jSONidentity(value: any) {
   return value;
 }
 
-function jSONparseLiteral(ast) {
+function jSONparseLiteral(ast: any) {
   switch (ast.kind) {
     case Kind.STRING:
     case Kind.BOOLEAN:
@@ -15,7 +15,8 @@ function jSONparseLiteral(ast) {
       return parseFloat(ast.value);
     case Kind.OBJECT: {
       const value = Object.create(null);
-      ast.fields.forEach(field => {
+
+      ast.fields.forEach((field: any) => {
         value[field.name.value] = jSONparseLiteral(field.value);
       });
 

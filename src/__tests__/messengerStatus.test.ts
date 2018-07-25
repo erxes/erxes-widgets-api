@@ -1,15 +1,29 @@
-import { isOnline, isTimeInBetween } from '../data/resolvers/utils/messenger';
+import {
+  isOnline,
+  isTimeInBetween
+} from '../data/resolvers/utils/messenger';
+
+import { integrationFactory } from '../db/factories';
+import { connect, disconnect } from '../db/connection';
+
+beforeAll(() => connect());
+
+afterAll(() => disconnect());
 
 describe('Manual mode', () => {
-  test('isOnline() must return status as it is', () => {
-    const integration = { availabilityMethod: 'manual' } as any;
+  test('isOnline() must return status as it is', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'manual'
+      }
+    });
 
     // online
-    integration.isOnline = true;
+    integration.messengerData.isOnline = true;
     expect(isOnline(integration)).toBeTruthy();
 
     // offline
-    integration.isOnline = false;
+    integration.messengerData.isOnline = false;
     expect(isOnline(integration)).toBeFalsy();
   });
 });
@@ -23,50 +37,56 @@ describe('Auto mode', () => {
     expect(isTimeInBetween(new Date('2017/05/08 7:00 PM'), time1, time2)).toBeFalsy();
   });
 
-  test('isOnline() must return false if there is no config for current day', () => {
-    const integration = {
-      availabilityMethod: 'auto',
-      onlineHours: [
-        {
-          day: 'tuesday',
-          from: '09:00 AM',
-          to: '05:00 PM',
-        },
-      ],
-    };
+  test('isOnline() must return false if there is no config for current day', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'auto',
+        onlineHours: [
+          {
+            day: 'tuesday',
+            from: '09:00 AM',
+            to: '05:00 PM',
+          },
+        ],
+      }
+    });
 
     // 2017-05-08, monday
     expect(isOnline(integration, new Date('2017/05/08 11:10 AM'))).toBeFalsy();
   });
 
-  test('isOnline() for specific day', () => {
-    const integration = {
-      availabilityMethod: 'auto',
-      onlineHours: [
-        {
-          day: 'tuesday',
-          from: '09:00 AM',
-          to: '05:00 PM',
-        },
-      ],
-    };
+  test('isOnline() for specific day', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'auto',
+        onlineHours: [
+          {
+            day: 'tuesday',
+            from: '09:00 AM',
+            to: '05:00 PM',
+          },
+        ],
+      }
+    });
 
     // 2017-05-09, tuesday
     expect(isOnline(integration, new Date('2017/05/09 06:10 PM'))).toBeFalsy();
     expect(isOnline(integration, new Date('2017/05/09 09:01 AM'))).toBeTruthy();
   });
 
-  test('isOnline() for everyday', () => {
-    const integration = {
-      availabilityMethod: 'auto',
-      onlineHours: [
-        {
-          day: 'everyday',
-          from: '09:00 AM',
-          to: '05:00 PM',
-        },
-      ],
-    };
+  test('isOnline() for everyday', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'auto',
+        onlineHours: [
+          {
+            day: 'everyday',
+            from: '09:00 AM',
+            to: '05:00 PM',
+          },
+        ],
+      }
+    });
 
     // monday -> sunday
     expect(isOnline(integration, new Date('2017/05/08 10:00 AM'))).toBeTruthy();
@@ -87,17 +107,19 @@ describe('Auto mode', () => {
     expect(isOnline(integration, new Date('2017/05/14 8:00 PM'))).toBeFalsy();
   });
 
-  test('isOnline() for weekdays', () => {
-    const integration = {
-      availabilityMethod: 'auto',
-      onlineHours: [
-        {
-          day: 'weekdays',
-          from: '09:00 AM',
-          to: '05:00 PM',
-        },
-      ],
-    };
+  test('isOnline() for weekdays', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'auto',
+        onlineHours: [
+          {
+            day: 'weekdays',
+            from: '09:00 AM',
+            to: '05:00 PM',
+          },
+        ],
+      }
+    });
 
     // weekdays
     expect(isOnline(integration, new Date('2017/05/08 10:00 AM'))).toBeTruthy();
@@ -113,17 +135,19 @@ describe('Auto mode', () => {
     expect(isOnline(integration, new Date('2017/05/14 11:00 AM'))).toBeFalsy();
   });
 
-  test('isOnline() for weekend', () => {
-    const integration = {
-      availabilityMethod: 'auto',
-      onlineHours: [
-        {
-          day: 'weekends',
-          from: '09:00 AM',
-          to: '05:00 PM',
-        },
-      ],
-    };
+  test('isOnline() for weekend', async () => {
+    const integration = await integrationFactory({
+      messengerData: {
+        availabilityMethod: 'auto',
+        onlineHours: [
+          {
+            day: 'weekends',
+            from: '09:00 AM',
+            to: '05:00 PM',
+          },
+        ],
+      }
+    });
 
     // weekdays
     expect(isOnline(integration, new Date('2017/05/08 10:00 AM'))).toBeFalsy();

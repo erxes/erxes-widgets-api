@@ -7,37 +7,36 @@ import {
 export default {
   /**
    * Find Topic detail data along with its categories
-   * @param {Object} args
-   * @param {Object} args.topicId
    * @return {Promise} topic detail
    */
-  knowledgeBaseTopicsDetail(root, { topicId }: { topicId: string }) {
+  knowledgeBaseTopicsDetail(root: any, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId });
   },
 
   /**
    * Find Category detail data along with its articles
-   * @param {Object} args
-   * @param {Object} args.categoryId
    * @return {Promise} category detail
    */
-  knowledgeBaseCategoriesDetail(root, { categoryId }: { categoryId: string }) {
+  knowledgeBaseCategoriesDetail(root: any, { categoryId }: { categoryId: string }) {
     return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
   },
 
   /**
    * Search published articles that contain searchString (case insensitive)
    * in a topic found by topicId
-   * @param {Object} args
-   * @param {Object} args.topicId
    * @return {Promise} searched articles
    */
-  async knowledgeBaseArticles(root, args: { topicId: string, searchString: string}) {
+  async knowledgeBaseArticles(root: any, args: { topicId: string, searchString: string}) {
     const { topicId, searchString } = args;
 
-    let articleIds = [];
+    let articleIds: string[] = [];
 
     const topic = await KnowledgeBaseTopicsModel.findOne({ _id: topicId });
+
+    if (!topic) {
+      return [];
+    }
+
     const categories = await KnowledgeBaseCategoriesModel.find({ _id: topic.categoryIds });
 
     categories.forEach(category => {
@@ -53,11 +52,9 @@ export default {
 
   /**
    * return a KnowledgeBaseLoader object with only `loadType` field in it
-   * @param {Object} args
-   * @param {Object} args.topicId
    * @return {Promise} KnowledgeBaseLoader
    */
-  knowledgeBaseLoader(root, { topicId }: { topicId: string }) {
+  knowledgeBaseLoader(root: any, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId }, { loadType: 1 });
   },
 };

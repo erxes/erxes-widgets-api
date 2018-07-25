@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+const nodemailer: any = require('nodemailer');
 
 export interface IEmail {
   toEmails: string[],
@@ -27,7 +27,7 @@ export const sendEmail = (args: IEmail) => {
       text: content,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error: Error, info: any) => {
       console.log(error); // eslint-disable-line
       console.log(info); // eslint-disable-line
     });

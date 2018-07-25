@@ -1,9 +1,9 @@
-import { Schema, model } from 'mongoose';
-import * as Random from 'meteor-random';
-import { schemaOptions } from './definations/brands';
+import { Schema, Model, model } from 'mongoose';
+import { BrandSchema, IBrandDocument } from './definations/brands';
 
-const BrandSchema = new Schema(schemaOptions);
+interface IBrandModel extends Model<IBrandDocument> {
+}
 
-const Brands = model('brands', BrandSchema);
+const Brands = model<IBrandDocument, IBrandModel>('brands', BrandSchema);
 
 export default Brands;

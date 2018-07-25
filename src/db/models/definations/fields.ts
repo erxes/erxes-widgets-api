@@ -1,5 +1,4 @@
 import { Document, Schema } from 'mongoose';
-import validator from 'validator';
 import { field } from '../utils';
 import { FIELD_CONTENT_TYPES, FIELDS_GROUPS_CONTENT_TYPES } from './constants';
 
@@ -33,8 +32,6 @@ export interface IFieldGroupDocument extends Document {
 
 // Mongoose schemas =============
 export const FieldSchema = new Schema({
-  _id: field({ pkey: true }),
-
   // form, customer, company
   contentType: field({ type: String }),
 

@@ -1,7 +1,7 @@
-import { Fields } from '../../db/models';
+import { Fields, IFormDocument } from '../../db/models';
 
 export default {
-  fields(form) {
+  fields(form: IFormDocument) {
     return Fields.find({ contentType: 'form', contentTypeId: form._id }).sort({ order: 1 });
   },
 };

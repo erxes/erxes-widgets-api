@@ -1,7 +1,7 @@
-import { Users } from '../../db/models';
+import { Users, IMessageDocument } from '../../db/models';
 
 export default {
-  user(message) {
+  user(message: IMessageDocument) {
     return Users.findOne({ _id: message.userId });
   },
 };

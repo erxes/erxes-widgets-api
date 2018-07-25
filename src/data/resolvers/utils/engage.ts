@@ -1,29 +1,38 @@
-import { Users, EngageMessages, Conversations, Messages } from '../../../db/models';
+import {
+  Users,
+  EngageMessages,
+  Conversations,
+  IBrandDocument,
+  ICustomerDocument,
+  IIntegrationDocument,
+  Messages,
+  IUserDocument,
+} from '../../../db/models';
 
 /*
- * replaces customer & user infos in given content
- * @return String
+ * Replaces customer & user infos in given content
  */
-export const replaceKeys = (params: { content: string, customer, user }) => {
+export const replaceKeys = (params: { content: string, customer: ICustomerDocument, user: IUserDocument }) => {
   const { content, customer, user } = params;
 
   let result = content;
 
   // replace customer fields
-  result = result.replace(/{{\s?customer.name\s?}}/gi, customer.name);
-  result = result.replace(/{{\s?customer.email\s?}}/gi, customer.email);
+  result = result.replace(/{{\s?customer.name\s?}}/gi, `${customer.firstName} ${customer.lastName}`);
+  result = result.replace(/{{\s?customer.email\s?}}/gi, customer.primaryEmail || '');
 
   // replace user fields
-  result = result.replace(/{{\s?user.fullName\s?}}/gi, user.fullName);
-  result = result.replace(/{{\s?user.position\s?}}/gi, user.position);
-  result = result.replace(/{{\s?user.email\s?}}/gi, user.email);
+  if (user.details) {
+    result = result.replace(/{{\s?user.fullName\s?}}/gi, user.details.fullName);
+    result = result.replace(/{{\s?user.position\s?}}/gi, user.details.position);
+    result = result.replace(/{{\s?user.email\s?}}/gi, user.email);
+  }
 
   return result;
 };
 
 /*
- * checks individual rule
- * @return boolean
+ * Checks individual rule
  */
 interface IBrowserInfo {
   language?: string,
@@ -45,9 +54,9 @@ export const checkRule = (params: ICheckRuleParams) => {
   const { rule, browserInfo, numberOfVisits } = params;
   const { language, url, city, country } = browserInfo;
   const { value, kind, condition } = rule;
-  const ruleValue = value;
+  const ruleValue: any = value;
 
-  let valueToTest;
+  let valueToTest: any;
 
   if (kind === 'browserLanguage') {
     valueToTest = language;
@@ -117,9 +126,8 @@ export const checkRule = (params: ICheckRuleParams) => {
 };
 
 /*
- * this function determines whether or not current visitor's information
+ * This function determines whether or not current visitor's information
  * satisfying given engage message's rules
- * @return Promise
  */
 interface ICheckRulesParams {
   rules: IRule[],
@@ -144,9 +152,14 @@ export const checkRules = async (params: ICheckRulesParams) => {
 
 /*
  * Creates or update conversation & message object using given info
- * @return Promise
  */
-export const createOrUpdateConversationAndMessages = async args => {
+export const createOrUpdateConversationAndMessages = async (args: {
+  customer: ICustomerDocument,
+  integration: IIntegrationDocument,
+  user: IUserDocument,
+  engageData: any,
+}) => {
+
   const { customer, integration, user, engageData } = args;
 
   const prevMessage = await Messages.findOne({
@@ -202,10 +215,13 @@ export const createOrUpdateConversationAndMessages = async args => {
 /*
  * This function will be used in messagerConnect and it will create conversations
  * when visitor messenger connect
- *
- * @return Promise
  */
-export const createEngageVisitorMessages = async params => {
+export const createEngageVisitorMessages = async (params: {
+  brand: IBrandDocument,
+  integration: IIntegrationDocument,
+  customer: ICustomerDocument,
+  browserInfo: any
+}) => {
   const { brand, integration, customer, browserInfo } = params;
 
   // force read previous unread engage messages ============
@@ -224,6 +240,10 @@ export const createEngageVisitorMessages = async params => {
     const messenger = message.messenger ? message.messenger.toJSON() : {};
 
     const user = await Users.findOne({ _id: message.fromUserId });
+
+    if (!user) {
+      continue;
+    }
 
     // check for rules ===
     const urlVisits = customer.urlVisits || {};

@@ -1,11 +1,11 @@
-import { Messages, Users } from '../../db/models';
+import { Messages, Users, IConversationDocument } from '../../db/models';
 
 export default {
-  participatedUsers(conversation) {
+  participatedUsers(conversation: IConversationDocument) {
     return Users.find({ _id: { $in: conversation.participatedUserIds } });
   },
 
-  messages(conversation) {
+  messages(conversation: IConversationDocument) {
     return Messages.find({
       conversationId: conversation._id,
       internal: false,

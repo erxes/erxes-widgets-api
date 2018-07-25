@@ -1,8 +1,9 @@
-import * as faker from 'faker';
-import * as Random from 'meteor-random';
+const faker: any = require('faker');
+const Random: any = require('meteor-random');
+
 import { connect, disconnect } from '../db/connection';
 import { conversationFactory, messageFactory } from '../db/factories';
-import { Conversations, Messages } from '../db/models';
+import { Conversations, IConversationDocument, Messages } from '../db/models';
 
 beforeAll(() => connect());
 
@@ -12,16 +13,17 @@ afterAll(() => disconnect());
  * Conversations related tests
  */
 describe('Conversations', () => {
-  let _conversation;
+  let _conversation: IConversationDocument;
 
   beforeEach(async () => {
     // Creating test conversation
     _conversation = await conversationFactory();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test data
-    return Conversations.remove({}).then(() => Messages.remove({}));
+    await Conversations.remove({});
+    await Messages.remove({});
   });
 
   test('createConversation() must return a new conversation', async () => {
@@ -50,7 +52,7 @@ describe('Conversations', () => {
       conversationId: _conversation._id,
       integrationId: _conversation.integrationId,
       customerId: _conversation.customerId,
-      message: _conversation.content,
+      content: _conversation.content,
     });
 
     expect(conversation).toBeDefined();
@@ -66,7 +68,7 @@ describe('Conversations', () => {
     const conversation = await Conversations.getOrCreateConversation({
       integrationId: _conversation.integrationId,
       customerId: _conversation.customerId,
-      message: _conversation.content,
+      content: _conversation.content,
     });
 
     expect(conversation).toBeDefined();
@@ -94,8 +96,9 @@ describe('Conversations', () => {
       _id: _message.conversationId,
     });
 
-    expect(updatedConversation.updatedAt).toEqual(expect.any(Date));
+    if (!updatedConversation) { throw new Error('conversation not found') }
 
+    expect(updatedConversation.updatedAt).toEqual(expect.any(Date));
     expect(message).toBeDefined();
     expect(message._id).toBeDefined();
     expect(message.createdAt >= now).toBeTruthy();

@@ -1,5 +1,4 @@
 import { Model, model } from 'mongoose';
-import * as Random from 'meteor-random';
 import { IEngageMessageDocument, EngageMessageSchema } from './definations/engages';
 
 interface IEngageMessageModel extends Model<IEngageMessageDocument> {

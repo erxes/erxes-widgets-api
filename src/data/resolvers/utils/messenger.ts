@@ -1,3 +1,5 @@
+import { IIntegrationDocument, IConversationDocument } from '../../../db/models';
+
 const daysAsString = [
   'sunday', 'monday', 'tuesday',
   'wednesday', 'thursday', 'friday', 'saturday'
@@ -12,7 +14,7 @@ export const isTimeInBetween = (date: Date, startTime: string, closeTime: string
   return startDate <= date && date <= closeDate;
 };
 
-const isWeekday = day => {
+const isWeekday = (day: string) => {
   return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
 };
 
@@ -20,43 +22,53 @@ const isWeekend = (day: string) => {
   return ['saturday', 'sunday'].includes(day);
 };
 
-export const isOnline = (integration, now = new Date()) => {
-  /**
-   * Manual: We can determine state from isOnline field value when method is manual
-   */
-  if (integration.availabilityMethod === 'manual') {
-    return integration.isOnline;
+export const isOnline = (integration: IIntegrationDocument, now = new Date()) => {
+  if (!integration.messengerData) {
+    return false;
   }
 
-  /**
+  const { messengerData } = integration;
+  const { availabilityMethod, isOnline, onlineHours } = messengerData;
+
+  /*
+   * Manual: We can determine state from isOnline field value when method is manual
+   */
+  if (availabilityMethod === 'manual') {
+    return isOnline;
+  }
+
+  /*
    * Auto
    */
   const day = daysAsString[now.getDay()];
 
-  if (!integration.onlineHours) {
+  if (!onlineHours) {
     return false;
   }
 
   // check by everyday config
-  const everydayConf = integration.onlineHours.find(c => c.day === 'everyday');
+  const everydayConf = onlineHours.find(c => c.day === 'everyday');
+
   if (everydayConf) {
     return isTimeInBetween(now, everydayConf.from, everydayConf.to);
   }
 
   // check by weekdays config
-  const weekdaysConf = integration.onlineHours.find(c => c.day === 'weekdays');
+  const weekdaysConf = onlineHours.find(c => c.day === 'weekdays');
+
   if (weekdaysConf && isWeekday(day)) {
     return isTimeInBetween(now, weekdaysConf.from, weekdaysConf.to);
   }
 
   // check by weekends config
-  const weekendsConf = integration.onlineHours.find(c => c.day === 'weekends');
+  const weekendsConf = onlineHours.find(c => c.day === 'weekends');
+
   if (weekendsConf && isWeekend(day)) {
     return isTimeInBetween(now, weekendsConf.from, weekendsConf.to);
   }
 
   // check by regular day config
-  const dayConf = integration.onlineHours.find(c => c.day === day);
+  const dayConf = onlineHours.find(c => c.day === day);
 
   if (dayConf) {
     return isTimeInBetween(now, dayConf.from, dayConf.to);
@@ -71,7 +83,7 @@ export const unreadMessagesSelector = {
   isCustomerRead: { $ne: true },
 };
 
-export const unreadMessagesQuery = conversations => {
+export const unreadMessagesQuery = (conversations: IConversationDocument[]) => {
   const conversationIds = conversations.map(c => c._id);
 
   return {

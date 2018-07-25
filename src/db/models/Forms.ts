@@ -1,68 +1,68 @@
 import { Model, model } from 'mongoose';
-import * as Random from 'meteor-random';
 import { IFormDocument, FormSchema } from './definations/forms';
 
 interface IFormModel extends Model<IFormDocument> {
-  increaseViewCount(formId: string): Promise<string>
-  increaseContactsGathered(formId: string): Promise<string>
-  addSubmission(formId: string, customerId: string): Promise<string>
+  increaseViewCount(formId: string): Promise<IFormDocument>
+  increaseContactsGathered(formId: string): Promise<IFormDocument>
+  addSubmission(formId: string, customerId: string): Promise<IFormDocument>
 }
 
 class Form {
-  /**
+  /*
    * Increase form view count
-   * @param  {String} formId - id of a form to update
-   * @return {Promise} Existing form object
    */
-  static async increaseViewCount(formId) {
-    const formObj = await Forms.findOne({ _id: formId });
+  static async increaseViewCount(formId: string) {
+    const form = await Forms.findOne({ _id: formId });
+
+    if (!form) {
+      throw new Error('Form not found');
+    }
 
     let viewCount = 0;
 
-    if (formObj.viewCount) {
-      viewCount = formObj.viewCount;
+    if (form.viewCount) {
+      viewCount = form.viewCount;
     }
 
     viewCount++;
 
     await Forms.update({ _id: formId }, { viewCount });
 
-    return formId;
+    return Forms.findOne({ _id: formId });
   }
 
-  /**
+  /*
    * Increase form submitted count
-   * @param  {String} formId - id of a form to update
-   * @return {Promise} Existing form object
    */
-  static async increaseContactsGathered(formId) {
-    const formObj = await Forms.findOne({ _id: formId });
+  static async increaseContactsGathered(formId: string) {
+    const form = await Forms.findOne({ _id: formId });
+
+    if (!form) {
+      throw new Error('Form not found');
+    }
 
     let contactsGathered = 0;
 
-    if (formObj.contactsGathered) {
-      contactsGathered = formObj.contactsGathered;
+    if (form.contactsGathered) {
+      contactsGathered = form.contactsGathered;
     }
 
     contactsGathered++;
 
     await Forms.update({ _id: formId }, { contactsGathered });
 
-    return formId;
+    return Forms.findOne({ _id: formId });
   }
 
-  /**
+  /*
    * Add customer to submitted customer ids
-   * @param  {String} formId - id of a form to update
-   * @param  {String} customerId - id of a customer who submitted
-   * @return {Promise} Existing form object
    */
-  static async addSubmission(formId, customerId) {
+  static async addSubmission(formId: string, customerId: string) {
     const submittedAt = new Date();
 
     await Forms.update({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
 
-    return formId;
+    return Forms.findOne({ _id: formId });
   }
 }
 

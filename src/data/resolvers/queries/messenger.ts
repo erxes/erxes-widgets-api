@@ -8,6 +8,10 @@ import {
 const isMessengerOnline = async (integrationId: string) => {
   const integration = await Integrations.findOne({ _id: integrationId });
 
+  if (!integration) {
+    return false;
+  }
+
   const { availabilityMethod, isOnline, onlineHours } = integration.messengerData || {
     availabilityMethod: '', isOnline: false, onlineHours: [] }
 
@@ -22,17 +26,22 @@ const isMessengerOnline = async (integrationId: string) => {
 
 const messengerSupporters = async (integrationId: string) => {
   const integration = await Integrations.findOne({ _id: integrationId });
+
+  if (!integration) {
+    return [];
+  }
+
   const messengerData = integration.messengerData || { supporterIds: [] };
 
   return Users.find({ _id: { $in: messengerData.supporterIds } });
 };
 
 export default {
-  getMessengerIntegration(root, args: { brandCode: string }) {
+  getMessengerIntegration(root: any, args: { brandCode: string }) {
     return Integrations.getIntegration(args.brandCode, 'messenger');
   },
 
-  conversations(root, args: { integrationId: string, customerId: string }) {
+  conversations(root: any, args: { integrationId: string, customerId: string }) {
     const { integrationId, customerId } = args
 
     return Conversations.find({
@@ -41,7 +50,7 @@ export default {
     }).sort({ createdAt: -1 });
   },
 
-  async conversationDetail(root, args: { _id: string, integrationId: string }) {
+  async conversationDetail(root: any, args: { _id: string, integrationId: string }) {
     const { _id, integrationId } = args
 
     return {
@@ -51,7 +60,7 @@ export default {
     };
   },
 
-  messages(root, args: { conversationId: string }) {
+  messages(root: any, args: { conversationId: string }) {
     const { conversationId } = args;
 
     return Messages.find({
@@ -60,7 +69,7 @@ export default {
     }).sort({ createdAt: 1 });
   },
 
-  unreadCount(root, args: { conversationId: string }) {
+  unreadCount(root: any, args: { conversationId: string }) {
     const { conversationId } = args;
 
     return Messages.count({
@@ -69,7 +78,7 @@ export default {
     });
   },
 
-  async totalUnreadCount(root, args: { integrationId: string, customerId: string }) {
+  async totalUnreadCount(root: any, args: { integrationId: string, customerId: string }) {
     const { integrationId, customerId } = args;
 
     // find conversations

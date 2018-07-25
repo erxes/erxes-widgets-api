@@ -1,14 +1,19 @@
 import { connect, disconnect } from '../db/connection';
 import { brandFactory, integrationFactory } from '../db/factories';
-import { Integrations, Customers } from '../db/models';
+import {
+  Integrations,
+  Customers,
+  IBrandDocument,
+  IIntegrationDocument,
+} from '../db/models';
 
 beforeAll(() => connect());
 
 afterAll(() => disconnect());
 
 describe('Integrations', () => {
-  let _brand;
-  let _integration;
+  let _brand: IBrandDocument;
+  let _integration: IIntegrationDocument;
 
   beforeEach(async () => {
     // Creating test brand and integration

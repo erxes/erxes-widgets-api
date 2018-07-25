@@ -1,5 +1,4 @@
 import { Model, model } from 'mongoose';
-import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 import { IConversationDocument, ConversationSchema } from './definations/conversations';
 import { CONVERSATION_STATUSES } from './definations/constants';
@@ -11,32 +10,18 @@ interface STATUSES {
   ALL_LIST: ['new', 'open', 'closed'],
 };
 
+interface IConversationParams {
+  conversationId?: string,
+  userId?: string,
+  integrationId: string,
+  customerId: string,
+  content: string
+}
+
 interface IConversationModel extends Model<IConversationDocument> {
   getConversationStatuses(): STATUSES
-
-  createConversation({
-    integrationId,
-    userId,
-    customerId,
-    content
-  } : {
-    integrationId: string,
-    userId?: string,
-    customerId: string,
-    content: string
-  }): Promise<IConversationDocument>
-
-  getOrCreateConversation({
-    conversationId,
-    integrationId,
-    customerId,
-    message
-  } : {
-    conversationId?: string,
-    integrationId: string,
-    customerId: string,
-    message: string
-  }): Promise<IConversationDocument>
+  createConversation(doc : IConversationParams): Promise<IConversationDocument>
+  getOrCreateConversation(doc : IConversationParams): Promise<IConversationDocument>
 }
 
 class Conversation {
@@ -46,11 +31,9 @@ class Conversation {
 
   /**
    * Create new conversation
-   * @param  {Object} conversationObj
-   * @return {Promise} Newly created conversation object
    */
-  static async createConversation(conversationObj) {
-    const { integrationId, userId, customerId, content } = conversationObj;
+  static async createConversation(doc: IConversationParams) {
+    const { integrationId, userId, customerId, content } = doc;
 
     const count = await Conversations.find({ customerId, integrationId }).count();
 
@@ -83,11 +66,9 @@ class Conversation {
 
   /**
    * Get or create conversation
-   * @param  {Object} doc
-   * @return {Promise}
    */
-  static getOrCreateConversation(doc) {
-    const { conversationId, integrationId, customerId, message } = doc;
+  static getOrCreateConversation(doc: IConversationParams) {
+    const { conversationId, integrationId, customerId, content } = doc;
 
     // customer can write a message
     // to the closed conversation even if it's closed
@@ -109,7 +90,7 @@ class Conversation {
     return this.createConversation({
       customerId,
       integrationId,
-      content: message,
+      content,
     });
   }
 }

@@ -1,5 +1,4 @@
 import { Schema, Document } from 'mongoose';
-import * as Random from 'meteor-random';
 import { field } from '../utils';
 
 interface ICallout extends Document {

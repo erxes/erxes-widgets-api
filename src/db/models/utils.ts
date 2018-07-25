@@ -1,9 +1,10 @@
-import * as Random from 'meteor-random';
+const Random: any = require('meteor-random');
 
 /*
  * Mongoose field options wrapper
  */
-export const field = options => {
+export const field = (options: any) => {
+  // TODO: resolve _id field
   const { pkey, type, optional } = options;
 
   if (type === String && !pkey && !optional) {

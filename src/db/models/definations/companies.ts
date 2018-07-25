@@ -1,5 +1,4 @@
 import { Document, Model, Schema, model } from 'mongoose';
-import * as Random from 'meteor-random';
 
 import {
   COMPANY_LEAD_STATUS_TYPES,

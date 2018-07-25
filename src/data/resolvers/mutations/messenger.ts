@@ -11,13 +11,23 @@ import { unreadMessagesQuery } from '../utils/messenger';
 import { mutateAppApi } from '../../../utils';
 
 export default {
-  /**
+  /*
    * Create a new customer or update existing customer info
    * when connection established
-   * @return {Promise}
    */
-  async messengerConnect(root, args) {
+  async messengerConnect(root: any, args: {
+      brandCode: string,
+      email?: string,
+      phone?: string,
+      isUser?: boolean,
+      companyData?: any,
+      data?: any,
+      cachedCustomerId?: string,
+    }) {
+
     const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
+
+    const customData = data;
 
     // find integration
     const integration = await Integrations.getIntegration(brandCode, 'messenger');
@@ -33,10 +43,18 @@ export default {
     });
 
     if (customer) {
-      // update fields
-      await Customers.updateMessengerCustomer(customer._id, { isUser }, data);
+      // update prev customer
+      customer = await Customers.updateMessengerCustomer({
+        _id: customer._id,
+        doc: {
+          email,
+          phone,
+          isUser,
+        },
+        customData,
+      });
 
-      // create new customer
+    // create new customer
     } else {
       customer = await Customers.createMessengerCustomer(
         {
@@ -45,7 +63,7 @@ export default {
           phone,
           isUser,
         },
-        data,
+        customData,
       );
     }
 
@@ -66,11 +84,17 @@ export default {
     };
   },
 
-  /**
+  /*
    * Create a new message
-   * @return {Promise}
    */
-  async insertMessage(root, args) {
+  async insertMessage(root: any, args: {
+    integrationId: string,
+    customerId: string,
+    conversationId?: string,
+    message: string,
+    attachments?: any[]
+  }) {
+
     const { integrationId, customerId, conversationId, message, attachments } = args;
 
     // get or create conversation
@@ -78,7 +102,7 @@ export default {
       conversationId,
       integrationId,
       customerId,
-      message,
+      content: message,
     });
 
     // create message
@@ -117,11 +141,10 @@ export default {
     return msg;
   },
 
-  /**
+  /*
    * Mark given conversation's messages as read
-   * @return {Promise}
    */
-  async readConversationMessages(root, args) {
+  async readConversationMessages(root: any, args: { conversationId: string }) {
     const response = await Messages.update(
       {
         conversationId: args.conversationId,
@@ -135,14 +158,14 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(root, args) {
+  saveCustomerGetNotified(root: any, args: { customerId: string, type: string, value: string }) {
     return Customers.saveVisitorContactInfo(args);
   },
 
   /**
    * Update customer location field
    */
-  async saveBrowserInfo(root, { customerId, browserInfo }) {
+  async saveBrowserInfo(root: any, { customerId, browserInfo }: { customerId: string, browserInfo: any }) {
     // update location
     await Customers.updateLocation(customerId, browserInfo);
 
@@ -153,7 +176,16 @@ export default {
     });
 
     const integration = await Integrations.findOne({ _id: customer.integrationId });
+
+    if (!integration) {
+      return null;
+    }
+
     const brand = await Brands.findOne({ _id: integration.brandId });
+
+    if (!brand) {
+      return null;
+    }
 
     // try to create engage chat auto messages
     if (!customer.primaryEmail) {

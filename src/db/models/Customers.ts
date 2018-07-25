@@ -1,96 +1,99 @@
 import { Model, model } from 'mongoose';
-import * as Random from 'meteor-random';
 import { mutateAppApi } from '../../utils';
 import { ICustomerDocument, CustomerSchema } from './definations/customers';
 
-interface ICustomerModel extends Model<ICustomerDocument> {
-  getCustomer({
-    email,
-    phone,
-    cachedCustomerId
-  } : {
+interface IGetCustomerParams {
+  email?: string,
+  phone?: string,
+  cachedCustomerId?: string,
+}
+
+interface ICreateCustomerParams {
+  integrationId: string,
+  email?: string,
+  phone?: string,
+  isUser?: boolean,
+  firstName?: string,
+  lastName?: string,
+  description?: string,
+  messengerData?: any,
+}
+
+export interface IUpdateMessengerCustomerParams {
+  _id: string,
+  doc: {
     email?: string,
     phone?: string,
-    cachedCustomerId?: string
-  }): Promise<ICustomerDocument>
+    isUser?: boolean,
+  },
+  customData?: any,
+};
+
+interface ICustomerModel extends Model<ICustomerDocument> {
+  getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>
+
+  getOrCreateCustomer(
+    getParams: IGetCustomerParams,
+    createParams: ICreateCustomerParams
+  ): Promise<ICustomerDocument>
 
   createMessengerCustomer(
-    {
-      integrationId,
-      email,
-      phone,
-      isUser,
-    } : {
-      integrationId: string,
-      email: string,
-      isUser: boolean,
-      phone?: string,
-    },
-    data: object,
+    doc: ICreateCustomerParams,
+    customData: any
   ): Promise<ICustomerDocument>
 
   updateMessengerCustomer(
-    _id: string,
-    doc: object,
-    customData: object
+    param: IUpdateMessengerCustomerParams
   ): Promise<ICustomerDocument>
 
-  getOrCreateCustomer(doc): Promise<ICustomerDocument>
   markCustomerAsActive(customerId: string): Promise<ICustomerDocument>
   markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>
-  updateMessengerSession({ _id, url } : { _id: string, url: string }): Promise<ICustomerDocument>
-  updateLocation(_id: string, browserInfo: object): Promise<ICustomerDocument>
+
+  updateMessengerSession(doc : { _id: string, url: string }): Promise<ICustomerDocument>
+
+  updateLocation(_id: string, browserInfo: any): Promise<ICustomerDocument>
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>
-  saveVisitorContactInfo({
-    customerId,
-    type,
-    value
-  } : {
-    customerId: string,
-    type: string,
-    value: string
-  }): Promise<ICustomerDocument>
+  saveVisitorContactInfo(doc: { customerId: string, type: string, value: string }): Promise<ICustomerDocument>
 }
 
 class Customer {
-  /**
-   * Get customer
-   * @param  {Object} customData - Customer customData from widget
-   * @param  {Object} doc - Customer basic info fields
-   * @return {Promise} Updated customer fields
+  /*
+   * Fix firstName, lastName, description abbriviations
    */
-  static assignFields(customData, doc) {
-    // Setting customData fields to customer fields
-    Object.keys(customData).forEach(key => {
-      if (key === 'first_name' || key === 'firstName') {
-        doc.firstName = customData[key];
+  static fixCustomData(customData: any): { extractedInfo: any, updatedCustomData: any } {
+    const extractedInfo: any = {};
+    const updatedCustomData = { ...customData };
 
-        delete customData[key];
+    // Setting customData fields to customer fields
+    Object.keys(updatedCustomData).forEach(key => {
+      if (key === 'first_name' || key === 'firstName') {
+        extractedInfo.firstName = updatedCustomData[key];
+
+        delete updatedCustomData[key];
       }
 
       if (key === 'last_name' || key === 'lastName') {
-        doc.lastName = customData[key];
+        extractedInfo.lastName = updatedCustomData[key];
 
-        delete customData[key];
+        delete updatedCustomData[key];
       }
 
       if (key === 'bio' || key === 'description') {
-        doc.description = customData[key];
+        extractedInfo.description = updatedCustomData[key];
 
-        delete customData[key];
+        delete updatedCustomData[key];
       }
     });
 
-    return doc;
+    return { extractedInfo, updatedCustomData };
   }
 
-  /**
+  /*
    * Get customer
-   * @param  {String} integrationId
-   * @param  {String} email
-   * @return {Promise} Existing customer object
    */
-  static getCustomer({ email, phone, cachedCustomerId }) {
+  static getCustomer(params: IGetCustomerParams) {
+    const { email, phone, cachedCustomerId } = params;
+
     if (email) {
       return Customers.findOne({
         $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
@@ -110,15 +113,13 @@ class Customer {
     return null;
   }
 
-  /**
+  /*
    * Create a new customer
-   * @param  {Object} doc Customer object without computational fields
-   * @return {Promise} Newly created customer object
    */
-  static async createCustomer(doc) {
+  static async createCustomer(doc: ICreateCustomerParams) {
     const { email, phone, ...restDoc } = doc;
 
-    const modifier = {
+    const modifier: any = {
       ...restDoc,
       createdAt: new Date(),
     };
@@ -141,68 +142,72 @@ class Customer {
         activityLogsAddCustomerLog(_id: "${customer._id}") {
           _id
         }
-      }`);
+      }`
+    );
 
     return customer;
   }
 
-  /**
+  /*
    * Create a new messenger customer
-   * @param  {Object} doc - Customer object without computational fields
-   * @param  {Object} customData - plan, domain etc ...
-   * @return {Promise} Newly created customer object
    */
-  static async createMessengerCustomer(doc, customData) {
-    doc.messengerData = {
-      lastSeenAt: new Date(),
-      isActive: true,
-      sessionCount: 1,
-      customData: customData,
-    };
+  static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
 
-    this.assignFields(customData || {}, doc);
-
-    return this.createCustomer(doc);
+    return this.createCustomer({
+      ...doc,
+      ...extractedInfo,
+      messengerData: {
+        lastSeenAt: new Date(),
+        isActive: true,
+        sessionCount: 1,
+        customData: updatedCustomData,
+      }
+    });
   }
 
-  /**
-   * Update messenger customer data
-   * @param  {Object} _id - Customer id
-   * @param  {Object} doc - Customer object without computational fields
-   * @param  {Object} customData - plan, domain etc ...
-   * @return {Promise} - updated customer
+  /*
+   * Update messenger customer
    */
-  static async updateMessengerCustomer(_id, doc, customData) {
-    doc['messengerData.customData'] = customData;
+  static async updateMessengerCustomer(param: IUpdateMessengerCustomerParams) {
+    const { _id, doc, customData } = param;
 
-    this.assignFields(customData || {}, doc);
+    const customer = await Customers.findOne({ _id });
 
-    await Customers.findByIdAndUpdate(_id, { $set: doc });
+    if (!customer) { throw new Error('Customer not found') };
+
+    const messengerData = customer.messengerData;
+
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+
+    const modifier = {
+      ...doc,
+      ...extractedInfo,
+      'messengerData.customData': updatedCustomData,
+    }
+
+    await Customers.update({ _id }, { $set: modifier });
 
     return Customers.findOne({ _id });
   }
 
   /**
    * Get or create customer
-   * @param  {Object} doc Expected customer object
-   * @return {Promise} Existing or newly created customer object
    */
-  static async getOrCreateCustomer(doc) {
-    const customer = await this.getCustomer(doc);
+  static async getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams) {
+    const customer = await this.getCustomer(getParams);
 
     if (customer) {
       return customer;
     }
 
-    return this.createCustomer(doc);
+    return this.createCustomer(createParams);
   }
 
   /**
    * Mark customer as active
-   * @param  {String} customerId
-   * @return {Promise} Updated customer
    */
-  static async markCustomerAsActive(customerId) {
+  static async markCustomerAsActive(customerId: string) {
     await Customers.update({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
 
     return Customers.findOne({ _id: customerId });
@@ -210,10 +215,8 @@ class Customer {
 
   /**
    * Mark customer as inactive
-   * @param  {String} customerId
-   * @return {Promise} Updated customer
    */
-  static async markCustomerAsNotActive(customerId) {
+  static async markCustomerAsNotActive(customerId: string) {
     await Customers.update(
       { _id: customerId },
       {
@@ -229,12 +232,16 @@ class Customer {
 
   /*
    * Update messenger session data
-   * @param {String} customer id
-   * @return {Promise} updated customer
    */
-  static async updateMessengerSession({ _id, url }) {
+  static async updateMessengerSession(doc: { _id: string, url: string }) {
+    const { _id, url } = doc;
+
     const now = new Date();
     const customer = await Customers.findOne({ _id });
+
+    if (!customer) {
+      return null;
+    }
 
     // TODO: check any
     const query: any = {
@@ -245,13 +252,16 @@ class Customer {
       },
     };
 
+    const messengerData = customer.messengerData;
+
     // TODO: check getTime
-    if (now.getTime() - customer.messengerData.lastSeenAt > 6 * 1000) {
+    if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
       // update session count
       query.$inc = { 'messengerData.sessionCount': 1 };
 
       // save access history by location.pathname
       const urlVisits = customer.urlVisits || {};
+
       urlVisits[url] = (urlVisits[url] || 0) + 1;
 
       query.urlVisits = urlVisits;
@@ -267,7 +277,7 @@ class Customer {
   /*
    * Update customer's location info
    */
-  static async updateLocation(_id, browserInfo) {
+  static async updateLocation(_id: string, browserInfo: any) {
     await Customers.findByIdAndUpdate(
       { _id },
       {
@@ -280,11 +290,8 @@ class Customer {
 
   /*
    * Add companyId to companyIds list
-   * @param {String} _id customer id
-   * @param {String} companyId
-   * @return {Promise}
    */
-  static async addCompany(_id, companyId) {
+  static async addCompany(_id: string, companyId: string) {
     await Customers.findByIdAndUpdate(_id, { $addToSet: { companyIds: companyId } });
 
     // updated customer
@@ -295,7 +302,9 @@ class Customer {
    * If customer is a visitor then we will contact with this customer using
    * this information later
    */
-  static async saveVisitorContactInfo({ customerId, type, value }) {
+  static async saveVisitorContactInfo(args: { customerId: string, type: string, value: string }) {
+    const { customerId, type, value } = args;
+
     if (type === 'email') {
       await Customers.update({ _id: customerId }, { 'visitorContactInfo.email': value });
     }

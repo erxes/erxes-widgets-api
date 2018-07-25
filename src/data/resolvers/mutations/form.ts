@@ -1,4 +1,4 @@
-import validator from 'validator';
+const validator: any = require('validator');
 import {
   Customers,
   Integrations,
@@ -25,7 +25,13 @@ export const validate = async (formId: string, submissions: ISubmission[]) => {
   for (let field of fields) {
     // find submission object by _id
     const submission = submissions.find(sub => sub._id === field._id);
+
+    if (!submission) {
+      continue
+    }
+
     const value = submission.value || '';
+
     const type = field.type;
     const validation = field.validation;
 
@@ -79,7 +85,13 @@ export const saveValues = async (args: {
   }) => {
 
   const { integrationId, submissions, formId, browserInfo } = args;
+
   const form = await Forms.findOne({ _id: formId });
+
+  if (!form) {
+    return null;
+  }
+
   const content = form.title;
 
   let email;
@@ -101,12 +113,10 @@ export const saveValues = async (args: {
   });
 
   // get or create customer
-  const customer = await Customers.getOrCreateCustomer({
-    integrationId,
-    email,
-    firstName,
-    lastName,
-  });
+  const customer = await Customers.getOrCreateCustomer(
+    { email },
+    { integrationId, email, firstName, lastName }
+  );
 
   await Customers.updateLocation(customer._id, browserInfo);
 
@@ -130,7 +140,7 @@ export const saveValues = async (args: {
 
 export default {
   // Find integrationId by brandCode
-  async formConnect(root, args: { brandCode: string, formCode: string }) {
+  async formConnect(root: any, args: { brandCode: string, formCode: string }) {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
@@ -170,7 +180,7 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(root, args: {
+  async saveForm(root: any, args: {
     integrationId: string,
     formId: string,
     submissions: ISubmission[],
@@ -187,6 +197,10 @@ export default {
 
     const message = await saveValues(args);
 
+    if (!message) {
+      return { status: 'error', errors: ['Invalid form'] };
+    }
+
     // increasing form submitted count
     await Forms.increaseContactsGathered(formId);
 
@@ -200,11 +214,11 @@ export default {
   },
 
   // send email
-  sendEmail(root, args: IEmail) {
+  sendEmail(root: any, args: IEmail) {
     sendEmail(args);
   },
 
-  formIncreaseViewCount(root, { formId }: { formId: string }) {
+  formIncreaseViewCount(root: any, { formId }: { formId: string }) {
     return Forms.increaseViewCount(formId);
   },
 };
