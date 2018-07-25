@@ -1,20 +1,20 @@
 import {
-  Integrations,
   Brands,
+  Companies,
   Conversations,
-  Messages,
   Customers,
-  Companies
+  Integrations,
+  Messages
 } from "../../../db/models";
 
 import {
-  IVisitorContactInfoParams,
-  IBrowserInfo
+  IBrowserInfo,
+  IVisitorContactInfoParams
 } from "../../../db/models/Customers";
 
+import { mutateAppApi } from "../../../utils";
 import { createEngageVisitorMessages } from "../utils/engage";
 import { unreadMessagesQuery } from "../utils/messenger";
-import { mutateAppApi } from "../../../utils";
 
 export default {
   /*

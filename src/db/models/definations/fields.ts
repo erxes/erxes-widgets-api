@@ -31,7 +31,7 @@ export interface IFieldGroupDocument extends Document {
 }
 
 // Mongoose schemas =============
-export const FieldSchema = new Schema({
+export const fieldSchema = new Schema({
   // form, customer, company
   contentType: field({ type: String }),
 
@@ -60,7 +60,7 @@ export const FieldSchema = new Schema({
   lastUpdatedUserId: field({ type: String })
 });
 
-export const FieldGroupSchema = new Schema({
+export const fieldGroupSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String }),
   // customer, company

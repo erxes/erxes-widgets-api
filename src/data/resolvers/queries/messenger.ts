@@ -1,13 +1,13 @@
 import {
-  Integrations,
   Conversations,
+  Integrations,
   Messages,
   Users
 } from "../../../db/models";
 import {
   isOnline as isStaffsOnline,
-  unreadMessagesSelector,
-  unreadMessagesQuery
+  unreadMessagesQuery,
+  unreadMessagesSelector
 } from "../utils/messenger";
 
 const isMessengerOnline = async (integrationId: string) => {
@@ -27,11 +27,12 @@ const isMessengerOnline = async (integrationId: string) => {
     onlineHours: []
   };
 
-  const modifiedIntegration = Object.assign({}, integration, {
+  const modifiedIntegration = {
+    ...integration,
     availabilityMethod,
     isOnline,
     onlineHours
-  });
+  };
 
   return isStaffsOnline(modifiedIntegration);
 };

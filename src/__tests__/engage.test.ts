@@ -1,31 +1,31 @@
 import {
-  replaceKeys,
+  createEngageVisitorMessages,
   createOrUpdateConversationAndMessages,
-  createEngageVisitorMessages
+  replaceKeys
 } from "../data/resolvers/utils/engage";
 
 import {
+  brandFactory,
+  customerFactory,
+  engageDataFactory,
   integrationFactory,
   messageFactory,
-  customerFactory,
-  brandFactory,
-  userFactory,
-  engageDataFactory
+  userFactory
 } from "../db/factories";
 
 import { connect, disconnect } from "../db/connection";
 
 import {
-  Conversations,
-  Messages,
-  Integrations,
-  Customers,
   Brands,
+  Conversations,
+  Customers,
   EngageMessages,
+  IBrandDocument,
   ICustomerDocument,
   IIntegrationDocument,
+  Integrations,
   IUserDocument,
-  IBrandDocument
+  Messages
 } from "../db/models";
 
 beforeAll(() => connect());

@@ -1,11 +1,11 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, model, Schema } from "mongoose";
 
 import {
-  COMPANY_LEAD_STATUS_TYPES,
-  COMPANY_LIFECYCLE_STATE_TYPES,
+  COMPANY_BASIC_INFOS,
   COMPANY_BUSINESS_TYPES,
   COMPANY_INDUSTRY_TYPES,
-  COMPANY_BASIC_INFOS
+  COMPANY_LEAD_STATUS_TYPES,
+  COMPANY_LIFECYCLE_STATE_TYPES
 } from "./constants";
 
 import { field } from "../utils";
@@ -44,7 +44,7 @@ export interface ICompanyDocument extends Document {
   customFieldsData?: any;
 }
 
-const LinkSchema = new Schema(
+const linkSchema = new Schema(
   {
     linkedIn: field({ type: String, optional: true, label: "LinkedIn" }),
     twitter: field({ type: String, optional: true, label: "Twitter" }),
@@ -56,7 +56,7 @@ const LinkSchema = new Schema(
   { _id: false }
 );
 
-export const CompanySchema = new Schema({
+export const companySchema = new Schema({
   _id: field({ pkey: true }),
 
   primaryName: field({
@@ -131,7 +131,7 @@ export const CompanySchema = new Schema({
     optional: true,
     label: "Do not disturb"
   }),
-  links: field({ type: LinkSchema, default: {} }),
+  links: field({ type: linkSchema, default: {} }),
 
   lastSeenAt: field({
     type: Date,

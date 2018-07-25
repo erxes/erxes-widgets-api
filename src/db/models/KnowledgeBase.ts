@@ -1,11 +1,11 @@
 import { Model, model } from "mongoose";
 import {
-  ArticleSchema,
+  articleSchema,
+  categorySchema,
   IArticleDocument,
-  CategorySchema,
   ICategoryDocument,
-  TopicSchema,
-  ITopicDocument
+  ITopicDocument,
+  topicSchema
 } from "./definations/knowledgebase";
 
 interface IArticleModel extends Model<IArticleDocument> {}
@@ -14,15 +14,15 @@ interface ITopicModel extends Model<ITopicDocument> {}
 
 export const KnowledgeBaseArticles = model<IArticleDocument, IArticleModel>(
   "knowledgebase_articles",
-  ArticleSchema
+  articleSchema
 );
 
 export const KnowledgeBaseCategories = model<ICategoryDocument, ICategoryModel>(
   "knowledgebase_categories",
-  CategorySchema
+  categorySchema
 );
 
 export const KnowledgeBaseTopics = model<ITopicDocument, ITopicModel>(
   "knowledgebase_topics",
-  TopicSchema
+  topicSchema
 );

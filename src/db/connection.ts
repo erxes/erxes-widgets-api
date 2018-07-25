@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
-import { Promise } from "q";
 import mongoose = require("mongoose");
+import { Promise } from "q";
 
 dotenv.config();
 
@@ -10,7 +10,7 @@ const {
   MONGO_URL = "mongodb://localhost/erxes"
 } = process.env;
 
-const isTest = NODE_ENV == "test";
+const isTest = NODE_ENV === "test";
 const DB_URI = isTest ? TEST_MONGO_URL : MONGO_URL;
 
 // use q library for mongoose promise

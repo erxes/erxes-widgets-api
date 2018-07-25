@@ -1,10 +1,10 @@
 import { connect, disconnect } from "../db/connection";
 import { brandFactory, integrationFactory } from "../db/factories";
 import {
-  Integrations,
   Customers,
   IBrandDocument,
-  IIntegrationDocument
+  IIntegrationDocument,
+  Integrations
 } from "../db/models";
 
 beforeAll(() => connect());

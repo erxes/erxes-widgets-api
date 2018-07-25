@@ -1,8 +1,8 @@
-import { Schema, Model, model } from "mongoose";
-import { BrandSchema, IBrandDocument } from "./definations/brands";
+import { Model, model, Schema } from "mongoose";
+import { brandSchema, IBrandDocument } from "./definations/brands";
 
 interface IBrandModel extends Model<IBrandDocument> {}
 
-const Brands = model<IBrandDocument, IBrandModel>("brands", BrandSchema);
+const Brands = model<IBrandDocument, IBrandModel>("brands", brandSchema);
 
 export default Brands;

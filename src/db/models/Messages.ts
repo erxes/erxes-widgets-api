@@ -1,10 +1,10 @@
-import { Schema, Model, model } from "mongoose";
+import { Model, model, Schema } from "mongoose";
 
+import Conversations from "./Conversations";
 import {
   IMessageDocument,
-  MessageSchema
+  messageSchema
 } from "./definations/conversationMessages";
-import Conversations from "./Conversations";
 
 interface IMessageParams {
   conversationId: string;
@@ -27,7 +27,7 @@ class Message {
   /*
    * Create new message
    */
-  static async createMessage(doc: IMessageParams) {
+  public static async createMessage(doc: IMessageParams) {
     const conversation = await Conversations.findOne({
       _id: doc.conversationId
     });
@@ -55,7 +55,7 @@ class Message {
   }
 
   // force read previous unread engage messages ============
-  static forceReadCustomerPreviousEngageMessages(customerId: string) {
+  public static forceReadCustomerPreviousEngageMessages(customerId: string) {
     return Messages.update(
       {
         customerId,
@@ -68,11 +68,11 @@ class Message {
   }
 }
 
-MessageSchema.loadClass(Message);
+messageSchema.loadClass(Message);
 
 const Messages = model<IMessageDocument, IMessageModel>(
   "conversation_messages",
-  MessageSchema
+  messageSchema
 );
 
 export default Messages;

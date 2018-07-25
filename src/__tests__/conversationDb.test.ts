@@ -4,8 +4,8 @@ const Random: any = require("meteor-random");
 import { connect, disconnect } from "../db/connection";
 import {
   conversationFactory,
-  messageFactory,
-  engageDataFactory
+  engageDataFactory,
+  messageFactory
 } from "../db/factories";
 import { Conversations, IConversationDocument, Messages } from "../db/models";
 

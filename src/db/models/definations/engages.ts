@@ -1,6 +1,6 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { MESSENGER_KINDS, SENT_AS_CHOICES, METHODS } from "./constants";
+import { MESSENGER_KINDS, METHODS, SENT_AS_CHOICES } from "./constants";
 
 interface IEmail extends Document {
   templateId?: string;
@@ -56,7 +56,7 @@ export interface IEngageMessageDocument extends Document {
 }
 
 // Mongoose schemas =======================
-const EmailSchema = new Schema(
+const emailSchema = new Schema(
   {
     templateId: field({
       type: String,
@@ -68,7 +68,7 @@ const EmailSchema = new Schema(
   { _id: false }
 );
 
-const RuleSchema = new Schema(
+const ruleSchema = new Schema(
   {
     _id: field({ type: String }),
 
@@ -86,7 +86,7 @@ const RuleSchema = new Schema(
   { _id: false }
 );
 
-const MessengerSchema = new Schema(
+const messengerSchema = new Schema(
   {
     brandId: field({ type: String }),
     kind: field({
@@ -98,12 +98,12 @@ const MessengerSchema = new Schema(
       enum: SENT_AS_CHOICES.ALL
     }),
     content: field({ type: String }),
-    rules: field({ type: [RuleSchema] })
+    rules: field({ type: [ruleSchema] })
   },
   { _id: false }
 );
 
-const StatsSchema = new Schema(
+const statsSchema = new Schema(
   {
     open: field({ type: Number }),
     click: field({ type: Number }),
@@ -117,7 +117,7 @@ const StatsSchema = new Schema(
   { _id: false }
 );
 
-export const EngageMessageSchema = new Schema({
+export const engageMessageSchema = new Schema({
   _id: field({ pkey: true }),
   kind: field({ type: String }),
   segmentId: field({
@@ -138,8 +138,8 @@ export const EngageMessageSchema = new Schema({
   tagIds: field({ type: [String] }),
   messengerReceivedCustomerIds: field({ type: [String] }),
 
-  email: field({ type: EmailSchema }),
-  messenger: field({ type: MessengerSchema }),
+  email: field({ type: emailSchema }),
+  messenger: field({ type: messengerSchema }),
   deliveryReports: field({ type: Object }),
-  stats: field({ type: StatsSchema, default: {} })
+  stats: field({ type: statsSchema, default: {} })
 });

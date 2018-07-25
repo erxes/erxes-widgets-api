@@ -1,6 +1,6 @@
 import {
-  IIntegrationDocument,
-  IConversationDocument
+  IConversationDocument,
+  IIntegrationDocument
 } from "../../../db/models";
 
 const daysAsString = [

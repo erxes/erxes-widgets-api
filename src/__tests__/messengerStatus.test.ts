@@ -1,7 +1,7 @@
 import { isOnline, isTimeInBetween } from "../data/resolvers/utils/messenger";
 
-import { integrationFactory } from "../db/factories";
 import { connect, disconnect } from "../db/connection";
+import { integrationFactory } from "../db/factories";
 
 beforeAll(() => connect());
 

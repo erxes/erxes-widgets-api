@@ -1,5 +1,5 @@
 import { Model, model } from "mongoose";
-import { IFormDocument, FormSchema } from "./definations/forms";
+import { formSchema, IFormDocument } from "./definations/forms";
 
 interface IFormModel extends Model<IFormDocument> {
   increaseViewCount(formId: string): Promise<IFormDocument>;
@@ -11,7 +11,7 @@ class Form {
   /*
    * Increase form view count
    */
-  static async increaseViewCount(formId: string) {
+  public static async increaseViewCount(formId: string) {
     const form = await Forms.findOne({ _id: formId });
 
     if (!form) {
@@ -34,7 +34,7 @@ class Form {
   /*
    * Increase form submitted count
    */
-  static async increaseContactsGathered(formId: string) {
+  public static async increaseContactsGathered(formId: string) {
     const form = await Forms.findOne({ _id: formId });
 
     if (!form) {
@@ -57,7 +57,7 @@ class Form {
   /*
    * Add customer to submitted customer ids
    */
-  static async addSubmission(formId: string, customerId: string) {
+  public static async addSubmission(formId: string, customerId: string) {
     const submittedAt = new Date();
 
     await Forms.update(
@@ -69,8 +69,8 @@ class Form {
   }
 }
 
-FormSchema.loadClass(Form);
+formSchema.loadClass(Form);
 
-const Forms = model<IFormDocument, IFormModel>("forms", FormSchema);
+const Forms = model<IFormDocument, IFormModel>("forms", formSchema);
 
 export default Forms;

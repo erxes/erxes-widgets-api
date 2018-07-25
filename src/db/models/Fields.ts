@@ -1,8 +1,8 @@
 import { model, Model } from "mongoose";
-import { FieldSchema, IFieldDocument } from "./definations/fields";
+import { fieldSchema, IFieldDocument } from "./definations/fields";
 
 interface IFieldModel extends Model<IFieldDocument> {}
 
-const Fields = model<IFieldDocument, IFieldModel>("fields", FieldSchema);
+const Fields = model<IFieldDocument, IFieldModel>("fields", fieldSchema);
 
 export default Fields;

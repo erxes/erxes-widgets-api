@@ -1,4 +1,4 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { CONVERSATION_STATUSES, FACEBOOK_DATA_KINDS } from "./constants";
 
@@ -79,7 +79,7 @@ export interface IConversationDocument extends Document {
  * like twitter response so that we can use it in findParentTweets helper to
  * not send extra request to twitter
  */
-export const TwitterResponseSchema = new Schema(
+export const twitterResponseSchema = new Schema(
   {
     id: field({ type: Number, optional: true }),
     id_str: field({ type: String }),
@@ -115,7 +115,7 @@ export const TwitterResponseSchema = new Schema(
 );
 
 // facebook schema
-const FacebookSchema = new Schema(
+const facebookSchema = new Schema(
   {
     kind: field({
       type: String,
@@ -144,7 +144,7 @@ const FacebookSchema = new Schema(
 );
 
 // Conversation schema
-export const ConversationSchema = new Schema({
+export const conversationSchema = new Schema({
   _id: field({ pkey: true }),
   content: field({ type: String }),
   integrationId: field({ type: String }),
@@ -175,6 +175,6 @@ export const ConversationSchema = new Schema({
 
   // number of total conversations
   number: field({ type: Number }),
-  twitterData: field({ type: TwitterResponseSchema }),
-  facebookData: field({ type: FacebookSchema })
+  twitterData: field({ type: twitterResponseSchema }),
+  facebookData: field({ type: facebookSchema })
 });

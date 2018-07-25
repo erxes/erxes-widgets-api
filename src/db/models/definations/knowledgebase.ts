@@ -1,15 +1,15 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { PUBLISH_STATUSES, LANGUAGE_CHOICES } from "./constants";
+import { LANGUAGE_CHOICES, PUBLISH_STATUSES } from "./constants";
 
-interface CommonFields {
+interface ICommonFields {
   createdBy: string;
   createdDate: Date;
   modifiedBy: string;
   modifiedDate: Date;
 }
 
-export interface IArticleDocument extends CommonFields, Document {
+export interface IArticleDocument extends ICommonFields, Document {
   _id: string;
   title: string;
   summary: string;
@@ -17,7 +17,7 @@ export interface IArticleDocument extends CommonFields, Document {
   status: string;
 }
 
-export interface ICategoryDocument extends CommonFields, Document {
+export interface ICategoryDocument extends ICommonFields, Document {
   _id: string;
   title: string;
   description: string;
@@ -25,7 +25,7 @@ export interface ICategoryDocument extends CommonFields, Document {
   icon: string;
 }
 
-export interface ITopicDocument extends CommonFields, Document {
+export interface ITopicDocument extends ICommonFields, Document {
   _id: string;
   title: string;
   description: string;
@@ -49,7 +49,7 @@ const commonFields = {
   })
 };
 
-export const ArticleSchema = new Schema({
+export const articleSchema = new Schema({
   _id: field({ pkey: true }),
   title: field({ type: String }),
   summary: field({ type: String }),
@@ -62,7 +62,7 @@ export const ArticleSchema = new Schema({
   ...commonFields
 });
 
-export const CategorySchema = new Schema({
+export const categorySchema = new Schema({
   _id: field({ pkey: true }),
   title: field({ type: String }),
   description: field({ type: String }),
@@ -71,7 +71,7 @@ export const CategorySchema = new Schema({
   ...commonFields
 });
 
-export const TopicSchema = new Schema({
+export const topicSchema = new Schema({
   _id: field({ pkey: true }),
   title: field({ type: String }),
   description: field({ type: String }),

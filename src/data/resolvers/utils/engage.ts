@@ -1,13 +1,13 @@
 import {
-  Users,
-  EngageMessages,
   Conversations,
+  EngageMessages,
   IBrandDocument,
   ICustomerDocument,
   IIntegrationDocument,
-  Messages,
+  IMessageEngageData,
   IUserDocument,
-  IMessageEngageData
+  Messages,
+  Users
 } from "../../../db/models";
 
 import { IBrowserInfo } from "../../../db/models/Customers";
@@ -200,7 +200,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
   // replace keys in content
   const replacedContent = replaceKeys({
     content: engageData.content,
-    customer: customer,
+    customer,
     user
   });
 
@@ -246,7 +246,7 @@ export const createEngageVisitorMessages = async (params: {
 
   const conversationMessages = [];
 
-  for (let message of messages) {
+  for (const message of messages) {
     const messenger = message.messenger ? message.messenger.toJSON() : {};
 
     const user = await Users.findOne({ _id: message.fromUserId });

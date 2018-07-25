@@ -1,4 +1,4 @@
-import { Messages, Users, IConversationDocument } from "../../db/models";
+import { IConversationDocument, Messages, Users } from "../../db/models";
 
 export default {
   participatedUsers(conversation: IConversationDocument) {

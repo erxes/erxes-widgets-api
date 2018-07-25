@@ -1,10 +1,10 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import {
-  LANGUAGE_CHOICES,
-  KIND_CHOICES,
-  FORM_SUCCESS_ACTIONS,
   FORM_LOAD_TYPES,
+  FORM_SUCCESS_ACTIONS,
+  KIND_CHOICES,
+  LANGUAGE_CHOICES,
   MESSENGER_DATA_AVAILABILITY
 } from "./constants";
 
@@ -16,10 +16,10 @@ interface ITwitterData extends Document {
 
 interface IFacebookData extends Document {
   appId: {
-    type: String;
+    type: string;
   };
   pageIds: {
-    type: [String];
+    type: string[];
   };
 }
 
@@ -77,7 +77,7 @@ export interface IIntegrationDocument extends Document {
 }
 
 // Mongoose schemas ======================
-const TwitterSchema = new Schema(
+const twitterSchema = new Schema(
   {
     info: {
       type: Object
@@ -92,7 +92,7 @@ const TwitterSchema = new Schema(
   { _id: false }
 );
 
-const FacebookSchema = new Schema(
+const facebookSchema = new Schema(
   {
     appId: {
       type: String
@@ -105,7 +105,7 @@ const FacebookSchema = new Schema(
 );
 
 // subdocument schema for MessengerOnlineHours
-const MessengerOnlineHoursSchema = new Schema(
+const messengerOnlineHoursSchema = new Schema(
   {
     day: field({ type: String }),
     from: field({ type: String }),
@@ -115,7 +115,7 @@ const MessengerOnlineHoursSchema = new Schema(
 );
 
 // subdocument schema for MessengerData
-const MessengerDataSchema = new Schema(
+const messengerDataSchema = new Schema(
   {
     supporterIds: field({ type: [String] }),
     notifyCustomer: field({ type: Boolean }),
@@ -126,7 +126,7 @@ const MessengerDataSchema = new Schema(
     isOnline: field({
       type: Boolean
     }),
-    onlineHours: field({ type: [MessengerOnlineHoursSchema] }),
+    onlineHours: field({ type: [messengerOnlineHoursSchema] }),
     timezone: field({
       type: String,
       optional: true
@@ -139,7 +139,7 @@ const MessengerDataSchema = new Schema(
 );
 
 // subdocument schema for FormData
-const FormDataSchema = new Schema(
+const formDataSchema = new Schema(
   {
     loadType: field({
       type: String,
@@ -187,7 +187,7 @@ const FormDataSchema = new Schema(
 );
 
 // subdocument schema for messenger UiOptions
-const UiOptionsSchema = new Schema(
+const uiOptionsSchema = new Schema(
   {
     color: field({ type: String }),
     wallpaper: field({ type: String }),
@@ -197,7 +197,7 @@ const UiOptionsSchema = new Schema(
 );
 
 // schema for integration document
-export const IntegrationSchema = new Schema({
+export const integrationSchema = new Schema({
   _id: field({ pkey: true }),
 
   kind: field({
@@ -215,9 +215,9 @@ export const IntegrationSchema = new Schema({
   }),
   tagIds: field({ type: [String], optional: true }),
   formId: field({ type: String }),
-  formData: field({ type: FormDataSchema }),
-  messengerData: field({ type: MessengerDataSchema }),
-  twitterData: field({ type: TwitterSchema }),
-  facebookData: field({ type: FacebookSchema }),
-  uiOptions: field({ type: UiOptionsSchema })
+  formData: field({ type: formDataSchema }),
+  messengerData: field({ type: messengerDataSchema }),
+  twitterData: field({ type: twitterSchema }),
+  facebookData: field({ type: facebookSchema }),
+  uiOptions: field({ type: uiOptionsSchema })
 });

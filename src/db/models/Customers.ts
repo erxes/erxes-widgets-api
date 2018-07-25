@@ -1,6 +1,6 @@
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import { ICustomerDocument, CustomerSchema } from "./definations/customers";
+import { customerSchema, ICustomerDocument } from "./definations/customers";
 
 interface IGetCustomerParams {
   email?: string;
@@ -81,7 +81,7 @@ class Customer {
   /*
    * Fix firstName, lastName, description abbriviations
    */
-  static fixCustomData(
+  public static fixCustomData(
     customData: any
   ): { extractedInfo: any; updatedCustomData: any } {
     const extractedInfo: any = {};
@@ -114,7 +114,7 @@ class Customer {
   /*
    * Get customer
    */
-  static getCustomer(params: IGetCustomerParams) {
+  public static getCustomer(params: IGetCustomerParams) {
     const { email, phone, cachedCustomerId } = params;
 
     if (email) {
@@ -139,7 +139,7 @@ class Customer {
   /*
    * Create a new customer
    */
-  static async createCustomer(doc: ICreateCustomerParams) {
+  public static async createCustomer(doc: ICreateCustomerParams) {
     const { email, phone, ...restDoc } = doc;
 
     const modifier: any = {
@@ -173,7 +173,7 @@ class Customer {
   /*
    * Create a new messenger customer
    */
-  static async createMessengerCustomer(
+  public static async createMessengerCustomer(
     doc: ICreateCustomerParams,
     customData: any
   ) {
@@ -196,7 +196,9 @@ class Customer {
   /*
    * Update messenger customer
    */
-  static async updateMessengerCustomer(param: IUpdateMessengerCustomerParams) {
+  public static async updateMessengerCustomer(
+    param: IUpdateMessengerCustomerParams
+  ) {
     const { _id, doc, customData } = param;
 
     const customer = await Customers.findOne({ _id });
@@ -225,7 +227,7 @@ class Customer {
   /**
    * Get or create customer
    */
-  static async getOrCreateCustomer(
+  public static async getOrCreateCustomer(
     getParams: IGetCustomerParams,
     createParams: ICreateCustomerParams
   ) {
@@ -241,7 +243,7 @@ class Customer {
   /**
    * Mark customer as active
    */
-  static async markCustomerAsActive(customerId: string) {
+  public static async markCustomerAsActive(customerId: string) {
     await Customers.update(
       { _id: customerId },
       { $set: { "messengerData.isActive": true } }
@@ -253,7 +255,7 @@ class Customer {
   /**
    * Mark customer as inactive
    */
-  static async markCustomerAsNotActive(customerId: string) {
+  public static async markCustomerAsNotActive(customerId: string) {
     await Customers.update(
       { _id: customerId },
       {
@@ -270,7 +272,10 @@ class Customer {
   /*
    * Update messenger session data
    */
-  static async updateMessengerSession(doc: { _id: string; url: string }) {
+  public static async updateMessengerSession(doc: {
+    _id: string;
+    url: string;
+  }) {
     const { _id, url } = doc;
 
     const now = new Date();
@@ -314,7 +319,7 @@ class Customer {
   /*
    * Update customer's location info
    */
-  static async updateLocation(_id: string, browserInfo: IBrowserInfo) {
+  public static async updateLocation(_id: string, browserInfo: IBrowserInfo) {
     await Customers.findByIdAndUpdate(
       { _id },
       {
@@ -328,7 +333,7 @@ class Customer {
   /*
    * Add companyId to companyIds list
    */
-  static async addCompany(_id: string, companyId: string) {
+  public static async addCompany(_id: string, companyId: string) {
     await Customers.findByIdAndUpdate(_id, {
       $addToSet: { companyIds: companyId }
     });
@@ -341,7 +346,7 @@ class Customer {
    * If customer is a visitor then we will contact with this customer using
    * this information later
    */
-  static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
+  public static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
     const { customerId, type, value } = args;
 
     if (type === "email") {
@@ -362,11 +367,11 @@ class Customer {
   }
 }
 
-CustomerSchema.loadClass(Customer);
+customerSchema.loadClass(Customer);
 
 const Customers = model<ICustomerDocument, ICustomerModel>(
   "customers",
-  CustomerSchema
+  customerSchema
 );
 
 export default Customers;

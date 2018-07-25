@@ -1,26 +1,26 @@
 const faker: any = require("faker");
 const Random: any = require("meteor-random");
 
+import messengerMutations from "../data/resolvers/mutations/messenger";
 import { connect, disconnect } from "../db/connection";
 import {
-  Customers,
-  Integrations,
-  Brands,
-  Conversations,
-  Messages,
-  IBrandDocument,
-  IIntegrationDocument,
-  ICustomerDocument,
-  IConversationDocument
-} from "../db/models";
-import {
   brandFactory,
-  integrationFactory,
-  customerFactory,
   conversationFactory,
+  customerFactory,
+  integrationFactory,
   messageFactory
 } from "../db/factories";
-import messengerMutations from "../data/resolvers/mutations/messenger";
+import {
+  Brands,
+  Conversations,
+  Customers,
+  IBrandDocument,
+  IConversationDocument,
+  ICustomerDocument,
+  IIntegrationDocument,
+  Integrations,
+  Messages
+} from "../db/models";
 
 beforeAll(() => connect());
 

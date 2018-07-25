@@ -1,4 +1,4 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { ROLES } from "./constants";
 
@@ -42,7 +42,7 @@ export interface IUserDocument extends Document {
 const SALT_WORK_FACTOR = 10;
 
 // Mongoose schemas ===============================
-const EmailSignatureSchema = new Schema(
+const emailSignatureSchema = new Schema(
   {
     brandId: field({ type: String }),
     signature: field({ type: String })
@@ -51,7 +51,7 @@ const EmailSignatureSchema = new Schema(
 );
 
 // Detail schema
-const DetailSchema = new Schema(
+const detailSchema = new Schema(
   {
     avatar: field({ type: String }),
     fullName: field({ type: String }),
@@ -62,7 +62,7 @@ const DetailSchema = new Schema(
   { _id: false }
 );
 
-const LinkSchema = new Schema(
+const linkSchema = new Schema(
   {
     linkedIn: field({ type: String, optional: true }),
     twitter: field({ type: String, optional: true }),
@@ -75,7 +75,7 @@ const LinkSchema = new Schema(
 );
 
 // User schema
-export const UserSchema = new Schema({
+export const userSchema = new Schema({
   _id: field({ pkey: true }),
   username: field({ type: String }),
   password: field({ type: String }),
@@ -96,8 +96,8 @@ export const UserSchema = new Schema({
     ]
   }),
   getNotificationByEmail: field({ type: Boolean }),
-  emailSignatures: field({ type: [EmailSignatureSchema] }),
+  emailSignatures: field({ type: [emailSignatureSchema] }),
   starredConversationIds: field({ type: [String] }),
-  details: field({ type: DetailSchema }),
-  links: field({ type: LinkSchema, default: {} })
+  details: field({ type: detailSchema }),
+  links: field({ type: linkSchema, default: {} })
 });

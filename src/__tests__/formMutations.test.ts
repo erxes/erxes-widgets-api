@@ -1,24 +1,24 @@
 import formMutations, {
-  validate,
-  saveValues
+  saveValues,
+  validate
 } from "../data/resolvers/mutations/form";
-import {
-  Brands,
-  Integrations,
-  Forms,
-  Fields,
-  Conversations,
-  Messages,
-  Customers,
-  IFieldDocument
-} from "../db/models";
 import { connect, disconnect } from "../db/connection";
 import {
   brandFactory,
-  integrationFactory,
+  formFactory,
   formFieldFactory,
-  formFactory
+  integrationFactory
 } from "../db/factories";
+import {
+  Brands,
+  Conversations,
+  Customers,
+  Fields,
+  Forms,
+  IFieldDocument,
+  Integrations,
+  Messages
+} from "../db/models";
 
 beforeAll(() => connect());
 

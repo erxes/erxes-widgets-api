@@ -1,4 +1,4 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 import {
   CUSTOMER_BASIC_INFOS,
@@ -99,7 +99,7 @@ const locationSchema = new Schema(
   { _id: false }
 );
 
-const VisitorContactSchema = new Schema(
+const visitorContactSchema = new Schema(
   {
     email: String,
     phone: String
@@ -167,7 +167,7 @@ const facebookSchema = new Schema(
   { _id: false }
 );
 
-const LinkSchema = new Schema(
+const linkSchema = new Schema(
   {
     linkedIn: field({ type: String, optional: true, label: "LinkedIn" }),
     twitter: field({ type: String, optional: true, label: "Twitter" }),
@@ -179,7 +179,7 @@ const LinkSchema = new Schema(
   { _id: false }
 );
 
-export const CustomerSchema = new Schema({
+export const customerSchema = new Schema({
   _id: field({ pkey: true }),
 
   firstName: field({ type: String, label: "First name", optional: true }),
@@ -216,7 +216,7 @@ export const CustomerSchema = new Schema({
     optional: true,
     label: "Do not disturb"
   }),
-  links: field({ type: LinkSchema, default: {} }),
+  links: field({ type: linkSchema, default: {} }),
 
   isUser: field({ type: Boolean, label: "Is user", optional: true }),
   createdAt: field({ type: Date, label: "Created at" }),
@@ -234,6 +234,6 @@ export const CustomerSchema = new Schema({
 
   // if customer is not a user then we will contact with this visitor using
   // this information
-  visitorContactInfo: field({ type: VisitorContactSchema, optional: true }),
+  visitorContactInfo: field({ type: visitorContactSchema, optional: true }),
   urlVisits: Object
 });

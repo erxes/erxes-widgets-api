@@ -1,16 +1,16 @@
-import customScalars from "./customScalars";
-import Query from "./queries";
-import Mutation from "./mutations";
 import Conversation from "./conversation";
 import ConversationMessage from "./conversationMessage";
+import customScalars from "./customScalars";
+import Engage from "./engage";
 import Field from "./field";
 import Form from "./form";
-import Engage from "./engage";
 import {
   KnowledgeBaseArticle,
   KnowledgeBaseCategory,
   KnowledgeBaseTopic
 } from "./knowledgeBase";
+import Mutation from "./mutations";
+import Query from "./queries";
 
 export default {
   ...customScalars,

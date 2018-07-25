@@ -1,10 +1,10 @@
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import {
-  IConversationDocument,
-  ConversationSchema
-} from "./definations/conversations";
 import { CONVERSATION_STATUSES } from "./definations/constants";
+import {
+  conversationSchema,
+  IConversationDocument
+} from "./definations/conversations";
 
 interface STATUSES {
   NEW: "new";
@@ -30,14 +30,14 @@ interface IConversationModel extends Model<IConversationDocument> {
 }
 
 class Conversation {
-  static getConversationStatuses() {
+  public static getConversationStatuses() {
     return CONVERSATION_STATUSES;
   }
 
   /**
    * Create new conversation
    */
-  static async createConversation(doc: IConversationParams) {
+  public static async createConversation(doc: IConversationParams) {
     const { integrationId, userId, customerId, content } = doc;
 
     const count = await Conversations.find({
@@ -75,7 +75,7 @@ class Conversation {
   /**
    * Get or create conversation
    */
-  static getOrCreateConversation(doc: IConversationParams) {
+  public static getOrCreateConversation(doc: IConversationParams) {
     const { conversationId, integrationId, customerId, content } = doc;
 
     // customer can write a message
@@ -103,11 +103,11 @@ class Conversation {
   }
 }
 
-ConversationSchema.loadClass(Conversation);
+conversationSchema.loadClass(Conversation);
 
 const Conversations = model<IConversationDocument, IConversationModel>(
   "conversations",
-  ConversationSchema
+  conversationSchema
 );
 
 export default Conversations;

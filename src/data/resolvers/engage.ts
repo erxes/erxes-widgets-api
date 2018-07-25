@@ -1,4 +1,4 @@
-import { Users, IMessageEngageData } from "../../db/models";
+import { IMessageEngageData, Users } from "../../db/models";
 
 export default {
   fromUser(engageData: IMessageEngageData) {

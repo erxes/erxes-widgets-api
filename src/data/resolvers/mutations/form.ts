@@ -1,18 +1,18 @@
 const validator: any = require("validator");
 import {
-  Customers,
-  Integrations,
   Brands,
   Conversations,
-  Messages,
+  Customers,
+  Fields,
   Forms,
-  Fields
+  Integrations,
+  Messages
 } from "../../../db/models";
 
 import { IBrowserInfo } from "../../../db/models/Customers";
 
-import { sendEmail, IEmail } from "../utils/email";
 import { mutateAppApi } from "../../../utils";
+import { IEmail, sendEmail } from "../utils/email";
 
 interface ISubmission {
   _id: string;
@@ -25,7 +25,7 @@ export const validate = async (formId: string, submissions: ISubmission[]) => {
   const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
-  for (let field of fields) {
+  for (const field of fields) {
     // find submission object by _id
     const submission = submissions.find(sub => sub._id === field._id);
 

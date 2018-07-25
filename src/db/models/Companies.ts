@@ -1,6 +1,6 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, model, Schema } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import { ICompanyDocument, CompanySchema } from "./definations/companies";
+import { companySchema, ICompanyDocument } from "./definations/companies";
 
 interface ICompanyDoc {
   id?: string;
@@ -17,7 +17,7 @@ class Company {
   /**
    * Create a company
    */
-  static async createCompany(doc: ICompanyDoc) {
+  public static async createCompany(doc: ICompanyDoc) {
     const { name, ...restDoc } = doc;
 
     const company = await Companies.create({
@@ -40,7 +40,7 @@ class Company {
   /**
    * Get or create company
    */
-  static async getOrCreate(doc: ICompanyDoc) {
+  public static async getOrCreate(doc: ICompanyDoc) {
     const company = await Companies.findOne({
       $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }]
     });
@@ -53,11 +53,11 @@ class Company {
   }
 }
 
-CompanySchema.loadClass(Company);
+companySchema.loadClass(Company);
 
 const Companies = model<ICompanyDocument, ICompanyModel>(
   "companies",
-  CompanySchema
+  companySchema
 );
 
 export default Companies;

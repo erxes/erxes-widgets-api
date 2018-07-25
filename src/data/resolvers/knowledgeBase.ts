@@ -1,10 +1,10 @@
 import {
-  Users,
-  KnowledgeBaseCategories as KnowledgeBaseCategoriesModel,
-  KnowledgeBaseArticles as KnowledgeBaseArticlesModel,
   IKbArticleDocument,
+  IKbCategoryDocument,
   IKbTopicDocument,
-  IKbCategoryDocument
+  KnowledgeBaseArticles as KnowledgeBaseArticlesModel,
+  KnowledgeBaseCategories as KnowledgeBaseCategoriesModel,
+  Users
 } from "../../db/models";
 
 export const KnowledgeBaseArticle = {

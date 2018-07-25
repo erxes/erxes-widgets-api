@@ -1,5 +1,5 @@
 import { connect, disconnect } from "../db/connection";
-import { formFactory, customerFactory } from "../db/factories";
+import { customerFactory, formFactory } from "../db/factories";
 import { Forms, IFormDocument } from "../db/models";
 
 beforeAll(() => connect());

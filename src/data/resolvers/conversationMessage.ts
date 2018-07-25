@@ -1,4 +1,4 @@
-import { Users, IMessageDocument } from "../../db/models";
+import { IMessageDocument, Users } from "../../db/models";
 
 export default {
   user(message: IMessageDocument) {

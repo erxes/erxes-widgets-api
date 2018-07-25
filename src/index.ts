@@ -1,11 +1,11 @@
-import * as dotenv from "dotenv";
-import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as cors from "cors";
+import * as dotenv from "dotenv";
+import * as express from "express";
+import { graphiqlExpress, graphqlExpress } from "graphql-server-express";
 import { createServer } from "http";
-import { graphqlExpress, graphiqlExpress } from "graphql-server-express";
-import { connect } from "./db/connection";
 import schema from "./data";
+import { connect } from "./db/connection";
 
 // load environment variables
 dotenv.config();

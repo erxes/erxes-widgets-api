@@ -1,4 +1,4 @@
-import { Schema, Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
 interface ICallout extends Document {
@@ -30,7 +30,7 @@ export interface IFormDocument extends Document {
 }
 
 // schema for form's callout component
-const CalloutSchema = new Schema(
+const calloutSchema = new Schema(
   {
     title: field({ type: String, optional: true }),
     body: field({ type: String, optional: true }),
@@ -42,7 +42,7 @@ const CalloutSchema = new Schema(
 );
 
 // schema for form submission details
-const SubmissionSchema = new Schema(
+const submissionSchema = new Schema(
   {
     customerId: field({ type: String }),
     submittedAt: field({ type: Date })
@@ -51,7 +51,7 @@ const SubmissionSchema = new Schema(
 );
 
 // schema for form document
-export const FormSchema = new Schema({
+export const formSchema = new Schema({
   _id: field({ pkey: true }),
   title: field({ type: String }),
   description: field({
@@ -66,8 +66,8 @@ export const FormSchema = new Schema({
     type: Date,
     default: Date.now
   }),
-  callout: field({ type: CalloutSchema, default: {} }),
+  callout: field({ type: calloutSchema, default: {} }),
   viewCount: field({ type: Number }),
   contactsGathered: field({ type: Number }),
-  submissions: field({ type: [SubmissionSchema] })
+  submissions: field({ type: [submissionSchema] })
 });

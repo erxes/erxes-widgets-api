@@ -1,4 +1,4 @@
-import { checkRules, checkRule } from "../data/resolvers/utils/engage";
+import { checkRule, checkRules } from "../data/resolvers/utils/engage";
 
 const browserLanguageRule = {
   kind: "browserLanguage",

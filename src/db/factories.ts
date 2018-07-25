@@ -3,16 +3,16 @@ const faker: any = require("faker");
 const Random: any = require("meteor-random");
 
 import {
-  Integrations,
   Brands,
-  Forms,
-  Fields,
-  Customers,
-  Conversations,
-  Messages,
-  Users,
   Companies,
-  IMessageEngageData
+  Conversations,
+  Customers,
+  Fields,
+  Forms,
+  IMessageEngageData,
+  Integrations,
+  Messages,
+  Users
 } from "./models";
 
 interface IUserParams {

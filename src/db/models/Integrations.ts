@@ -1,9 +1,9 @@
 import { Document, Model, model } from "mongoose";
-import {
-  IntegrationSchema,
-  IIntegrationDocument
-} from "./definations/integrations";
 import Brands from "./Brands";
+import {
+  IIntegrationDocument,
+  integrationSchema
+} from "./definations/integrations";
 
 interface IIntegrationModel extends Model<IIntegrationDocument> {
   getIntegration(
@@ -17,7 +17,7 @@ class Integration {
   /*
    * Get integration
    */
-  static async getIntegration(
+  public static async getIntegration(
     brandCode: string,
     kind: string,
     brandObject = false
@@ -44,11 +44,11 @@ class Integration {
   }
 }
 
-IntegrationSchema.loadClass(Integration);
+integrationSchema.loadClass(Integration);
 
 const Integrations = model<IIntegrationDocument, IIntegrationModel>(
   "integrations",
-  IntegrationSchema
+  integrationSchema
 );
 
 export default Integrations;
