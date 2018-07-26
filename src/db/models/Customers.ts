@@ -257,7 +257,9 @@ class Customer {
 
     const messengerData = customer.messengerData;
 
-    // TODO: check getTime
+    // Preventing session count to increase on page every refresh
+    // Close your web site tab and reopen it after 6 seconds then it will increase
+    // session count by 1
     if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
       // update session count
       query.$inc = { "messengerData.sessionCount": 1 };

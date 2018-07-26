@@ -17,6 +17,10 @@ const isMessengerOnline = async (integrationId: string) => {
     return false;
   }
 
+  if (!integration.messengerData) {
+    return false;
+  }
+
   const {
     availabilityMethod,
     isOnline,
