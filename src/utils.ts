@@ -1,3 +1,4 @@
+// TODO: readd strict mode and fix below import
 import * as requestify from "requestify";
 
 export const mutateAppApi = (query: string) => {

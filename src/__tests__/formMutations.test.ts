@@ -56,36 +56,37 @@ describe("Form mutations", () => {
     });
   });
 
-  test("validate", async () => {
+  describe("validate", async () => {
     const formId = "DFDFDAFD";
     const contentTypeId = formId;
 
-    const requiredField = await formFieldFactory({
-      contentTypeId,
-      isRequired: true
-    });
-    const emailField = await formFieldFactory({
-      contentTypeId,
-      validation: "email"
-    });
-    const numberField = await formFieldFactory({
-      contentTypeId,
-      validation: "number"
-    });
-    const validNumberField = await formFieldFactory({
-      contentTypeId,
-      validation: "number"
-    });
-    const validDateField = await formFieldFactory({
-      contentTypeId,
-      validation: "date"
-    });
-    const dateField = await formFieldFactory({
-      contentTypeId,
-      validation: "date"
-    });
+    test("validate", async () => {
+      const requiredField = await formFieldFactory({
+        contentTypeId,
+        isRequired: true
+      });
 
-    it("validate", async () => {
+      const emailField = await formFieldFactory({
+        contentTypeId,
+        validation: "email"
+      });
+      const numberField = await formFieldFactory({
+        contentTypeId,
+        validation: "number"
+      });
+      const validNumberField = await formFieldFactory({
+        contentTypeId,
+        validation: "number"
+      });
+      const validDateField = await formFieldFactory({
+        contentTypeId,
+        validation: "date"
+      });
+      const dateField = await formFieldFactory({
+        contentTypeId,
+        validation: "date"
+      });
+
       const submissions = [
         { _id: requiredField._id, value: null },
         { _id: emailField._id, value: "email", validation: "email" },
@@ -104,19 +105,19 @@ describe("Form mutations", () => {
       const [requiredError, emailError, numberError, dateError] = errors;
 
       // required
-      expect(requiredError.fieldId).toEqual(requiredField);
+      expect(requiredError.fieldId).toEqual(requiredField._id);
       expect(requiredError.code).toEqual("required");
 
       // email
-      expect(emailError.fieldId).toEqual(emailField);
+      expect(emailError.fieldId).toEqual(emailField._id);
       expect(emailError.code).toEqual("invalidEmail");
 
       // number
-      expect(numberError.fieldId).toEqual(numberField);
+      expect(numberError.fieldId).toEqual(numberField._id);
       expect(numberError.code).toEqual("invalidNumber");
 
       // date
-      expect(dateError.fieldId).toEqual(dateField);
+      expect(dateError.fieldId).toEqual(dateField._id);
       expect(dateError.code).toEqual("invalidDate");
     });
   });

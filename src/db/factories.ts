@@ -16,12 +16,14 @@ import {
 
 interface IUserParams {
   fullName?: string;
+  email?: string;
 }
 export const userFactory = (params: IUserParams = {}) => {
   const user = new Users({
     details: {
       fullName: params.fullName || faker.random.word()
-    }
+    },
+    email: params.email || faker.internet.email()
   });
 
   return user.save();

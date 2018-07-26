@@ -13,7 +13,6 @@ export const field = (options: any) => {
 
   if (pkey) {
     options.type = String;
-    options.unique = true;
     options.default = () => Random.id();
   }
 
