@@ -6,7 +6,7 @@ import {
   IConversationDocument
 } from "./definations/conversations";
 
-interface STATUSES {
+interface ISTATUSES {
   NEW: "new";
   OPEN: "open";
   CLOSED: "closed";
@@ -22,7 +22,7 @@ interface IConversationParams {
 }
 
 interface IConversationModel extends Model<IConversationDocument> {
-  getConversationStatuses(): STATUSES;
+  getConversationStatuses(): ISTATUSES;
   createConversation(doc: IConversationParams): Promise<IConversationDocument>;
   getOrCreateConversation(
     doc: IConversationParams

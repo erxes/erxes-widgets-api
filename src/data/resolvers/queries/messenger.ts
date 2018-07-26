@@ -21,17 +21,15 @@ const isMessengerOnline = async (integrationId: string) => {
     availabilityMethod,
     isOnline,
     onlineHours
-  } = integration.messengerData || {
-    availabilityMethod: "",
-    isOnline: false,
-    onlineHours: []
-  };
+  } = integration.messengerData;
 
   const modifiedIntegration = {
-    ...integration,
-    availabilityMethod,
-    isOnline,
-    onlineHours
+    ...integration.toJSON(),
+    messengerData: {
+      availabilityMethod,
+      isOnline,
+      onlineHours
+    }
   };
 
   return isStaffsOnline(modifiedIntegration);

@@ -1,5 +1,5 @@
-const faker: any = require("faker");
-const Random: any = require("meteor-random");
+import * as faker from "faker";
+import * as Random from "meteor-random";
 
 import messengerMutations from "../data/resolvers/mutations/messenger";
 import { connect, disconnect } from "../db/connection";

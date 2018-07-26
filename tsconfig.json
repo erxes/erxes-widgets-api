@@ -6,8 +6,7 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "lib": ["es2015", "es6", "es7"],
-    "sourceMap": true,
-    "strict": true
+    "sourceMap": true
   },
   "include": [
     "./src/**/*"

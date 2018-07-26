@@ -3,7 +3,6 @@ import * as cors from "cors";
 import * as dotenv from "dotenv";
 import * as express from "express";
 import { graphiqlExpress, graphqlExpress } from "graphql-server-express";
-import { createServer } from "http";
 import schema from "./data";
 import { connect } from "./db/connection";
 

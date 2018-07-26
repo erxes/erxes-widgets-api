@@ -1,4 +1,5 @@
-const validator: any = require("validator");
+import * as validator from "validator";
+
 import {
   Brands,
   Conversations,

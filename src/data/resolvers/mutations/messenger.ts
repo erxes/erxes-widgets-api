@@ -203,10 +203,10 @@ export default {
     await Customers.updateLocation(customerId, browserInfo);
 
     // update messenger session data
-    const customer = await Customers.updateMessengerSession({
-      _id: customerId,
-      url: browserInfo.url || ""
-    });
+    const customer = await Customers.updateMessengerSession(
+      customerId,
+      browserInfo.url || ""
+    );
 
     const integration = await Integrations.findOne({
       _id: customer.integrationId

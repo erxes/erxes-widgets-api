@@ -62,11 +62,7 @@ interface ICustomerModel extends Model<ICustomerDocument> {
   markCustomerAsActive(customerId: string): Promise<ICustomerDocument>;
   markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>;
 
-  updateMessengerSession(doc: {
-    _id: string;
-    url: string;
-  }): Promise<ICustomerDocument>;
-
+  updateMessengerSession(_id: string, url: string): Promise<ICustomerDocument>;
   updateLocation(
     _id: string,
     browserInfo: IBrowserInfo
@@ -240,44 +236,10 @@ class Customer {
     return this.createCustomer(createParams);
   }
 
-  /**
-   * Mark customer as active
-   */
-  public static async markCustomerAsActive(customerId: string) {
-    await Customers.update(
-      { _id: customerId },
-      { $set: { "messengerData.isActive": true } }
-    );
-
-    return Customers.findOne({ _id: customerId });
-  }
-
-  /**
-   * Mark customer as inactive
-   */
-  public static async markCustomerAsNotActive(customerId: string) {
-    await Customers.update(
-      { _id: customerId },
-      {
-        $set: {
-          "messengerData.isActive": false,
-          "messengerData.lastSeenAt": new Date()
-        }
-      }
-    );
-
-    return Customers.findOne({ _id: customerId });
-  }
-
   /*
    * Update messenger session data
    */
-  public static async updateMessengerSession(doc: {
-    _id: string;
-    url: string;
-  }) {
-    const { _id, url } = doc;
-
+  public static async updateMessengerSession(_id: string, url: string) {
     const now = new Date();
     const customer = await Customers.findOne({ _id });
 
@@ -285,7 +247,6 @@ class Customer {
       return null;
     }
 
-    // TODO: check any
     const query: any = {
       $set: {
         // update messengerData
@@ -314,6 +275,35 @@ class Customer {
 
     // updated customer
     return Customers.findOne({ _id });
+  }
+
+  /**
+   * Mark customer as active
+   */
+  public static async markCustomerAsActive(customerId: string) {
+    await Customers.update(
+      { _id: customerId },
+      { $set: { "messengerData.isActive": true } }
+    );
+
+    return Customers.findOne({ _id: customerId });
+  }
+
+  /**
+   * Mark customer as inactive
+   */
+  public static async markCustomerAsNotActive(customerId: string) {
+    await Customers.update(
+      { _id: customerId },
+      {
+        $set: {
+          "messengerData.isActive": false,
+          "messengerData.lastSeenAt": new Date()
+        }
+      }
+    );
+
+    return Customers.findOne({ _id: customerId });
   }
 
   /*

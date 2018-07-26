@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from "mongoose";
+import { Model, model, Schema } from "mongoose";
 import { mutateAppApi } from "../../utils";
 import { companySchema, ICompanyDocument } from "./definations/companies";
 

@@ -1,5 +1,5 @@
-const faker: any = require("faker");
-const Random: any = require("meteor-random");
+import * as faker from "faker";
+import * as Random from "meteor-random";
 
 import { connect, disconnect } from "../db/connection";
 import { customerFactory } from "../db/factories";
@@ -31,15 +31,15 @@ describe("Customers", () => {
   test("createMessengerCustomer() must return a new customer", async () => {
     const now = new Date();
 
-    const first_name = "test first name";
-    const last_name = "test last name";
+    const firstName = "test first name";
+    const lastName = "test last name";
     const bio = "test BIO 1231321312";
     const email = "email@gmail.com";
     const phone = "422999";
 
     const customData = {
-      first_name,
-      last_name,
+      first_name: firstName,
+      last_name: lastName,
       bio,
       created_at: "1321313"
     };
@@ -64,7 +64,7 @@ describe("Customers", () => {
 
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer.createdAt >= now).toBe(true);
-    expect(customer.lastName).toBe(last_name);
+    expect(customer.lastName).toBe(lastName);
     expect(customer.description).toBe(bio);
 
     const messengerData = customer.messengerData;
@@ -206,10 +206,10 @@ describe("Customers", () => {
   test("updateMessengerSession()", async () => {
     const now = new Date();
 
-    const customer = await Customers.updateMessengerSession({
-      _id: _customer._id,
-      url: "/career/open"
-    });
+    const customer = await Customers.updateMessengerSession(
+      _customer._id,
+      "/career/open"
+    );
 
     const { messengerData } = customer;
 

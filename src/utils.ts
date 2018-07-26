@@ -1,4 +1,4 @@
-const requestify: any = require("requestify");
+import * as requestify from "requestify";
 
 export const mutateAppApi = (query: string) => {
   const { MAIN_API_URL } = process.env;

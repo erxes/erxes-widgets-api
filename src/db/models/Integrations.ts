@@ -1,4 +1,4 @@
-import { Document, Model, model } from "mongoose";
+import { Model, model } from "mongoose";
 import Brands from "./Brands";
 import {
   IIntegrationDocument,

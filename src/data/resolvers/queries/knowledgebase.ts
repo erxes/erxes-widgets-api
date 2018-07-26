@@ -1,7 +1,7 @@
 import {
-  KnowledgeBaseTopics as KnowledgeBaseTopicsModel,
+  KnowledgeBaseArticles as KnowledgeBaseArticlesModel,
   KnowledgeBaseCategories as KnowledgeBaseCategoriesModel,
-  KnowledgeBaseArticles as KnowledgeBaseArticlesModel
+  KnowledgeBaseTopics as KnowledgeBaseTopicsModel
 } from "../../../db/models";
 
 export default {
@@ -24,7 +24,7 @@ export default {
     return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
   },
 
-  /**
+  /*
    * Search published articles that contain searchString (case insensitive)
    * in a topic found by topicId
    * @return {Promise} searched articles
