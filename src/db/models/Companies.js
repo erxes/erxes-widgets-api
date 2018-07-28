@@ -34,11 +34,6 @@ const CompanySchema = mongoose.Schema({
     optional: true,
   },
 
-  plan: {
-    type: String,
-    optional: true,
-  },
-
   lastSeenAt: Date,
   sessionCount: Number,
 
