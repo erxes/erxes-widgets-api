@@ -14,25 +14,25 @@ import {
 import Messages from "./Messages";
 import Users from "./Users";
 
-import { IBrandDocument } from "./definations/brands";
-import { IConversationDocument } from "./definations/conversations";
-import { ICustomerDocument } from "./definations/customers";
-import { IIntegrationDocument } from "./definations/integrations";
-import { IUserDocument } from "./definations/users";
+import { IBrandDocument } from "./definitions/brands";
+import { IConversationDocument } from "./definitions/conversations";
+import { ICustomerDocument } from "./definitions/customers";
+import { IIntegrationDocument } from "./definitions/integrations";
+import { IUserDocument } from "./definitions/users";
 
 import {
   IEngageData as IMessageEngageData,
   IMessageDocument
-} from "./definations/conversationMessages";
+} from "./definitions/conversationMessages";
 
-import { IFieldDocument } from "./definations/fields";
-import { IFormDocument } from "./definations/forms";
+import { IFieldDocument } from "./definitions/fields";
+import { IFormDocument } from "./definitions/forms";
 
 import {
   IArticleDocument as IKbArticleDocument,
   ICategoryDocument as IKbCategoryDocument,
   ITopicDocument as IKbTopicDocument
-} from "./definations/knowledgebase";
+} from "./definitions/knowledgebase";
 
 export {
   Companies,

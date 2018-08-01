@@ -6,7 +6,7 @@ import {
   ICategoryDocument,
   ITopicDocument,
   topicSchema
-} from "./definations/knowledgebase";
+} from "./definitions/knowledgebase";
 
 interface IArticleModel extends Model<IArticleDocument> {}
 interface ICategoryModel extends Model<ICategoryDocument> {}

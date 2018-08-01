@@ -1,10 +1,10 @@
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import { CONVERSATION_STATUSES } from "./definations/constants";
+import { CONVERSATION_STATUSES } from "./definitions/constants";
 import {
   conversationSchema,
   IConversationDocument
-} from "./definations/conversations";
+} from "./definitions/conversations";
 
 interface ISTATUSES {
   NEW: "new";

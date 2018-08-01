@@ -4,7 +4,7 @@ import Conversations from "./Conversations";
 import {
   IMessageDocument,
   messageSchema
-} from "./definations/conversationMessages";
+} from "./definitions/conversationMessages";
 
 interface IMessageParams {
   conversationId: string;

@@ -2,7 +2,7 @@ import { Model, model } from "mongoose";
 import {
   engageMessageSchema,
   IEngageMessageDocument
-} from "./definations/engages";
+} from "./definitions/engages";
 
 interface IEngageMessageModel extends Model<IEngageMessageDocument> {}
 

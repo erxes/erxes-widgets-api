@@ -1,6 +1,6 @@
 import { Model, model, Schema } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import { companySchema, ICompanyDocument } from "./definations/companies";
+import { companySchema, ICompanyDocument } from "./definitions/companies";
 
 interface ICompanyDoc {
   id?: string;

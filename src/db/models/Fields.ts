@@ -1,5 +1,5 @@
 import { model, Model } from "mongoose";
-import { fieldSchema, IFieldDocument } from "./definations/fields";
+import { fieldSchema, IFieldDocument } from "./definitions/fields";
 
 interface IFieldModel extends Model<IFieldDocument> {}
 

@@ -1,6 +1,6 @@
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
-import { customerSchema, ICustomerDocument } from "./definations/customers";
+import { customerSchema, ICustomerDocument } from "./definitions/customers";
 
 interface IGetCustomerParams {
   email?: string;

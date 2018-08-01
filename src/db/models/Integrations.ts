@@ -3,7 +3,7 @@ import Brands from "./Brands";
 import {
   IIntegrationDocument,
   integrationSchema
-} from "./definations/integrations";
+} from "./definitions/integrations";
 
 interface IIntegrationModel extends Model<IIntegrationDocument> {
   getIntegration(

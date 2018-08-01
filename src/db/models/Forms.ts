@@ -1,5 +1,5 @@
 import { Model, model } from "mongoose";
-import { formSchema, IFormDocument } from "./definations/forms";
+import { formSchema, IFormDocument } from "./definitions/forms";
 
 interface IFormModel extends Model<IFormDocument> {
   increaseViewCount(formId: string): Promise<IFormDocument>;
