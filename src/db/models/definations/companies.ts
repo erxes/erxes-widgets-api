@@ -26,7 +26,6 @@ export interface ICompanyDocument extends Document {
   size?: number;
   industry?: string;
   website?: string;
-  plan?: string;
   parentCompanyId?: string;
   email?: string;
   ownerId?: string;
@@ -85,12 +84,6 @@ export const companySchema = new Schema({
   website: field({
     type: String,
     label: "Website",
-    optional: true
-  }),
-
-  plan: field({
-    type: String,
-    label: "Plan",
     optional: true
   }),
 

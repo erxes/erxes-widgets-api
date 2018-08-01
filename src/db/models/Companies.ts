@@ -5,7 +5,6 @@ import { companySchema, ICompanyDocument } from "./definations/companies";
 interface ICompanyDoc {
   id?: string;
   name: string;
-  plan?: string;
 }
 
 interface ICompanyModel extends Model<ICompanyDocument> {

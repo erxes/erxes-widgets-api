@@ -8,7 +8,6 @@ export const types = `
     size: Int
     website: String
     industry: String
-    plan: String
     lastSeenAt: Date
     sessionCount: Int
     tagIds: [String],
