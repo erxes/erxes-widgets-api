@@ -51,8 +51,8 @@ describe("Form mutations", () => {
       const res = await formMutations.formConnect({}, { brandCode, formCode });
 
       // must return integrationId and formId
-      expect(res.integrationId).toBeDefined();
-      expect(res.formId).toBeDefined();
+      expect(res.integration._id).toBeDefined();
+      expect(res.form._id).toBeDefined();
     });
   });
 

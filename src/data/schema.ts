@@ -49,9 +49,11 @@ export const types = `
 
   type Integration {
     _id: String!
+    name: String
     languageCode: String
     uiOptions: JSON
     messengerData: JSON
+    formData: JSON
   }
 
   type Conversation {
@@ -94,6 +96,7 @@ export const types = `
   }
 
   type Form {
+    _id: String
     title: String
     description: String
     buttonText: String
@@ -117,11 +120,8 @@ export const types = `
   }
 
   type FormConnectResponse {
-    integrationId: String!
-    integrationName: String!
-    languageCode: String
-    formId: String!
-    formData: JSON!
+    integration: Integration
+    form: Form
   }
 
   type SaveFormResponse {

@@ -170,18 +170,8 @@ export default {
 
     // return integration details
     return {
-      integrationId: integ._id,
-      integrationName: integ.name,
-      languageCode: integ.languageCode,
-      formId: integ.formId,
-      formData: {
-        ...integ.formData,
-        title: form.title,
-        description: form.description,
-        buttonText: form.buttonText,
-        themeColor: form.themeColor,
-        callout: form.callout
-      }
+      integration: integ,
+      form
     };
   },
 
