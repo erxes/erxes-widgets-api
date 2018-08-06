@@ -1,4 +1,4 @@
-import { Model, model, Schema } from "mongoose";
+import { Model, model } from "mongoose";
 import { brandSchema, IBrandDocument } from "./definitions/brands";
 
 interface IBrandModel extends Model<IBrandDocument> {}

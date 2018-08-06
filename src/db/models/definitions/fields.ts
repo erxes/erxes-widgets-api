@@ -1,6 +1,6 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { FIELD_CONTENT_TYPES, FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
+import { FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
 
 export interface IFieldDocument extends Document {
   _id: string;

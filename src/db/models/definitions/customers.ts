@@ -1,7 +1,6 @@
 import { Document, Schema } from "mongoose";
 
 import {
-  CUSTOMER_BASIC_INFOS,
   CUSTOMER_LEAD_STATUS_TYPES,
   CUSTOMER_LIFECYCLE_STATE_TYPES
 } from "./constants";

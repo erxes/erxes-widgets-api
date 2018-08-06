@@ -1,7 +1,6 @@
-import { Document, Model, model, Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 import {
-  COMPANY_BASIC_INFOS,
   COMPANY_BUSINESS_TYPES,
   COMPANY_INDUSTRY_TYPES,
   COMPANY_LEAD_STATUS_TYPES,
