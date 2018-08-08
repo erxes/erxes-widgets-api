@@ -53,6 +53,8 @@ interface ILink extends Document {
 
 export interface ICustomerDocument extends Document {
   _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
   firstName?: string;
   lastName?: string;
   primaryEmail?: string;
@@ -71,7 +73,6 @@ export interface ICustomerDocument extends Document {
   doNotDisturb?: string;
   links?: ILink;
   isUser?: boolean;
-  createdAt: Date;
   integrationId: string;
   tagIds?: string[];
   companyIds?: string[];
@@ -181,6 +182,9 @@ const linkSchema = new Schema(
 export const customerSchema = new Schema({
   _id: field({ pkey: true }),
 
+  createdAt: field({ type: Date, label: "Created at" }),
+  modifiedAt: field({ type: Date, label: "Modified at" }),
+
   firstName: field({ type: String, label: "First name", optional: true }),
   lastName: field({ type: String, label: "Last name", optional: true }),
 
@@ -218,7 +222,6 @@ export const customerSchema = new Schema({
   links: field({ type: linkSchema, default: {} }),
 
   isUser: field({ type: Boolean, label: "Is user", optional: true }),
-  createdAt: field({ type: Date, label: "Created at" }),
 
   integrationId: field({ type: String }),
   tagIds: field({ type: [String], optional: true }),

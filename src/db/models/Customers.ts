@@ -140,7 +140,8 @@ class Customer {
 
     const modifier: any = {
       ...restDoc,
-      createdAt: new Date()
+      createdAt: new Date(),
+      modifiedAt: new Date()
     };
 
     if (email) {
@@ -203,8 +204,6 @@ class Customer {
       throw new Error("Customer not found");
     }
 
-    const messengerData = customer.messengerData;
-
     const { extractedInfo, updatedCustomData } = this.fixCustomData(
       customData || {}
     );
@@ -212,6 +211,7 @@ class Customer {
     const modifier = {
       ...doc,
       ...extractedInfo,
+      modifiedAt: new Date(),
       "messengerData.customData": updatedCustomData
     };
 

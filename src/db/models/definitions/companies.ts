@@ -20,6 +20,8 @@ interface ILink extends Document {
 
 export interface ICompanyDocument extends Document {
   _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
   primaryName: string;
   names?: string[];
   size?: number;
@@ -37,8 +39,6 @@ export interface ICompanyDocument extends Document {
   employees?: number;
   doNotDisturb?: string;
   links?: ILink;
-  lastSeenAt?: Date;
-  sessionCount: number;
   tagIds?: string[];
   customFieldsData?: any;
 }
@@ -57,6 +57,9 @@ const linkSchema = new Schema(
 
 export const companySchema = new Schema({
   _id: field({ pkey: true }),
+
+  createdAt: field({ type: Date, label: "Created at" }),
+  modifiedAt: field({ type: Date, label: "Modified at" }),
 
   primaryName: field({
     type: String,
@@ -131,16 +134,6 @@ export const companySchema = new Schema({
     label: "Do not disturb"
   }),
   links: field({ type: linkSchema, default: {} }),
-
-  lastSeenAt: field({
-    type: Date,
-    label: "Last seen at"
-  }),
-
-  sessionCount: field({
-    type: Number,
-    label: "Session count"
-  }),
 
   tagIds: field({
     type: [String],

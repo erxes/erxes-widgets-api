@@ -21,6 +21,8 @@ class Company {
     const { name, ...restDoc } = doc;
 
     const company = await Companies.create({
+      createdAt: new Date(),
+      modifiedAt: new Date(),
       primaryName: name,
       names: [name],
       ...restDoc

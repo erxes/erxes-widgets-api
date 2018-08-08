@@ -56,6 +56,8 @@ describe("Customers", () => {
 
     expect(customer).toBeDefined();
 
+    expect(customer.createdAt).toBeDefined();
+    expect(customer.modifiedAt).toBeDefined();
     expect(customer.primaryEmail).toBe(email);
     expect(customer.emails).toContain(email);
 

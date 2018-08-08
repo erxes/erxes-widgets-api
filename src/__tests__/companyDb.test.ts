@@ -19,6 +19,8 @@ describe("Companies", () => {
     const company = await Companies.createCompany({ name: "test" });
 
     expect(company).toBeDefined();
+    expect(company.createdAt).toBeDefined();
+    expect(company.modifiedAt).toBeDefined();
     expect(company.primaryName).toBe("test");
     expect(company.names).toContain("test");
   });
