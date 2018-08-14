@@ -70,18 +70,32 @@ describe("Form mutations", () => {
         contentTypeId,
         validation: "email"
       });
+
+      const phoneField = await formFieldFactory({
+        contentTypeId,
+        validation: "phone"
+      });
+
+      const validPhoneField = await formFieldFactory({
+        contentTypeId,
+        validation: "phone"
+      });
+
       const numberField = await formFieldFactory({
         contentTypeId,
         validation: "number"
       });
+
       const validNumberField = await formFieldFactory({
         contentTypeId,
         validation: "number"
       });
+
       const validDateField = await formFieldFactory({
         contentTypeId,
         validation: "date"
       });
+
       const dateField = await formFieldFactory({
         contentTypeId,
         validation: "date"
@@ -90,6 +104,8 @@ describe("Form mutations", () => {
       const submissions = [
         { _id: requiredField._id, value: null },
         { _id: emailField._id, value: "email", validation: "email" },
+        { _id: phoneField._id, value: "phone", validation: "phone" },
+        { _id: validPhoneField._id, value: "88183943", validation: "phone" },
         { _id: numberField._id, value: "number", validation: "number" },
         { _id: validNumberField._id, value: 10, validation: "number" },
         { _id: dateField._id, value: "date", validation: "date" },
@@ -100,9 +116,15 @@ describe("Form mutations", () => {
       const errors = await validate(formId, submissions);
 
       // must be 4 error
-      expect(errors.length).toEqual(4);
+      expect(errors.length).toEqual(5);
 
-      const [requiredError, emailError, numberError, dateError] = errors;
+      const [
+        requiredError,
+        emailError,
+        phoneError,
+        numberError,
+        dateError
+      ] = errors;
 
       // required
       expect(requiredError.fieldId).toEqual(requiredField._id);
@@ -111,6 +133,10 @@ describe("Form mutations", () => {
       // email
       expect(emailError.fieldId).toEqual(emailField._id);
       expect(emailError.code).toEqual("invalidEmail");
+
+      // phone
+      expect(phoneError.fieldId).toEqual(phoneField._id);
+      expect(phoneError.code).toEqual("invalidPhone");
 
       // number
       expect(numberError.fieldId).toEqual(numberField._id);
@@ -129,6 +155,7 @@ describe("Form mutations", () => {
     let formId: string;
 
     let emailField: IFieldDocument;
+    let phoneField: IFieldDocument;
     let firstNameField: IFieldDocument;
     let lastNameField: IFieldDocument;
     let arbitraryField: IFieldDocument;
@@ -138,24 +165,33 @@ describe("Form mutations", () => {
 
       const contentTypeId = formId;
 
+      phoneField = await formFieldFactory({
+        contentTypeId,
+        type: "phoneFieldId"
+      });
+
       emailField = await formFieldFactory({
         contentTypeId,
         type: "emailFieldId"
       });
+
       firstNameField = await formFieldFactory({
         contentTypeId,
         type: "firstNameFieldId"
       });
+
       lastNameField = await formFieldFactory({
         contentTypeId,
         type: "lastNameFieldId"
       });
+
       arbitraryField = await formFieldFactory({ contentTypeId, type: "input" });
     });
 
     test("saveValues", async () => {
       const submissions = [
         { _id: arbitraryField._id, value: "Value", type: "input" },
+        { _id: phoneField._id, value: "88183943", type: "phone" },
         { _id: emailField._id, value: "email@gmail.com", type: "email" },
         { _id: firstNameField._id, value: "first name", type: "firstName" },
         { _id: lastNameField._id, value: "last name", type: "lastName" }
@@ -211,6 +247,7 @@ describe("Form mutations", () => {
         throw new Error("customer not found");
       }
 
+      expect(customer.primaryPhone).toBe("88183943");
       expect(customer.primaryEmail).toBe("email@gmail.com");
       expect(customer.emails).toContain("email@gmail.com");
       expect(customer.firstName).toBe("first name");

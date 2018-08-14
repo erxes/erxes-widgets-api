@@ -61,6 +61,18 @@ export const validate = async (formId: string, submissions: ISubmission[]) => {
         });
       }
 
+      // phone
+      if (
+        (type === "phone" || validation === "phone") &&
+        !/^\d{8,}$/.test(value.replace(/[\s()+\-\.]|ext/gi, ""))
+      ) {
+        errors.push({
+          fieldId: field._id,
+          code: "invalidPhone",
+          text: "Invalid phone"
+        });
+      }
+
       // number
       if (validation === "number" && !validator.isNumeric(value.toString())) {
         errors.push({
@@ -101,12 +113,17 @@ export const saveValues = async (args: {
   const content = form.title;
 
   let email;
+  let phone;
   let firstName = "";
   let lastName = "";
 
   submissions.forEach(submission => {
     if (submission.type === "email") {
       email = submission.value;
+    }
+
+    if (submission.type === "phone") {
+      phone = submission.value;
     }
 
     if (submission.type === "firstName") {
@@ -121,7 +138,7 @@ export const saveValues = async (args: {
   // get or create customer
   const customer = await Customers.getOrCreateCustomer(
     { email },
-    { integrationId, email, firstName, lastName }
+    { integrationId, email, firstName, lastName, phone }
   );
 
   await Customers.updateLocation(customer._id, browserInfo);
