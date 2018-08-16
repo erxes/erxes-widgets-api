@@ -13,6 +13,7 @@ import {
 } from "./KnowledgeBase";
 import Messages from "./Messages";
 import Users from "./Users";
+import Deals from "./Deals";
 
 import { IBrandDocument } from "./definitions/brands";
 import { IConversationDocument } from "./definitions/conversations";
@@ -37,6 +38,7 @@ import {
 export {
   Companies,
   Brands,
+  Deals,
   IBrandDocument,
   Conversations,
   IConversationDocument,
