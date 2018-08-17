@@ -188,11 +188,7 @@ export const types = `
     order: Int
     createdAt: Date
   }
-
-  input DealInput {
-
-  }
-
+  
   input DealProductInput {
     uom: String
     currency: String
