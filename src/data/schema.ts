@@ -256,12 +256,9 @@ export const mutations = `
     createDeal(
       name: String!,
       stageId: String!,
-      assignedUserIds: [String],
       companyIds: [String],
       customerIds: [String],
-      closeDate: Date,
       description: String,
-      order: Int,
       productsData: JSON
     ): Deal
   }

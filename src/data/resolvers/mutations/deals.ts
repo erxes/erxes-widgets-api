@@ -15,6 +15,6 @@ export default {
       productsData?: any;
     }
   ) {
-    return Deals.create(args);
+    return Deals.createDeal(args);
   }
 };
