@@ -18,23 +18,23 @@ interface IPipeline extends IcommonFields {
   boardId: string;
 }
 
-interface IStage extends IcommonFields {
+export interface IStage extends IcommonFields {
   name: string;
   probability: string;
   pipeLineId: string;
 }
 
-interface IProduct extends IcommonFields {
-  productId: string;
-  uom: string;
-  currency: string;
-  quantity: number;
-  unitPrice: number;
-  taxPercent: number;
-  tax: number;
-  discountPercent: number;
-  discount: number;
-  amount: number;
+export interface IProduct extends Document {
+  productId?: string;
+  uom?: string;
+  currency?: string;
+  quantity?: number;
+  unitPrice?: number;
+  taxPercent?: number;
+  tax?: number;
+  discountPercent?: number;
+  discount?: number;
+  amount?: number;
 }
 
 export interface IDeal extends IcommonFields {
@@ -42,7 +42,7 @@ export interface IDeal extends IcommonFields {
   productsData: IProduct[];
   companyIds: string[];
   customerIds: string[];
-  closeData: Date;
+  closeDate: Date;
   description: string;
   assignedUserIds: string[];
   stageId: string;
@@ -61,6 +61,7 @@ const commonFieldsSchema = {
 };
 
 const boardSchema = new Schema({
+  _id: field({ pkey: true }),
   name: field({ type: String }),
   isDefault: field({
     type: Boolean,
@@ -70,12 +71,14 @@ const boardSchema = new Schema({
 });
 
 const pipelineSchema = new Schema({
+  _id: field({ pkey: true }),
   name: field({ type: String }),
   boardId: field({ type: String }),
   ...commonFieldsSchema
 });
 
-const stageSchema = new Schema({
+export const stageSchema = new Schema({
+  _id: field({ pkey: true }),
   name: field({ type: String }),
   probability: field({
     type: String,
@@ -103,6 +106,7 @@ const productSchema = new Schema(
 );
 
 export const dealSchema = new Schema({
+  _id: field({ pkey: true }),
   name: field({ type: String }),
   productsData: field({ type: [productSchema] }),
   companyIds: field({ type: [String] }),

@@ -13,14 +13,13 @@ import {
 } from "./KnowledgeBase";
 import Messages from "./Messages";
 import Users from "./Users";
-import Deals from "./Deals";
+import { Deals, DealStages } from "./Deals";
 
 import { IBrandDocument } from "./definitions/brands";
 import { IConversationDocument } from "./definitions/conversations";
 import { ICustomerDocument } from "./definitions/customers";
 import { IIntegrationDocument } from "./definitions/integrations";
 import { IUserDocument } from "./definitions/users";
-import { IDeal } from "./definitions/deals";
 
 import {
   IEngageData as IMessageEngageData,
@@ -40,7 +39,7 @@ export {
   Companies,
   Brands,
   Deals,
-  IDeal,
+  DealStages,
   IBrandDocument,
   Conversations,
   IConversationDocument,

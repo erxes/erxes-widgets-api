@@ -1,24 +1,34 @@
 import { Model, model } from "mongoose";
-import { IDeal, dealSchema } from "./definitions/deals";
+import { IDeal, dealSchema, stageSchema, IStage } from "./definitions/deals";
 
-interface IDealDoc {
+interface IDealInput {
   name: string;
   stageId: string;
-  assignedUsers?: string[];
+  assignedUserIds?: string[];
   companyIds?: string[];
-  cutsomerIds?: string[];
+  customerIds?: string[];
   closeDate?: Date;
-  description?: String;
+  description?: string;
   order?: number;
-  productsData?: JSON;
+  productsData?: any;
 }
 
+interface IStageModel extends Model<IStage> {}
+
 interface IDealModel extends Model<IDeal> {
-  createDeal(doc: IDealDoc): IDeal;
+  createDeal(doc: IDealInput): IDeal;
 }
 
 class Deal {
-  public static async createDeal(doc: IDealDoc) {
+  public static async createDeal(doc: IDealInput) {
+    const { stageId } = doc;
+
+    const stage = await DealStages.findOne({ _id: stageId });
+
+    if (!stage) {
+      throw new Error("Stage not found");
+    }
+
     return Deals.create(doc);
   }
 }
@@ -27,4 +37,6 @@ dealSchema.loadClass(Deal);
 
 const Deals = model<IDeal, IDealModel>("deals", dealSchema);
 
-export default Deals;
+const DealStages = model<IStage, IStageModel>("deal_stages", stageSchema);
+
+export { Deals, DealStages };
