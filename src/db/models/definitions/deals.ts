@@ -8,23 +8,23 @@ interface IcommonFields extends Document {
   order: number;
 }
 
-export interface IBoard extends IcommonFields {
+interface IBoard extends IcommonFields {
   name: string;
   isDefault: boolean;
 }
 
-export interface IPipeline extends IcommonFields {
+interface IPipeline extends IcommonFields {
   name: string;
   boardId: string;
 }
 
-export interface IStage extends IcommonFields {
+interface IStage extends IcommonFields {
   name: string;
   probability: string;
   pipeLineId: string;
 }
 
-interface IProduct extends Document {
+interface IProduct extends IcommonFields {
   productId: string;
   uom: string;
   currency: string;
@@ -51,19 +51,16 @@ export interface IDeal extends IcommonFields {
 }
 
 // Mongoose schemas =======================
-const commonFieldsSchema = new Schema(
-  {
-    userId: field({ type: String }),
-    createdAt: field({
-      type: Date,
-      default: new Date()
-    }),
-    order: field({ type: Number })
-  },
-  { _id: false }
-);
+const commonFieldsSchema = {
+  userId: field({ type: String }),
+  createdAt: field({
+    type: Date,
+    default: new Date()
+  }),
+  order: field({ type: Number })
+};
 
-export const boardSchema = new Schema({
+const boardSchema = new Schema({
   name: field({ type: String }),
   isDefault: field({
     type: Boolean,
@@ -72,13 +69,13 @@ export const boardSchema = new Schema({
   ...commonFieldsSchema
 });
 
-export const pipelineSchema = new Schema({
+const pipelineSchema = new Schema({
   name: field({ type: String }),
   boardId: field({ type: String }),
   ...commonFieldsSchema
 });
 
-export const stageSchema = new Schema({
+const stageSchema = new Schema({
   name: field({ type: String }),
   probability: field({
     type: String,
@@ -90,17 +87,17 @@ export const stageSchema = new Schema({
 
 const productSchema = new Schema(
   {
-    _id: String,
-    productId: String,
-    uom: String, // Units of measurement
-    currency: String,
-    quantity: Number,
-    unitPrice: Number,
-    taxPercent: Number,
-    tax: Number,
-    discountPercent: Number,
-    discount: Number,
-    amount: Number
+    _id: field({ type: String }),
+    productId: field({ type: String }),
+    uom: field({ type: String }), // Units of measurement
+    currency: field({ type: String }),
+    quantity: field({ type: Number }),
+    unitPrice: field({ type: Number }),
+    taxPercent: field({ type: Number }),
+    tax: field({ type: Number }),
+    discountPercent: field({ type: Number }),
+    discount: field({ type: Number }),
+    amount: field({ type: Number })
   },
   { _id: false }
 );

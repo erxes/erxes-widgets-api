@@ -1,17 +1,7 @@
 import { Model, model } from "mongoose";
-import {
-  boardSchema,
-  IBoard,
-  pipelineSchema,
-  stageSchema,
-  IPipeline,
-  IStage,
-  IDeal,
-  dealSchema
-} from "./definitions/deals";
+import { IDeal, dealSchema } from "./definitions/deals";
 
 interface IDealDoc {
-  _id?: string;
   name: string;
   stageId: string;
   assignedUsers?: string[];
@@ -23,16 +13,8 @@ interface IDealDoc {
   productsData?: JSON;
 }
 
-interface IOrderDoc {
-  _id: string;
-  order: number;
-}
-
 interface IDealModel extends Model<IDeal> {
   createDeal(doc: IDealDoc): IDeal;
-  updateDeal(doc: IDealDoc): IDeal;
-  updateOrder(doc: IOrderDoc): IDeal[];
-  removeDeal(doc: IDealDoc): string;
 }
 
 class Deal {

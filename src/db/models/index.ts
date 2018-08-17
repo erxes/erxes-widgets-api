@@ -20,6 +20,7 @@ import { IConversationDocument } from "./definitions/conversations";
 import { ICustomerDocument } from "./definitions/customers";
 import { IIntegrationDocument } from "./definitions/integrations";
 import { IUserDocument } from "./definitions/users";
+import { IDeal } from "./definitions/deals";
 
 import {
   IEngageData as IMessageEngageData,
@@ -39,6 +40,7 @@ export {
   Companies,
   Brands,
   Deals,
+  IDeal,
   IBrandDocument,
   Conversations,
   IConversationDocument,
