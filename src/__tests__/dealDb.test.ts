@@ -9,9 +9,10 @@ afterAll(() => disconnect());
  * Deals related tests
  */
 describe("Deals", () => {
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test deals
-    return Deals.remove({});
+    await Deals.remove({});
+    await DealStages.remove({});
   });
 
   test("Create Deal:", async () => {

@@ -9,13 +9,13 @@ export default {
     args: {
       name: string;
       stageId: string;
-      assignedUsers?: string;
+      assignedUserIds?: string[];
       companyIds?: string[];
       customerIds?: string[];
       closeDate?: Date;
       description?: string;
       order?: number;
-      productsData?: JSON;
+      productsData?: any;
     }
   ) {
     return Deals.create(args);
