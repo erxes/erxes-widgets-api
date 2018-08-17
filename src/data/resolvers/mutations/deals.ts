@@ -9,12 +9,9 @@ export default {
     args: {
       name: string;
       stageId: string;
-      assignedUserIds?: string[];
       companyIds?: string[];
       customerIds?: string[];
-      closeDate?: Date;
       description?: string;
-      order?: number;
       productsData?: any;
     }
   ) {

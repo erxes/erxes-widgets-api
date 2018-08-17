@@ -1,15 +1,12 @@
 import { Model, model } from "mongoose";
-import { IDeal, dealSchema, stageSchema, IStage } from "./definitions/deals";
+import { dealSchema, IDeal, IStage, stageSchema } from "./definitions/deals";
 
 interface IDealInput {
   name: string;
   stageId: string;
-  assignedUserIds?: string[];
   companyIds?: string[];
   customerIds?: string[];
-  closeDate?: Date;
   description?: string;
-  order?: number;
   productsData?: any;
 }
 

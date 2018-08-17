@@ -2,6 +2,7 @@ import Brands from "./Brands";
 import Companies from "./Companies";
 import Conversations from "./Conversations";
 import Customers from "./Customers";
+import { Deals, DealStages } from "./Deals";
 import { EngageMessages } from "./Engages";
 import Fields from "./Fields";
 import Forms from "./Forms";
@@ -13,7 +14,6 @@ import {
 } from "./KnowledgeBase";
 import Messages from "./Messages";
 import Users from "./Users";
-import { Deals, DealStages } from "./Deals";
 
 import { IBrandDocument } from "./definitions/brands";
 import { IConversationDocument } from "./definitions/conversations";

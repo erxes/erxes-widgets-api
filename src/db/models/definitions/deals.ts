@@ -1,24 +1,24 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { ROLES, PROBABILITY } from "./constants";
+import { PROBABILITY, ROLES } from "./constants";
 
-interface IcommonFields extends Document {
+interface ICommonFields extends Document {
   userId: string;
   createdAt: Date;
   order: number;
 }
 
-interface IBoard extends IcommonFields {
+interface IBoard extends ICommonFields {
   name: string;
   isDefault: boolean;
 }
 
-interface IPipeline extends IcommonFields {
+interface IPipeline extends ICommonFields {
   name: string;
   boardId: string;
 }
 
-export interface IStage extends IcommonFields {
+export interface IStage extends ICommonFields {
   name: string;
   probability: string;
   pipeLineId: string;
@@ -37,7 +37,7 @@ export interface IProduct extends Document {
   amount?: number;
 }
 
-export interface IDeal extends IcommonFields {
+export interface IDeal extends ICommonFields {
   name: string;
   productsData: IProduct[];
   companyIds: string[];

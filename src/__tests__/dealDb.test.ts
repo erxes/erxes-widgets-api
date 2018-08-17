@@ -21,11 +21,8 @@ describe("Deals", () => {
     const doc = {
       name: "testDeal",
       stageId: stage._id,
-      assignedUserIds: ["1231", "123312"],
       customerIds: ["123312", "21321"],
       description: "description",
-      closeDate: new Date(),
-      order: 1,
       productsData: { productId: "123" }
     };
 
@@ -34,17 +31,11 @@ describe("Deals", () => {
     expect(response.name).toBe(doc.name);
     expect(response.stageId).toBe(stage._id);
 
-    expect(response.assignedUserIds).toEqual(
-      expect.arrayContaining(["1231", "123312"])
-    );
-
     expect(response.customerIds).toEqual(
       expect.arrayContaining(["123312", "21321"])
     );
 
-    expect(response.closeDate).toBeDefined();
     expect(response.description).toBe("description");
-    expect(response.order).toBe(1);
 
     expect(response.productsData).toEqual(
       expect.arrayContaining([
