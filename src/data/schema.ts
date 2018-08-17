@@ -188,6 +188,22 @@ export const types = `
     order: Int
     createdAt: Date
   }
+
+  input DealInput {
+
+  }
+
+  input DealProductInput {
+    uom: String
+    currency: String
+    quantity: Int
+    unitPrice: Int
+    taxPercent: Int
+    tax: Int
+    discountPercent: Int
+    discount: Int
+    amount: Int
+  }
 `;
 
 export const queries = `
@@ -259,7 +275,7 @@ export const mutations = `
       companyIds: [String],
       customerIds: [String],
       description: String,
-      productsData: JSON
+      productsData: DealProductInput
     ): Deal
   }
 `;
