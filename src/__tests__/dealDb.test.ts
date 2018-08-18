@@ -20,7 +20,7 @@ describe("Deals", () => {
 
     const doc = {
       name: "testDeal",
-      stageId: stage._id,
+      stageName: "stageName",
       customerIds: ["123312", "21321"],
       description: "description",
       productsData: { productId: "123" }

@@ -188,8 +188,18 @@ export const types = `
     order: Int
     createdAt: Date
   }
-  
+
+  input DealInput {
+    name: String
+    stageName: String
+    companyIds: [String]
+    customerIds: [String]
+    description: String
+    productsData: DealProductInput
+  }
+
   input DealProductInput {
+    productId: String
     uom: String
     currency: String
     quantity: Int
@@ -265,13 +275,6 @@ export const mutations = `
 
     formIncreaseViewCount(formId: String!): String
 
-    createDeal(
-      name: String!,
-      stageId: String!,
-      companyIds: [String],
-      customerIds: [String],
-      description: String,
-      productsData: DealProductInput
-    ): Deal
+    sendEvent(doc: DealInput, type: String): JSON
   }
 `;

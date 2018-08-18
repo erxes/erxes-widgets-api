@@ -2,6 +2,7 @@ import { Model, model } from "mongoose";
 import { dealSchema, IDeal, IStage, stageSchema } from "./definitions/deals";
 
 interface IProductDataInput {
+  productId?: string;
   uom?: string;
   currency?: string;
   quantity?: number;
@@ -13,9 +14,9 @@ interface IProductDataInput {
   amount?: number;
 }
 
-interface IDealInput {
+export interface IDealInput {
   name: string;
-  stageId: string;
+  stageName: string;
   companyIds?: string[];
   customerIds?: string[];
   description?: string;
@@ -30,15 +31,17 @@ interface IDealModel extends Model<IDeal> {
 
 class Deal {
   public static async createDeal(doc: IDealInput) {
-    const { stageId } = doc;
+    const { stageName } = doc;
 
-    const stage = await DealStages.findOne({ _id: stageId });
+    const stage = await DealStages.findOne({ name: stageName });
 
     if (!stage) {
       throw new Error("Stage not found");
     }
 
-    return Deals.create(doc);
+    delete doc.stageName;
+
+    return Deals.create({ ...doc, stageId: stage._id });
   }
 }
 

@@ -1,4 +1,4 @@
-import dealMutations from "../data/resolvers/mutations/deals";
+import sendEventMutations from "../data/resolvers/mutations/sendEvent";
 import { connect, disconnect } from "../db/connection";
 import { Deals, DealStages } from "../db/models";
 
@@ -18,13 +18,15 @@ describe("Deal Mutations: ", () => {
 
     const doc = {
       name: "testDeal",
-      stageId: stage._id,
+      stageName: "stageName",
       customerIds: ["123312", "21321"],
       description: "description",
       productsData: { productId: "123" }
     };
 
-    const response = await dealMutations.createDeal({}, { ...doc });
+    const type = "createDeal";
+
+    const response = await sendEventMutations.sendEvent({}, { type, doc });
 
     expect(response.name).toBe(doc.name);
     expect(response.stageId).toBe(stage._id);
