@@ -1,8 +1,9 @@
 import { Deals } from "../../../db/models";
+import { IDealInput } from "../../../db/models/Deals";
 
 interface ISendEvent {
   type: string;
-  doc: any;
+  doc: IDealInput;
 }
 
 export default {
