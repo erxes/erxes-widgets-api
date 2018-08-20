@@ -1,7 +1,13 @@
 import sendEventMutations from "../data/resolvers/mutations/sendEvent";
 import { connect, disconnect } from "../db/connection";
 import { userFactory } from "../db/factories";
-import { DealProducts, Deals, DealStages } from "../db/models";
+import {
+  DealBoards,
+  DealPipelines,
+  DealProducts,
+  Deals,
+  DealStages
+} from "../db/models";
 
 beforeAll(() => connect());
 
@@ -15,16 +21,28 @@ describe("Deal Mutations: ", () => {
   });
 
   test("Creates new Deal", async () => {
-    const stage = await DealStages.create({ name: "stageName" });
+    const board = await DealBoards.create({ name: "board" });
     const product = await DealProducts.create({ name: "123" });
     const user = await userFactory({});
 
+    const pipeline = await DealPipelines.create({
+      name: "pipeline",
+      boardId: board._id
+    });
+
+    const stage = await DealStages.create({
+      name: "stage",
+      pipelineId: pipeline._id
+    });
+
     const doc = {
       name: "testDeal",
-      stageName: "stageName",
+      stageName: "stage",
       userEmail: user.email,
       customerIds: ["123312", "21321"],
       description: "description",
+      boardName: "board",
+      pipelineName: "pipeline",
       productsData: { productName: "123", uom: "1231" }
     };
 

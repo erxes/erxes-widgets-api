@@ -8,12 +8,12 @@ interface ICommonFields extends Document {
   order: number;
 }
 
-interface IBoard extends ICommonFields {
+export interface IBoard extends ICommonFields {
   name: string;
   isDefault: boolean;
 }
 
-interface IPipeline extends ICommonFields {
+export interface IPipeline extends ICommonFields {
   name: string;
   boardId: string;
 }
@@ -68,7 +68,7 @@ const commonFieldsSchema = {
   order: field({ type: Number })
 };
 
-const boardSchema = new Schema({
+export const boardSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String }),
   isDefault: field({
@@ -78,7 +78,7 @@ const boardSchema = new Schema({
   ...commonFieldsSchema
 });
 
-const pipelineSchema = new Schema({
+export const pipelineSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String }),
   boardId: field({ type: String }),

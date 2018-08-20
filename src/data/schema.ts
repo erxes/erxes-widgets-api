@@ -192,6 +192,8 @@ export const types = `
   input DealInput {
     name: String
     stageName: String
+    boardName: String
+    pipelineName: String
     userEmail: String
     companyIds: [String]
     customerIds: [String]
