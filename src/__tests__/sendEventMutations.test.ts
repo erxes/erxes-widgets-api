@@ -1,6 +1,7 @@
 import sendEventMutations from "../data/resolvers/mutations/sendEvent";
 import { connect, disconnect } from "../db/connection";
 import {
+  configFactory,
   dealBoardFactory,
   dealPipelineFactory,
   dealProductFactory,
@@ -44,6 +45,9 @@ describe("Deal Mutations: ", () => {
       pipelineId: pipeline._id
     });
 
+    await configFactory({ code: "dealUOM", value: ["PCS"] });
+    await configFactory({ code: "dealCurrency", value: ["MNT"] });
+
     const dealDoc = {
       name: "testDeal",
       stageName: "stage",
@@ -54,7 +58,7 @@ describe("Deal Mutations: ", () => {
       pipelineName: "pipeline",
       productsData: {
         productName: "123",
-        uom: "1231",
+        uom: "PCS",
         currency: "MNT",
         quantity: 1,
         unitPrice: 123213

@@ -4,6 +4,7 @@ import * as Random from "meteor-random";
 import {
   Brands,
   Companies,
+  Configs,
   Conversations,
   Customers,
   DealBoards,
@@ -295,5 +296,17 @@ export function dealPipelineFactory(params: IDealPipelineInput) {
   return DealPipelines.create({
     name: params.name || faker.random.word(),
     boardId: params.boardId || Random.id()
+  });
+}
+
+interface IConfigInput {
+  code?: string;
+  value: string[];
+}
+
+export function configFactory(params: IConfigInput) {
+  return Configs.create({
+    code: params.code || faker.random.word(),
+    value: params.value || [faker.random.word()]
   });
 }

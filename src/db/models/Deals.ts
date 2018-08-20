@@ -1,5 +1,5 @@
 import { Model, model } from "mongoose";
-import { Users } from "./";
+import { Configs, Users } from "./";
 import {
   boardSchema,
   dealSchema,
@@ -53,7 +53,7 @@ interface IDealModel extends Model<IDeal> {
 class Deal {
   public static async createDeal(doc: IDealInput) {
     const { stageName, userEmail, productsData, boardName, pipelineName } = doc;
-    const { productName } = productsData;
+    const { productName, uom, currency } = productsData;
 
     const user = await Users.findOne({ email: userEmail });
 
@@ -89,6 +89,18 @@ class Deal {
 
     if (!product) {
       throw new Error("Product not found");
+    }
+
+    const uomConfig = await Configs.findOne({ code: "dealUOM" });
+
+    if (!uomConfig.value.includes(uom)) {
+      throw new Error("Bad uom config");
+    }
+
+    const currencyConfig = await Configs.findOne({ code: "dealCurrency" });
+
+    if (!currencyConfig.value.includes(currency)) {
+      throw new Error("Bad currency config");
     }
 
     delete doc.stageName;

@@ -1,5 +1,6 @@
 import Brands from "./Brands";
 import Companies from "./Companies";
+import Configs from "./Configs";
 import Conversations from "./Conversations";
 import Customers from "./Customers";
 import {
@@ -49,6 +50,7 @@ export {
   DealProducts,
   DealBoards,
   DealPipelines,
+  Configs,
   IBrandDocument,
   Conversations,
   IConversationDocument,

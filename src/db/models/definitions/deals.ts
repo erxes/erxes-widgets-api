@@ -34,10 +34,10 @@ export interface IProduct extends Document {
 
 interface IProductData extends Document {
   productId: string;
-  uom?: string;
-  currency?: string;
-  quantity?: number;
-  unitPrice?: number;
+  uom: string;
+  currency: string;
+  quantity: number;
+  unitPrice: number;
   taxPercent?: number;
   tax?: number;
   discountPercent?: number;

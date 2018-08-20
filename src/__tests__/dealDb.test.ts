@@ -1,5 +1,6 @@
 import { connect, disconnect } from "../db/connection";
 import {
+  configFactory,
   dealBoardFactory,
   dealFactory,
   dealPipelineFactory,
@@ -47,6 +48,9 @@ describe("Deals", () => {
       pipelineId: pipeline._id
     });
 
+    await configFactory({ code: "dealUOM", value: ["PCS"] });
+    await configFactory({ code: "dealCurrency", value: ["MNT"] });
+
     const doc = {
       name: "testDeal",
       stageName: "stage",
@@ -57,7 +61,7 @@ describe("Deals", () => {
       description: "description",
       productsData: {
         productName: "123",
-        uom: "1231",
+        uom: "PCS",
         currency: "MNT",
         quantity: 1,
         unitPrice: 123213
@@ -108,6 +112,24 @@ describe("Deals", () => {
     }
 
     doc.productsData.productName = "123";
+
+    try {
+      doc.productsData.uom = "qqqq";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Bad uom config");
+    }
+
+    doc.productsData.uom = "PCS";
+
+    try {
+      doc.productsData.currency = "qqqq";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Bad currency config");
+    }
+
+    doc.productsData.currency = "MNT";
 
     const response = await Deals.createDeal(doc);
 
