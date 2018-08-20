@@ -55,7 +55,13 @@ describe("Deals", () => {
       userEmail: user.email,
       customerIds: ["123312", "21321"],
       description: "description",
-      productsData: { productName: "123" }
+      productsData: {
+        productName: "123",
+        uom: "1231",
+        currency: "MNT",
+        quantity: 1,
+        unitPrice: 123213
+      }
     };
 
     try {
