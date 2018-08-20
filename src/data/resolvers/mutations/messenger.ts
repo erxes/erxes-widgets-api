@@ -22,7 +22,7 @@ export default {
    * when connection established
    */
   async messengerConnect(
-    root: any,
+    _root: any,
     args: {
       brandCode: string;
       email?: string;
@@ -107,7 +107,7 @@ export default {
    * Create a new message
    */
   async insertMessage(
-    root: any,
+    _root: any,
     args: {
       integrationId: string;
       customerId: string;
@@ -171,7 +171,7 @@ export default {
   /*
    * Mark given conversation's messages as read
    */
-  async readConversationMessages(root: any, args: { conversationId: string }) {
+  async readConversationMessages(_root: any, args: { conversationId: string }) {
     const response = await Messages.update(
       {
         conversationId: args.conversationId,
@@ -185,7 +185,7 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(root: any, args: IVisitorContactInfoParams) {
+  saveCustomerGetNotified(_root: any, args: IVisitorContactInfoParams) {
     return Customers.saveVisitorContactInfo(args);
   },
 
@@ -193,7 +193,7 @@ export default {
    * Update customer location field
    */
   async saveBrowserInfo(
-    root: any,
+    _root: any,
     {
       customerId,
       browserInfo
