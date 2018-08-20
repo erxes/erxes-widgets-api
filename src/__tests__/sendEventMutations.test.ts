@@ -44,7 +44,7 @@ describe("Deal Mutations: ", () => {
       pipelineId: pipeline._id
     });
 
-    const doc = {
+    const dealDoc = {
       name: "testDeal",
       stageName: "stage",
       userEmail: user.email,
@@ -52,14 +52,20 @@ describe("Deal Mutations: ", () => {
       description: "description",
       boardName: "board",
       pipelineName: "pipeline",
-      productsData: { productName: "123", uom: "1231" }
+      productsData: {
+        productName: "123",
+        uom: "1231",
+        currency: "MNT",
+        quantity: 1,
+        unitPrice: 123213
+      }
     };
 
     const type = "createDeal";
 
-    const response = await sendEventMutations.sendEvent({}, { type, doc });
+    const response = await sendEventMutations.sendEvent({}, { type, dealDoc });
 
-    expect(response.name).toBe(doc.name);
+    expect(response.name).toBe(dealDoc.name);
     expect(response.stageId).toBe(stage._id);
 
     expect(response.customerIds).toEqual(

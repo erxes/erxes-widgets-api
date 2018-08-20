@@ -15,10 +15,10 @@ import {
 
 interface IProductDataInput {
   productName: string;
-  uom?: string;
-  currency?: string;
-  quantity?: number;
-  unitPrice?: number;
+  uom: string;
+  currency: string;
+  quantity: number;
+  unitPrice: number;
   taxPercent?: number;
   tax?: number;
   discountPercent?: number;
@@ -35,7 +35,7 @@ export interface IDealInput {
   companyIds?: string[];
   customerIds?: string[];
   description?: string;
-  productsData?: IProductDataInput;
+  productsData: IProductDataInput;
 }
 
 interface IStageModel extends Model<IStage> {}

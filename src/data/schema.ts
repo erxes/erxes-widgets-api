@@ -190,23 +190,23 @@ export const types = `
   }
 
   input DealInput {
-    name: String
-    stageName: String
-    boardName: String
+    name: String!
+    stageName: String!
+    boardName: String!
     pipelineName: String
-    userEmail: String
+    userEmail: String!
     companyIds: [String]
     customerIds: [String]
     description: String
-    productsData: DealProductInput
+    productsData: DealProductInput!
   }
 
   input DealProductInput {
-    productName: String
-    uom: String
-    currency: String
-    quantity: Int
-    unitPrice: Int
+    productName: String!
+    uom: String!
+    currency: String!
+    quantity: Int!
+    unitPrice: Int!
     taxPercent: Int
     tax: Int
     discountPercent: Int
@@ -278,6 +278,6 @@ export const mutations = `
 
     formIncreaseViewCount(formId: String!): String
 
-    sendEvent(type: String, doc: DealInput): JSON
+    sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;
