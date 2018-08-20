@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv";
 import mongoose = require("mongoose");
-import { Promise } from "q";
 
 dotenv.config();
 

@@ -6,10 +6,10 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "lib": ["es2015", "es6", "es7"],
-    "sourceMap": true
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
-  "include": [
-    "./src/**/*"
-  ],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

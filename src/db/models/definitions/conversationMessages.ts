@@ -16,13 +16,6 @@ interface IFacebook extends Document {
   senderName?: string;
 }
 
-interface IAttachment extends Document {
-  url: string;
-  name: string;
-  size: number;
-  type: string;
-}
-
 export interface IEngageData {
   messageId: string;
   brandId: string;

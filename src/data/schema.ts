@@ -170,6 +170,49 @@ export const types = `
   type KnowledgeBaseLoader {
     loadType: String
   }
+
+  type Deal {
+    _id: String!
+    name: String!
+    stageId: String!
+    boardId: String
+    companyIds: [String]
+    customerIds: [String]
+    assignedUserIds: [String]
+    amount: JSON
+    closeDate: Date
+    description: String
+    productsData: JSON
+    modifiedAt: Date
+    modifiedBy: String
+    order: Int
+    createdAt: Date
+  }
+
+  input DealInput {
+    name: String!
+    stageName: String!
+    boardName: String!
+    pipelineName: String
+    userEmail: String!
+    companyIds: [String]
+    customerIds: [String]
+    description: String
+    productsData: DealProductInput!
+  }
+
+  input DealProductInput {
+    productName: String!
+    uom: String!
+    currency: String!
+    quantity: Int!
+    unitPrice: Int!
+    taxPercent: Int
+    tax: Int
+    discountPercent: Int
+    discount: Int
+    amount: Int
+  }
 `;
 
 export const queries = `
@@ -234,5 +277,7 @@ export const mutations = `
     ): String
 
     formIncreaseViewCount(formId: String!): String
+
+    sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;

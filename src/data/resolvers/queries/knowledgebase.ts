@@ -9,7 +9,7 @@ export default {
    * Find Topic detail data along with its categories
    * @return {Promise} topic detail
    */
-  knowledgeBaseTopicsDetail(root: any, { topicId }: { topicId: string }) {
+  knowledgeBaseTopicsDetail(_root: any, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId });
   },
 
@@ -18,7 +18,7 @@ export default {
    * @return {Promise} category detail
    */
   knowledgeBaseCategoriesDetail(
-    root: any,
+    _root: any,
     { categoryId }: { categoryId: string }
   ) {
     return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
@@ -30,7 +30,7 @@ export default {
    * @return {Promise} searched articles
    */
   async knowledgeBaseArticles(
-    root: any,
+    _root: any,
     args: { topicId: string; searchString: string }
   ) {
     const { topicId, searchString } = args;
@@ -62,7 +62,7 @@ export default {
    * return a KnowledgeBaseLoader object with only `loadType` field in it
    * @return {Promise} KnowledgeBaseLoader
    */
-  knowledgeBaseLoader(root: any, { topicId }: { topicId: string }) {
+  knowledgeBaseLoader(_root: any, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId }, { loadType: 1 });
   }
 };

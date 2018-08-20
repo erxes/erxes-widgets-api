@@ -52,12 +52,12 @@ const messengerSupporters = async (integrationId: string) => {
 };
 
 export default {
-  getMessengerIntegration(root: any, args: { brandCode: string }) {
+  getMessengerIntegration(_root: any, args: { brandCode: string }) {
     return Integrations.getIntegration(args.brandCode, "messenger");
   },
 
   conversations(
-    root: any,
+    _root: any,
     args: { integrationId: string; customerId: string }
   ) {
     const { integrationId, customerId } = args;
@@ -69,7 +69,7 @@ export default {
   },
 
   async conversationDetail(
-    root: any,
+    _root: any,
     args: { _id: string; integrationId: string }
   ) {
     const { _id, integrationId } = args;
@@ -81,7 +81,7 @@ export default {
     };
   },
 
-  messages(root: any, args: { conversationId: string }) {
+  messages(_root: any, args: { conversationId: string }) {
     const { conversationId } = args;
 
     return Messages.find({
@@ -90,7 +90,7 @@ export default {
     }).sort({ createdAt: 1 });
   },
 
-  unreadCount(root: any, args: { conversationId: string }) {
+  unreadCount(_root: any, args: { conversationId: string }) {
     const { conversationId } = args;
 
     return Messages.count({
@@ -100,7 +100,7 @@ export default {
   },
 
   async totalUnreadCount(
-    root: any,
+    _root: any,
     args: { integrationId: string; customerId: string }
   ) {
     const { integrationId, customerId } = args;
