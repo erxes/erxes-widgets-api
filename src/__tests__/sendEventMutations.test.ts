@@ -1,6 +1,7 @@
 import sendEventMutations from "../data/resolvers/mutations/sendEvent";
 import { connect, disconnect } from "../db/connection";
 import { Deals, DealStages } from "../db/models";
+import { userFactory } from "../db/factories";
 
 beforeAll(() => connect());
 
@@ -15,10 +16,12 @@ describe("Deal Mutations: ", () => {
 
   test("Creates new Deal", async () => {
     const stage = await DealStages.create({ name: "stageName" });
+    const user = await userFactory({});
 
     const doc = {
       name: "testDeal",
       stageName: "stageName",
+      userEmail: user.email,
       customerIds: ["123312", "21321"],
       description: "description",
       productsData: { productId: "123" }
