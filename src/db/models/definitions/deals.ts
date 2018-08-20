@@ -1,6 +1,6 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { PROBABILITY, PRODUCT_TYPES, ROLES } from "./constants";
+import { PROBABILITY, PRODUCT_TYPES } from "./constants";
 
 interface ICommonFields extends Document {
   userId: string;

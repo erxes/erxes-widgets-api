@@ -2,7 +2,6 @@ import { connect, disconnect } from "../db/connection";
 import {
   configFactory,
   dealBoardFactory,
-  dealFactory,
   dealPipelineFactory,
   dealProductFactory,
   dealStageFactory,

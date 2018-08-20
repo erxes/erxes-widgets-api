@@ -39,8 +39,6 @@ export interface IUserDocument extends Document {
   links: ILink[];
 }
 
-const SALT_WORK_FACTOR = 10;
-
 // Mongoose schemas ===============================
 const emailSignatureSchema = new Schema(
   {

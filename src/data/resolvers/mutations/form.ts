@@ -202,7 +202,7 @@ export default {
       browserInfo: any;
     }
   ) {
-    const { formId, submissions, browserInfo } = args;
+    const { formId, submissions } = args;
 
     const errors = await validate(formId, submissions);
 
