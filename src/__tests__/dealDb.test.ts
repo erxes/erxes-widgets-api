@@ -1,5 +1,12 @@
 import { connect, disconnect } from "../db/connection";
-import { userFactory } from "../db/factories";
+import {
+  dealBoardFactory,
+  dealFactory,
+  dealPipelineFactory,
+  dealProductFactory,
+  dealStageFactory,
+  userFactory
+} from "../db/factories";
 import {
   DealBoards,
   DealPipelines,
@@ -18,21 +25,24 @@ afterAll(() => disconnect());
 describe("Deals", () => {
   afterEach(async () => {
     // Clearing test deals
+    await DealBoards.remove({});
+    await DealPipelines.remove({});
+    await DealProducts.remove({});
     await Deals.remove({});
     await DealStages.remove({});
   });
 
   test("Create Deal:", async () => {
-    const board = await DealBoards.create({ name: "board" });
-    const product = await DealProducts.create({ name: "123" });
+    const board = await dealBoardFactory({ name: "board" });
+    const product = await dealProductFactory({ name: "123" });
     const user = await userFactory({});
 
-    const pipeline = await DealPipelines.create({
+    const pipeline = await dealPipelineFactory({
       name: "pipeline",
       boardId: board._id
     });
 
-    const stage = await DealStages.create({
+    const stage = await dealStageFactory({
       name: "stage",
       pipelineId: pipeline._id
     });
@@ -47,6 +57,51 @@ describe("Deals", () => {
       description: "description",
       productsData: { productName: "123" }
     };
+
+    try {
+      doc.boardName = "dsdewqe";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Board not found");
+    }
+
+    doc.boardName = "board";
+
+    try {
+      doc.pipelineName = "qwerty";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Pipeline not found");
+    }
+
+    doc.pipelineName = "pipeline";
+
+    try {
+      doc.stageName = "qqqq";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Stage not found");
+    }
+
+    doc.stageName = "stage";
+
+    try {
+      doc.userEmail = "qqqq";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("User not found");
+    }
+
+    doc.userEmail = user.email;
+
+    try {
+      doc.productsData.productName = "qqqq";
+      await Deals.createDeal(doc);
+    } catch (e) {
+      expect(e.message).toBe("Product not found");
+    }
+
+    doc.productsData.productName = "123";
 
     const response = await Deals.createDeal(doc);
 

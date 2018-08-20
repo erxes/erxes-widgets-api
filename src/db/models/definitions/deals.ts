@@ -21,7 +21,7 @@ export interface IPipeline extends ICommonFields {
 export interface IStage extends ICommonFields {
   name: string;
   probability: string;
-  pipeLineId: string;
+  pipelineId: string;
 }
 
 export interface IProduct extends Document {

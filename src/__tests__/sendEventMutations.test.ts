@@ -1,6 +1,12 @@
 import sendEventMutations from "../data/resolvers/mutations/sendEvent";
 import { connect, disconnect } from "../db/connection";
-import { userFactory } from "../db/factories";
+import {
+  dealBoardFactory,
+  dealPipelineFactory,
+  dealProductFactory,
+  dealStageFactory,
+  userFactory
+} from "../db/factories";
 import {
   DealBoards,
   DealPipelines,
@@ -16,21 +22,24 @@ afterAll(() => disconnect());
 describe("Deal Mutations: ", () => {
   afterEach(async () => {
     // Clearing test data
+    await DealBoards.remove({});
+    await DealPipelines.remove({});
+    await DealProducts.remove({});
     await Deals.remove({});
     await DealStages.remove({});
   });
 
   test("Creates new Deal", async () => {
-    const board = await DealBoards.create({ name: "board" });
-    const product = await DealProducts.create({ name: "123" });
+    const board = await dealBoardFactory({ name: "board" });
+    const product = await dealProductFactory({ name: "123" });
     const user = await userFactory({});
 
-    const pipeline = await DealPipelines.create({
+    const pipeline = await dealPipelineFactory({
       name: "pipeline",
       boardId: board._id
     });
 
-    const stage = await DealStages.create({
+    const stage = await dealStageFactory({
       name: "stage",
       pipelineId: pipeline._id
     });
