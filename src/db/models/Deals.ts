@@ -1,9 +1,16 @@
 import { Model, model } from "mongoose";
-import { dealSchema, IDeal, IStage, stageSchema } from "./definitions/deals";
 import { Users } from "./";
+import {
+  dealSchema,
+  IDeal,
+  IProduct,
+  IStage,
+  productSchema,
+  stageSchema
+} from "./definitions/deals";
 
 interface IProductDataInput {
-  productId?: string;
+  productName: string;
   uom?: string;
   currency?: string;
   quantity?: number;
@@ -27,13 +34,16 @@ export interface IDealInput {
 
 interface IStageModel extends Model<IStage> {}
 
+interface IProductModel extends Model<IProduct> {}
+
 interface IDealModel extends Model<IDeal> {
   createDeal(doc: IDealInput): IDeal;
 }
 
 class Deal {
   public static async createDeal(doc: IDealInput) {
-    const { stageName, userEmail } = doc;
+    const { stageName, userEmail, productsData } = doc;
+    const { productName } = productsData;
 
     const user = await Users.findOne({ email: userEmail });
 
@@ -47,9 +57,25 @@ class Deal {
       throw new Error("Stage not found");
     }
 
-    delete doc.stageName;
+    const product = await DealProducts.findOne({ name: productName });
 
-    return Deals.create({ ...doc, stageId: stage._id, userId: user._id });
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    delete doc.stageName;
+    delete doc.userEmail;
+    delete productsData.productName;
+
+    return Deals.create({
+      ...doc,
+      stageId: stage._id,
+      userId: user._id,
+      productsData: {
+        ...productsData,
+        productId: product._id
+      }
+    });
   }
 }
 
@@ -59,4 +85,6 @@ const Deals = model<IDeal, IDealModel>("deals", dealSchema);
 
 const DealStages = model<IStage, IStageModel>("deal_stages", stageSchema);
 
-export { Deals, DealStages };
+const DealProducts = model<IProduct, IProductModel>("products", productSchema);
+
+export { Deals, DealStages, DealProducts };

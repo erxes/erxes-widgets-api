@@ -1,6 +1,6 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { PROBABILITY, ROLES } from "./constants";
+import { PROBABILITY, PRODUCT_TYPES, ROLES } from "./constants";
 
 interface ICommonFields extends Document {
   userId: string;
@@ -25,7 +25,15 @@ export interface IStage extends ICommonFields {
 }
 
 export interface IProduct extends Document {
-  productId?: string;
+  name: string;
+  type?: string;
+  description?: string;
+  sku?: string;
+  createdAt: Date;
+}
+
+interface IProductData extends Document {
+  productId: string;
   uom?: string;
   currency?: string;
   quantity?: number;
@@ -39,7 +47,7 @@ export interface IProduct extends Document {
 
 export interface IDeal extends ICommonFields {
   name: string;
-  productsData: IProduct[];
+  productsData: IProductData[];
   companyIds: string[];
   customerIds: string[];
   closeDate: Date;
@@ -88,7 +96,23 @@ export const stageSchema = new Schema({
   ...commonFieldsSchema
 });
 
-const productSchema = new Schema(
+export const productSchema = new Schema({
+  _id: field({ pkey: true }),
+  name: field({ type: String }),
+  type: field({
+    type: String,
+    enum: PRODUCT_TYPES.ALL,
+    default: PRODUCT_TYPES.PRODUCT
+  }),
+  description: field({ type: String, optional: true }),
+  sku: field({ type: String, optional: true }), // Stock Keeping Unit
+  createdAt: field({
+    type: Date,
+    default: new Date()
+  })
+});
+
+const productDataSchema = new Schema(
   {
     _id: field({ type: String }),
     productId: field({ type: String }),
@@ -108,7 +132,7 @@ const productSchema = new Schema(
 export const dealSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String }),
-  productsData: field({ type: [productSchema] }),
+  productsData: field({ type: [productDataSchema] }),
   companyIds: field({ type: [String] }),
   customerIds: field({ type: [String] }),
   closeDate: field({ type: Date }),

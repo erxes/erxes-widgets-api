@@ -1,6 +1,6 @@
 import { connect, disconnect } from "../db/connection";
-import { Deals, DealStages } from "../db/models";
 import { userFactory } from "../db/factories";
+import { DealProducts, Deals, DealStages } from "../db/models";
 
 beforeAll(() => connect());
 
@@ -18,6 +18,7 @@ describe("Deals", () => {
 
   test("Create Deal:", async () => {
     const stage = await DealStages.create({ name: "stageName" });
+    const product = await DealProducts.create({ name: "123" });
     const user = await userFactory({});
 
     const doc = {
@@ -26,7 +27,7 @@ describe("Deals", () => {
       userEmail: user.email,
       customerIds: ["123312", "21321"],
       description: "description",
-      productsData: { productId: "123" }
+      productsData: { productName: "123" }
     };
 
     const response = await Deals.createDeal(doc);
@@ -40,13 +41,8 @@ describe("Deals", () => {
 
     expect(response.description).toBe("description");
 
-    expect(response.productsData).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          // 3
-          productId: "123" // 4
-        })
-      ])
-    );
+    const responseProduct = response.productsData[0];
+
+    expect(responseProduct.productId).toBe(product._id);
   });
 });

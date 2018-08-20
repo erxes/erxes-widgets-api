@@ -200,7 +200,7 @@ export const types = `
   }
 
   input DealProductInput {
-    productId: String
+    productName: String
     uom: String
     currency: String
     quantity: Int
@@ -276,6 +276,6 @@ export const mutations = `
 
     formIncreaseViewCount(formId: String!): String
 
-    sendEvent(doc: DealInput, type: String): JSON
+    sendEvent(type: String, doc: DealInput): JSON
   }
 `;
