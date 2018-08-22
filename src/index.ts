@@ -21,6 +21,11 @@ app.use(cors());
 
 app.use("/graphql", graphqlExpress(() => ({ schema })));
 
+// for health check
+app.get("/status", async (_, res) => {
+  res.end("ok");
+});
+
 if (process.env.NODE_ENV === "development") {
   app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
 }
