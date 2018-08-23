@@ -7,25 +7,25 @@ import {
   COC_CONTENT_TYPES
 } from "./constants";
 
-interface IActionPerformer extends Document {
+export interface IActionPerformer {
   type: string;
   id: string;
 }
 
-interface IActivity extends Document {
+export interface IActivity {
   type: string;
   action: string;
   content: string;
   id: string;
 }
 
-interface ICoc extends Document {
+export interface ICoc {
   id: string;
   type: string;
 }
 
-export interface IActivityLog extends Document {
-  id: string;
+export interface IActivityLogDocument extends Document {
+  _id: string;
   activity: IActivity;
   performedBy?: IActionPerformer;
   coc: ICoc;

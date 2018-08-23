@@ -25,6 +25,7 @@ interface ILink extends Document {
 }
 
 export interface IUserDocument extends Document {
+  _id: string;
   username: string;
   password: string;
   resetPasswordToken: string;
