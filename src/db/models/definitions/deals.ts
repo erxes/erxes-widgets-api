@@ -8,23 +8,27 @@ interface ICommonFields extends Document {
   order: number;
 }
 
-export interface IBoard extends ICommonFields {
+export interface IBoardDocument extends ICommonFields {
+  _id: string;
   name: string;
   isDefault: boolean;
 }
 
-export interface IPipeline extends ICommonFields {
+export interface IPipelineDocument extends ICommonFields {
+  _id: string;
   name: string;
   boardId: string;
 }
 
-export interface IStage extends ICommonFields {
+export interface IStageDocument extends ICommonFields {
+  _id: string;
   name: string;
   probability: string;
   pipelineId: string;
 }
 
-export interface IProduct extends Document {
+export interface IProductDocument extends Document {
+  _id: string;
   name: string;
   type?: string;
   description?: string;
@@ -45,7 +49,8 @@ interface IProductData extends Document {
   amount?: number;
 }
 
-export interface IDeal extends ICommonFields {
+export interface IDealDocument extends ICommonFields {
+  _id: string;
   name: string;
   productsData: IProductData[];
   companyIds: string[];

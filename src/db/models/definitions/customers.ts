@@ -83,6 +83,8 @@ export interface ICustomerDocument extends Document {
   location?: ILocation;
   visitorContactInfo?: IVisitorContact;
   urlVisits: any;
+
+  getFullName?: () => string;
 }
 
 /* location schema */

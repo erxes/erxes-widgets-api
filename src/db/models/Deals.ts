@@ -3,11 +3,11 @@ import { Configs, Users } from "./";
 import {
   boardSchema,
   dealSchema,
-  IBoard,
-  IDeal,
-  IPipeline,
-  IProduct,
-  IStage,
+  IBoardDocument,
+  IDealDocument,
+  IPipelineDocument,
+  IProductDocument,
+  IStageDocument,
   pipelineSchema,
   productSchema,
   stageSchema
@@ -38,16 +38,16 @@ export interface IDealInput {
   productsData: IProductDataInput;
 }
 
-interface IStageModel extends Model<IStage> {}
+interface IStageModel extends Model<IStageDocument> {}
 
-interface IProductModel extends Model<IProduct> {}
+interface IProductModel extends Model<IPipelineDocument> {}
 
-interface IBoardModel extends Model<IBoard> {}
+interface IBoardModel extends Model<IBoardDocument> {}
 
-interface IPipelineModel extends Model<IPipeline> {}
+interface IPipelineModel extends Model<IPipelineDocument> {}
 
-interface IDealModel extends Model<IDeal> {
-  createDeal(doc: IDealInput): IDeal;
+interface IDealModel extends Model<IDealDocument> {
+  createDeal(doc: IDealInput): IDealDocument;
 }
 
 class Deal {
@@ -121,17 +121,26 @@ class Deal {
 
 dealSchema.loadClass(Deal);
 
-const Deals = model<IDeal, IDealModel>("deals", dealSchema);
+const Deals = model<IDealDocument, IDealModel>("deals", dealSchema);
 
-const DealStages = model<IStage, IStageModel>("deal_stages", stageSchema);
+const DealStages = model<IStageDocument, IStageModel>(
+  "deal_stages",
+  stageSchema
+);
 
-const DealBoards = model<IBoard, IBoardModel>("deal_boards", boardSchema);
+const DealBoards = model<IBoardDocument, IBoardModel>(
+  "deal_boards",
+  boardSchema
+);
 
-const DealPipelines = model<IPipeline, IPipelineModel>(
+const DealPipelines = model<IPipelineDocument, IPipelineModel>(
   "deal_pipelines",
   pipelineSchema
 );
 
-const DealProducts = model<IProduct, IProductModel>("products", productSchema);
+const DealProducts = model<IProductDocument, IProductModel>(
+  "products",
+  productSchema
+);
 
 export { Deals, DealStages, DealProducts, DealBoards, DealPipelines };
