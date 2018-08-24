@@ -29,7 +29,7 @@ interface IMessengerData extends Document {
   customData?: any;
 }
 
-interface ITwitterData extends Document {
+export interface ITwitterData extends Document {
   id: number;
   id_str: string;
   name: string;
@@ -37,7 +37,7 @@ interface ITwitterData extends Document {
   profile_image_url: string;
 }
 
-interface IFacebookData extends Document {
+export interface IFacebookData extends Document {
   id: string;
   profilePic?: string;
 }
@@ -73,7 +73,7 @@ export interface ICustomerDocument extends Document {
   doNotDisturb?: string;
   links?: ILink;
   isUser?: boolean;
-  integrationId: string;
+  integrationId?: string;
   tagIds?: string[];
   companyIds?: string[];
   customFieldsData?: any;
@@ -83,8 +83,6 @@ export interface ICustomerDocument extends Document {
   location?: ILocation;
   visitorContactInfo?: IVisitorContact;
   urlVisits: any;
-
-  getFullName?: () => string;
 }
 
 /* location schema */
