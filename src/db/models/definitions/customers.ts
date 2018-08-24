@@ -7,7 +7,7 @@ import {
 
 import { field } from "../utils";
 
-interface ILocation extends Document {
+export interface ILocation {
   remoteAddress: string;
   country: string;
   city: string;
@@ -17,19 +17,25 @@ interface ILocation extends Document {
   userAgent: string;
 }
 
-interface IVisitorContact extends Document {
+interface ILocationDocument extends ILocation, Document {}
+
+export interface IVisitorContact {
   email: string;
   phone: string;
 }
 
-interface IMessengerData extends Document {
+interface IVisitorContactDocument extends IVisitorContact, Document {}
+
+export interface IMessengerData {
   lastSeenAt: number;
   sessionCount: number;
   isActive: boolean;
   customData?: any;
 }
 
-export interface ITwitterData extends Document {
+interface IMessengerDataDocument extends IMessengerData, Document {}
+
+export interface ITwitterData {
   id: number;
   id_str: string;
   name: string;
@@ -37,12 +43,20 @@ export interface ITwitterData extends Document {
   profile_image_url: string;
 }
 
-export interface IFacebookData extends Document {
+interface ITwitterDataDocument extends ITwitterData, Document {
+  id: number;
+}
+
+export interface IFacebookData {
   id: string;
   profilePic?: string;
 }
 
-interface ILink extends Document {
+interface IFacebookDataDocument extends IFacebookData, Document {
+  id: string;
+}
+
+export interface ILink extends Document {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -77,11 +91,11 @@ export interface ICustomerDocument extends Document {
   tagIds?: string[];
   companyIds?: string[];
   customFieldsData?: any;
-  messengerData?: IMessengerData;
-  twitterData?: ITwitterData;
-  facebookData?: IFacebookData;
-  location?: ILocation;
-  visitorContactInfo?: IVisitorContact;
+  messengerData?: IMessengerDataDocument;
+  twitterData?: ITwitterDataDocument;
+  facebookData?: IFacebookDataDocument;
+  location?: ILocationDocument;
+  visitorContactInfo?: IVisitorContactDocument;
   urlVisits: any;
 }
 

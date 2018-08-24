@@ -9,7 +9,7 @@ import {
 
 import { field } from "../utils";
 
-interface ILink extends Document {
+export interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -17,6 +17,8 @@ interface ILink extends Document {
   youtube?: string;
   website?: string;
 }
+
+interface ILinkDocument extends ILink, Document {}
 
 export interface ICompanyDocument extends Document {
   _id: string;
@@ -38,7 +40,7 @@ export interface ICompanyDocument extends Document {
   description?: string;
   employees?: number;
   doNotDisturb?: string;
-  links?: ILink;
+  links?: ILinkDocument;
   tagIds?: string[];
   customFieldsData?: any;
 }

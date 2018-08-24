@@ -12,10 +12,18 @@ export interface IActionPerformer {
   id: string;
 }
 
+interface IActionPerformerDocument extends IActionPerformer, Document {
+  id: string;
+}
+
 export interface IActivity {
   type: string;
   action: string;
   content: string;
+  id: string;
+}
+
+interface IActivityDocument extends IActivity, Document {
   id: string;
 }
 
@@ -24,11 +32,15 @@ export interface ICoc {
   type: string;
 }
 
+interface ICocDocument extends ICoc, Document {
+  id: string;
+}
+
 export interface IActivityLogDocument extends Document {
   _id: string;
-  activity: IActivity;
-  performedBy?: IActionPerformer;
-  coc: ICoc;
+  activity: IActivityDocument;
+  performedBy?: IActionPerformerDocument;
+  coc: ICocDocument;
   createdAt: Date;
 }
 
