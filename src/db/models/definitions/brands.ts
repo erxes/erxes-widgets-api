@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-interface IBrandEmailConfig extends Document {
+export interface IBrandEmailConfig extends Document {
   type: string;
   template: string;
 }
