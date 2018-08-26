@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IConfig extends Document {
+export interface IConfigDocument extends Document {
   _id: string;
   code: string;
   value: string[];

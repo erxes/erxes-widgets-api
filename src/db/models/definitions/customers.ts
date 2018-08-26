@@ -20,27 +20,27 @@ export interface ILocation {
 interface ILocationDocument extends ILocation, Document {}
 
 export interface IVisitorContact {
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
 }
 
 interface IVisitorContactDocument extends IVisitorContact, Document {}
 
 export interface IMessengerData {
-  lastSeenAt: number;
-  sessionCount: number;
-  isActive: boolean;
+  lastSeenAt?: number;
+  sessionCount?: number;
+  isActive?: boolean;
   customData?: any;
 }
 
 interface IMessengerDataDocument extends IMessengerData, Document {}
 
 export interface ITwitterData {
-  id: number;
-  id_str: string;
-  name: string;
-  screen_name: string;
-  profile_image_url: string;
+  id?: number;
+  id_str?: string;
+  name?: string;
+  screen_name?: string;
+  profile_image_url?: string;
 }
 
 interface ITwitterDataDocument extends ITwitterData, Document {

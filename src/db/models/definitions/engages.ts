@@ -2,7 +2,7 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { MESSENGER_KINDS, METHODS, SENT_AS_CHOICES } from "./constants";
 
-interface IEmail extends Document {
+export interface IEmail extends Document {
   templateId?: string;
   subject: string;
   content: string;
@@ -16,7 +16,7 @@ interface IRule extends Document {
   value: string;
 }
 
-interface IMessenger extends Document {
+export interface IMessenger extends Document {
   brandId: string;
   kind: string;
   sentAs: string;
@@ -24,7 +24,7 @@ interface IMessenger extends Document {
   rules: IRule[];
 }
 
-interface IStats {
+export interface IStats {
   open: number;
   click: number;
   complaint: number;

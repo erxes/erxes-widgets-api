@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-interface ICallout extends Document {
+export interface ICallout extends Document {
   title?: string;
   body?: string;
   buttonText?: string;
