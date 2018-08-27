@@ -17,14 +17,14 @@ export interface ILocation {
   userAgent: string;
 }
 
-interface ILocationDocument extends ILocation, Document {}
+export interface ILocationDocument extends ILocation, Document {}
 
 export interface IVisitorContact {
   email?: string;
   phone?: string;
 }
 
-interface IVisitorContactDocument extends IVisitorContact, Document {}
+export interface IVisitorContactDocument extends IVisitorContact, Document {}
 
 export interface IMessengerData {
   lastSeenAt?: number;
@@ -33,7 +33,7 @@ export interface IMessengerData {
   customData?: any;
 }
 
-interface IMessengerDataDocument extends IMessengerData, Document {}
+export interface IMessengerDataDocument extends IMessengerData, Document {}
 
 export interface ITwitterData {
   id?: number;
@@ -43,7 +43,7 @@ export interface ITwitterData {
   profile_image_url?: string;
 }
 
-interface ITwitterDataDocument extends ITwitterData, Document {
+export interface ITwitterDataDocument extends ITwitterData, Document {
   id: number;
 }
 
@@ -52,7 +52,7 @@ export interface IFacebookData {
   profilePic?: string;
 }
 
-interface IFacebookDataDocument extends IFacebookData, Document {
+export interface IFacebookDataDocument extends IFacebookData, Document {
   id: string;
 }
 
@@ -88,11 +88,11 @@ export interface ICustomer {
   tagIds?: string[];
   companyIds?: string[];
   customFieldsData?: any;
-  messengerData?: IMessengerDataDocument;
-  twitterData?: ITwitterDataDocument;
-  facebookData?: IFacebookDataDocument;
-  location?: ILocationDocument;
-  visitorContactInfo?: IVisitorContactDocument;
+  messengerData?: IMessengerData;
+  twitterData?: ITwitterData;
+  facebookData?: IFacebookData;
+  location?: ILocation;
+  visitorContactInfo?: IVisitorContact;
   urlVisits?: any;
 }
 

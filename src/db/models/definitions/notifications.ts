@@ -2,12 +2,16 @@ import { Document, Schema } from "mongoose";
 import { NOTIFICATION_TYPES } from "../../../data/constants";
 import { field } from "../utils";
 
-export interface INotificationDocument extends Document {
+export interface INotification {
+  notifType?: string;
+  title?: string;
+  content?: string;
+  link?: string;
+  receiver?: string;
+}
+
+export interface INotificationDocument extends INotification, Document {
   _id: string;
-  notifType: string;
-  title: string;
-  link: string;
-  content: string;
   createdUser: string;
   receiver: string;
   date: Date;

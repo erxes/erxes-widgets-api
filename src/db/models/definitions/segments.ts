@@ -2,13 +2,15 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { COC_CONTENT_TYPES } from "./constants";
 
-export interface ICondition extends Document {
+export interface ICondition {
   field: string;
   operator: string;
   type: string;
   value?: string;
   dateUnit?: string;
 }
+
+export interface IConditionDocument extends ICondition, Document {}
 
 export interface ISegment {
   contentType: string;

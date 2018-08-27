@@ -2,11 +2,13 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { MESSENGER_KINDS, METHODS, SENT_AS_CHOICES } from "./constants";
 
-export interface IEmail extends Document {
+interface IEmail {
   templateId?: string;
   subject: string;
   content: string;
 }
+
+export interface IEmailDocument extends IEmail, Document {}
 
 interface IRule extends Document {
   _id: string;
@@ -36,7 +38,7 @@ export interface IStats {
 }
 
 export interface IEngageMessage {
-  kind: string;
+  kind?: string;
   segmentId?: string;
   customerIds?: string[];
   title?: string;
@@ -49,8 +51,8 @@ export interface IEngageMessage {
   messengerReceivedCustomerIds?: string[];
   email?: IEmail;
   messenger?: IMessenger;
-  deliveryReports: any;
-  stats: IStats;
+  deliveryReports?: any;
+  stats?: IStats;
 }
 
 export interface IEngageMessageDocument extends IEngageMessage, Document {
