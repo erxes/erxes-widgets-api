@@ -2,13 +2,16 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { TAG_TYPES } from "./constants";
 
-export interface ITagDocument extends Document {
+export interface ITag {
+  name?: string;
+  type?: string;
+  colorCode?: string;
+  objectCount?: number;
+}
+
+export interface ITagDocument extends ITag, Document {
   _id: string;
-  name: string;
-  type: string;
-  colorCode: string;
   createdAt: Date;
-  objectCount: number;
 }
 
 export const tagSchema = new Schema({

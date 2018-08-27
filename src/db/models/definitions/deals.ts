@@ -27,12 +27,15 @@ export interface IStageDocument extends ICommonFields {
   pipelineId: string;
 }
 
-export interface IProductDocument extends Document {
-  _id: string;
+export interface IProduct {
   name: string;
   type?: string;
   description?: string;
   sku?: string;
+}
+
+export interface IProductDocument extends IProduct, Document {
+  _id: string;
   createdAt: Date;
 }
 

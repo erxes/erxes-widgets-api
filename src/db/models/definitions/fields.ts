@@ -2,8 +2,7 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
 
-export interface IFieldDocument extends Document {
-  _id: string;
+export interface IField {
   contentType: string;
   contentTypeId: string;
   type: string;
@@ -11,12 +10,16 @@ export interface IFieldDocument extends Document {
   text: string;
   description?: string;
   options?: string[];
-  isRequired: boolean;
-  isDefinedByErxes: boolean;
-  order: number;
-  groupId: string;
-  isVisible: boolean;
-  lastUpdatedUserId: string;
+  isRequired?: boolean;
+  isDefinedByErxes?: boolean;
+  order?: number;
+  groupId?: string;
+  isVisible?: boolean;
+  lastUpdatedUserId?: string;
+}
+
+export interface IFieldDocument extends IField, Document {
+  _id: string;
 }
 
 export interface IFieldGroupDocument extends Document {

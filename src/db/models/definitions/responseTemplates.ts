@@ -1,12 +1,15 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IResponseTemplateDocument extends Document {
+export interface IResponseTemplate {
+  name?: string;
+  content?: string;
+  brandId?: string;
+  files?: string[];
+}
+
+export interface IResponseTemplateDocument extends IResponseTemplate, Document {
   _id: string;
-  name: string;
-  content: string;
-  brandId: string;
-  files: string[];
 }
 
 export const responseTemplateSchema = new Schema({

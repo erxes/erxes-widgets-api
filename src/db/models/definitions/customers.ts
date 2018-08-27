@@ -65,10 +65,7 @@ export interface ILink extends Document {
   website?: string;
 }
 
-export interface ICustomerDocument extends Document {
-  _id: string;
-  createdAt: Date;
-  modifiedAt: Date;
+export interface ICustomer {
   firstName?: string;
   lastName?: string;
   primaryEmail?: string;
@@ -96,7 +93,13 @@ export interface ICustomerDocument extends Document {
   facebookData?: IFacebookDataDocument;
   location?: ILocationDocument;
   visitorContactInfo?: IVisitorContactDocument;
-  urlVisits: any;
+  urlVisits?: any;
+}
+
+export interface ICustomerDocument extends ICustomer, Document {
+  _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
 /* location schema */

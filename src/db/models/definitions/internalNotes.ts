@@ -2,11 +2,14 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { COC_CONTENT_TYPES } from "./constants";
 
-export interface IInternalNoteDocument extends Document {
-  _id: string;
+export interface IInternalNote {
   contentType: string;
   contentTypeId: string;
   content: string;
+}
+
+export interface IInternalNoteDocument extends IInternalNote, Document {
+  _id: string;
   createdUserId: string;
   createdDate: Date;
 }

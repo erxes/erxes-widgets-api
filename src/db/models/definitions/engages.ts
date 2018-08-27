@@ -35,8 +35,25 @@ export interface IStats {
   renderingfailure: number;
 }
 
-export interface IEngageMessageDocument extends Document {
-  _id: string;
+export interface IEngageMessage {
+  kind: string;
+  segmentId?: string;
+  customerIds?: string[];
+  title?: string;
+  fromUserId?: string;
+  method?: string;
+  isDraft?: boolean;
+  isLive?: boolean;
+  stopDate?: Date;
+  tagIds?: string[];
+  messengerReceivedCustomerIds?: string[];
+  email?: IEmail;
+  messenger?: IMessenger;
+  deliveryReports: any;
+  stats: IStats;
+}
+
+export interface IEngageMessageDocument extends IEngageMessage, Document {
   kind: string;
   segmentId?: string;
   customerIds: string[];
@@ -46,7 +63,6 @@ export interface IEngageMessageDocument extends Document {
   isDraft: boolean;
   isLive: boolean;
   stopDate: Date;
-  createdDate: Date;
   tagIds: string[];
   messengerReceivedCustomerIds: string[];
   email: IEmail;

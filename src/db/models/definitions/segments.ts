@@ -2,7 +2,7 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { COC_CONTENT_TYPES } from "./constants";
 
-interface ICondition extends Document {
+export interface ICondition extends Document {
   field: string;
   operator: string;
   type: string;
@@ -10,8 +10,7 @@ interface ICondition extends Document {
   dateUnit?: string;
 }
 
-export interface ISegmentDocument extends Document {
-  _id: string;
+export interface ISegment {
   contentType: string;
   name: string;
   description?: string;
@@ -19,6 +18,10 @@ export interface ISegmentDocument extends Document {
   color: string;
   connector: string;
   conditions: ICondition[];
+}
+
+export interface ISegmentDocument extends ISegment, Document {
+  _id: string;
 }
 
 // Mongoose schemas =======================

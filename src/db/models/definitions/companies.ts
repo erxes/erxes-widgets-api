@@ -20,11 +20,8 @@ export interface ILink {
 
 interface ILinkDocument extends ILink, Document {}
 
-export interface ICompanyDocument extends Document {
-  _id: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  primaryName: string;
+export interface ICompany {
+  primaryName?: string;
   names?: string[];
   size?: number;
   industry?: string;
@@ -43,6 +40,12 @@ export interface ICompanyDocument extends Document {
   links?: ILinkDocument;
   tagIds?: string[];
   customFieldsData?: any;
+}
+
+export interface ICompanyDocument extends ICompany, Document {
+  _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
 const linkSchema = new Schema(

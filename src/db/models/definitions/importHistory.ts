@@ -1,13 +1,16 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IImportHistoryDocument extends Document {
-  _id: string;
-  success: number;
-  failed: number;
-  total: number;
-  ids: string[];
+export interface IImportHistory {
+  success?: number;
+  failed?: number;
+  total?: number;
+  ids?: string[];
   contentType: string;
+}
+
+export interface IImportHistoryDocument extends IImportHistory, Document {
+  _id: string;
   userId: string;
   date: Date;
 }
