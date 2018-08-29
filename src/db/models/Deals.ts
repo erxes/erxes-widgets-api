@@ -1,5 +1,6 @@
 import { Model, model } from "mongoose";
 import { Configs, Users } from "./";
+import { Customers } from "./";
 import {
   boardSchema,
   dealSchema,
@@ -33,7 +34,7 @@ export interface IDealInput {
   stageName: string;
   userEmail: string;
   companyIds?: string[];
-  customerIds?: string[];
+  customerEmail?: string;
   description?: string;
   productsData: IProductDataInput;
 }
@@ -52,7 +53,15 @@ interface IDealModel extends Model<IDeal> {
 
 class Deal {
   public static async createDeal(doc: IDealInput) {
-    const { stageName, userEmail, productsData, boardName, pipelineName } = doc;
+    const {
+      stageName,
+      userEmail,
+      productsData,
+      boardName,
+      pipelineName,
+      customerEmail
+    } = doc;
+
     const { productName, uom, currency } = productsData;
 
     const user = await Users.findOne({ email: userEmail });
@@ -103,6 +112,19 @@ class Deal {
       throw new Error("Bad currency config");
     }
 
+    const customerIds = [];
+
+    if (customerEmail) {
+      const email = customerEmail;
+
+      const customerObj = await Customers.getOrCreateCustomer(
+        { email },
+        { email, integrationId: "" }
+      );
+
+      customerIds.push(customerObj._id);
+    }
+
     delete doc.stageName;
     delete doc.userEmail;
     delete productsData.productName;
@@ -111,6 +133,7 @@ class Deal {
       ...doc,
       stageId: stage._id,
       userId: user._id,
+      customerIds,
       productsData: {
         ...productsData,
         productId: product._id

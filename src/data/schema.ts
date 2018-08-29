@@ -196,7 +196,7 @@ export const types = `
     pipelineName: String
     userEmail: String!
     companyIds: [String]
-    customerIds: [String]
+    customerEmail: String
     description: String
     productsData: DealProductInput!
   }
