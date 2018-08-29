@@ -40,7 +40,7 @@ export interface IDealInput {
 
 interface IStageModel extends Model<IStageDocument> {}
 
-interface IProductModel extends Model<IPipelineDocument> {}
+interface IProductModel extends Model<IProductDocument> {}
 
 interface IBoardModel extends Model<IBoardDocument> {}
 

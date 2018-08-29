@@ -3,11 +3,11 @@ import { field } from "../utils";
 import { FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
 
 export interface IField {
-  contentType: string;
-  contentTypeId: string;
-  type: string;
+  contentType?: string;
+  contentTypeId?: string;
+  type?: string;
   validation?: string;
-  text: string;
+  text?: string;
   description?: string;
   options?: string[];
   isRequired?: boolean;

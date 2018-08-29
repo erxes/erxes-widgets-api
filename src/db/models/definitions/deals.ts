@@ -2,29 +2,38 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { PROBABILITY, PRODUCT_TYPES } from "./constants";
 
-interface ICommonFields extends Document {
-  userId: string;
-  createdAt: Date;
-  order: number;
+interface ICommonFields {
+  userId?: string;
+  createdAt?: Date;
+  order?: number;
 }
 
-export interface IBoardDocument extends ICommonFields {
-  _id: string;
-  name: string;
-  isDefault: boolean;
+export interface IBoard extends ICommonFields {
+  name?: string;
+  isDefault?: boolean;
 }
 
-export interface IPipelineDocument extends ICommonFields {
+export interface IBoardDocument extends IBoard, Document {
   _id: string;
-  name: string;
-  boardId: string;
 }
 
-export interface IStageDocument extends ICommonFields {
+export interface IPipeline extends ICommonFields {
+  name?: string;
+  boardId?: string;
+}
+
+export interface IPipelineDocument extends IPipeline, Document {
   _id: string;
-  name: string;
-  probability: string;
-  pipelineId: string;
+}
+
+export interface IStage extends ICommonFields {
+  name?: string;
+  probability?: string;
+  pipelineId?: string;
+}
+
+export interface IStageDocument extends IStage, Document {
+  _id: string;
 }
 
 export interface IProduct {
@@ -52,16 +61,19 @@ interface IProductData extends Document {
   amount?: number;
 }
 
-export interface IDealDocument extends ICommonFields {
+export interface IDeal {
+  name?: string;
+  productsData?: IProductData[];
+  companyIds?: string[];
+  customerIds?: string[];
+  closeDate?: Date;
+  description?: string;
+  assignedUserIds?: string[];
+  stageId?: string;
+}
+
+export interface IDealDocument extends IDeal, ICommonFields, Document {
   _id: string;
-  name: string;
-  productsData: IProductData[];
-  companyIds: string[];
-  customerIds: string[];
-  closeDate: Date;
-  description: string;
-  assignedUserIds: string[];
-  stageId: string;
   modifiedAt: Date;
   modifiedBy: Date;
 }

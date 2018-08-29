@@ -2,10 +2,12 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { ROLES } from "./constants";
 
-interface IEmailSignature extends Document {
-  brandId: string;
-  signature: string;
+export interface IEmailSignature {
+  brandId?: string;
+  signature?: string;
 }
+
+export interface IEmailSignatureDocument extends IEmailSignature, Document {}
 
 interface IDetail extends Document {
   avatar: string;
@@ -24,20 +26,24 @@ interface ILink extends Document {
   website?: string;
 }
 
-export interface IUserDocument extends Document {
+export interface IUser {
+  username?: string;
+  password?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  role?: string;
+  isOwner?: boolean;
+  email?: string;
+  getNotificationByEmail?: boolean;
+  emailSignatures?: IEmailSignature[];
+  starredConversationIds?: string[];
+  details?: IDetail;
+  links?: ILink[];
+  isActive?: boolean;
+}
+
+export interface IUserDocument extends IUser, Document {
   _id: string;
-  username: string;
-  password: string;
-  resetPasswordToken: string;
-  resetPasswordExpires: Date;
-  role: string;
-  isOwner: boolean;
-  email: string;
-  getNotificationByEmail: boolean;
-  emailSignatures: IEmailSignature[];
-  starredConversationIds: string[];
-  details: IDetail;
-  links: ILink[];
 }
 
 // Mongoose schemas ===============================
