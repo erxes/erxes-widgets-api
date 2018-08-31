@@ -79,6 +79,7 @@ export const types = `
     attachments: [JSON]
     internal: Boolean
     engageData: EngageData
+    messengerAppData: JSON
   }
 
   type Field {

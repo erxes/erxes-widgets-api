@@ -40,6 +40,7 @@ export interface IMessageDocument extends Document {
   engageData: IEngageData;
   facebookData: IFacebook;
   twitterData: ITwitterResponse;
+  messengerAppData: any;
 }
 
 const attachmentSchema = new Schema({
@@ -136,5 +137,6 @@ export const messageSchema = new Schema({
   formWidgetData: field({ type: Object }),
   engageData: field({ type: engageDataSchema }),
   facebookData: field({ type: facebookSchema }),
-  twitterData: field({ type: twitterResponseSchema })
+  twitterData: field({ type: twitterResponseSchema }),
+  messengerAppData: field({ type: Object })
 });
