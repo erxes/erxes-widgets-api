@@ -25,7 +25,6 @@ export interface ICompany {
   names?: string[];
   size?: number;
   industry?: string;
-  website?: string;
   plan?: string;
   parentCompanyId?: string;
   email?: string;

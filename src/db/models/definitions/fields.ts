@@ -22,15 +22,18 @@ export interface IFieldDocument extends IField, Document {
   _id: string;
 }
 
-export interface IFieldGroupDocument extends Document {
+export interface IFieldGroup {
+  name?: string;
+  contentType?: string;
+  order?: number;
+  isDefinedByErxes?: boolean;
+  description?: string;
+  lastUpdatedUserId?: string;
+  isVisible?: boolean;
+}
+
+export interface IFieldGroupDocument extends IFieldGroup, Document {
   _id: string;
-  name: string;
-  contentType: string;
-  order: number;
-  isDefinedByErxes: boolean;
-  description: string;
-  lastUpdatedUserId: string;
-  isVisible: boolean;
 }
 
 // Mongoose schemas =============

@@ -2,8 +2,16 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { MESSENGER_KINDS, METHODS, SENT_AS_CHOICES } from "./constants";
 
+export interface IScheduleDate {
+  type?: string;
+  month?: string;
+  day?: string;
+  time?: string;
+}
+
 interface IEmail {
   templateId?: string;
+  attachments?: any;
   subject: string;
   content: string;
 }
@@ -50,36 +58,34 @@ export interface IEngageMessage {
   tagIds?: string[];
   messengerReceivedCustomerIds?: string[];
   email?: IEmail;
+  scheduleDate: IScheduleDate;
   messenger?: IMessenger;
   deliveryReports?: any;
   stats?: IStats;
 }
 
 export interface IEngageMessageDocument extends IEngageMessage, Document {
-  kind: string;
-  segmentId?: string;
-  customerIds: string[];
-  title: string;
-  fromUserId: string;
-  method: string;
-  isDraft: boolean;
-  isLive: boolean;
-  stopDate: Date;
-  tagIds: string[];
-  messengerReceivedCustomerIds: string[];
-  email: IEmail;
-  messenger: IMessenger;
-  deliveryReports: any;
-  stats: IStats;
+  _id: string;
 }
 
 // Mongoose schemas =======================
+const scheduleDateSchema = new Schema(
+  {
+    type: field({ type: String, optional: true }),
+    month: field({ type: String, optional: true }),
+    day: field({ type: String, optional: true }),
+    time: field({ type: Date, optional: true })
+  },
+  { _id: false }
+);
+
 const emailSchema = new Schema(
   {
     templateId: field({
       type: String,
       optional: true
     }),
+    attachments: field({ type: Object }),
     subject: field({ type: String }),
     content: field({ type: String })
   },
@@ -157,6 +163,7 @@ export const engageMessageSchema = new Schema({
   messengerReceivedCustomerIds: field({ type: [String] }),
 
   email: field({ type: emailSchema }),
+  scheduleDate: field({ type: scheduleDateSchema }),
   messenger: field({ type: messengerSchema }),
   deliveryReports: field({ type: Object }),
   stats: field({ type: statsSchema, default: {} })

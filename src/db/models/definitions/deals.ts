@@ -70,12 +70,12 @@ export interface IDeal {
   description?: string;
   assignedUserIds?: string[];
   stageId?: string;
+  modifiedAt?: Date;
+  modifiedBy?: string;
 }
 
 export interface IDealDocument extends IDeal, ICommonFields, Document {
   _id: string;
-  modifiedAt: Date;
-  modifiedBy: Date;
 }
 
 // Mongoose schemas =======================

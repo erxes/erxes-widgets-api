@@ -1,19 +1,25 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IBrandEmailConfig extends Document {
-  type: string;
-  template: string;
+export interface IBrandEmailConfig {
+  type?: string;
+  template?: string;
 }
 
-export interface IBrandDocument extends Document {
+interface IBrandEmailConfigDocument extends IBrandEmailConfig, Document {}
+
+export interface IBrand {
+  code?: string;
+  name?: string;
+  description?: string;
+  userId?: string;
+  emailConfig?: IBrandEmailConfig;
+}
+
+export interface IBrandDocument extends IBrand, Document {
   _id: string;
-  code: string;
-  name: string;
-  description: string;
-  userId: string;
+  emailConfig?: IBrandEmailConfigDocument;
   createdAt: Date;
-  emailConfig: IBrandEmailConfig;
 }
 
 // Mongoose schemas ===========

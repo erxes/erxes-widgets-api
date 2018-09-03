@@ -70,7 +70,7 @@ export interface ICustomer {
   lastName?: string;
   primaryEmail?: string;
   emails?: string[];
-
+  avatar?: string;
   primaryPhone?: string;
   phones?: string[];
 
@@ -201,6 +201,7 @@ export const customerSchema = new Schema({
 
   createdAt: field({ type: Date, label: "Created at" }),
   modifiedAt: field({ type: Date, label: "Modified at" }),
+  avatar: field({ type: String, optional: true }),
 
   firstName: field({ type: String, label: "First name", optional: true }),
   lastName: field({ type: String, label: "Last name", optional: true }),

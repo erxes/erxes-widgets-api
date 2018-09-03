@@ -2,16 +2,34 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { ITwitterResponse, twitterResponseSchema } from "./conversations";
 
-interface IFacebook extends Document {
+export interface IFbUser {
+  id: string;
+  name: string;
+}
+
+export interface IReactions {
+  like?: IFbUser[];
+  love?: IFbUser[];
+  wow?: IFbUser[];
+  haha?: IFbUser[];
+  sad?: IFbUser[];
+  angry?: IFbUser[];
+}
+
+export interface IFacebook {
   postId?: string;
   commentId?: string;
   parentId?: string;
+  isPost?: boolean;
+  reactions?: IReactions;
+  likeCount?: number;
+  commentCount?: number;
   messageId?: string;
   item?: string;
-  photoId?: string;
-  videoId?: string;
+  photo?: string;
+  video?: string;
+  photos?: string[];
   link?: string;
-  reactionType?: string;
   senderId?: string;
   senderName?: string;
 }
@@ -25,21 +43,24 @@ export interface IEngageData {
   sentAs: string;
 }
 
-export interface IMessageDocument extends Document {
-  _id: string;
-  content: string;
-  attachments: any;
-  mentionedUserIds: string[];
+export interface IMessage {
+  content?: string;
+  attachments?: any;
+  mentionedUserIds?: string[];
   conversationId: string;
-  internal: boolean;
-  customerId: string;
-  userId: string;
+  internal?: boolean;
+  customerId?: string;
+  userId?: string;
+  isCustomerRead?: boolean;
+  formWidgetData?: any;
+  engageData?: IEngageData;
+  facebookData?: IFacebook;
+  twitterData?: ITwitterResponse;
+}
+
+export interface IMessageDocument extends IMessage, Document {
+  _id: string;
   createdAt: Date;
-  isCustomerRead: boolean;
-  formWidgetData: any;
-  engageData: IEngageData;
-  facebookData: IFacebook;
-  twitterData: ITwitterResponse;
 }
 
 const attachmentSchema = new Schema({
@@ -48,6 +69,27 @@ const attachmentSchema = new Schema({
   size: field({ type: Number }),
   type: field({ type: String })
 });
+
+const fbUserSchema = new Schema(
+  {
+    id: field({ type: String, optional: true }),
+    name: field({ type: String, optional: true })
+  },
+  { _id: false }
+);
+
+// Post or comment's reaction data
+const reactionSchema = new Schema(
+  {
+    like: field({ type: [fbUserSchema], default: [] }),
+    love: field({ type: [fbUserSchema], default: [] }),
+    wow: field({ type: [fbUserSchema], default: [] }),
+    haha: field({ type: [fbUserSchema], default: [] }),
+    sad: field({ type: [fbUserSchema], default: [] }),
+    angry: field({ type: [fbUserSchema], default: [] })
+  },
+  { _id: false }
+);
 
 const facebookSchema = new Schema(
   {
@@ -61,9 +103,26 @@ const facebookSchema = new Schema(
       optional: true
     }),
 
+    // parent comment id
     parentId: field({
       type: String,
       optional: true
+    }),
+
+    isPost: field({
+      type: Boolean,
+      optional: true
+    }),
+
+    reactions: field({ type: reactionSchema, default: {} }),
+
+    likeCount: field({
+      type: Number,
+      default: 0
+    }),
+    commentCount: field({
+      type: Number,
+      default: 0
     }),
 
     // messenger message id
@@ -78,24 +137,25 @@ const facebookSchema = new Schema(
       optional: true
     }),
 
-    // when share photo
-    photoId: field({
+    // photo link when included photo
+    photo: field({
       type: String,
       optional: true
     }),
 
-    // when share video
-    videoId: field({
+    // video link when included video
+    video: field({
       type: String,
+      optional: true
+    }),
+
+    // photo links when user posted multiple photos
+    photos: field({
+      type: [String],
       optional: true
     }),
 
     link: field({
-      type: String,
-      optional: true
-    }),
-
-    reactionType: field({
       type: String,
       optional: true
     }),

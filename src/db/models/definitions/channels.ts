@@ -1,15 +1,18 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IChannelDocument extends Document {
-  _id: string;
-  name: string;
+export interface IChannel {
+  name?: string;
   description?: string;
-  integrationIds: string[];
-  memberIds: string[];
-  userId: string;
-  conversationCount: number;
-  openConversationCount: number;
+  integrationIds?: string[];
+  memberIds?: string[];
+  userId?: string;
+  conversationCount?: number;
+  openConversationCount?: number;
+}
+
+export interface IChannelDocument extends IChannel, Document {
+  _id: string;
 }
 
 export const channelSchema = new Schema({
