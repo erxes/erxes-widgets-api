@@ -39,11 +39,14 @@ export const notificationSchema = new Schema({
   })
 });
 
-export interface IConfigDocument extends Document {
+export interface IConfig {
+  user?: string;
+  notifType?: string;
+  isAllowed?: boolean;
+}
+
+export interface IConfigDocument extends IConfig, Document {
   _id: string;
-  user: string;
-  notifType: string;
-  isAllowed: boolean;
 }
 
 export const configSchema = new Schema({
