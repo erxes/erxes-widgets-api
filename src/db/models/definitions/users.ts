@@ -17,6 +17,8 @@ interface IDetail {
   description: string;
 }
 
+interface IDetailDocument extends IDetail, Document {}
+
 interface ILink {
   linkedIn?: string;
   twitter?: string;
@@ -25,6 +27,8 @@ interface ILink {
   youtube?: string;
   website?: string;
 }
+
+interface ILinkDocument extends ILink, Document {}
 
 export interface IUser {
   username?: string;
@@ -38,12 +42,15 @@ export interface IUser {
   emailSignatures?: IEmailSignature[];
   starredConversationIds?: string[];
   details?: IDetail;
-  links?: ILink[];
+  links?: ILink;
   isActive?: boolean;
 }
 
 export interface IUserDocument extends IUser, Document {
   _id: string;
+  emailSignatures?: IEmailSignatureDocument[];
+  details?: IDetailDocument;
+  links?: ILinkDocument;
 }
 
 // Mongoose schemas ===============================
@@ -104,5 +111,6 @@ export const userSchema = new Schema({
   emailSignatures: field({ type: [emailSignatureSchema] }),
   starredConversationIds: field({ type: [String] }),
   details: field({ type: detailSchema }),
-  links: field({ type: linkSchema, default: {} })
+  links: field({ type: linkSchema, default: {} }),
+  isActive: field({ type: Boolean, default: true })
 });

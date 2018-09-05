@@ -87,6 +87,11 @@ export interface IIntegration {
 
 export interface IIntegrationDocument extends IIntegration, Document {
   _id: string;
+  formData?: IFormDataDocument;
+  messengerData?: IMessengerDataDocument;
+  twitterData?: ITwitterDataDocument;
+  facebookData?: IFacebookDataDocument;
+  uiOptions?: IUiOptionsDocument;
 }
 
 // Mongoose schemas ======================
