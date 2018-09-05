@@ -56,6 +56,12 @@ export const types = `
     formData: JSON
   }
 
+  type Brand {
+    name: String!
+    code: String!
+    description: String
+  }
+
   type Conversation {
     _id: String!
     customerId: String!
@@ -112,6 +118,7 @@ export const types = `
     languageCode: String
     messengerData: JSON
     customerId: String
+    brand: Brand
   }
 
   type ConversationDetailResponse {
@@ -224,6 +231,7 @@ export const queries = `
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     totalUnreadCount(integrationId: String!, customerId: String!): Int
+    messengerSupporters(integrationId: String!): [User]
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
     knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory

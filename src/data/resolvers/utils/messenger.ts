@@ -17,7 +17,7 @@ export const isTimeInBetween = (
   date: Date,
   startTime: string,
   closeTime: string
-) => {
+): boolean => {
   // concatnating time ranges with today's date
   const dateString = date.toLocaleDateString();
   const startDate = new Date(`${dateString} ${startTime}`);
@@ -26,30 +26,30 @@ export const isTimeInBetween = (
   return startDate <= date && date <= closeDate;
 };
 
-const isWeekday = (day: string) => {
+const isWeekday = (day: string): boolean => {
   return ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day);
 };
 
-const isWeekend = (day: string) => {
+const isWeekend = (day: string): boolean => {
   return ["saturday", "sunday"].includes(day);
 };
 
 export const isOnline = (
   integration: IIntegrationDocument,
   now = new Date()
-) => {
+): boolean => {
   if (!integration.messengerData) {
     return false;
   }
 
   const { messengerData } = integration;
-  const { availabilityMethod, isOnline, onlineHours } = messengerData;
+  const { availabilityMethod, onlineHours } = messengerData;
 
   /*
    * Manual: We can determine state from isOnline field value when method is manual
    */
   if (availabilityMethod === "manual") {
-    return isOnline;
+    return messengerData.isOnline;
   }
 
   /*

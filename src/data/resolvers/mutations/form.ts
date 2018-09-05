@@ -6,12 +6,12 @@ import {
   Customers,
   Fields,
   Forms,
+  IMessageDocument,
   Integrations,
   Messages
 } from "../../../db/models";
 
 import { IBrowserInfo } from "../../../db/models/Customers";
-
 import { mutateAppApi } from "../../../utils";
 import { IEmail, sendEmail } from "../utils/email";
 
@@ -22,7 +22,16 @@ interface ISubmission {
   validation?: string;
 }
 
-export const validate = async (formId: string, submissions: ISubmission[]) => {
+interface IError {
+  fieldId: string;
+  code: string;
+  text: string;
+}
+
+export const validate = async (
+  formId: string,
+  submissions: ISubmission[]
+): Promise<IError[]> => {
   const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
@@ -101,7 +110,7 @@ export const saveValues = async (args: {
   submissions: ISubmission[];
   formId: string;
   browserInfo: IBrowserInfo;
-}) => {
+}): Promise<IMessageDocument> => {
   const { integrationId, submissions, formId, browserInfo } = args;
 
   const form = await Forms.findOne({ _id: formId });
@@ -163,7 +172,7 @@ export const saveValues = async (args: {
 
 export default {
   // Find integrationId by brandCode
-  async formConnect(_root: any, args: { brandCode: string; formCode: string }) {
+  async formConnect(_root, args: { brandCode: string; formCode: string }) {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
@@ -194,7 +203,7 @@ export default {
 
   // create new conversation using form data
   async saveForm(
-    _root: any,
+    _root,
     args: {
       integrationId: string;
       formId: string;
@@ -229,11 +238,11 @@ export default {
   },
 
   // send email
-  sendEmail(_root: any, args: IEmail) {
+  sendEmail(_root, args: IEmail) {
     sendEmail(args);
   },
 
-  formIncreaseViewCount(_root: any, { formId }: { formId: string }) {
+  formIncreaseViewCount(_root, { formId }: { formId: string }) {
     return Forms.increaseViewCount(formId);
   }
 };
