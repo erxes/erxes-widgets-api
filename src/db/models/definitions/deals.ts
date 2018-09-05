@@ -61,7 +61,7 @@ interface IProductData extends Document {
   amount?: number;
 }
 
-export interface IDeal {
+export interface IDeal extends ICommonFields {
   name?: string;
   productsData?: IProductData[];
   companyIds?: string[];

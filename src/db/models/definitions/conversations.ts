@@ -51,7 +51,7 @@ export interface IFacebookDocument extends IFacebook, Document {}
 export interface IConversation {
   content?: string;
   integrationId: string;
-  customerId: string;
+  customerId?: string;
   userId?: string;
   assignedUserId?: string;
   participatedUserIds?: string[];

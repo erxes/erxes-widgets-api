@@ -98,6 +98,11 @@ export interface ICustomer {
 
 export interface ICustomerDocument extends ICustomer, Document {
   _id: string;
+  messengerData?: IMessengerDataDocument;
+  twitterData?: ITwitterDataDocument;
+  facebookData?: IFacebookDataDocument;
+  location?: ILocationDocument;
+  visitorContactInfo?: IVisitorContactDocument;
   createdAt: Date;
   modifiedAt: Date;
 }

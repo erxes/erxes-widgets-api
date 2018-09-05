@@ -34,6 +34,8 @@ export interface IFacebook {
   senderName?: string;
 }
 
+interface IFacebookDataDocument extends IFacebook, Document {}
+
 export interface IEngageData {
   messageId: string;
   brandId: string;
@@ -42,6 +44,8 @@ export interface IEngageData {
   kind: string;
   sentAs: string;
 }
+
+interface IEngageDataDocument extends IEngageData, Document {}
 
 export interface IMessage {
   content?: string;
@@ -53,8 +57,8 @@ export interface IMessage {
   userId?: string;
   isCustomerRead?: boolean;
   formWidgetData?: any;
-  engageData?: IEngageData;
-  facebookData?: IFacebook;
+  engageData?: IEngageDataDocument;
+  facebookData?: IFacebookDataDocument;
   twitterData?: ITwitterResponse;
 }
 

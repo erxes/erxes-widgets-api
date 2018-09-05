@@ -9,6 +9,8 @@ export interface IScheduleDate {
   time?: string;
 }
 
+interface IScheduleDateDocument extends IScheduleDate, Document {}
+
 interface IEmail {
   templateId?: string;
   attachments?: any;
@@ -26,13 +28,15 @@ interface IRule extends Document {
   value: string;
 }
 
-export interface IMessenger extends Document {
-  brandId: string;
-  kind: string;
-  sentAs: string;
-  content: string;
-  rules: IRule[];
+export interface IMessenger {
+  brandId?: string;
+  kind?: string;
+  sentAs?: string;
+  content?: string;
+  rules?: IRule[];
 }
+
+interface IMessengerDocument extends IMessenger, Document {}
 
 export interface IStats {
   open: number;
@@ -44,6 +48,8 @@ export interface IStats {
   send: number;
   renderingfailure: number;
 }
+
+interface IStatsDocument extends IStats, Document {}
 
 export interface IEngageMessage {
   kind?: string;
@@ -58,13 +64,19 @@ export interface IEngageMessage {
   tagIds?: string[];
   messengerReceivedCustomerIds?: string[];
   email?: IEmail;
-  scheduleDate: IScheduleDate;
+  scheduleDate?: IScheduleDate;
   messenger?: IMessenger;
   deliveryReports?: any;
   stats?: IStats;
 }
 
 export interface IEngageMessageDocument extends IEngageMessage, Document {
+  scheduleDate?: IScheduleDateDocument;
+
+  email?: IEmailDocument;
+  messenger?: IMessengerDocument;
+  stats?: IStatsDocument;
+
   _id: string;
 }
 
