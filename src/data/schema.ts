@@ -224,6 +224,7 @@ export const queries = `
     messages(conversationId: String): [ConversationMessage]
     unreadCount(conversationId: String): Int
     totalUnreadCount(integrationId: String!, customerId: String!): Int
+    messengerSupporters(integrationId: String!): [User]
     form(formId: String): Form
     knowledgeBaseTopicsDetail(topicId: String!) : KnowledgeBaseTopic
     knowledgeBaseCategoriesDetail(categoryId: String!) : KnowledgeBaseCategory
