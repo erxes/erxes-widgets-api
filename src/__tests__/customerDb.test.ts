@@ -133,7 +133,8 @@ describe("Customers", () => {
 
     const doc = {
       ..._customer,
-      email: "email@gmail.com"
+      email: "email@gmail.com",
+      integrationId: _customer.integrationId
     };
 
     const customer = await Customers.getOrCreateCustomer(
@@ -153,8 +154,8 @@ describe("Customers", () => {
       throw new Error("messengerData is null");
     }
 
-    expect(customer.messengerData.toJSON()).toEqual(
-      _customer.messengerData.toJSON()
+    expect(JSON.stringify(customer.messengerData)).toEqual(
+      JSON.stringify(_customer.messengerData)
     );
   });
 

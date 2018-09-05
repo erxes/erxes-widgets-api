@@ -7,7 +7,7 @@ import {
 
 import { field } from "../utils";
 
-interface ILocation extends Document {
+export interface ILocation {
   remoteAddress: string;
   country: string;
   city: string;
@@ -17,32 +17,46 @@ interface ILocation extends Document {
   userAgent: string;
 }
 
-interface IVisitorContact extends Document {
-  email: string;
-  phone: string;
+export interface ILocationDocument extends ILocation, Document {}
+
+export interface IVisitorContact {
+  email?: string;
+  phone?: string;
 }
 
-interface IMessengerData extends Document {
-  lastSeenAt: number;
-  sessionCount: number;
-  isActive: boolean;
+export interface IVisitorContactDocument extends IVisitorContact, Document {}
+
+export interface IMessengerData {
+  lastSeenAt?: number;
+  sessionCount?: number;
+  isActive?: boolean;
   customData?: any;
 }
 
-interface ITwitterData extends Document {
-  id: number;
-  id_str: string;
-  name: string;
-  screen_name: string;
-  profile_image_url: string;
+export interface IMessengerDataDocument extends IMessengerData, Document {}
+
+export interface ITwitterData {
+  id?: number;
+  id_str?: string;
+  name?: string;
+  screen_name?: string;
+  profile_image_url?: string;
 }
 
-interface IFacebookData extends Document {
+export interface ITwitterDataDocument extends ITwitterData, Document {
+  id: number;
+}
+
+export interface IFacebookData {
   id: string;
   profilePic?: string;
 }
 
-interface ILink extends Document {
+export interface IFacebookDataDocument extends IFacebookData, Document {
+  id: string;
+}
+
+export interface ILink extends Document {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -51,15 +65,12 @@ interface ILink extends Document {
   website?: string;
 }
 
-export interface ICustomerDocument extends Document {
-  _id: string;
-  createdAt: Date;
-  modifiedAt: Date;
+export interface ICustomer {
   firstName?: string;
   lastName?: string;
   primaryEmail?: string;
   emails?: string[];
-
+  avatar?: string;
   primaryPhone?: string;
   phones?: string[];
 
@@ -73,7 +84,7 @@ export interface ICustomerDocument extends Document {
   doNotDisturb?: string;
   links?: ILink;
   isUser?: boolean;
-  integrationId: string;
+  integrationId?: string;
   tagIds?: string[];
   companyIds?: string[];
   customFieldsData?: any;
@@ -82,7 +93,18 @@ export interface ICustomerDocument extends Document {
   facebookData?: IFacebookData;
   location?: ILocation;
   visitorContactInfo?: IVisitorContact;
-  urlVisits: any;
+  urlVisits?: any;
+}
+
+export interface ICustomerDocument extends ICustomer, Document {
+  _id: string;
+  messengerData?: IMessengerDataDocument;
+  twitterData?: ITwitterDataDocument;
+  facebookData?: IFacebookDataDocument;
+  location?: ILocationDocument;
+  visitorContactInfo?: IVisitorContactDocument;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
 /* location schema */
@@ -184,6 +206,7 @@ export const customerSchema = new Schema({
 
   createdAt: field({ type: Date, label: "Created at" }),
   modifiedAt: field({ type: Date, label: "Modified at" }),
+  avatar: field({ type: String, optional: true }),
 
   firstName: field({ type: String, label: "First name", optional: true }),
   lastName: field({ type: String, label: "Last name", optional: true }),

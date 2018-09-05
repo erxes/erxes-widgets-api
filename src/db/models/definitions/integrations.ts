@@ -8,41 +8,47 @@ import {
   MESSENGER_DATA_AVAILABILITY
 } from "./constants";
 
-interface ITwitterData extends Document {
-  info: any;
-  token: string;
-  tokenSecret: string;
+export interface ITwitterData {
+  info?: any;
+  token?: string;
+  tokenSecret?: string;
 }
 
-interface IFacebookData extends Document {
-  appId: {
-    type: string;
-  };
-  pageIds: {
-    type: string[];
-  };
+export interface ITwitterDataDocument extends ITwitterData, Document {}
+
+export interface IFacebookData {
+  appId: string;
+  pageIds: string[];
 }
 
-interface IMessengerOnlineHours extends Document {
-  day: string;
-  from: string;
-  to: string;
+export interface IFacebookDataDocument extends IFacebookData, Document {}
+
+export interface IMessengerOnlineHours {
+  day?: string;
+  from?: string;
+  to?: string;
 }
 
-interface IMessengerData extends Document {
-  supporterIds: string[];
-  notifyCustomer: boolean;
-  availabilityMethod: string;
-  isOnline: boolean;
-  onlineHours: IMessengerOnlineHours[];
+export interface IMessengerOnlineHoursDocument
+  extends IMessengerOnlineHours,
+    Document {}
+
+export interface IMessengerData {
+  supporterIds?: string[];
+  notifyCustomer?: boolean;
+  availabilityMethod?: string;
+  isOnline?: boolean;
+  onlineHours?: IMessengerOnlineHours[];
   timezone?: string;
   welcomeMessage?: string;
   awayMessage?: string;
   thankYouMessage?: string;
 }
 
-interface IFormData extends Document {
-  loadType: string;
+export interface IMessengerDataDocument extends IMessengerData, Document {}
+
+export interface IFormData {
+  loadType?: string;
   successAction?: string;
   fromEmail?: string;
   userEmailTitle?: string;
@@ -54,26 +60,38 @@ interface IFormData extends Document {
   redirectUrl?: string;
 }
 
-// subdocument schema for messenger UiOptions
-interface IUiOptions extends Document {
-  color: string;
-  wallpaper: string;
-  logo: string;
+export interface IFormDataDocument extends IFormData, Document {}
+
+export interface IUiOptions {
+  color?: string;
+  wallpaper?: string;
+  logo?: string;
 }
 
-export interface IIntegrationDocument extends Document {
-  _id: string;
-  kind: string;
-  name: string;
-  brandId: string;
+// subdocument schema for messenger UiOptions
+export interface IUiOptionsDocument extends IUiOptions, Document {}
+
+export interface IIntegration {
+  kind?: string;
+  name?: string;
+  brandId?: string;
   languageCode?: string;
   tagIds?: string[];
-  formId: string;
-  formData: IFormData;
-  messengerData: IMessengerData;
-  twitterData: ITwitterData;
-  facebookData: IFacebookData;
-  uiOptions: IUiOptions;
+  formId?: string;
+  formData?: IFormData;
+  messengerData?: IMessengerData;
+  twitterData?: ITwitterData;
+  facebookData?: IFacebookData;
+  uiOptions?: IUiOptions;
+}
+
+export interface IIntegrationDocument extends IIntegration, Document {
+  _id: string;
+  formData?: IFormDataDocument;
+  messengerData?: IMessengerDataDocument;
+  twitterData?: ITwitterDataDocument;
+  facebookData?: IFacebookDataDocument;
+  uiOptions?: IUiOptionsDocument;
 }
 
 // Mongoose schemas ======================

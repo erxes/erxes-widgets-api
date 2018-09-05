@@ -9,30 +9,39 @@ interface ICommonFields {
   modifiedDate: Date;
 }
 
-export interface IArticleDocument extends ICommonFields, Document {
-  _id: string;
-  title: string;
-  summary: string;
-  content: string;
-  status: string;
+export interface IArticle {
+  title?: string;
+  summary?: string;
+  content?: string;
+  status?: string;
 }
 
-export interface ICategoryDocument extends ICommonFields, Document {
+export interface IArticleDocument extends ICommonFields, IArticle, Document {
   _id: string;
-  title: string;
-  description: string;
-  articleIds: string[];
-  icon: string;
 }
 
-export interface ITopicDocument extends ICommonFields, Document {
+export interface ICategory {
+  title?: string;
+  description?: string;
+  articleIds?: string[];
+  icon?: string;
+}
+
+export interface ICategoryDocument extends ICommonFields, ICategory, Document {
   _id: string;
-  title: string;
-  description: string;
-  brandId: string;
-  categoryIds: string[];
-  color: string;
+}
+
+export interface ITopic {
+  title?: string;
+  description?: string;
+  brandId?: string;
+  categoryIds?: string[];
+  color?: string;
   languageCode?: string;
+}
+
+export interface ITopicDocument extends ICommonFields, ITopic, Document {
+  _id: string;
 }
 
 // Mongoose schemas ==================

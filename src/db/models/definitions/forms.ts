@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-interface ICallout extends Document {
+export interface ICallout extends Document {
   title?: string;
   body?: string;
   buttonText?: string;
@@ -14,16 +14,19 @@ interface ISubmission extends Document {
   submittedAt: Date;
 }
 
-export interface IFormDocument extends Document {
-  _id: string;
+export interface IForm {
   title: string;
-  code: string;
+  code?: string;
   description?: string;
   buttonText?: string;
   themeColor?: string;
+  callout?: ICallout;
+}
+
+export interface IFormDocument extends IForm, Document {
+  _id: string;
   createdUserId: string;
   createdDate: Date;
-  callout: ICallout;
   viewCount: number;
   contactsGathered: number;
   submissions: ISubmission[];

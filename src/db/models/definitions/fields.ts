@@ -2,32 +2,38 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { FIELDS_GROUPS_CONTENT_TYPES } from "./constants";
 
-export interface IFieldDocument extends Document {
-  _id: string;
-  contentType: string;
-  contentTypeId: string;
-  type: string;
+export interface IField {
+  contentType?: string;
+  contentTypeId?: string;
+  type?: string;
   validation?: string;
-  text: string;
+  text?: string;
   description?: string;
   options?: string[];
-  isRequired: boolean;
-  isDefinedByErxes: boolean;
-  order: number;
-  groupId: string;
-  isVisible: boolean;
-  lastUpdatedUserId: string;
+  isRequired?: boolean;
+  isDefinedByErxes?: boolean;
+  order?: number;
+  groupId?: string;
+  isVisible?: boolean;
+  lastUpdatedUserId?: string;
 }
 
-export interface IFieldGroupDocument extends Document {
+export interface IFieldDocument extends IField, Document {
   _id: string;
-  name: string;
-  contentType: string;
-  order: number;
-  isDefinedByErxes: boolean;
-  description: string;
-  lastUpdatedUserId: string;
-  isVisible: boolean;
+}
+
+export interface IFieldGroup {
+  name?: string;
+  contentType?: string;
+  order?: number;
+  isDefinedByErxes?: boolean;
+  description?: string;
+  lastUpdatedUserId?: string;
+  isVisible?: boolean;
+}
+
+export interface IFieldGroupDocument extends IFieldGroup, Document {
+  _id: string;
 }
 
 // Mongoose schemas =============

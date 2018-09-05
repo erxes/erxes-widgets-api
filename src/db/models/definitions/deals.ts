@@ -2,33 +2,49 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { PROBABILITY, PRODUCT_TYPES } from "./constants";
 
-interface ICommonFields extends Document {
-  userId: string;
-  createdAt: Date;
-  order: number;
+interface ICommonFields {
+  userId?: string;
+  createdAt?: Date;
+  order?: number;
 }
 
 export interface IBoard extends ICommonFields {
-  name: string;
-  isDefault: boolean;
+  name?: string;
+  isDefault?: boolean;
+}
+
+export interface IBoardDocument extends IBoard, Document {
+  _id: string;
 }
 
 export interface IPipeline extends ICommonFields {
-  name: string;
-  boardId: string;
+  name?: string;
+  boardId?: string;
+}
+
+export interface IPipelineDocument extends IPipeline, Document {
+  _id: string;
 }
 
 export interface IStage extends ICommonFields {
-  name: string;
-  probability: string;
-  pipelineId: string;
+  name?: string;
+  probability?: string;
+  pipelineId?: string;
 }
 
-export interface IProduct extends Document {
+export interface IStageDocument extends IStage, Document {
+  _id: string;
+}
+
+export interface IProduct {
   name: string;
   type?: string;
   description?: string;
   sku?: string;
+}
+
+export interface IProductDocument extends IProduct, Document {
+  _id: string;
   createdAt: Date;
 }
 
@@ -46,16 +62,20 @@ interface IProductData extends Document {
 }
 
 export interface IDeal extends ICommonFields {
-  name: string;
-  productsData: IProductData[];
-  companyIds: string[];
-  customerIds: string[];
-  closeDate: Date;
-  description: string;
-  assignedUserIds: string[];
-  stageId: string;
-  modifiedAt: Date;
-  modifiedBy: Date;
+  name?: string;
+  productsData?: IProductData[];
+  companyIds?: string[];
+  customerIds?: string[];
+  closeDate?: Date;
+  description?: string;
+  assignedUserIds?: string[];
+  stageId?: string;
+  modifiedAt?: Date;
+  modifiedBy?: string;
+}
+
+export interface IDealDocument extends IDeal, ICommonFields, Document {
+  _id: string;
 }
 
 // Mongoose schemas =======================

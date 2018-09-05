@@ -2,12 +2,14 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { ROLES } from "./constants";
 
-interface IEmailSignature extends Document {
-  brandId: string;
-  signature: string;
+export interface IEmailSignature {
+  brandId?: string;
+  signature?: string;
 }
 
-interface IDetail extends Document {
+export interface IEmailSignatureDocument extends IEmailSignature, Document {}
+
+interface IDetail {
   avatar: string;
   fullName: string;
   position: string;
@@ -15,7 +17,9 @@ interface IDetail extends Document {
   description: string;
 }
 
-interface ILink extends Document {
+interface IDetailDocument extends IDetail, Document {}
+
+interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -24,19 +28,29 @@ interface ILink extends Document {
   website?: string;
 }
 
-export interface IUserDocument extends Document {
-  username: string;
-  password: string;
-  resetPasswordToken: string;
-  resetPasswordExpires: Date;
-  role: string;
-  isOwner: boolean;
-  email: string;
-  getNotificationByEmail: boolean;
-  emailSignatures: IEmailSignature[];
-  starredConversationIds: string[];
-  details: IDetail;
-  links: ILink[];
+interface ILinkDocument extends ILink, Document {}
+
+export interface IUser {
+  username?: string;
+  password?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  role?: string;
+  isOwner?: boolean;
+  email?: string;
+  getNotificationByEmail?: boolean;
+  emailSignatures?: IEmailSignature[];
+  starredConversationIds?: string[];
+  details?: IDetail;
+  links?: ILink;
+  isActive?: boolean;
+}
+
+export interface IUserDocument extends IUser, Document {
+  _id: string;
+  emailSignatures?: IEmailSignatureDocument[];
+  details?: IDetailDocument;
+  links?: ILinkDocument;
 }
 
 // Mongoose schemas ===============================
@@ -97,5 +111,6 @@ export const userSchema = new Schema({
   emailSignatures: field({ type: [emailSignatureSchema] }),
   starredConversationIds: field({ type: [String] }),
   details: field({ type: detailSchema }),
-  links: field({ type: linkSchema, default: {} })
+  links: field({ type: linkSchema, default: {} }),
+  isActive: field({ type: Boolean, default: true })
 });

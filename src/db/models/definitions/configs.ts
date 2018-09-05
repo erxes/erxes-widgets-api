@@ -1,10 +1,13 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-export interface IConfig extends Document {
-  _id: string;
+export interface IConfig {
   code: string;
   value: string[];
+}
+
+export interface IConfigDocument extends IConfig, Document {
+  _id: string;
 }
 
 // Mongoose schemas ===========

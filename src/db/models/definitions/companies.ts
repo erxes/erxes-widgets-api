@@ -9,7 +9,7 @@ import {
 
 import { field } from "../utils";
 
-interface ILink extends Document {
+export interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -18,15 +18,13 @@ interface ILink extends Document {
   website?: string;
 }
 
-export interface ICompanyDocument extends Document {
-  _id: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  primaryName: string;
+interface ILinkDocument extends ILink, Document {}
+
+export interface ICompany {
+  primaryName?: string;
   names?: string[];
   size?: number;
   industry?: string;
-  website?: string;
   plan?: string;
   parentCompanyId?: string;
   email?: string;
@@ -38,9 +36,15 @@ export interface ICompanyDocument extends Document {
   description?: string;
   employees?: number;
   doNotDisturb?: string;
-  links?: ILink;
+  links?: ILinkDocument;
   tagIds?: string[];
   customFieldsData?: any;
+}
+
+export interface ICompanyDocument extends ICompany, Document {
+  _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
 const linkSchema = new Schema(

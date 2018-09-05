@@ -34,42 +34,47 @@ export interface ITwitterResponse extends Document {
   favorite_count?: number;
 }
 
-interface IFacebook extends Document {
-  kind: string;
-  senderName: string;
-  senderId: string;
-  recipientId: string;
+export interface IFacebook {
+  kind?: string;
+  senderName?: string;
+  senderId?: string;
+  recipientId?: string;
 
   // when wall post
-  postId: string;
+  postId?: string;
 
-  pageId: string;
+  pageId?: string;
 }
 
-// Conversation schema
-export interface IConversationDocument extends Document {
-  _id: string;
-  content: string;
+export interface IFacebookDocument extends IFacebook, Document {}
+
+export interface IConversation {
+  content?: string;
   integrationId: string;
-  customerId: string;
-  userId: string;
-  assignedUserId: string;
-  participatedUserIds: string[];
-  readUserIds: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  customerId?: string;
+  userId?: string;
+  assignedUserId?: string;
+  participatedUserIds?: string[];
+  readUserIds?: string[];
 
   closedAt?: Date;
   closedUserId?: string;
 
-  status: string;
-  messageCount: number;
-  tagIds: [string];
+  status?: string;
+  messageCount?: number;
+  tagIds?: [string];
 
   // number of total conversations
-  number: number;
-  twitterData: ITwitterResponse;
-  facebookData: IFacebook;
+  number?: number;
+  twitterData?: ITwitterResponse;
+  facebookData?: IFacebook;
+}
+
+// Conversation schema
+export interface IConversationDocument extends IConversation, Document {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /*
