@@ -36,13 +36,14 @@ export interface ICompany {
   description?: string;
   employees?: number;
   doNotDisturb?: string;
-  links?: ILinkDocument;
+  links?: ILink;
   tagIds?: string[];
   customFieldsData?: any;
 }
 
 export interface ICompanyDocument extends ICompany, Document {
   _id: string;
+  links?: ILinkDocument;
   createdAt: Date;
   modifiedAt: Date;
 }
