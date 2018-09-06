@@ -10,11 +10,11 @@ export interface IEmailSignature {
 export interface IEmailSignatureDocument extends IEmailSignature, Document {}
 
 interface IDetail {
-  avatar: string;
-  fullName: string;
-  position: string;
+  avatar?: string;
+  fullName?: string;
+  position?: string;
   location?: string;
-  description: string;
+  description?: string;
 }
 
 interface IDetailDocument extends IDetail, Document {}
