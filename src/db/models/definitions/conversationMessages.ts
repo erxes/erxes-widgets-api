@@ -1,6 +1,10 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { ITwitterResponse, twitterResponseSchema } from "./conversations";
+import {
+  ITwitterResponse,
+  ITwitterResponseDocument,
+  twitterResponseSchema
+} from "./conversations";
 
 export interface IFbUser {
   id: string;
@@ -69,13 +73,16 @@ export interface IMessage {
   userId?: string;
   isCustomerRead?: boolean;
   formWidgetData?: any;
-  engageData?: IEngageDataDocument;
-  facebookData?: IFacebookDataDocument;
+  engageData?: IEngageData;
+  facebookData?: IFacebook;
   twitterData?: ITwitterResponse;
 }
 
 export interface IMessageDocument extends IMessage, Document {
   _id: string;
+  engageData?: IEngageDataDocument;
+  facebookData?: IFacebookDataDocument;
+  twitterData?: ITwitterResponseDocument;
   createdAt: Date;
 }
 

@@ -2,7 +2,7 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 import { CONVERSATION_STATUSES, FACEBOOK_DATA_KINDS } from "./constants";
 
-export interface ITwitterResponse extends Document {
+export interface ITwitterResponse {
   id?: number;
   id_str: string;
   created_at?: string;
@@ -32,6 +32,10 @@ export interface ITwitterResponse extends Document {
   reply_count?: number;
   retweet_count?: number;
   favorite_count?: number;
+}
+
+export interface ITwitterResponseDocument extends ITwitterResponse, Document {
+  id?: number;
 }
 
 export interface IFacebook {
@@ -73,6 +77,8 @@ export interface IConversation {
 // Conversation schema
 export interface IConversationDocument extends IConversation, Document {
   _id: string;
+  twitterData?: ITwitterResponseDocument;
+  facebookData?: IFacebookDocument;
   createdAt: Date;
   updatedAt: Date;
 }
