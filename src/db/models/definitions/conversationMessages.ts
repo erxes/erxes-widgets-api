@@ -43,6 +43,8 @@ interface IEngageDataRules {
   value?: string;
 }
 
+interface IEngageDataRulesDocument extends IEngageDataRules, Document {}
+
 export interface IEngageData {
   messageId: string;
   brandId: string;
@@ -50,10 +52,12 @@ export interface IEngageData {
   fromUserId: string;
   kind: string;
   sentAs: string;
-  rules: IEngageDataRules[];
+  rules?: IEngageDataRules[];
 }
 
-interface IEngageDataDocument extends IEngageData, Document {}
+interface IEngageDataDocument extends IEngageData, Document {
+  rules?: IEngageDataRulesDocument[];
+}
 
 export interface IMessage {
   content?: string;
@@ -203,7 +207,7 @@ const engageDataSchema = new Schema(
     fromUserId: field({ type: String }),
     kind: field({ type: String }),
     sentAs: field({ type: String }),
-    rules: field({ type: [engageDataRuleSchema] })
+    rules: field({ type: [engageDataRuleSchema], optional: true })
   },
   { _id: false }
 );
