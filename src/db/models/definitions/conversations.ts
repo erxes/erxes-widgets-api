@@ -6,7 +6,7 @@ export interface ITwitterResponse {
   id?: number;
   id_str: string;
   created_at?: string;
-  isDirectMessage: boolean;
+  isDirectMessage?: boolean;
 
   // media content
   entities?: any;
@@ -14,10 +14,10 @@ export interface ITwitterResponse {
   extended_tweet?: any;
 
   // direct message
-  sender_id: number;
-  sender_id_str: string;
-  recipient_id: number;
-  recipient_id_str: string;
+  sender_id?: number;
+  sender_id_str?: string;
+  recipient_id?: number;
+  recipient_id_str?: string;
 
   // timeline
   in_reply_to_status_id?: number;
@@ -25,9 +25,9 @@ export interface ITwitterResponse {
   in_reply_to_user_id?: number;
   in_reply_to_user_id_str?: string;
   in_reply_to_screen_name?: string;
-  is_quote_status: boolean;
-  favorited: boolean;
-  retweeted: boolean;
+  is_quote_status?: boolean;
+  favorited?: boolean;
+  retweeted?: boolean;
   quote_count?: number;
   reply_count?: number;
   retweet_count?: number;
