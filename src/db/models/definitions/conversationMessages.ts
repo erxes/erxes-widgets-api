@@ -36,6 +36,13 @@ export interface IFacebook {
 
 interface IFacebookDataDocument extends IFacebook, Document {}
 
+interface IEngageDataRules {
+  kind: string;
+  text: string;
+  condition: string;
+  value?: string;
+}
+
 export interface IEngageData {
   messageId: string;
   brandId: string;
@@ -43,6 +50,7 @@ export interface IEngageData {
   fromUserId: string;
   kind: string;
   sentAs: string;
+  rules: IEngageDataRules[];
 }
 
 interface IEngageDataDocument extends IEngageData, Document {}
@@ -67,12 +75,15 @@ export interface IMessageDocument extends IMessage, Document {
   createdAt: Date;
 }
 
-const attachmentSchema = new Schema({
-  url: field({ type: String }),
-  name: field({ type: String }),
-  size: field({ type: Number }),
-  type: field({ type: String })
-});
+const attachmentSchema = new Schema(
+  {
+    url: field({ type: String }),
+    name: field({ type: String }),
+    size: field({ type: Number }),
+    type: field({ type: String })
+  },
+  { _id: false }
+);
 
 const fbUserSchema = new Schema(
   {
@@ -177,14 +188,25 @@ const facebookSchema = new Schema(
   { _id: false }
 );
 
-const engageDataSchema = new Schema({
-  messageId: field({ type: String }),
-  brandId: field({ type: String }),
-  content: field({ type: String }),
-  fromUserId: field({ type: String }),
+const engageDataRuleSchema = new Schema({
   kind: field({ type: String }),
-  sentAs: field({ type: String })
+  text: field({ type: String }),
+  condition: field({ type: String }),
+  value: field({ type: String, optional: true })
 });
+
+const engageDataSchema = new Schema(
+  {
+    messageId: field({ type: String }),
+    brandId: field({ type: String }),
+    content: field({ type: String }),
+    fromUserId: field({ type: String }),
+    kind: field({ type: String }),
+    sentAs: field({ type: String }),
+    rules: field({ type: [engageDataRuleSchema] })
+  },
+  { _id: false }
+);
 
 export const messageSchema = new Schema({
   _id: field({ pkey: true }),
