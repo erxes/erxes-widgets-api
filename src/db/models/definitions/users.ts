@@ -9,7 +9,7 @@ export interface IEmailSignature {
 
 export interface IEmailSignatureDocument extends IEmailSignature, Document {}
 
-interface IDetail {
+export interface IDetail {
   avatar?: string;
   fullName?: string;
   position?: string;
@@ -17,9 +17,9 @@ interface IDetail {
   description?: string;
 }
 
-interface IDetailDocument extends IDetail, Document {}
+export interface IDetailDocument extends IDetail, Document {}
 
-interface ILink {
+export interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
