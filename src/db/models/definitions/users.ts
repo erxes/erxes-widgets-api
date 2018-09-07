@@ -32,7 +32,7 @@ interface ILinkDocument extends ILink, Document {}
 
 export interface IUser {
   username?: string;
-  password?: string;
+  password: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   role?: string;
