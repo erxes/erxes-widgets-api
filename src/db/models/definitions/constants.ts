@@ -253,26 +253,26 @@ export const FIELDS_GROUPS_CONTENT_TYPES = {
 
 export const CUSTOMER_LEAD_STATUS_TYPES = [
   "",
-  "New",
-  "Open",
-  "In Progress",
-  "Open Deal",
-  "Unqualified",
-  "Attempted to Contact",
-  "Connected",
-  "Bad Timing"
+  "new",
+  "open",
+  "inProgress",
+  "openDeal",
+  "unqualified",
+  "attemptedToContact",
+  "connected",
+  "badTiming"
 ];
 
 export const CUSTOMER_LIFECYCLE_STATE_TYPES = [
   "",
-  "Subscriber",
-  "Lead",
-  "Marketing Qualified Lead",
-  "Sales Qualified Lead",
-  "Opportunity",
-  "Customer",
-  "Evangelist",
-  "Other"
+  "subscriber",
+  "lead",
+  "marketingQualifiedLead",
+  "salesQualifiedLead",
+  "opportunity",
+  "customer",
+  "evangelist",
+  "other"
 ];
 
 export const CUSTOMER_BASIC_INFOS = [
@@ -292,26 +292,26 @@ export const CUSTOMER_BASIC_INFOS = [
 
 export const COMPANY_LEAD_STATUS_TYPES = [
   "",
-  "New",
-  "Open",
-  "In Progress",
-  "Open Deal",
-  "Unqualified",
-  "Attempted to contact",
-  "Connected",
-  "Bad Timing"
+  "new",
+  "open",
+  "inProgress",
+  "openDeal",
+  "unqualified",
+  "attemptedToContact",
+  "connected",
+  "badTiming"
 ];
 
 export const COMPANY_LIFECYCLE_STATE_TYPES = [
   "",
-  "Subscriber",
-  "Lead",
-  "Marketing Qualified Lead",
-  "Sales Qualified Lead",
-  "Opportunity",
-  "Customer",
-  "Evangelist",
-  "Other"
+  "subscriber",
+  "lead",
+  "marketingQualifiedLead",
+  "salesQualifiedLead",
+  "opportunity",
+  "customer",
+  "evangelist",
+  "other"
 ];
 
 export const COMPANY_BUSINESS_TYPES = [

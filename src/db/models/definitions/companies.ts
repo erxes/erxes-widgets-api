@@ -39,6 +39,7 @@ export interface ICompany {
   links?: ILink;
   tagIds?: string[];
   customFieldsData?: any;
+  website?: string;
 }
 
 export interface ICompanyDocument extends ICompany, Document {

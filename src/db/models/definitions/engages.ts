@@ -4,8 +4,8 @@ import { MESSENGER_KINDS, METHODS, SENT_AS_CHOICES } from "./constants";
 
 export interface IScheduleDate {
   type?: string;
-  month?: string;
-  day?: string;
+  month?: string | number;
+  day?: string | number;
   time?: string;
 }
 

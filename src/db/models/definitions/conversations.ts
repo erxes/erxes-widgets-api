@@ -66,7 +66,7 @@ export interface IConversation {
 
   status?: string;
   messageCount?: number;
-  tagIds?: [string];
+  tagIds?: string[];
 
   // number of total conversations
   number?: number;
