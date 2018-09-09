@@ -73,6 +73,7 @@ export interface IMessage {
   userId?: string;
   isCustomerRead?: boolean;
   formWidgetData?: any;
+  messengerAppData?: any;
   engageData?: IEngageData;
   facebookData?: IFacebook;
   twitterData?: ITwitterResponse;
@@ -231,6 +232,7 @@ export const messageSchema = new Schema({
   createdAt: field({ type: Date }),
   isCustomerRead: field({ type: Boolean }),
   formWidgetData: field({ type: Object }),
+  messengerAppData: field({ type: Object }),
   engageData: field({ type: engageDataSchema }),
   facebookData: field({ type: facebookSchema }),
   twitterData: field({ type: twitterResponseSchema })
