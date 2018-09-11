@@ -2,7 +2,6 @@ import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
 export interface IChannel {
-  createdAt: Date;
   name?: string;
   description?: string;
   integrationIds?: string[];
@@ -14,6 +13,7 @@ export interface IChannel {
 
 export interface IChannelDocument extends IChannel, Document {
   _id: string;
+  createdAt: Date;
 }
 
 export const channelSchema = new Schema({
