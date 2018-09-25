@@ -235,5 +235,6 @@ export const messageSchema = new Schema({
   messengerAppData: field({ type: Object }),
   engageData: field({ type: engageDataSchema }),
   facebookData: field({ type: facebookSchema }),
-  twitterData: field({ type: twitterResponseSchema })
+  twitterData: field({ type: twitterResponseSchema }),
+  messengerAppData: field({ type: Object })
 });
