@@ -4,6 +4,7 @@ import {
   IBrandDocument,
   ICustomerDocument,
   IIntegrationDocument,
+  IMessageDocument,
   IMessageEngageData,
   IUserDocument,
   Messages,
@@ -19,7 +20,7 @@ export const replaceKeys = (params: {
   content: string;
   customer: ICustomerDocument;
   user: IUserDocument;
-}) => {
+}): string => {
   const { content, customer, user } = params;
 
   let result = content;
@@ -52,12 +53,14 @@ interface IRule {
   kind: string;
   condition: string;
 }
+
 interface ICheckRuleParams {
   rule: IRule;
   browserInfo: IBrowserInfo;
   numberOfVisits?: number;
 }
-export const checkRule = (params: ICheckRuleParams) => {
+
+export const checkRule = (params: ICheckRuleParams): boolean => {
   const { rule, browserInfo, numberOfVisits } = params;
   const { language, url, city, country } = browserInfo;
   const { value, kind, condition } = rule;
@@ -145,7 +148,9 @@ interface ICheckRulesParams {
   browserInfo: IBrowserInfo;
   numberOfVisits?: number;
 }
-export const checkRules = async (params: ICheckRulesParams) => {
+export const checkRules = async (
+  params: ICheckRulesParams
+): Promise<boolean> => {
   const { rules, browserInfo, numberOfVisits } = params;
 
   let passedAllRules = true;
@@ -169,7 +174,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
   integration: IIntegrationDocument;
   user: IUserDocument;
   engageData: IMessageEngageData;
-}) => {
+}): Promise<IMessageDocument> => {
   const { customer, integration, user, engageData } = args;
 
   const prevMessage = await Messages.findOne({
@@ -231,7 +236,7 @@ export const createEngageVisitorMessages = async (params: {
   integration: IIntegrationDocument;
   customer: ICustomerDocument;
   browserInfo: any;
-}) => {
+}): Promise<IMessageDocument[]> => {
   const { brand, integration, customer, browserInfo } = params;
 
   // force read previous unread engage messages ============

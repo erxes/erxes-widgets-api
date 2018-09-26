@@ -22,7 +22,7 @@ export default {
    * when connection established
    */
   async messengerConnect(
-    _root: any,
+    _root,
     args: {
       brandCode: string;
       email?: string;
@@ -44,6 +44,9 @@ export default {
     } = args;
 
     const customData = data;
+
+    // find brand
+    const brand = await Brands.findOne({ code: brandCode });
 
     // find integration
     const integration = await Integrations.getIntegration(
@@ -99,7 +102,8 @@ export default {
       uiOptions: integration.uiOptions,
       languageCode: integration.languageCode,
       messengerData: integration.messengerData,
-      customerId: customer._id
+      customerId: customer._id,
+      brand
     };
   },
 
@@ -107,7 +111,7 @@ export default {
    * Create a new message
    */
   async insertMessage(
-    _root: any,
+    _root,
     args: {
       integrationId: string;
       customerId: string;
@@ -171,7 +175,7 @@ export default {
   /*
    * Mark given conversation's messages as read
    */
-  async readConversationMessages(_root: any, args: { conversationId: string }) {
+  async readConversationMessages(_root, args: { conversationId: string }) {
     const response = await Messages.update(
       {
         conversationId: args.conversationId,
@@ -185,7 +189,7 @@ export default {
     return response;
   },
 
-  saveCustomerGetNotified(_root: any, args: IVisitorContactInfoParams) {
+  saveCustomerGetNotified(_root, args: IVisitorContactInfoParams) {
     return Customers.saveVisitorContactInfo(args);
   },
 
@@ -193,7 +197,7 @@ export default {
    * Update customer location field
    */
   async saveBrowserInfo(
-    _root: any,
+    _root,
     {
       customerId,
       browserInfo

@@ -8,6 +8,7 @@ import {
   userFactory
 } from "../db/factories";
 import {
+  Customers,
   DealBoards,
   DealPipelines,
   DealProducts,
@@ -56,7 +57,7 @@ describe("Deals", () => {
       boardName: "board",
       pipelineName: "pipeline",
       userEmail: user.email,
-      customerIds: ["123312", "21321"],
+      customerEmail: "testCustomer@yahoo.com",
       description: "description",
       productsData: {
         productName: "123",
@@ -132,11 +133,15 @@ describe("Deals", () => {
 
     const response = await Deals.createDeal(doc);
 
+    const customerObj = await Customers.findOne({
+      primaryEmail: "testCustomer@yahoo.com"
+    });
+
     expect(response.name).toBe(doc.name);
     expect(response.stageId).toBe(stage._id);
 
     expect(response.customerIds).toEqual(
-      expect.arrayContaining(["123312", "21321"])
+      expect.arrayContaining([customerObj._id])
     );
 
     expect(response.description).toBe("description");

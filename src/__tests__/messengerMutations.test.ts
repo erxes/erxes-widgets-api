@@ -54,12 +54,13 @@ describe("messenger connect", () => {
   });
 
   test("returns proper integrationId", async () => {
-    const { integrationId } = await messengerMutations.messengerConnect(
+    const { integrationId, brand } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email: faker.internet.email() }
     );
 
     expect(integrationId).toBe(_integration._id);
+    expect(brand.code).toBe(_brand.code);
   });
 
   test("creates new customer", async () => {
