@@ -90,7 +90,8 @@ export const KIND_CHOICES = {
   FORM: "form",
   TWITTER: "twitter",
   FACEBOOK: "facebook",
-  ALL: ["messenger", "form", "twitter", "facebook"]
+  GMAIL: "gmail",
+  ALL: ["messenger", "form", "twitter", "facebook", "gmail"]
 };
 
 // module constants
@@ -211,6 +212,7 @@ export const ACTIVITY_TYPES = {
   CONVERSATION: "conversation",
   SEGMENT: "segment",
   DEAL: "deal",
+  EMAIL: "email",
 
   ALL: [
     "customer",
@@ -218,7 +220,8 @@ export const ACTIVITY_TYPES = {
     "internal_note",
     "conversation",
     "segment",
-    "deal"
+    "deal",
+    "email"
   ]
 };
 
@@ -226,8 +229,9 @@ export const ACTIVITY_ACTIONS = {
   CREATE: "create",
   UPDATE: "update",
   DELETE: "delete",
+  SEND: "send",
 
-  ALL: ["create", "update", "delete"]
+  ALL: ["create", "update", "delete", "send"]
 };
 
 export const ACTIVITY_PERFORMER_TYPES = {

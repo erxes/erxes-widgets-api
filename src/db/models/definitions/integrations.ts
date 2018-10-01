@@ -23,6 +23,13 @@ export interface IFacebookData {
 
 export interface IFacebookDataDocument extends IFacebookData, Document {}
 
+export interface IGmailData {
+  email: string;
+  credentials?: any;
+}
+
+export interface IGmailDataDocument extends IGmailData, Document {}
+
 export interface IMessengerOnlineHours {
   day?: string;
   from?: string;
@@ -82,6 +89,7 @@ export interface IIntegration {
   messengerData?: IMessengerData;
   twitterData?: ITwitterData;
   facebookData?: IFacebookData;
+  gmailData?: IGmailData;
   uiOptions?: IUiOptions;
 }
 
@@ -91,7 +99,13 @@ export interface IIntegrationDocument extends IIntegration, Document {
   messengerData?: IMessengerDataDocument;
   twitterData?: ITwitterDataDocument;
   facebookData?: IFacebookDataDocument;
+  gmailData?: IGmailDataDocument;
   uiOptions?: IUiOptionsDocument;
+}
+
+export interface IMessengerApp {
+  email: string;
+  credentials?: any;
 }
 
 // Mongoose schemas ======================
@@ -214,6 +228,14 @@ const uiOptionsSchema = new Schema(
   { _id: false }
 );
 
+const gmailSchema = new Schema(
+  {
+    email: field({ type: String }),
+    credentials: field({ type: Object })
+  },
+  { _id: false }
+);
+
 // schema for integration document
 export const integrationSchema = new Schema({
   _id: field({ pkey: true }),
@@ -237,5 +259,6 @@ export const integrationSchema = new Schema({
   messengerData: field({ type: messengerDataSchema }),
   twitterData: field({ type: twitterSchema }),
   facebookData: field({ type: facebookSchema }),
+  gmailData: field({ type: gmailSchema }),
   uiOptions: field({ type: uiOptionsSchema })
 });
