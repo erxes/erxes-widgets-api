@@ -9,7 +9,7 @@ interface IGetCustomerParams {
 }
 
 interface ICreateCustomerParams {
-  integrationId: string;
+  integrationId?: string;
   email?: string;
   phone?: string;
   isUser?: boolean;

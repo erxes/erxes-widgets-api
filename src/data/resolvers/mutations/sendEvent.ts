@@ -6,7 +6,7 @@ export default {
    * Create a new deal
    */
   async sendEvent(
-    _root: any,
+    _root,
     { type, dealDoc }: { type: string; dealDoc: IDealInput }
   ) {
     if (type === "createDeal") {

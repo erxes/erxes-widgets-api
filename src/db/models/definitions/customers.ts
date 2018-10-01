@@ -249,7 +249,7 @@ export const customerSchema = new Schema({
 
   isUser: field({ type: Boolean, label: "Is user", optional: true }),
 
-  integrationId: field({ type: String }),
+  integrationId: field({ type: String, optional: true }),
   tagIds: field({ type: [String], optional: true }),
   companyIds: field({ type: [String], optional: true }),
 

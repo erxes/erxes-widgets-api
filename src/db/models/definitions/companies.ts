@@ -22,6 +22,7 @@ interface ILinkDocument extends ILink, Document {}
 
 export interface ICompany {
   primaryName?: string;
+  avatar?: string;
   names?: string[];
   size?: number;
   industry?: string;
@@ -74,6 +75,11 @@ export const companySchema = new Schema({
 
   names: field({
     type: [String],
+    optional: true
+  }),
+
+  avatar: field({
+    type: String,
     optional: true
   }),
 

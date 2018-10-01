@@ -9,6 +9,7 @@ import {
   userFactory
 } from "../db/factories";
 import {
+  Customers,
   DealBoards,
   DealPipelines,
   DealProducts,
@@ -52,7 +53,7 @@ describe("Deal Mutations: ", () => {
       name: "testDeal",
       stageName: "stage",
       userEmail: user.email,
-      customerIds: ["123312", "21321"],
+      customerEmail: "testCustomer@yahoo.com",
       description: "description",
       boardName: "board",
       pipelineName: "pipeline",
@@ -66,18 +67,20 @@ describe("Deal Mutations: ", () => {
     };
 
     const type = "createDeal";
-
     const response = await sendEventMutations.sendEvent({}, { type, dealDoc });
+
+    const customerObj = await Customers.findOne({
+      primaryEmail: "testCustomer@yahoo.com"
+    });
 
     expect(response.name).toBe(dealDoc.name);
     expect(response.stageId).toBe(stage._id);
 
     expect(response.customerIds).toEqual(
-      expect.arrayContaining(["123312", "21321"])
+      expect.arrayContaining([customerObj._id])
     );
 
     expect(response.description).toBe("description");
-
     const responseProduct = response.productsData[0];
     expect(responseProduct.productId).toBe(product._id);
   });

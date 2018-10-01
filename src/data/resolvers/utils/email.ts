@@ -7,7 +7,7 @@ export interface IEmail {
   content: string;
 }
 
-export const sendEmail = (args: IEmail) => {
+export const sendEmail = (args: IEmail): void => {
   const { toEmails, fromEmail, title, content } = args;
   const { MAIL_SERVICE, MAIL_USER, MAIL_PASS } = process.env;
 
