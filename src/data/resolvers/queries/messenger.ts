@@ -72,6 +72,10 @@ export default {
     const { _id, integrationId } = args;
     const conversation = await Conversations.findOne({ _id });
 
+    if (!conversation) {
+      return null;
+    }
+
     return {
       messages: await Messages.find({ conversationId: _id }),
       isOnline: await isMessengerOnline(integrationId),
