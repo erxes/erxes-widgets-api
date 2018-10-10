@@ -123,6 +123,7 @@ export const types = `
 
   type ConversationDetailResponse {
     messages: [ConversationMessage]
+    participatedUsers: [User]
     isOnline: Boolean
     supporters: [User]
   }

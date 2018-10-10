@@ -8,6 +8,12 @@ import {
   MESSENGER_DATA_AVAILABILITY
 } from "./constants";
 
+export interface ILink {
+  twitter?: string;
+  facebook?: string;
+  youtube?: string;
+}
+
 export interface ITwitterData {
   info?: any;
   token?: string;
@@ -43,6 +49,9 @@ export interface IMessengerData {
   welcomeMessage?: string;
   awayMessage?: string;
   thankYouMessage?: string;
+  greetingMessage?: string;
+  showFaq?: boolean;
+  links?: ILink;
 }
 
 export interface IMessengerDataDocument extends IMessengerData, Document {}
@@ -151,7 +160,14 @@ const messengerDataSchema = new Schema(
     }),
     welcomeMessage: field({ type: String, optional: true }),
     awayMessage: field({ type: String, optional: true }),
-    thankYouMessage: field({ type: String, optional: true })
+    thankYouMessage: field({ type: String, optional: true }),
+    greetingMessage: field({ type: String, optional: true }),
+    showFaq: field({ type: Boolean, optional: true }),
+    links: {
+      facebook: String,
+      twitter: String,
+      youtube: String
+    }
   },
   { _id: false }
 );

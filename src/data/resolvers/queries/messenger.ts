@@ -70,10 +70,14 @@ export default {
     args: { _id: string; integrationId: string }
   ) {
     const { _id, integrationId } = args;
+    const conversation = await Conversations.findOne({ _id });
 
     return {
       messages: await Messages.find({ conversationId: _id }),
       isOnline: await isMessengerOnline(integrationId),
+      participatedUsers: await Users.find({
+        _id: { $in: conversation.participatedUserIds }
+      }),
       supporters: await messengerSupporters(integrationId)
     };
   },
