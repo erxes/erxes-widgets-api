@@ -19,9 +19,19 @@ export const types = `
     fullName: String
   }
 
+  type UserLinks {
+    facebook: String
+    twitter: String
+    youtube: String
+    linkedIn: String
+    github: String
+    website: String
+  }
+
   type User {
     _id: String!
     details: UserDetails
+    links: UserLinks
   }
 
   type Customer {
