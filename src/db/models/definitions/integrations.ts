@@ -47,6 +47,28 @@ export interface IMessengerOnlineHoursDocument
   extends IMessengerOnlineHours,
     Document {}
 
+interface IGreetingMessage {
+  title?: string;
+  message?: string;
+}
+
+interface IOnlineMessage {
+  welcome?: string;
+}
+
+interface IOfflineMessage {
+  away?: string;
+  thankyou?: string;
+}
+
+interface IMessages {
+  [key: string]: {
+    greetings: IGreetingMessage;
+    online: IOnlineMessage;
+    offline: IOfflineMessage;
+  };
+}
+
 export interface IMessengerData {
   supporterIds?: string[];
   notifyCustomer?: boolean;
@@ -54,11 +76,7 @@ export interface IMessengerData {
   isOnline?: boolean;
   onlineHours?: IMessengerOnlineHours[];
   timezone?: string;
-  welcomeMessage?: string;
-  awayMessage?: string;
-  thankYouMessage?: string;
-  greetingTitle?: string;
-  greetingMessage?: string;
+  messages?: IMessages;
   showFaq?: boolean;
   links?: ILink;
 }
@@ -174,6 +192,7 @@ const messengerDataSchema = new Schema(
       type: String,
       optional: true
     }),
+    messages: field({ type: Object, optional: true }),
     welcomeMessage: field({ type: String, optional: true }),
     awayMessage: field({ type: String, optional: true }),
     thankYouMessage: field({ type: String, optional: true }),
