@@ -20,11 +20,11 @@ export interface IActivity {
   type: string;
   action: string;
   content: string;
-  id: string;
+  id?: string;
 }
 
 interface IActivityDocument extends IActivity, Document {
-  id: string;
+  id?: string;
 }
 
 export interface ICoc {
