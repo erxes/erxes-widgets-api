@@ -49,6 +49,7 @@ export interface IMessengerData {
   welcomeMessage?: string;
   awayMessage?: string;
   thankYouMessage?: string;
+  greetingTitle?: string;
   greetingMessage?: string;
   showFaq?: boolean;
   links?: ILink;
