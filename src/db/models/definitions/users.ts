@@ -12,6 +12,7 @@ export interface IEmailSignatureDocument extends IEmailSignature, Document {}
 export interface IDetail {
   avatar?: string;
   fullName?: string;
+  shortName?: string;
   position?: string;
   location?: string;
   description?: string;
@@ -66,6 +67,7 @@ const emailSignatureSchema = new Schema(
 const detailSchema = new Schema(
   {
     avatar: field({ type: String }),
+    shortName: field({ type: String, optional: true }),
     fullName: field({ type: String }),
     position: field({ type: String }),
     location: field({ type: String, optional: true }),
