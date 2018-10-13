@@ -29,15 +29,11 @@ export interface ICompany {
   plan?: string;
   parentCompanyId?: string;
 
-  // TODO: remove email after custom command
-  email?: string;
   primaryEmail?: string;
   emails?: string[];
 
   ownerId?: string;
 
-  // TODO: remove phone after custom command
-  phone?: string;
   primaryPhone?: string;
   phones?: string[];
 
@@ -126,13 +122,9 @@ export const companySchema = new Schema({
 
   primaryEmail: field({ type: String, optional: true, label: "Email" }),
   emails: field({ type: [String], optional: true }),
-  // TODO: remove email after custom command
-  email: field({ type: String, optional: true }),
 
   primaryPhone: field({ type: String, optional: true, label: "Phone" }),
   phones: field({ type: [String], optional: true }),
-  // TODO: remove phone after custom command
-  phone: field({ type: String, optional: true }),
 
   ownerId: field({ type: String, optional: true, label: "Owner" }),
 
