@@ -16,6 +16,10 @@ export const types = `
 
   type UserDetails {
     avatar: String
+    shortName: String
+    position: String
+    location: String
+    description: String
     fullName: String
   }
 
