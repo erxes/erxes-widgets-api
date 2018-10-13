@@ -47,13 +47,15 @@ export interface IMessengerOnlineHoursDocument
   extends IMessengerOnlineHours,
     Document {}
 
-interface IMessages {
-  [key: string]: {
-    greetings: { title?: string; message?: string };
-    away?: string;
-    thank?: string;
-    welcome?: string;
-  };
+export interface IMessengerDataMessagesItem {
+  greetings: { title?: string; message?: string };
+  away?: string;
+  thank?: string;
+  welcome?: string;
+}
+
+export interface IMessageDataMessages {
+  [key: string]: IMessengerDataMessagesItem;
 }
 
 export interface IMessengerData {
@@ -63,7 +65,7 @@ export interface IMessengerData {
   isOnline?: boolean;
   onlineHours?: IMessengerOnlineHours[];
   timezone?: string;
-  messages?: IMessages;
+  messages?: IMessageDataMessages;
   showFaq?: boolean;
   links?: ILink;
 }

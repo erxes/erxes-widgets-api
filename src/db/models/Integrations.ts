@@ -2,6 +2,7 @@ import { Model, model } from "mongoose";
 import Brands from "./Brands";
 import {
   IIntegrationDocument,
+  IMessengerDataMessagesItem,
   integrationSchema
 } from "./definitions/integrations";
 
@@ -11,6 +12,10 @@ interface IIntegrationModel extends Model<IIntegrationDocument> {
     kind: string,
     brandObject?: boolean
   ): IIntegrationDocument;
+
+  getMessengerMessagesByLanguage(
+    integration: IIntegrationDocument
+  ): IMessengerDataMessagesItem | null;
 }
 
 class Integration {
@@ -41,6 +46,30 @@ class Integration {
     }
 
     return integration;
+  }
+
+  /*
+  * Get messages config from messengerData by chosen language code in integration
+  */
+  public static getMessengerMessagesByLanguage(
+    integration: IIntegrationDocument
+  ): IMessengerDataMessagesItem {
+    let messagesByLanguage: IMessengerDataMessagesItem;
+
+    const messengerData = integration.messengerData
+      ? integration.messengerData.toJSON()
+      : {};
+    const languageCode = messengerData.languageCode || "en";
+
+    if (messengerData) {
+      const messages = messengerData.messages;
+
+      if (messages) {
+        messagesByLanguage = messages[languageCode];
+      }
+    }
+
+    return messagesByLanguage;
   }
 }
 
