@@ -101,12 +101,7 @@ export default {
       integrationId: integration._id,
       uiOptions: integration.uiOptions,
       languageCode: integration.languageCode,
-      messengerData: {
-        ...(integration.messengerData
-          ? integration.messengerData.toJSON()
-          : {}),
-        messages: Integrations.getMessengerMessagesByLanguage(integration)
-      },
+      messengerData: Integrations.getMessengerData(integration),
       customerId: customer._id,
       brand
     };

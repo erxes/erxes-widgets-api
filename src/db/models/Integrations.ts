@@ -13,9 +13,7 @@ interface IIntegrationModel extends Model<IIntegrationDocument> {
     brandObject?: boolean
   ): IIntegrationDocument;
 
-  getMessengerMessagesByLanguage(
-    integration: IIntegrationDocument
-  ): IMessengerDataMessagesItem | null;
+  getMessengerData(integration: IIntegrationDocument);
 }
 
 class Integration {
@@ -48,20 +46,14 @@ class Integration {
     return integration;
   }
 
-  /*
-  * Get messages config from messengerData by chosen language code in integration
-  */
-  public static getMessengerMessagesByLanguage(
-    integration: IIntegrationDocument
-  ): IMessengerDataMessagesItem {
+  public static getMessengerData(integration: IIntegrationDocument) {
     let messagesByLanguage: IMessengerDataMessagesItem;
-
-    const messengerData = integration.messengerData
-      ? integration.messengerData.toJSON()
-      : {};
-    const languageCode = messengerData.languageCode || "en";
+    let messengerData = integration.messengerData;
 
     if (messengerData) {
+      messengerData = messengerData.toJSON();
+
+      const languageCode = integration.languageCode || "en";
       const messages = messengerData.messages;
 
       if (messages) {
@@ -69,7 +61,10 @@ class Integration {
       }
     }
 
-    return messagesByLanguage;
+    return {
+      ...(messengerData || {}),
+      messages: messagesByLanguage
+    };
   }
 }
 
