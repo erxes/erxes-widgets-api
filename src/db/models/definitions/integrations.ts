@@ -47,25 +47,12 @@ export interface IMessengerOnlineHoursDocument
   extends IMessengerOnlineHours,
     Document {}
 
-interface IGreetingMessage {
-  title?: string;
-  message?: string;
-}
-
-interface IOnlineMessage {
-  welcome?: string;
-}
-
-interface IOfflineMessage {
-  away?: string;
-  thankyou?: string;
-}
-
 interface IMessages {
   [key: string]: {
-    greetings: IGreetingMessage;
-    online: IOnlineMessage;
-    offline: IOfflineMessage;
+    greetings: { title?: string; message?: string };
+    away?: string;
+    thank?: string;
+    welcome?: string;
   };
 }
 
@@ -193,10 +180,6 @@ const messengerDataSchema = new Schema(
       optional: true
     }),
     messages: field({ type: Object, optional: true }),
-    welcomeMessage: field({ type: String, optional: true }),
-    awayMessage: field({ type: String, optional: true }),
-    thankYouMessage: field({ type: String, optional: true }),
-    greetingMessage: field({ type: String, optional: true }),
     showFaq: field({ type: Boolean, optional: true }),
     links: {
       facebook: String,
