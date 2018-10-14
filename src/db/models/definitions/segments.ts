@@ -55,7 +55,7 @@ export const segmentSchema = new Schema({
   }),
   name: field({ type: String }),
   description: field({ type: String, optional: true }),
-  subOf: field({ type: String }),
+  subOf: field({ type: String, optional: true }),
   color: field({ type: String }),
   connector: field({ type: String }),
   conditions: field({ type: [conditionSchema] })
