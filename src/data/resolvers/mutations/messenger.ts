@@ -104,7 +104,7 @@ export default {
       integrationId: integration._id,
       uiOptions: integration.uiOptions,
       languageCode: integration.languageCode,
-      messengerData: integration.messengerData,
+      messengerData: Integrations.getMessengerData(integration),
       customerId: customer._id,
       brand,
       topicId: topic && topic._id
