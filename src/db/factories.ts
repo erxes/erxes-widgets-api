@@ -16,6 +16,7 @@ import {
   Forms,
   IMessageEngageData,
   Integrations,
+  KnowledgeBaseTopics,
   Messages,
   Users
 } from "./models";
@@ -308,5 +309,17 @@ export function configFactory(params: IConfigInput) {
   return Configs.create({
     code: params.code || faker.random.word(),
     value: params.value || [faker.random.word()]
+  });
+}
+
+interface IKnowledgebaseTopicInput {
+  brandId?: string;
+  title?: string;
+}
+
+export function knowledgebaseTopicFactory(params: IKnowledgebaseTopicInput) {
+  return KnowledgeBaseTopics.create({
+    brandId: params.brandId || Random.id(),
+    title: params.title || faker.random.word()
   });
 }

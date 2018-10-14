@@ -8,6 +8,7 @@ import {
   conversationFactory,
   customerFactory,
   integrationFactory,
+  knowledgebaseTopicFactory,
   messageFactory
 } from "../db/factories";
 import {
@@ -61,6 +62,17 @@ describe("messenger connect", () => {
 
     expect(integrationId).toBe(_integration._id);
     expect(brand.code).toBe(_brand.code);
+  });
+
+  test("returns proper knowledge base topic Id", async () => {
+    const topic = await knowledgebaseTopicFactory({ brandId: _brand._id });
+
+    const response = await messengerMutations.messengerConnect(
+      {},
+      { brandCode: _brand.code, email: faker.internet.email() }
+    );
+
+    expect(response.topicId).toBe(topic._id);
   });
 
   test("creates new customer", async () => {
