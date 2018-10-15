@@ -56,7 +56,7 @@ export interface IFacebookDataDocument extends IFacebookData, Document {
   id: string;
 }
 
-export interface ILink extends Document {
+export interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -64,6 +64,8 @@ export interface ILink extends Document {
   youtube?: string;
   website?: string;
 }
+
+interface ILinkDocument extends ILink, Document {}
 
 export interface ICustomer {
   firstName?: string;
@@ -102,6 +104,7 @@ export interface ICustomerDocument extends ICustomer, Document {
   twitterData?: ITwitterDataDocument;
   facebookData?: IFacebookDataDocument;
   location?: ILocationDocument;
+  links?: ILinkDocument;
   visitorContactInfo?: IVisitorContactDocument;
   createdAt: Date;
   modifiedAt: Date;

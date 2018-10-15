@@ -22,27 +22,36 @@ interface ILinkDocument extends ILink, Document {}
 
 export interface ICompany {
   primaryName?: string;
+  avatar?: string;
   names?: string[];
   size?: number;
   industry?: string;
   plan?: string;
   parentCompanyId?: string;
-  email?: string;
+
+  primaryEmail?: string;
+  emails?: string[];
+
   ownerId?: string;
-  phone?: string;
+
+  primaryPhone?: string;
+  phones?: string[];
+
   leadStatus?: string;
   lifecycleState?: string;
   businessType?: string;
   description?: string;
   employees?: number;
   doNotDisturb?: string;
-  links?: ILinkDocument;
+  links?: ILink;
   tagIds?: string[];
   customFieldsData?: any;
+  website?: string;
 }
 
 export interface ICompanyDocument extends ICompany, Document {
   _id: string;
+  links?: ILinkDocument;
   createdAt: Date;
   modifiedAt: Date;
 }
@@ -72,6 +81,11 @@ export const companySchema = new Schema({
 
   names: field({
     type: [String],
+    optional: true
+  }),
+
+  avatar: field({
+    type: String,
     optional: true
   }),
 
@@ -105,9 +119,14 @@ export const companySchema = new Schema({
     optional: true,
     label: "Parent Company"
   }),
-  email: field({ type: String, optional: true, label: "Email" }),
+
+  primaryEmail: field({ type: String, optional: true, label: "Email" }),
+  emails: field({ type: [String], optional: true }),
+
+  primaryPhone: field({ type: String, optional: true, label: "Phone" }),
+  phones: field({ type: [String], optional: true }),
+
   ownerId: field({ type: String, optional: true, label: "Owner" }),
-  phone: field({ type: String, optional: true, label: "Phone" }),
 
   leadStatus: field({
     type: String,

@@ -9,17 +9,18 @@ export interface IEmailSignature {
 
 export interface IEmailSignatureDocument extends IEmailSignature, Document {}
 
-interface IDetail {
-  avatar: string;
-  fullName: string;
-  position: string;
+export interface IDetail {
+  avatar?: string;
+  fullName?: string;
+  shortName?: string;
+  position?: string;
   location?: string;
-  description: string;
+  description?: string;
 }
 
-interface IDetailDocument extends IDetail, Document {}
+export interface IDetailDocument extends IDetail, Document {}
 
-interface ILink {
+export interface ILink {
   linkedIn?: string;
   twitter?: string;
   facebook?: string;
@@ -32,7 +33,7 @@ interface ILinkDocument extends ILink, Document {}
 
 export interface IUser {
   username?: string;
-  password?: string;
+  password: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   role?: string;
@@ -66,6 +67,7 @@ const emailSignatureSchema = new Schema(
 const detailSchema = new Schema(
   {
     avatar: field({ type: String }),
+    shortName: field({ type: String, optional: true }),
     fullName: field({ type: String }),
     position: field({ type: String }),
     location: field({ type: String, optional: true }),

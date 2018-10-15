@@ -1,6 +1,10 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
-import { ITwitterResponse, twitterResponseSchema } from "./conversations";
+import {
+  ITwitterResponse,
+  ITwitterResponseDocument,
+  twitterResponseSchema
+} from "./conversations";
 
 export interface IFbUser {
   id: string;
@@ -36,6 +40,15 @@ export interface IFacebook {
 
 interface IFacebookDataDocument extends IFacebook, Document {}
 
+interface IEngageDataRules {
+  kind: string;
+  text: string;
+  condition: string;
+  value?: string;
+}
+
+interface IEngageDataRulesDocument extends IEngageDataRules, Document {}
+
 export interface IEngageData {
   messageId: string;
   brandId: string;
@@ -43,9 +56,12 @@ export interface IEngageData {
   fromUserId: string;
   kind: string;
   sentAs: string;
+  rules?: IEngageDataRules[];
 }
 
-interface IEngageDataDocument extends IEngageData, Document {}
+interface IEngageDataDocument extends IEngageData, Document {
+  rules?: IEngageDataRulesDocument[];
+}
 
 export interface IMessage {
   content?: string;
@@ -57,22 +73,29 @@ export interface IMessage {
   userId?: string;
   isCustomerRead?: boolean;
   formWidgetData?: any;
-  engageData?: IEngageDataDocument;
-  facebookData?: IFacebookDataDocument;
+  messengerAppData?: any;
+  engageData?: IEngageData;
+  facebookData?: IFacebook;
   twitterData?: ITwitterResponse;
 }
 
 export interface IMessageDocument extends IMessage, Document {
   _id: string;
+  engageData?: IEngageDataDocument;
+  facebookData?: IFacebookDataDocument;
+  twitterData?: ITwitterResponseDocument;
   createdAt: Date;
 }
 
-const attachmentSchema = new Schema({
-  url: field({ type: String }),
-  name: field({ type: String }),
-  size: field({ type: Number }),
-  type: field({ type: String })
-});
+const attachmentSchema = new Schema(
+  {
+    url: field({ type: String }),
+    name: field({ type: String }),
+    size: field({ type: Number }),
+    type: field({ type: String })
+  },
+  { _id: false }
+);
 
 const fbUserSchema = new Schema(
   {
@@ -177,14 +200,25 @@ const facebookSchema = new Schema(
   { _id: false }
 );
 
-const engageDataSchema = new Schema({
-  messageId: field({ type: String }),
-  brandId: field({ type: String }),
-  content: field({ type: String }),
-  fromUserId: field({ type: String }),
+const engageDataRuleSchema = new Schema({
   kind: field({ type: String }),
-  sentAs: field({ type: String })
+  text: field({ type: String }),
+  condition: field({ type: String }),
+  value: field({ type: String, optional: true })
 });
+
+const engageDataSchema = new Schema(
+  {
+    messageId: field({ type: String }),
+    brandId: field({ type: String }),
+    content: field({ type: String }),
+    fromUserId: field({ type: String }),
+    kind: field({ type: String }),
+    sentAs: field({ type: String }),
+    rules: field({ type: [engageDataRuleSchema], optional: true })
+  },
+  { _id: false }
+);
 
 export const messageSchema = new Schema({
   _id: field({ pkey: true }),
@@ -198,8 +232,8 @@ export const messageSchema = new Schema({
   createdAt: field({ type: Date }),
   isCustomerRead: field({ type: Boolean }),
   formWidgetData: field({ type: Object }),
+  messengerAppData: field({ type: Object }),
   engageData: field({ type: engageDataSchema }),
   facebookData: field({ type: facebookSchema }),
-  twitterData: field({ type: twitterResponseSchema }),
-  messengerAppData: field({ type: Object })
+  twitterData: field({ type: twitterResponseSchema })
 });

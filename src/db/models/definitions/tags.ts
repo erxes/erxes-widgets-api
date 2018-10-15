@@ -3,8 +3,8 @@ import { field } from "../utils";
 import { TAG_TYPES } from "./constants";
 
 export interface ITag {
-  name?: string;
-  type?: string;
+  name: string;
+  type: string;
   colorCode?: string;
   objectCount?: number;
 }

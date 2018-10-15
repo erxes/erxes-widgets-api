@@ -90,7 +90,8 @@ export const KIND_CHOICES = {
   FORM: "form",
   TWITTER: "twitter",
   FACEBOOK: "facebook",
-  ALL: ["messenger", "form", "twitter", "facebook"]
+  GMAIL: "gmail",
+  ALL: ["messenger", "form", "twitter", "facebook", "gmail"]
 };
 
 // module constants
@@ -211,6 +212,7 @@ export const ACTIVITY_TYPES = {
   CONVERSATION: "conversation",
   SEGMENT: "segment",
   DEAL: "deal",
+  EMAIL: "email",
 
   ALL: [
     "customer",
@@ -218,7 +220,8 @@ export const ACTIVITY_TYPES = {
     "internal_note",
     "conversation",
     "segment",
-    "deal"
+    "deal",
+    "email"
   ]
 };
 
@@ -226,8 +229,9 @@ export const ACTIVITY_ACTIONS = {
   CREATE: "create",
   UPDATE: "update",
   DELETE: "delete",
+  SEND: "send",
 
-  ALL: ["create", "update", "delete"]
+  ALL: ["create", "update", "delete", "send"]
 };
 
 export const ACTIVITY_PERFORMER_TYPES = {
@@ -253,26 +257,26 @@ export const FIELDS_GROUPS_CONTENT_TYPES = {
 
 export const CUSTOMER_LEAD_STATUS_TYPES = [
   "",
-  "New",
-  "Open",
-  "In Progress",
-  "Open Deal",
-  "Unqualified",
-  "Attempted to Contact",
-  "Connected",
-  "Bad Timing"
+  "new",
+  "open",
+  "inProgress",
+  "openDeal",
+  "unqualified",
+  "attemptedToContact",
+  "connected",
+  "badTiming"
 ];
 
 export const CUSTOMER_LIFECYCLE_STATE_TYPES = [
   "",
-  "Subscriber",
-  "Lead",
-  "Marketing Qualified Lead",
-  "Sales Qualified Lead",
-  "Opportunity",
-  "Customer",
-  "Evangelist",
-  "Other"
+  "subscriber",
+  "lead",
+  "marketingQualifiedLead",
+  "salesQualifiedLead",
+  "opportunity",
+  "customer",
+  "evangelist",
+  "other"
 ];
 
 export const CUSTOMER_BASIC_INFOS = [
@@ -292,26 +296,26 @@ export const CUSTOMER_BASIC_INFOS = [
 
 export const COMPANY_LEAD_STATUS_TYPES = [
   "",
-  "New",
-  "Open",
-  "In Progress",
-  "Open Deal",
-  "Unqualified",
-  "Attempted to contact",
-  "Connected",
-  "Bad Timing"
+  "new",
+  "open",
+  "inProgress",
+  "openDeal",
+  "unqualified",
+  "attemptedToContact",
+  "connected",
+  "badTiming"
 ];
 
 export const COMPANY_LIFECYCLE_STATE_TYPES = [
   "",
-  "Subscriber",
-  "Lead",
-  "Marketing Qualified Lead",
-  "Sales Qualified Lead",
-  "Opportunity",
-  "Customer",
-  "Evangelist",
-  "Other"
+  "subscriber",
+  "lead",
+  "marketingQualifiedLead",
+  "salesQualifiedLead",
+  "opportunity",
+  "customer",
+  "evangelist",
+  "other"
 ];
 
 export const COMPANY_BUSINESS_TYPES = [
@@ -392,8 +396,8 @@ export const COMPANY_BASIC_INFOS = [
   "industry",
   "website",
   "plan",
-  "email",
-  "phone",
+  "primaryPhone",
+  "primaryEmail",
   "leadStatus",
   "lifecycleState",
   "businessType",
