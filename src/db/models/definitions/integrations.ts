@@ -48,7 +48,7 @@ export interface IMessengerOnlineHoursDocument
     Document {}
 
 export interface IMessengerDataMessagesItem {
-  greetings: { title?: string; message?: string };
+  greetings?: { title?: string; message?: string };
   away?: string;
   thank?: string;
   welcome?: string;
