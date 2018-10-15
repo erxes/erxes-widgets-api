@@ -4,7 +4,6 @@ import {
   Conversations,
   Customers,
   Integrations,
-  KnowledgeBaseTopics,
   Messages
 } from "../../../db/models";
 
@@ -59,8 +58,6 @@ export default {
       throw new Error("Integration not found");
     }
 
-    const topic = await KnowledgeBaseTopics.findOne({ brandId: brand._id });
-
     let customer = await Customers.getCustomer({
       cachedCustomerId,
       email,
@@ -106,8 +103,7 @@ export default {
       languageCode: integration.languageCode,
       messengerData: Integrations.getMessengerData(integration),
       customerId: customer._id,
-      brand,
-      topicId: topic && topic._id
+      brand
     };
   },
 

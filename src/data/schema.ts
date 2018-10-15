@@ -133,7 +133,6 @@ export const types = `
     messengerData: JSON
     customerId: String
     brand: Brand
-    topicId: String
   }
 
   type ConversationDetailResponse {
