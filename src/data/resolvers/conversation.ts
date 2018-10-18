@@ -1,4 +1,4 @@
-import { IConversationDocument, Messages, Users } from "../../db/models";
+import { Conversations, IConversationDocument, Users } from "../../db/models";
 
 export default {
   participatedUsers(conversation: IConversationDocument) {
@@ -6,9 +6,6 @@ export default {
   },
 
   messages(conversation: IConversationDocument) {
-    return Messages.find({
-      conversationId: conversation._id,
-      internal: false
-    }).sort({ createdAt: 1 });
+    return Conversations.getMessages(conversation._id);
   }
 };

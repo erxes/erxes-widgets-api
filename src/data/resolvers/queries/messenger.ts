@@ -77,7 +77,7 @@ export default {
     }
 
     return {
-      messages: await Messages.find({ conversationId: _id }),
+      messages: await Conversations.getMessages(conversation._id),
       isOnline: await isMessengerOnline(integrationId),
       participatedUsers: await Users.find({
         _id: { $in: conversation.participatedUserIds }
@@ -89,10 +89,7 @@ export default {
   messages(_root, args: { conversationId: string }) {
     const { conversationId } = args;
 
-    return Messages.find({
-      conversationId,
-      internal: false
-    }).sort({ createdAt: 1 });
+    return Conversations.getMessages(conversationId);
   },
 
   unreadCount(_root, args: { conversationId: string }) {
