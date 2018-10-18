@@ -1,32 +1,18 @@
 #!/bin/sh
 
-if [ ! -d .git ]; then
-  echo 'Clone erxes repository and install its dependencies:'
-  git clone https://github.com/erxes/erxes-api
-  cd erxes-api
-  yarn install
-fi
+echo 'Clone erxes-widgets-api repository and install its dependencies:'
+git clone https://github.com/erxes/erxes-widgets-api.git
+cd erxes-widgets-api
+git checkout master
+yarn install
 
-#### 3. Create configuration. We use [dotenv](https://github.com/motdotla/dotenv) for this.
-
+echo 'Create `.env.sample` from default settings file and configure it on your own:'
 cp .env.sample .env
 
-cat <<"EOF"
- -------------------------------------------------------------------------
- To get started:
+CURRENT_FOLDER=${PWD##*/}
+if [ $CURRENT_FOLDER = 'erxes-widgets-api' ]; then
+  cd ..
+fi
 
- Run erxes which is an AI meets open source messaging platform for sales and marketing
- $ cd erxes/ && yarn start
-
- Run api which for erxes administration apps:
- $ cd erxes-app-api/ && yarn dev
-
- Run redis server
- $ redis-server
-
- Run widget which embedable widget scripts server for erxes
- $ cd erxes-widget/ && yarn dev
-
- Run erxes apps which graphQL API for erxes apps
- $ cd erxes-api/ && yarn dev
-EOF
+echo 'Install erxes-widgets'
+curl https://raw.githubusercontent.com/erxes/erxes-widgets/master/scripts/install.sh | sh
