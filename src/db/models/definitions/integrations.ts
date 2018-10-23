@@ -66,7 +66,7 @@ export interface IMessengerData {
   onlineHours?: IMessengerOnlineHours[];
   timezone?: string;
   messages?: IMessageDataMessages;
-  showFaq?: boolean;
+  knowledgeBaseTopicId?: string;
   links?: ILink;
 }
 
@@ -182,7 +182,7 @@ const messengerDataSchema = new Schema(
       optional: true
     }),
     messages: field({ type: Object, optional: true }),
-    showFaq: field({ type: Boolean, optional: true }),
+    knowledgeBaseTopicId: field({ type: String, optional: true }),
     links: {
       facebook: String,
       twitter: String,
