@@ -72,7 +72,10 @@ class Integration {
       "credentials.integrationId": integration._id
     });
 
-    const kbCredentials = kbApp && kbApp.credentials ? kbApp.credentials : {};
+    const topicId =
+      kbApp && kbApp.credentials
+        ? (kbApp.credentials as IKnowledgebaseCredentials).topicId
+        : null;
 
     // lead app ==========
     const leadApp = await MessengerApps.findOne({
@@ -80,18 +83,16 @@ class Integration {
       "credentials.integrationId": integration._id
     });
 
-    const leadCredentials =
-      leadApp && leadApp.credentials ? leadApp.credentials : {};
+    const formId =
+      leadApp && leadApp.credentials
+        ? (leadApp.credentials as ILeadCredentials).formId
+        : null;
 
     return {
       ...(messengerData || {}),
       messages: messagesByLanguage,
-      knowledgebaseTopicId: kbCredentials
-        ? (kbCredentials as IKnowledgebaseCredentials).topicId
-        : null,
-      formId: leadCredentials
-        ? (leadCredentials as ILeadCredentials).formId
-        : null
+      knowledgebaseTopicId: topicId,
+      formId
     };
   }
 }
