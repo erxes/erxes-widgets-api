@@ -1,10 +1,15 @@
 import { Model, model } from "mongoose";
+import { MessengerApps } from ".";
 import Brands from "./Brands";
 import {
   IIntegrationDocument,
   IMessengerDataMessagesItem,
   integrationSchema
 } from "./definitions/integrations";
+import {
+  IKnowledgebaseCredentials,
+  ILeadCredentials
+} from "./definitions/messengerApps";
 
 interface IIntegrationModel extends Model<IIntegrationDocument> {
   getIntegration(
@@ -46,7 +51,7 @@ class Integration {
     return integration;
   }
 
-  public static getMessengerData(integration: IIntegrationDocument) {
+  public static async getMessengerData(integration: IIntegrationDocument) {
     let messagesByLanguage: IMessengerDataMessagesItem;
     let messengerData = integration.messengerData;
 
@@ -61,9 +66,32 @@ class Integration {
       }
     }
 
+    // knowledgebase app =======
+    const kbApp = await MessengerApps.findOne({
+      kind: "knowledgebase",
+      "credentials.integrationId": integration._id
+    });
+
+    const kbCredentials = kbApp && kbApp.credentials ? kbApp.credentials : {};
+
+    // lead app ==========
+    const leadApp = await MessengerApps.findOne({
+      kind: "lead",
+      "credentials.integrationId": integration._id
+    });
+
+    const leadCredentials =
+      leadApp && leadApp.credentials ? leadApp.credentials : {};
+
     return {
       ...(messengerData || {}),
-      messages: messagesByLanguage
+      messages: messagesByLanguage,
+      knowledgebaseTopicId: kbCredentials
+        ? (kbCredentials as IKnowledgebaseCredentials).topicId
+        : null,
+      formId: leadCredentials
+        ? (leadCredentials as ILeadCredentials).formId
+        : null
     };
   }
 }

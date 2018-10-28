@@ -8,21 +8,26 @@ export interface IGoogleCredentials {
   expiry_date: number;
 }
 
-interface IKnowledgebase {
+export interface IKnowledgebaseCredentials {
   integrationId: string;
   topicId: string;
 }
 
-interface ILead {
+export interface ILeadCredentials {
   integrationId: string;
   formId: string;
 }
+
+export type IMessengerAppCrendentials =
+  | IGoogleCredentials
+  | IKnowledgebaseCredentials
+  | ILeadCredentials;
 
 export interface IMessengerApp {
   kind: "googleMeet" | "knowledgebase" | "lead";
   name: string;
   showInInbox?: boolean;
-  credentials?: IGoogleCredentials | IKnowledgebase | ILead;
+  credentials: IMessengerAppCrendentials;
 }
 
 export interface IMessengerAppDocument extends IMessengerApp, Document {
