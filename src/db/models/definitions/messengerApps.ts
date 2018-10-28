@@ -1,19 +1,28 @@
 import { Document, Schema } from "mongoose";
 import { field } from "../utils";
 
-interface IGoogleCredentials {
+export interface IGoogleCredentials {
   access_token: string;
   scope: string;
   token_type: string;
   expiry_date: number;
 }
 
+interface IKnowledgebase {
+  integrationId: string;
+  topicId: string;
+}
+
+interface ILead {
+  integrationId: string;
+  formId: string;
+}
+
 export interface IMessengerApp {
   kind: "googleMeet" | "knowledgebase" | "lead";
   name: string;
-
-  // can add other credentials link IGoogleCredentials | IMailChimpCredentials
-  credentials?: IGoogleCredentials;
+  showInInbox?: boolean;
+  credentials?: IGoogleCredentials | IKnowledgebase | ILead;
 }
 
 export interface IMessengerAppDocument extends IMessengerApp, Document {
@@ -30,5 +39,6 @@ export const messengerAppSchema = new Schema({
   }),
 
   name: field({ type: String }),
+  showInInbox: field({ type: Boolean, default: false }),
   credentials: field({ type: Object })
 });
