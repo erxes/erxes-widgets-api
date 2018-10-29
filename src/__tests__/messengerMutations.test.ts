@@ -87,6 +87,7 @@ describe("messenger connect", () => {
     expect(integrationId).toBe(_integration._id);
     expect(brand.code).toBe(_brand.code);
     expect(messengerData.formId).toBe("formId");
+    expect(messengerData.knowledgeBaseTopicId).toBe("topicId");
   });
 
   test("creates new customer", async () => {

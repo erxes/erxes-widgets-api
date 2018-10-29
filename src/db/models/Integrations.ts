@@ -91,7 +91,7 @@ class Integration {
     return {
       ...(messengerData || {}),
       messages: messagesByLanguage,
-      knowledgebaseTopicId: topicId,
+      knowledgeBaseTopicId: topicId,
       formId
     };
   }
