@@ -20,6 +20,7 @@ import {
   KnowledgeBaseTopics
 } from "./KnowledgeBase";
 import Messages from "./Messages";
+import MessengerApps from "./MessengerApps";
 import Users from "./Users";
 
 import { IBrandDocument } from "./definitions/brands";
@@ -73,5 +74,6 @@ export {
   KnowledgeBaseArticles,
   IKbTopicDocument,
   IKbCategoryDocument,
-  IKbArticleDocument
+  IKbArticleDocument,
+  MessengerApps
 };

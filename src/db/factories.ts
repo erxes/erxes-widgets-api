@@ -17,8 +17,10 @@ import {
   IMessageEngageData,
   Integrations,
   Messages,
+  MessengerApps,
   Users
 } from "./models";
+import { IMessengerAppCrendentials } from "./models/definitions/messengerApps";
 
 interface IUserParams {
   fullName?: string;
@@ -308,5 +310,19 @@ export function configFactory(params: IConfigInput) {
   return Configs.create({
     code: params.code || faker.random.word(),
     value: params.value || [faker.random.word()]
+  });
+}
+
+interface IMessengerApp {
+  name?: string;
+  kind?: string;
+  credentials: IMessengerAppCrendentials;
+}
+
+export function messengerAppFactory(params: IMessengerApp) {
+  return MessengerApps.create({
+    name: params.name || faker.random.word(),
+    kind: params.kind || "knowledgebase",
+    credentials: params.credentials
   });
 }

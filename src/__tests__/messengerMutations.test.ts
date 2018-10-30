@@ -8,7 +8,8 @@ import {
   conversationFactory,
   customerFactory,
   integrationFactory,
-  messageFactory
+  messageFactory,
+  messengerAppFactory
 } from "../db/factories";
 import {
   Brands,
@@ -19,7 +20,8 @@ import {
   ICustomerDocument,
   IIntegrationDocument,
   Integrations,
-  Messages
+  Messages,
+  MessengerApps
 } from "../db/models";
 
 beforeAll(() => connect());
@@ -51,16 +53,41 @@ describe("messenger connect", () => {
     await Brands.remove({});
     await Integrations.remove({});
     await Customers.remove({});
+    await MessengerApps.remove({});
   });
 
   test("returns proper integrationId", async () => {
-    const { integrationId, brand } = await messengerMutations.messengerConnect(
+    await messengerAppFactory({
+      kind: "knowledgebase",
+      name: "kb",
+      credentials: {
+        integrationId: _integration._id,
+        topicId: "topicId"
+      }
+    });
+
+    await messengerAppFactory({
+      kind: "lead",
+      name: "lead",
+      credentials: {
+        integrationId: _integration._id,
+        formCode: "formCode"
+      }
+    });
+
+    const {
+      integrationId,
+      brand,
+      messengerData
+    } = await messengerMutations.messengerConnect(
       {},
       { brandCode: _brand.code, email: faker.internet.email() }
     );
 
     expect(integrationId).toBe(_integration._id);
     expect(brand.code).toBe(_brand.code);
+    expect(messengerData.formCode).toBe("formCode");
+    expect(messengerData.knowledgeBaseTopicId).toBe("topicId");
   });
 
   test("creates new customer", async () => {

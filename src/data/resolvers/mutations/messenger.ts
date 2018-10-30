@@ -97,11 +97,13 @@ export default {
       await Customers.addCompany(customer._id, company._id);
     }
 
+    const messengerData = await Integrations.getMessengerData(integration);
+
     return {
       integrationId: integration._id,
       uiOptions: integration.uiOptions,
       languageCode: integration.languageCode,
-      messengerData: integration.messengerData,
+      messengerData,
       customerId: customer._id,
       brand
     };

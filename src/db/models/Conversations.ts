@@ -1,10 +1,13 @@
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
 import { CONVERSATION_STATUSES } from "./definitions/constants";
+import { IMessageDocument } from "./definitions/conversationMessages";
 import {
   conversationSchema,
   IConversationDocument
 } from "./definitions/conversations";
+
+import { Messages } from "./";
 
 interface ISTATUSES {
   NEW: "new";
@@ -22,6 +25,7 @@ interface IConversationParams {
 }
 
 interface IConversationModel extends Model<IConversationDocument> {
+  getMessages(conversationId: string): Promise<IMessageDocument[]>;
   getConversationStatuses(): ISTATUSES;
   createConversation(doc: IConversationParams): Promise<IConversationDocument>;
   getOrCreateConversation(
@@ -32,6 +36,12 @@ interface IConversationModel extends Model<IConversationDocument> {
 class Conversation {
   public static getConversationStatuses() {
     return CONVERSATION_STATUSES;
+  }
+
+  public static getMessages(conversationId: string) {
+    return Messages.find({ conversationId, internal: false }).sort({
+      createdAt: 1
+    });
   }
 
   /**

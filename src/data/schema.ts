@@ -16,12 +16,26 @@ export const types = `
 
   type UserDetails {
     avatar: String
+    shortName: String
+    position: String
+    location: String
+    description: String
     fullName: String
+  }
+
+  type UserLinks {
+    facebook: String
+    twitter: String
+    youtube: String
+    linkedIn: String
+    github: String
+    website: String
   }
 
   type User {
     _id: String!
     details: UserDetails
+    links: UserLinks
   }
 
   type Customer {
@@ -123,6 +137,7 @@ export const types = `
 
   type ConversationDetailResponse {
     messages: [ConversationMessage]
+    participatedUsers: [User]
     isOnline: Boolean
     supporters: [User]
   }
