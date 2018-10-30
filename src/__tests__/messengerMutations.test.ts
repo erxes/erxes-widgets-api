@@ -71,7 +71,7 @@ describe("messenger connect", () => {
       name: "lead",
       credentials: {
         integrationId: _integration._id,
-        formId: "formId"
+        formCode: "formCode"
       }
     });
 
@@ -86,7 +86,7 @@ describe("messenger connect", () => {
 
     expect(integrationId).toBe(_integration._id);
     expect(brand.code).toBe(_brand.code);
-    expect(messengerData.formId).toBe("formId");
+    expect(messengerData.formCode).toBe("formCode");
     expect(messengerData.knowledgeBaseTopicId).toBe("topicId");
   });
 

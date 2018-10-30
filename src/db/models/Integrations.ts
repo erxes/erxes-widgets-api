@@ -83,16 +83,16 @@ class Integration {
       "credentials.integrationId": integration._id
     });
 
-    const formId =
+    const formCode =
       leadApp && leadApp.credentials
-        ? (leadApp.credentials as ILeadCredentials).formId
+        ? (leadApp.credentials as ILeadCredentials).formCode
         : null;
 
     return {
       ...(messengerData || {}),
       messages: messagesByLanguage,
       knowledgeBaseTopicId: topicId,
-      formId
+      formCode
     };
   }
 }

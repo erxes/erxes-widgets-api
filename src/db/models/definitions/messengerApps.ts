@@ -15,7 +15,7 @@ export interface IKnowledgebaseCredentials {
 
 export interface ILeadCredentials {
   integrationId: string;
-  formId: string;
+  formCode: string;
 }
 
 export type IMessengerAppCrendentials =
