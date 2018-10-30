@@ -38,7 +38,27 @@ export interface IFacebook {
   senderName?: string;
 }
 
+export interface IGmailAttachment {
+  filename?: string;
+  mimeType?: string;
+  size: number;
+  attachmentId: string;
+}
+
+export interface IGmail {
+  messageId?: string;
+  from?: string;
+  to?: string;
+  cc?: string;
+  bcc?: string;
+  subject?: string;
+  textPlain?: string;
+  textHtml?: string;
+  attachments?: IGmailAttachment[];
+}
+
 interface IFacebookDataDocument extends IFacebook, Document {}
+interface IGmailDataDocument extends IGmail, Document {}
 
 interface IEngageDataRules {
   kind: string;
@@ -77,12 +97,14 @@ export interface IMessage {
   engageData?: IEngageData;
   facebookData?: IFacebook;
   twitterData?: ITwitterResponse;
+  gmailData?: IGmail;
 }
 
 export interface IMessageDocument extends IMessage, Document {
   _id: string;
   engageData?: IEngageDataDocument;
   facebookData?: IFacebookDataDocument;
+  gmailData?: IGmailDataDocument;
   twitterData?: ITwitterResponseDocument;
   createdAt: Date;
 }
@@ -200,6 +222,55 @@ const facebookSchema = new Schema(
   { _id: false }
 );
 
+const gmailAttachmentSchema = new Schema(
+  {
+    filename: field({ type: String }),
+    mimeType: field({ type: String }),
+    size: field({ type: Number }),
+    attachmentId: field({ type: String })
+  },
+  { _id: false }
+);
+
+const gmailSchema = new Schema(
+  {
+    messageId: field({
+      type: String,
+      optional: true
+    }),
+    from: field({
+      type: String
+    }),
+    to: field({
+      type: String
+    }),
+    cc: field({
+      type: String,
+      optional: true
+    }),
+    bcc: field({
+      type: String,
+      optional: true
+    }),
+    subject: field({
+      type: String
+    }),
+    textPlain: field({
+      type: String,
+      optional: true
+    }),
+    textHtml: field({
+      type: String,
+      optional: true
+    }),
+    attachments: field({
+      type: [gmailAttachmentSchema],
+      optional: true
+    })
+  },
+  { _id: false }
+);
+
 const engageDataRuleSchema = new Schema({
   kind: field({ type: String }),
   text: field({ type: String }),
@@ -235,5 +306,6 @@ export const messageSchema = new Schema({
   messengerAppData: field({ type: Object }),
   engageData: field({ type: engageDataSchema }),
   facebookData: field({ type: facebookSchema }),
-  twitterData: field({ type: twitterResponseSchema })
+  twitterData: field({ type: twitterResponseSchema }),
+  gmailData: field({ type: gmailSchema })
 });
