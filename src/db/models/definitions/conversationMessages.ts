@@ -47,10 +47,13 @@ export interface IGmailAttachment {
 
 export interface IGmail {
   messageId?: string;
+  headerId?: string;
   from?: string;
   to?: string;
   cc?: string;
   bcc?: string;
+  reply?: string;
+  refrences?: string;
   subject?: string;
   textPlain?: string;
   textHtml?: string;
@@ -235,8 +238,10 @@ const gmailAttachmentSchema = new Schema(
 const gmailSchema = new Schema(
   {
     messageId: field({
-      type: String,
-      optional: true
+      type: String
+    }),
+    headerId: field({
+      type: String
     }),
     from: field({
       type: String
@@ -249,6 +254,14 @@ const gmailSchema = new Schema(
       optional: true
     }),
     bcc: field({
+      type: String,
+      optional: true
+    }),
+    reply: field({
+      type: String,
+      optional: true
+    }),
+    refrences: field({
       type: String,
       optional: true
     }),
