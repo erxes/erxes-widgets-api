@@ -10,7 +10,7 @@ pipeline:
     commands:
       - node -v
       - npm -v
-      - apt-get install -y python build-essential
+      - apt-get update && apt-get install -y python build-essential
       - yarn --version
       - yarn config set cache-folder .yarn-cache
       - yarn install
