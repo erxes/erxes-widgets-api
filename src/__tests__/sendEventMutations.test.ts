@@ -1,5 +1,4 @@
 import sendEventMutations from "../data/resolvers/mutations/sendEvent";
-import { connect, disconnect } from "../db/connection";
 import {
   configFactory,
   dealBoardFactory,
@@ -16,10 +15,6 @@ import {
   Deals,
   DealStages
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("Deal Mutations: ", () => {
   afterEach(async () => {

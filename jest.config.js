@@ -12,4 +12,5 @@ module.exports = {
       enableTsDiagnostics: true
     },
   },
+  setupTestFrameworkScriptFile: './src/setupTests.ts'
 };

@@ -1,4 +1,3 @@
-import { connect, disconnect } from "../db/connection";
 import { brandFactory, integrationFactory } from "../db/factories";
 import {
   Customers,
@@ -6,10 +5,6 @@ import {
   IIntegrationDocument,
   Integrations
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("Integrations", () => {
   let _brand: IBrandDocument;

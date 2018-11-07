@@ -2,7 +2,6 @@ import formMutations, {
   saveValues,
   validate
 } from "../data/resolvers/mutations/form";
-import { connect, disconnect } from "../db/connection";
 import {
   brandFactory,
   formFactory,
@@ -19,10 +18,6 @@ import {
   Integrations,
   Messages
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("Form mutations", () => {
   // remove previous datas

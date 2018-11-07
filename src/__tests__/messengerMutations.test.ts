@@ -2,7 +2,6 @@ import * as faker from "faker";
 import * as Random from "meteor-random";
 
 import messengerMutations from "../data/resolvers/mutations/messenger";
-import { connect, disconnect } from "../db/connection";
 import {
   brandFactory,
   conversationFactory,
@@ -23,10 +22,6 @@ import {
   Messages,
   MessengerApps
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("messenger connect", () => {
   let _brand: IBrandDocument;

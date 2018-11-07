@@ -1,4 +1,3 @@
-import { connect, disconnect } from "../db/connection";
 import {
   configFactory,
   dealBoardFactory,
@@ -15,10 +14,6 @@ import {
   Deals,
   DealStages
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Deals related tests

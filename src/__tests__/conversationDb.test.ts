@@ -1,17 +1,13 @@
 import * as faker from "faker";
 import * as Random from "meteor-random";
 
-import { connect, disconnect } from "../db/connection";
 import {
   conversationFactory,
   engageDataFactory,
   messageFactory
 } from "../db/factories";
+
 import { Conversations, IConversationDocument, Messages } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Conversations related tests
