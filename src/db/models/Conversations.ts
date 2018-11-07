@@ -115,6 +115,7 @@ class Conversation {
 
 conversationSchema.loadClass(Conversation);
 
+// tslint:disable-next-line
 const Conversations = model<IConversationDocument, IConversationModel>(
   "conversations",
   conversationSchema

@@ -99,6 +99,7 @@ class Integration {
 
 integrationSchema.loadClass(Integration);
 
+// tslint:disable-next-line
 const Integrations = model<IIntegrationDocument, IIntegrationModel>(
   "integrations",
   integrationSchema

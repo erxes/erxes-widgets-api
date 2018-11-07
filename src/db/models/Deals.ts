@@ -1,6 +1,5 @@
 import { Model, model } from "mongoose";
-import { Configs, Users } from "./";
-import { Customers } from "./";
+import { Configs, Customers, Users } from "./";
 import {
   boardSchema,
   dealSchema,
@@ -144,23 +143,28 @@ class Deal {
 
 dealSchema.loadClass(Deal);
 
+// tslint:disable-next-line
 const Deals = model<IDealDocument, IDealModel>("deals", dealSchema);
 
+// tslint:disable-next-line
 const DealStages = model<IStageDocument, IStageModel>(
   "deal_stages",
   stageSchema
 );
 
+// tslint:disable-next-line
 const DealBoards = model<IBoardDocument, IBoardModel>(
   "deal_boards",
   boardSchema
 );
 
+// tslint:disable-next-line
 const DealPipelines = model<IPipelineDocument, IPipelineModel>(
   "deal_pipelines",
   pipelineSchema
 );
 
+// tslint:disable-next-line
 const DealProducts = model<IProductDocument, IProductModel>(
   "products",
   productSchema

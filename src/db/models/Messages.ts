@@ -70,6 +70,7 @@ class Message {
 
 messageSchema.loadClass(Message);
 
+// tslint:disable-next-line
 const Messages = model<IMessageDocument, IMessageModel>(
   "conversation_messages",
   messageSchema
