@@ -5,9 +5,9 @@ import Engage from "./engage";
 import Field from "./field";
 import Form from "./form";
 import {
-  KnowledgeBaseArticle,
-  KnowledgeBaseCategory,
-  KnowledgeBaseTopic
+  knowledgeBaseArticle,
+  knowledgeBaseCategory,
+  knowledgeBaseTopic
 } from "./knowledgeBase";
 import Mutation from "./mutations";
 import Query from "./queries";
@@ -27,7 +27,7 @@ export default {
   Query,
   Mutation,
 
-  KnowledgeBaseArticle,
-  KnowledgeBaseCategory,
-  KnowledgeBaseTopic
+  KnowledgeBaseArticle: knowledgeBaseArticle,
+  KnowledgeBaseCategory: knowledgeBaseCategory,
+  KnowledgeBaseTopic: knowledgeBaseTopic
 };

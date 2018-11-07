@@ -7,13 +7,13 @@ import {
   Users
 } from "../../db/models";
 
-export const KnowledgeBaseArticle = {
+export const knowledgeBaseArticle = {
   author(article: IKbArticleDocument) {
     return Users.findOne({ _id: article.createdBy });
   }
 };
 
-export const KnowledgeBaseTopic = {
+export const knowledgeBaseTopic = {
   categories(topic: IKbTopicDocument) {
     return KnowledgeBaseCategoriesModel.find({
       _id: { $in: topic.categoryIds }
@@ -21,7 +21,7 @@ export const KnowledgeBaseTopic = {
   }
 };
 
-export const KnowledgeBaseCategory = {
+export const knowledgeBaseCategory = {
   articles(category: IKbCategoryDocument) {
     return KnowledgeBaseArticlesModel.find({
       _id: { $in: category.articleIds },

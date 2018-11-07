@@ -1,4 +1,4 @@
-const nodemailer: any = require("nodemailer");
+import * as nodemailer from "nodemailer";
 
 export interface IEmail {
   toEmails: string[];
