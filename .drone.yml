@@ -30,6 +30,7 @@ pipeline:
       - TEST_MONGO_URL=mongodb://mongo/test
     commands:
       - yarn test
+
   publish:
     image: plugins/docker
     repo: goharbor.erxes.io/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
