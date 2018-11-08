@@ -37,7 +37,11 @@ pipeline:
     dockerfile: Dockerfile
     secrets: [ docker_username, docker_password ]
     tags:
-      - latest-${DRONE_COMMIT}
+      - ${DRONE_BRANCH}-latest
+    when:
+      branch: develop
+      event: push
+      status: success
 
 services:
   mongo:
