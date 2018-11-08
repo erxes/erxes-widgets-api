@@ -1,4 +1,4 @@
-ROM node:8-slim as build-deps
+FROM node:8-slim as build-deps
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y rsync && \
     rm -rf /var/lib/apt/lists/*
