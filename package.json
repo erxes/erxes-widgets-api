@@ -47,7 +47,7 @@
     "q": "^1.5.1",
     "requestify": "^0.2.5",
     "underscore": "^1.8.3",
-    "validator": "^7.0.0"
+    "validator": "^9.4.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
