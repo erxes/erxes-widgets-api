@@ -13,8 +13,6 @@ import {
   userFactory
 } from "../db/factories";
 
-import { connect, disconnect } from "../db/connection";
-
 import {
   Brands,
   Conversations,
@@ -27,10 +25,6 @@ import {
   IUserDocument,
   Messages
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("replace keys", () => {
   test("must replace customer, user placeholders", async () => {

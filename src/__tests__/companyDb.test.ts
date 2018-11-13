@@ -1,10 +1,5 @@
-import { connect, disconnect } from "../db/connection";
 import { companyFactory } from "../db/factories";
 import { Companies } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Company related tests
