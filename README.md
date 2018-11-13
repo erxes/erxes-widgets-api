@@ -8,6 +8,7 @@ erxes is an open source growth marketing platform. Marketing, sales, and custome
 
 ![Build Status](https://drone.erxes.io/api/badges/erxes/erxes-widgets-api/status.svg)
 [![Coverage Status](https://coveralls.io/repos/github/erxes/erxes-widgets-api/badge.svg?branch=master)](https://coveralls.io/github/erxes/erxes-widgets-api?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/github/erxes/erxes-widgets-api/badge.svg)](https://snyk.io/test/github/erxes/erxes-widgets-api)
 
 ## Running the server
 
