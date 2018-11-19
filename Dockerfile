@@ -1,11 +1,9 @@
-FROM node:8-slim as build-deps
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y rsync && \
-    rm -rf /var/lib/apt/lists/*
+FROM goharbor.erxes.io/erxes/runner:latest as build-deps
 WORKDIR /erxes-widgets-api/
 COPY package.json .
 RUN yarn
 COPY . .
+RUN cp .env.sample .env
 RUN yarn build
 RUN mkdir /erxes-widgets-api/prod
 RUN rsync -a /erxes-widgets-api/dist /erxes-widgets-api/prod/ && \
