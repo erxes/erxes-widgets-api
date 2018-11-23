@@ -1,7 +1,7 @@
+import * as EmailValidator from "email-deep-validator";
 import { Model, model } from "mongoose";
 import { mutateAppApi } from "../../utils";
 import { customerSchema, ICustomerDocument } from "./definitions/customers";
-
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -11,6 +11,7 @@ interface IGetCustomerParams {
 interface ICreateCustomerParams {
   integrationId?: string;
   email?: string;
+  isValidEmail?: boolean;
   phone?: string;
   isUser?: boolean;
   firstName?: string;
@@ -72,6 +73,12 @@ interface ICustomerModel extends Model<ICustomerDocument> {
     doc: IVisitorContactInfoParams
   ): Promise<ICustomerDocument>;
 }
+
+const validateEmail = async email => {
+  const emailValidator = new EmailValidator();
+  const { validDomain, validMailbox } = await emailValidator.verify(email);
+  return validDomain && validMailbox;
+};
 
 class Customer {
   /*
@@ -143,8 +150,8 @@ class Customer {
       createdAt: new Date(),
       modifiedAt: new Date()
     };
-
     if (email) {
+      modifier.isValidEmail = validateEmail(email);
       modifier.primaryEmail = email;
       modifier.emails = [email];
     }
@@ -177,7 +184,6 @@ class Customer {
     const { extractedInfo, updatedCustomData } = this.fixCustomData(
       customData || {}
     );
-
     return this.createCustomer({
       ...doc,
       ...extractedInfo,
@@ -344,7 +350,10 @@ class Customer {
     if (type === "email") {
       await Customers.update(
         { _id: customerId },
-        { "visitorContactInfo.email": value }
+        {
+          "visitorContactInfo.email": value,
+          isValidEmail: validateEmail(value)
+        }
       );
     }
 

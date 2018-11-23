@@ -84,6 +84,7 @@ export interface ICustomer {
   hasAuthority?: string;
   description?: string;
   doNotDisturb?: string;
+  isValidEmail?: boolean;
   links?: ILink;
   isUser?: boolean;
   integrationId?: string;
@@ -250,6 +251,7 @@ export const customerSchema = new Schema({
   isUser: field({ type: Boolean, label: "Is user", optional: true }),
 
   integrationId: field({ type: String, optional: true }),
+  isValidEmail: field({ type: Boolean, optional: true }),
   tagIds: field({ type: [String], optional: true }),
   companyIds: field({ type: [String], optional: true }),
 
