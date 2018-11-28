@@ -1,7 +1,6 @@
 import { Model, model } from "mongoose";
-import { mutateAppApi } from "../../utils";
+import { mutateAppApi, validateEmail } from "../../utils";
 import { customerSchema, ICustomerDocument } from "./definitions/customers";
-
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -11,6 +10,7 @@ interface IGetCustomerParams {
 interface ICreateCustomerParams {
   integrationId?: string;
   email?: string;
+  hasValidEmail?: boolean;
   phone?: string;
   isUser?: boolean;
   firstName?: string;
@@ -143,8 +143,8 @@ class Customer {
       createdAt: new Date(),
       modifiedAt: new Date()
     };
-
     if (email) {
+      modifier.hasValidEmail = await validateEmail(email);
       modifier.primaryEmail = email;
       modifier.emails = [email];
     }
@@ -177,7 +177,6 @@ class Customer {
     const { extractedInfo, updatedCustomData } = this.fixCustomData(
       customData || {}
     );
-
     return this.createCustomer({
       ...doc,
       ...extractedInfo,
@@ -344,7 +343,10 @@ class Customer {
     if (type === "email") {
       await Customers.update(
         { _id: customerId },
-        { "visitorContactInfo.email": value }
+        {
+          "visitorContactInfo.email": value,
+          hasValidEmail: validateEmail(value)
+        }
       );
     }
 

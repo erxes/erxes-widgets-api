@@ -1,5 +1,21 @@
 // TODO: readd strict mode and fix below import
+import * as EmailValidator from "email-deep-validator";
 import * as requestify from "requestify";
+
+export const validateEmail = async email => {
+  const emailValidator = new EmailValidator();
+  const { validDomain, validMailbox } = await emailValidator.verify(email);
+
+  if (!validDomain) {
+    return false;
+  }
+
+  if (!validMailbox && validMailbox === null) {
+    return false;
+  }
+
+  return true;
+};
 
 export const mutateAppApi = (query: string) => {
   const { MAIN_API_URL } = process.env;
@@ -18,4 +34,9 @@ export const mutateAppApi = (query: string) => {
     .catch((e: Error) => {
       console.log(e); // eslint-disable-line
     });
+};
+
+export default {
+  mutateAppApi,
+  validateEmail
 };
