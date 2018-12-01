@@ -77,6 +77,7 @@ export default {
     }
 
     return {
+      _id,
       messages: await Conversations.getMessages(conversation._id),
       isOnline: await isMessengerOnline(integrationId),
       participatedUsers: await Users.find({

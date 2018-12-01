@@ -136,6 +136,7 @@ export const types = `
   }
 
   type ConversationDetailResponse {
+    _id: String
     messages: [ConversationMessage]
     participatedUsers: [User]
     isOnline: Boolean
