@@ -49,6 +49,6 @@ export const knowledgeBaseCategory = {
     return KnowledgeBaseArticlesModel.find({
       _id: { $in: category.articleIds },
       status: "publish"
-    }).count();
+    }).countDocuments();
   }
 };

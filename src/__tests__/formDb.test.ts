@@ -14,7 +14,7 @@ describe("Forms", () => {
 
   afterEach(() => {
     // Clearing test forms
-    return Forms.remove({});
+    return Forms.deleteMany({});
   });
 
   test("Increase view count of form", async () => {

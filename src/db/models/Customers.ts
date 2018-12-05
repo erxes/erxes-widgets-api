@@ -214,7 +214,7 @@ class Customer {
       "messengerData.customData": updatedCustomData
     };
 
-    await Customers.update({ _id }, { $set: modifier });
+    await Customers.updateOne({ _id }, { $set: modifier });
 
     return Customers.findOne({ _id });
   }
@@ -282,7 +282,7 @@ class Customer {
    * Mark customer as active
    */
   public static async markCustomerAsActive(customerId: string) {
-    await Customers.update(
+    await Customers.updateOne(
       { _id: customerId },
       { $set: { "messengerData.isActive": true } }
     );
@@ -294,7 +294,7 @@ class Customer {
    * Mark customer as inactive
    */
   public static async markCustomerAsNotActive(customerId: string) {
-    await Customers.update(
+    await Customers.updateOne(
       { _id: customerId },
       {
         $set: {
@@ -341,17 +341,17 @@ class Customer {
     const { customerId, type, value } = args;
 
     if (type === "email") {
-      await Customers.update(
+      await Customers.updateOne(
         { _id: customerId },
         {
           "visitorContactInfo.email": value,
-          hasValidEmail: validateEmail(value)
+          hasValidEmail: await validateEmail(value)
         }
       );
     }
 
     if (type === "phone") {
-      await Customers.update(
+      await Customers.updateOne(
         { _id: customerId },
         { "visitorContactInfo.phone": value }
       );

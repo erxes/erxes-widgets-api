@@ -96,7 +96,7 @@ export default {
   unreadCount(_root, args: { conversationId: string }) {
     const { conversationId } = args;
 
-    return Messages.count({
+    return Messages.countDocuments({
       conversationId,
       ...unreadMessagesSelector
     });
@@ -112,7 +112,7 @@ export default {
     const convs = await Conversations.find({ integrationId, customerId });
 
     // find read messages count
-    return Messages.count(unreadMessagesQuery(convs));
+    return Messages.countDocuments(unreadMessagesQuery(convs));
   },
 
   async messengerSupporters(

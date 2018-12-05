@@ -56,10 +56,10 @@ describe("createConversation", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Customers.remove({});
-    await Integrations.remove({});
-    await Conversations.remove({});
-    await Messages.remove({});
+    await Customers.deleteMany({});
+    await Integrations.deleteMany({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
   });
 
   test("createOrUpdateConversationAndMessages", async () => {
@@ -90,8 +90,8 @@ describe("createConversation", () => {
       throw new Error("conversation not found");
     }
 
-    expect(await Conversations.find().count()).toBe(1);
-    expect(await Messages.find().count()).toBe(1);
+    expect(await Conversations.find().countDocuments()).toBe(1);
+    expect(await Messages.find().countDocuments()).toBe(1);
 
     const customerName = `${_customer.firstName} ${_customer.lastName}`;
 
@@ -108,7 +108,7 @@ describe("createConversation", () => {
 
     // second time ==========================
     // must not create new conversation & messages update
-    await Messages.update(
+    await Messages.updateMany(
       { conversationId: conversation._id },
       { $set: { isCustomerRead: true } }
     );
@@ -117,8 +117,8 @@ describe("createConversation", () => {
 
     expect(response).toBe(null);
 
-    expect(await Conversations.find().count()).toBe(1);
-    expect(await Messages.find().count()).toBe(1);
+    expect(await Conversations.find().countDocuments()).toBe(1);
+    expect(await Messages.find().countDocuments()).toBe(1);
 
     const updatedMessage = await Messages.findOne({
       conversationId: conversation._id
@@ -132,7 +132,7 @@ describe("createConversation", () => {
 
     // do not mark as unread for conversations that
     // have more than one messages =====================
-    await Messages.update(
+    await Messages.updateMany(
       { conversationId: conversation._id },
       { $set: { isCustomerRead: true } }
     );
@@ -146,8 +146,8 @@ describe("createConversation", () => {
 
     expect(response).toBe(null);
 
-    expect(await Conversations.find().count()).toBe(1);
-    expect(await Messages.find().count()).toBe(2);
+    expect(await Conversations.find().countDocuments()).toBe(1);
+    expect(await Messages.find().countDocuments()).toBe(2);
 
     const [message1, message2] = await Messages.find({
       conversationId: conversation._id
@@ -203,11 +203,11 @@ describe("createEngageVisitorMessages", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Customers.remove({});
-    await Integrations.remove({});
-    await Conversations.remove({});
-    await Messages.remove({});
-    await Brands.remove({});
+    await Customers.deleteMany({});
+    await Integrations.deleteMany({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
+    await Brands.deleteMany({});
   });
 
   test("must create conversation & message object", async () => {

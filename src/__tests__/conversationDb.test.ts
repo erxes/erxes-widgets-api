@@ -22,8 +22,8 @@ describe("Conversations", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Conversations.remove({});
-    await Messages.remove({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
   });
 
   test("createConversation() must return a new conversation", async () => {
@@ -136,7 +136,7 @@ describe("Conversations", () => {
     expect(messages.length).toBe(1);
 
     // isCustomRead is undefined ===============
-    await Messages.remove({});
+    await Messages.deleteMany({});
 
     await messageFactory({
       customerId,

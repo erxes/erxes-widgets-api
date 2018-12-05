@@ -43,12 +43,15 @@
     "graphql-server-module-graphiql": "^0.8.2",
     "graphql-tools": "^1.0.0",
     "meteor-random": "0.0.3",
-    "mongoose": "^4.9.2",
+    "mongoose": "^5.2.16",
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
     "requestify": "^0.2.5",
     "underscore": "^1.8.3",
     "validator": "^10.9.0"
+  },
+  "peerOptionalDependencies": {
+    "kerberos": "^1.0.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",

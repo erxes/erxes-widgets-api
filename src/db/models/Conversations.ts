@@ -53,7 +53,7 @@ class Conversation {
     const count = await Conversations.find({
       customerId,
       integrationId
-    }).count();
+    }).countDocuments();
 
     const conversation = await Conversations.create({
       customerId,

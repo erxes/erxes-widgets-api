@@ -7,6 +7,8 @@ const { MONGO_URL = "" } = process.env;
 
 mongoose.Promise = global.Promise;
 
+mongoose.set("useFindAndModify", false);
+
 mongoose.connection
   .on("connected", () => {
     console.log(`Connected to the database: ${MONGO_URL}`);
@@ -21,7 +23,7 @@ mongoose.connection
 export function connect() {
   return mongoose.connect(
     MONGO_URL,
-    { useMongoClient: true }
+    { useNewUrlParser: true, useCreateIndex: true }
   );
 }
 

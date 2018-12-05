@@ -56,7 +56,7 @@ class Message {
 
   // force read previous unread engage messages ============
   public static forceReadCustomerPreviousEngageMessages(customerId: string) {
-    return Messages.update(
+    return Messages.updateMany(
       {
         customerId,
         engageData: { $exists: true },
