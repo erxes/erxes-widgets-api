@@ -39,7 +39,11 @@ class Conversation {
   }
 
   public static getMessages(conversationId: string) {
-    return Messages.find({ conversationId, internal: false }).sort({
+    return Messages.find({
+      conversationId,
+      internal: false,
+      fromBot: { $exists: false }
+    }).sort({
       createdAt: 1
     });
   }
