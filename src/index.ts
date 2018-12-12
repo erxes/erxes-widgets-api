@@ -27,6 +27,8 @@ app.get("/status", async (_, res) => {
 });
 
 app.get("/script-manager", async (req, res) => {
+  const { WIDGET_URL } = process.env;
+
   connectionPromise.then(async instance => {
     const script = await instance.connection.db
       .collection("scripts")
@@ -40,7 +42,7 @@ app.get("/script-manager", async (req, res) => {
       return `
         (function() {
           var script = document.createElement('script');
-          script.src = "build/${type}Widget.bundle.js";
+          script.src = "${WIDGET_URL}/build/${type}Widget.bundle.js";
           script.async = true;
           
           var entry = document.getElementsByTagName('script')[0];
