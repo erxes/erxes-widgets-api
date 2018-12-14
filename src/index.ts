@@ -29,60 +29,58 @@ app.get("/status", async (_, res) => {
 app.get("/script-manager", async (req, res) => {
   const { WIDGET_URL } = process.env;
 
-  connectionPromise.then(async instance => {
-    const script = await instance.connection.db
-      .collection("scripts")
-      .findOne({ _id: req.query.id });
+  const instance = await connectionPromise;
 
-    if (!script) {
-      res.end("Not found");
-    }
+  const script = await instance.connection.db
+    .collection("scripts")
+    .findOne({ _id: req.query.id });
 
-    const generateScript = type => {
-      return `
-        (function() {
-          var script = document.createElement('script');
-          script.src = "${WIDGET_URL}/build/${type}Widget.bundle.js";
-          script.async = true;
-          
-          var entry = document.getElementsByTagName('script')[0];
-          entry.parentNode.insertBefore(script, entry);
-        })();
-      `;
-    };
+  if (!script) {
+    res.end("Not found");
+  }
 
-    let erxesSettings = "{";
-    let includeScripts = "";
+  const generateScript = type => {
+    return `
+      (function() {
+        var script = document.createElement('script');
+        script.src = "${WIDGET_URL}/build/${type}Widget.bundle.js";
+        script.async = true;
+        
+        var entry = document.getElementsByTagName('script')[0];
+        entry.parentNode.insertBefore(script, entry);
+      })();
+    `;
+  };
 
-    if (script.messengerBrandCode) {
-      erxesSettings += `messenger: { brand_id: "${
-        script.messengerBrandCode
+  let erxesSettings = "{";
+  let includeScripts = "";
+
+  if (script.messengerBrandCode) {
+    erxesSettings += `messenger: { brand_id: "${script.messengerBrandCode}" },`;
+    includeScripts += generateScript("messenger");
+  }
+
+  if (script.kbTopicId) {
+    erxesSettings += `knowledgeBase: { topic_id: "${script.kbTopicId}" },`;
+    includeScripts += generateScript("knowledgebase");
+  }
+
+  if (script.leadMaps) {
+    erxesSettings += "forms: [";
+
+    script.leadMaps.forEach(map => {
+      erxesSettings += `{ brand_id: "${map.brandCode}", form_id: "${
+        map.formCode
       }" },`;
-      includeScripts += generateScript("messenger");
-    }
+      includeScripts += generateScript("form");
+    });
 
-    if (script.kbTopicId) {
-      erxesSettings += `knowledgeBase: { topic_id: "${script.kbTopicId}" },`;
-      includeScripts += generateScript("knowledgebase");
-    }
+    erxesSettings += "],";
+  }
 
-    if (script.leadMaps) {
-      erxesSettings += "forms: [";
+  erxesSettings = `${erxesSettings}}`;
 
-      script.leadMaps.forEach(map => {
-        erxesSettings += `{ brand_id: "${map.brandCode}", form_id: "${
-          map.formCode
-        }" },`;
-        includeScripts += generateScript("form");
-      });
-
-      erxesSettings += "],";
-    }
-
-    erxesSettings = `${erxesSettings}}`;
-
-    res.end(`window.erxesSettings=${erxesSettings};${includeScripts}`);
-  });
+  res.end(`window.erxesSettings=${erxesSettings};${includeScripts}`);
 });
 
 if (process.env.NODE_ENV === "development") {
