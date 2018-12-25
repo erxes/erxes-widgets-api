@@ -1,7 +1,6 @@
 import { Model, model } from "mongoose";
-import { mutateAppApi } from "../../utils";
+import { mutateAppApi, validateEmail } from "../../utils";
 import { customerSchema, ICustomerDocument } from "./definitions/customers";
-
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -11,6 +10,7 @@ interface IGetCustomerParams {
 interface ICreateCustomerParams {
   integrationId?: string;
   email?: string;
+  hasValidEmail?: boolean;
   phone?: string;
   isUser?: boolean;
   firstName?: string;
@@ -143,8 +143,8 @@ class Customer {
       createdAt: new Date(),
       modifiedAt: new Date()
     };
-
     if (email) {
+      modifier.hasValidEmail = await validateEmail(email);
       modifier.primaryEmail = email;
       modifier.emails = [email];
     }
@@ -177,7 +177,6 @@ class Customer {
     const { extractedInfo, updatedCustomData } = this.fixCustomData(
       customData || {}
     );
-
     return this.createCustomer({
       ...doc,
       ...extractedInfo,
@@ -215,7 +214,7 @@ class Customer {
       "messengerData.customData": updatedCustomData
     };
 
-    await Customers.update({ _id }, { $set: modifier });
+    await Customers.updateOne({ _id }, { $set: modifier });
 
     return Customers.findOne({ _id });
   }
@@ -283,7 +282,7 @@ class Customer {
    * Mark customer as active
    */
   public static async markCustomerAsActive(customerId: string) {
-    await Customers.update(
+    await Customers.updateOne(
       { _id: customerId },
       { $set: { "messengerData.isActive": true } }
     );
@@ -295,7 +294,7 @@ class Customer {
    * Mark customer as inactive
    */
   public static async markCustomerAsNotActive(customerId: string) {
-    await Customers.update(
+    await Customers.updateOne(
       { _id: customerId },
       {
         $set: {
@@ -342,14 +341,17 @@ class Customer {
     const { customerId, type, value } = args;
 
     if (type === "email") {
-      await Customers.update(
+      await Customers.updateOne(
         { _id: customerId },
-        { "visitorContactInfo.email": value }
+        {
+          "visitorContactInfo.email": value,
+          hasValidEmail: await validateEmail(value)
+        }
       );
     }
 
     if (type === "phone") {
-      await Customers.update(
+      await Customers.updateOne(
         { _id: customerId },
         { "visitorContactInfo.phone": value }
       );
@@ -361,6 +363,7 @@ class Customer {
 
 customerSchema.loadClass(Customer);
 
+// tslint:disable-next-line
 const Customers = model<ICustomerDocument, ICustomerModel>(
   "customers",
   customerSchema

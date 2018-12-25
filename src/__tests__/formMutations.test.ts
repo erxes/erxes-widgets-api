@@ -2,7 +2,6 @@ import formMutations, {
   saveValues,
   validate
 } from "../data/resolvers/mutations/form";
-import { connect, disconnect } from "../db/connection";
 import {
   brandFactory,
   formFactory,
@@ -20,20 +19,16 @@ import {
   Messages
 } from "../db/models";
 
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
-
 describe("Form mutations", () => {
   // remove previous datas
   afterEach(async () => {
-    await Integrations.remove({});
-    await Brands.remove({});
-    await Fields.remove({});
-    await Conversations.remove({});
-    await Messages.remove({});
-    await Forms.remove({});
-    await Customers.remove({});
+    await Integrations.deleteMany({});
+    await Brands.deleteMany({});
+    await Fields.deleteMany({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
+    await Forms.deleteMany({});
+    await Customers.deleteMany({});
   });
 
   describe("formConnect", () => {
@@ -210,10 +205,10 @@ describe("Form mutations", () => {
       await saveValues({ integrationId, formId, submissions, browserInfo });
 
       // must create 1 conversation
-      expect(await Conversations.find().count()).toBe(1);
+      expect(await Conversations.find().countDocuments()).toBe(1);
 
       // must create 1 message
-      expect(await Messages.find().count()).toBe(1);
+      expect(await Messages.find().countDocuments()).toBe(1);
 
       // check conversation fields
       const conversation = await Conversations.findOne({});
@@ -238,7 +233,7 @@ describe("Form mutations", () => {
       expect(message.formWidgetData).toEqual(submissions);
 
       // must create 1 customer
-      expect(await Customers.find().count()).toBe(1);
+      expect(await Customers.find().countDocuments()).toBe(1);
 
       // check customer fields
       const customer = await Customers.findOne({});

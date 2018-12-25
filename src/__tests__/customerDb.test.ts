@@ -1,13 +1,8 @@
 import * as faker from "faker";
 import * as Random from "meteor-random";
 
-import { connect, disconnect } from "../db/connection";
 import { customerFactory } from "../db/factories";
 import { Customers, ICustomerDocument } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Customer related tests
@@ -25,7 +20,7 @@ describe("Customers", () => {
 
   afterEach(() => {
     // Clearing test customers
-    return Customers.remove({});
+    return Customers.deleteMany({});
   });
 
   test("createMessengerCustomer() must return a new customer", async () => {

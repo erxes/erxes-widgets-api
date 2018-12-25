@@ -1,17 +1,13 @@
 import * as faker from "faker";
 import * as Random from "meteor-random";
 
-import { connect, disconnect } from "../db/connection";
 import {
   conversationFactory,
   engageDataFactory,
   messageFactory
 } from "../db/factories";
+
 import { Conversations, IConversationDocument, Messages } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Conversations related tests
@@ -26,8 +22,8 @@ describe("Conversations", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Conversations.remove({});
-    await Messages.remove({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
   });
 
   test("createConversation() must return a new conversation", async () => {
@@ -140,7 +136,7 @@ describe("Conversations", () => {
     expect(messages.length).toBe(1);
 
     // isCustomRead is undefined ===============
-    await Messages.remove({});
+    await Messages.deleteMany({});
 
     await messageFactory({
       customerId,

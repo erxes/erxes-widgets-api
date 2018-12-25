@@ -1,6 +1,6 @@
 {
   "name": "erxes-widgets-api",
-  "version": "0.9.11",
+  "version": "0.9.13",
   "description": "GraphQL API for erxes widgets",
   "homepage": "https://erxes.io",
   "repository": {
@@ -19,7 +19,7 @@
   "scripts": {
     "start": "node dist",
     "dev": "NODE_ENV=development nodemon -e ts src --exec ts-node",
-    "test": "NODE_ENV=test jest --runInBand",
+    "test": "NODE_ENV=test jest --runInBand --forceExit",
     "build": "tsc -p tsconfig.prod.json",
     "lint": "tslint 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
@@ -35,6 +35,7 @@
     "body-parser": "^1.17.1",
     "cors": "^2.8.1",
     "dotenv": "^4.0.0",
+    "email-deep-validator": "^3.1.0",
     "express": "^4.15.2",
     "graphql": "^0.10.1",
     "graphql-server-core": "^0.8.2",
@@ -42,12 +43,15 @@
     "graphql-server-module-graphiql": "^0.8.2",
     "graphql-tools": "^1.0.0",
     "meteor-random": "0.0.3",
-    "mongoose": "^4.9.2",
+    "mongoose": "^5.2.16",
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
     "requestify": "^0.2.5",
     "underscore": "^1.8.3",
-    "validator": "^7.0.0"
+    "validator": "^10.9.0"
+  },
+  "peerOptionalDependencies": {
+    "kerberos": "^1.0.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
@@ -58,13 +62,13 @@
     "@types/mongodb": "^3.1.2",
     "@types/mongoose": "^5.2.1",
     "@types/q": "^1.5.0",
-    "jest": "22.0.4",
-    "prettier": "^1.13.7",
-    "ts-jest": "22.0.4",
     "faker": "^4.1.0",
     "husky": "^0.13.4",
+    "jest": "22.0.4",
     "lint-staged": "^3.6.0",
     "nodemon": "^1.11.0",
+    "prettier": "^1.13.7",
+    "ts-jest": "22.0.4",
     "ts-node": "^7.0.0",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.1.0",

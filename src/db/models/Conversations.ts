@@ -39,7 +39,11 @@ class Conversation {
   }
 
   public static getMessages(conversationId: string) {
-    return Messages.find({ conversationId, internal: false }).sort({
+    return Messages.find({
+      conversationId,
+      internal: false,
+      fromBot: { $exists: false }
+    }).sort({
       createdAt: 1
     });
   }
@@ -53,7 +57,7 @@ class Conversation {
     const count = await Conversations.find({
       customerId,
       integrationId
-    }).count();
+    }).countDocuments();
 
     const conversation = await Conversations.create({
       customerId,
@@ -115,6 +119,7 @@ class Conversation {
 
 conversationSchema.loadClass(Conversation);
 
+// tslint:disable-next-line
 const Conversations = model<IConversationDocument, IConversationModel>(
   "conversations",
   conversationSchema

@@ -1,4 +1,3 @@
-import { connect, disconnect } from "../db/connection";
 import { brandFactory, integrationFactory } from "../db/factories";
 import {
   Customers,
@@ -6,10 +5,6 @@ import {
   IIntegrationDocument,
   Integrations
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("Integrations", () => {
   let _brand: IBrandDocument;
@@ -26,7 +21,7 @@ describe("Integrations", () => {
 
   afterEach(() => {
     // Clearing test data
-    return Customers.remove({});
+    return Customers.deleteMany({});
   });
 
   test("getIntegration() must return an integration", async () => {

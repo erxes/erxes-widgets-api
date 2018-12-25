@@ -1,10 +1,5 @@
-import { connect, disconnect } from "../db/connection";
 import { customerFactory, formFactory } from "../db/factories";
 import { Forms, IFormDocument } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 /**
  * Form related tests
@@ -19,7 +14,7 @@ describe("Forms", () => {
 
   afterEach(() => {
     // Clearing test forms
-    return Forms.remove({});
+    return Forms.deleteMany({});
   });
 
   test("Increase view count of form", async () => {

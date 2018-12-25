@@ -2,7 +2,6 @@ import * as faker from "faker";
 import * as Random from "meteor-random";
 
 import messengerMutations from "../data/resolvers/mutations/messenger";
-import { connect, disconnect } from "../db/connection";
 import {
   brandFactory,
   conversationFactory,
@@ -23,10 +22,6 @@ import {
   Messages,
   MessengerApps
 } from "../db/models";
-
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
 
 describe("messenger connect", () => {
   let _brand: IBrandDocument;
@@ -50,10 +45,10 @@ describe("messenger connect", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Brands.remove({});
-    await Integrations.remove({});
-    await Customers.remove({});
-    await MessengerApps.remove({});
+    await Brands.deleteMany({});
+    await Integrations.deleteMany({});
+    await Customers.deleteMany({});
+    await MessengerApps.deleteMany({});
   });
 
   test("returns proper integrationId", async () => {
@@ -177,8 +172,8 @@ describe("insertMessage()", () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Integrations.remove({});
-    await Customers.remove({});
+    await Integrations.deleteMany({});
+    await Customers.deleteMany({});
   });
 
   test("successfull", async () => {
@@ -236,8 +231,8 @@ describe("readConversationMessages()", async () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Conversations.remove({});
-    await Messages.remove({});
+    await Conversations.deleteMany({});
+    await Messages.deleteMany({});
   });
 
   test("updates messages' isCustomerRead state", async () => {
@@ -260,7 +255,7 @@ describe("common", async () => {
 
   afterEach(async () => {
     // Clearing test data
-    await Customers.remove({});
+    await Customers.deleteMany({});
   });
 
   test("saveCustomerGetNotified", async () => {

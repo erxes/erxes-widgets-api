@@ -1,4 +1,3 @@
-import { connect, disconnect } from "../db/connection";
 import {
   configFactory,
   dealBoardFactory,
@@ -16,21 +15,17 @@ import {
   DealStages
 } from "../db/models";
 
-beforeAll(() => connect());
-
-afterAll(() => disconnect());
-
 /**
  * Deals related tests
  */
 describe("Deals", () => {
   afterEach(async () => {
     // Clearing test deals
-    await DealBoards.remove({});
-    await DealPipelines.remove({});
-    await DealProducts.remove({});
-    await Deals.remove({});
-    await DealStages.remove({});
+    await DealBoards.deleteMany({});
+    await DealPipelines.deleteMany({});
+    await DealProducts.deleteMany({});
+    await Deals.deleteMany({});
+    await DealStages.deleteMany({});
   });
 
   test("Create Deal:", async () => {

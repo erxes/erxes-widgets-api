@@ -26,7 +26,7 @@ class Form {
 
     viewCount++;
 
-    await Forms.update({ _id: formId }, { viewCount });
+    await Forms.updateOne({ _id: formId }, { viewCount });
 
     return Forms.findOne({ _id: formId });
   }
@@ -49,7 +49,7 @@ class Form {
 
     contactsGathered++;
 
-    await Forms.update({ _id: formId }, { contactsGathered });
+    await Forms.updateOne({ _id: formId }, { contactsGathered });
 
     return Forms.findOne({ _id: formId });
   }
@@ -60,7 +60,7 @@ class Form {
   public static async addSubmission(formId: string, customerId: string) {
     const submittedAt = new Date();
 
-    await Forms.update(
+    await Forms.updateOne(
       { _id: formId },
       { $push: { submissions: { customerId, submittedAt } } }
     );
@@ -71,6 +71,7 @@ class Form {
 
 formSchema.loadClass(Form);
 
+// tslint:disable-next-line
 const Forms = model<IFormDocument, IFormModel>("forms", formSchema);
 
 export default Forms;

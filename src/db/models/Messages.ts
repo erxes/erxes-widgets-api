@@ -56,7 +56,7 @@ class Message {
 
   // force read previous unread engage messages ============
   public static forceReadCustomerPreviousEngageMessages(customerId: string) {
-    return Messages.update(
+    return Messages.updateMany(
       {
         customerId,
         engageData: { $exists: true },
@@ -70,6 +70,7 @@ class Message {
 
 messageSchema.loadClass(Message);
 
+// tslint:disable-next-line
 const Messages = model<IMessageDocument, IMessageModel>(
   "conversation_messages",
   messageSchema
