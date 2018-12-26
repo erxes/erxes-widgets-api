@@ -297,8 +297,8 @@ export const mutations = `
       attachments: [AttachmentInput]
     ): ConversationMessage
 
-    readConversationMessages(conversationId: String): String
-    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
+    readConversationMessages(conversationId: String): JSON
+    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): JSON
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 
     saveForm(
@@ -315,8 +315,12 @@ export const mutations = `
       content: String
     ): String
 
-    formIncreaseViewCount(formId: String!): String
+    formIncreaseViewCount(formId: String!): JSON
 
     sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;
+
+const typeDefs = [types, queries, mutations];
+
+export default typeDefs;
