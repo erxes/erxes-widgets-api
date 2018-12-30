@@ -318,5 +318,7 @@ export const mutations = `
     formIncreaseViewCount(formId: String!): String
 
     sendEvent(type: String, dealDoc: DealInput): JSON
+
+    updateCustomer(email: String): Customer
   }
 `;
