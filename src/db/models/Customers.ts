@@ -213,9 +213,16 @@ class Customer {
       emails.push(doc.email);
     }
 
+    const phones = customer.phones || [];
+
+    if (doc.phone && !doc.phone.includes(doc.phone)) {
+      phones.push(doc.phone);
+    }
+
     const modifier = {
       ...doc,
       ...extractedInfo,
+      phones,
       emails,
       modifiedAt: new Date(),
       "messengerData.customData": updatedCustomData

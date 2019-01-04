@@ -319,6 +319,6 @@ export const mutations = `
 
     sendEvent(type: String, dealDoc: DealInput): JSON
 
-    updateCustomer(_id: String, email: String): Customer
+    updateCustomer(_id: String, email: String, phone: String): Customer
   }
 `;
