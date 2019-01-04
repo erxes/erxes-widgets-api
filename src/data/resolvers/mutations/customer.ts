@@ -2,7 +2,7 @@ import { Customers } from "../../../db/models";
 
 export default {
   /*
-   * Create a new deal
+   * Updates customer's email and phone
    */
   async updateCustomer(
     _root,
