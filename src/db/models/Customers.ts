@@ -208,21 +208,15 @@ class Customer {
     );
 
     const emails = customer.emails || [];
-    let primaryEmail = customer.primaryEmail;
 
     if (doc.email && !emails.includes(doc.email)) {
       emails.push(doc.email);
-    }
-
-    if (!primaryEmail) {
-      primaryEmail = doc.email;
     }
 
     const modifier = {
       ...doc,
       ...extractedInfo,
       emails,
-      primaryEmail,
       modifiedAt: new Date(),
       "messengerData.customData": updatedCustomData
     };
