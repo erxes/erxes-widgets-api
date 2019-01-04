@@ -215,7 +215,7 @@ class Customer {
 
     const phones = customer.phones || [];
 
-    if (doc.phone && !doc.phone.includes(doc.phone)) {
+    if (doc.phone && !phones.includes(doc.phone)) {
       phones.push(doc.phone);
     }
 
