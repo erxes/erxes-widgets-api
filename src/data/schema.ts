@@ -53,14 +53,6 @@ export const types = `
     sentAs: String
   }
 
-  input FieldValueInput {
-    _id: String!
-    type: String
-    validation: String
-    text: String
-    value: String
-  }
-
   type Integration {
     _id: String!
     name: String
@@ -74,6 +66,13 @@ export const types = `
     name: String!
     code: String!
     description: String
+  }
+
+  type Attachment {
+    url: String!
+    name: String!
+    type: String!
+    size: Float
   }
 
   type Conversation {
@@ -96,7 +95,7 @@ export const types = `
     user: User
     content: String
     createdAt: Date
-    attachments: [JSON]
+    attachments: [Attachment]
     internal: Boolean
     engageData: EngageData
     messengerAppData: JSON
@@ -136,6 +135,7 @@ export const types = `
   }
 
   type ConversationDetailResponse {
+    _id: String
     messages: [ConversationMessage]
     participatedUsers: [User]
     isOnline: Boolean
@@ -212,6 +212,13 @@ export const types = `
     createdAt: Date
   }
 
+  input AttachmentInput {
+    url: String!
+    name: String!
+    type: String!
+    size: Float
+  }
+
   input DealInput {
     name: String!
     stageName: String!
@@ -235,6 +242,14 @@ export const types = `
     discountPercent: Int
     discount: Int
     amount: Int
+  }
+
+  input FieldValueInput {
+    _id: String!
+    type: String
+    validation: String
+    text: String
+    value: String
   }
 `;
 
@@ -279,11 +294,11 @@ export const mutations = `
       customerId: String!
       conversationId: String
       message: String,
-      attachments: [JSON]
+      attachments: [AttachmentInput]
     ): ConversationMessage
 
-    readConversationMessages(conversationId: String): String
-    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): String
+    readConversationMessages(conversationId: String): JSON
+    saveCustomerGetNotified(customerId: String!, type: String!, value: String!): JSON
     formConnect(brandCode: String!, formCode: String!): FormConnectResponse
 
     saveForm(
@@ -300,8 +315,12 @@ export const mutations = `
       content: String
     ): String
 
-    formIncreaseViewCount(formId: String!): String
+    formIncreaseViewCount(formId: String!): JSON
 
     sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;
+
+const typeDefs = [types, queries, mutations];
+
+export default typeDefs;

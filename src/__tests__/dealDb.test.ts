@@ -21,11 +21,11 @@ import {
 describe("Deals", () => {
   afterEach(async () => {
     // Clearing test deals
-    await DealBoards.remove({});
-    await DealPipelines.remove({});
-    await DealProducts.remove({});
-    await Deals.remove({});
-    await DealStages.remove({});
+    await DealBoards.deleteMany({});
+    await DealPipelines.deleteMany({});
+    await DealProducts.deleteMany({});
+    await Deals.deleteMany({});
+    await DealStages.deleteMany({});
   });
 
   test("Create Deal:", async () => {

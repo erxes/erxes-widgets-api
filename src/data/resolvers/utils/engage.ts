@@ -194,7 +194,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
     }
 
     // mark as unread again && reset engageData
-    await Messages.update(
+    await Messages.updateOne(
       { _id: prevMessage._id },
       { $set: { engageData, isCustomerRead: false } }
     );
@@ -288,7 +288,7 @@ export const createEngageVisitorMessages = async (params: {
         conversationMessages.push(conversationMessage);
 
         // add given customer to customerIds list
-        await EngageMessages.update(
+        await EngageMessages.updateOne(
           { _id: message._id },
           { $push: { customerIds: customer._id } }
         );

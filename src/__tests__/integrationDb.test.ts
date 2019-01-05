@@ -21,7 +21,7 @@ describe("Integrations", () => {
 
   afterEach(() => {
     // Clearing test data
-    return Customers.remove({});
+    return Customers.deleteMany({});
   });
 
   test("getIntegration() must return an integration", async () => {

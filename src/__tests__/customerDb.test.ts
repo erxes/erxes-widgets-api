@@ -20,7 +20,7 @@ describe("Customers", () => {
 
   afterEach(() => {
     // Clearing test customers
-    return Customers.remove({});
+    return Customers.deleteMany({});
   });
 
   test("createMessengerCustomer() must return a new customer", async () => {

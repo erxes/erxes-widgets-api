@@ -7,7 +7,7 @@ import { Companies } from "../db/models";
 describe("Companies", () => {
   afterEach(() => {
     // Clearing test companies
-    return Companies.remove({});
+    return Companies.deleteMany({});
   });
 
   test("createCompany", async () => {

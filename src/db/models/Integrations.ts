@@ -54,7 +54,6 @@ class Integration {
   public static async getMessengerData(integration: IIntegrationDocument) {
     let messagesByLanguage: IMessengerDataMessagesItem;
     let messengerData = integration.messengerData;
-
     if (messengerData) {
       messengerData = messengerData.toJSON();
 

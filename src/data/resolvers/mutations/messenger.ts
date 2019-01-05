@@ -146,7 +146,7 @@ export default {
       attachments
     });
 
-    await Conversations.update(
+    await Conversations.updateOne(
       { _id: msg.conversationId },
       {
         $set: {
@@ -178,7 +178,7 @@ export default {
    * Mark given conversation's messages as read
    */
   async readConversationMessages(_root, args: { conversationId: string }) {
-    const response = await Messages.update(
+    const response = await Messages.updateMany(
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
