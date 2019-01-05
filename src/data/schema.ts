@@ -318,8 +318,6 @@ export const mutations = `
     formIncreaseViewCount(formId: String!): JSON
 
     sendEvent(type: String, dealDoc: DealInput): JSON
-
-    updateCustomer(_id: String, email: String, phone: String): Customer
   }
 `;
 
