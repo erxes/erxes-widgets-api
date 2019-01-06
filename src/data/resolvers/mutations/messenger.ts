@@ -214,8 +214,11 @@ export default {
       browserInfo.url || ""
     );
 
+    // Preventing from displaying non messenger integrations like form's messages
+    // as last unread message
     const integration = await Integrations.findOne({
-      _id: customer.integrationId
+      _id: customer.integrationId,
+      kind: "messenger"
     });
 
     if (!integration) {
