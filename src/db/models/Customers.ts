@@ -1,6 +1,6 @@
-import { Model, model } from "mongoose";
-import { mutateAppApi, validateEmail } from "../../utils";
-import { customerSchema, ICustomerDocument } from "./definitions/customers";
+import { Model, model } from 'mongoose';
+import { mutateAppApi, validateEmail } from '../../utils';
+import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -45,59 +45,44 @@ export interface IBrowserInfo {
 interface ICustomerModel extends Model<ICustomerDocument> {
   getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>;
 
-  getOrCreateCustomer(
-    getParams: IGetCustomerParams,
-    createParams: ICreateCustomerParams
-  ): Promise<ICustomerDocument>;
+  getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams): Promise<ICustomerDocument>;
 
-  createMessengerCustomer(
-    doc: ICreateCustomerParams,
-    customData: any
-  ): Promise<ICustomerDocument>;
+  createMessengerCustomer(doc: ICreateCustomerParams, customData: any): Promise<ICustomerDocument>;
 
-  updateMessengerCustomer(
-    param: IUpdateMessengerCustomerParams
-  ): Promise<ICustomerDocument>;
+  updateMessengerCustomer(param: IUpdateMessengerCustomerParams): Promise<ICustomerDocument>;
 
   markCustomerAsActive(customerId: string): Promise<ICustomerDocument>;
   markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>;
 
   updateMessengerSession(_id: string, url: string): Promise<ICustomerDocument>;
-  updateLocation(
-    _id: string,
-    browserInfo: IBrowserInfo
-  ): Promise<ICustomerDocument>;
+  updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>;
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>;
-  saveVisitorContactInfo(
-    doc: IVisitorContactInfoParams
-  ): Promise<ICustomerDocument>;
+  saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>;
 }
 
 class Customer {
   /*
    * Fix firstName, lastName, description abbriviations
    */
-  public static fixCustomData(
-    customData: any
-  ): { extractedInfo: any; updatedCustomData: any } {
+  public static fixCustomData(customData: any): { extractedInfo: any; updatedCustomData: any } {
     const extractedInfo: any = {};
     const updatedCustomData = { ...customData };
 
     // Setting customData fields to customer fields
     Object.keys(updatedCustomData).forEach(key => {
-      if (key === "first_name" || key === "firstName") {
+      if (key === 'first_name' || key === 'firstName') {
         extractedInfo.firstName = updatedCustomData[key];
 
         delete updatedCustomData[key];
       }
 
-      if (key === "last_name" || key === "lastName") {
+      if (key === 'last_name' || key === 'lastName') {
         extractedInfo.lastName = updatedCustomData[key];
 
         delete updatedCustomData[key];
       }
 
-      if (key === "bio" || key === "description") {
+      if (key === 'bio' || key === 'description') {
         extractedInfo.description = updatedCustomData[key];
 
         delete updatedCustomData[key];
@@ -115,13 +100,13 @@ class Customer {
 
     if (email) {
       return Customers.findOne({
-        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }]
+        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
       });
     }
 
     if (phone) {
       return Customers.findOne({
-        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }]
+        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
       });
     }
 
@@ -141,7 +126,7 @@ class Customer {
     const modifier: any = {
       ...restDoc,
       createdAt: new Date(),
-      modifiedAt: new Date()
+      modifiedAt: new Date(),
     };
     if (email) {
       modifier.hasValidEmail = await validateEmail(email);
@@ -170,13 +155,8 @@ class Customer {
   /*
    * Create a new messenger customer
    */
-  public static async createMessengerCustomer(
-    doc: ICreateCustomerParams,
-    customData: any
-  ) {
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(
-      customData || {}
-    );
+  public static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
     return this.createCustomer({
       ...doc,
       ...extractedInfo,
@@ -184,28 +164,24 @@ class Customer {
         lastSeenAt: new Date(),
         isActive: true,
         sessionCount: 1,
-        customData: updatedCustomData
-      }
+        customData: updatedCustomData,
+      },
     });
   }
 
   /*
    * Update messenger customer
    */
-  public static async updateMessengerCustomer(
-    param: IUpdateMessengerCustomerParams
-  ) {
+  public static async updateMessengerCustomer(param: IUpdateMessengerCustomerParams) {
     const { _id, doc, customData } = param;
 
     const customer = await Customers.findOne({ _id });
 
     if (!customer) {
-      throw new Error("Customer not found");
+      throw new Error('Customer not found');
     }
 
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(
-      customData || {}
-    );
+    const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
 
     const emails = customer.emails || [];
 
@@ -225,7 +201,7 @@ class Customer {
       phones,
       emails,
       modifiedAt: new Date(),
-      "messengerData.customData": updatedCustomData
+      'messengerData.customData': updatedCustomData,
     };
 
     await Customers.updateOne({ _id }, { $set: modifier });
@@ -236,10 +212,7 @@ class Customer {
   /**
    * Get or create customer
    */
-  public static async getOrCreateCustomer(
-    getParams: IGetCustomerParams,
-    createParams: ICreateCustomerParams
-  ) {
+  public static async getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams) {
     const customer = await this.getCustomer(getParams);
 
     if (customer) {
@@ -263,9 +236,9 @@ class Customer {
     const query: any = {
       $set: {
         // update messengerData
-        "messengerData.lastSeenAt": now,
-        "messengerData.isActive": true
-      }
+        'messengerData.lastSeenAt': now,
+        'messengerData.isActive': true,
+      },
     };
 
     const messengerData = customer.messengerData;
@@ -275,7 +248,7 @@ class Customer {
     // session count by 1
     if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
       // update session count
-      query.$inc = { "messengerData.sessionCount": 1 };
+      query.$inc = { 'messengerData.sessionCount': 1 };
 
       // save access history by location.pathname
       const urlVisits = customer.urlVisits || {};
@@ -296,10 +269,7 @@ class Customer {
    * Mark customer as active
    */
   public static async markCustomerAsActive(customerId: string) {
-    await Customers.updateOne(
-      { _id: customerId },
-      { $set: { "messengerData.isActive": true } }
-    );
+    await Customers.updateOne({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
 
     return Customers.findOne({ _id: customerId });
   }
@@ -312,10 +282,10 @@ class Customer {
       { _id: customerId },
       {
         $set: {
-          "messengerData.isActive": false,
-          "messengerData.lastSeenAt": new Date()
-        }
-      }
+          'messengerData.isActive': false,
+          'messengerData.lastSeenAt': new Date(),
+        },
+      },
     );
 
     return Customers.findOne({ _id: customerId });
@@ -328,8 +298,8 @@ class Customer {
     await Customers.findByIdAndUpdate(
       { _id },
       {
-        $set: { location: browserInfo }
-      }
+        $set: { location: browserInfo },
+      },
     );
 
     return Customers.findOne({ _id });
@@ -340,7 +310,7 @@ class Customer {
    */
   public static async addCompany(_id: string, companyId: string) {
     await Customers.findByIdAndUpdate(_id, {
-      $addToSet: { companyIds: companyId }
+      $addToSet: { companyIds: companyId },
     });
 
     // updated customer
@@ -354,21 +324,18 @@ class Customer {
   public static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
     const { customerId, type, value } = args;
 
-    if (type === "email") {
+    if (type === 'email') {
       await Customers.updateOne(
         { _id: customerId },
         {
-          "visitorContactInfo.email": value,
-          hasValidEmail: await validateEmail(value)
-        }
+          'visitorContactInfo.email': value,
+          hasValidEmail: await validateEmail(value),
+        },
       );
     }
 
-    if (type === "phone") {
-      await Customers.updateOne(
-        { _id: customerId },
-        { "visitorContactInfo.phone": value }
-      );
+    if (type === 'phone') {
+      await Customers.updateOne({ _id: customerId }, { 'visitorContactInfo.phone': value });
     }
 
     return Customers.findOne({ _id: customerId });
@@ -378,9 +345,6 @@ class Customer {
 customerSchema.loadClass(Customer);
 
 // tslint:disable-next-line
-const Customers = model<ICustomerDocument, ICustomerModel>(
-  "customers",
-  customerSchema
-);
+const Customers = model<ICustomerDocument, ICustomerModel>('customers', customerSchema);
 
 export default Customers;

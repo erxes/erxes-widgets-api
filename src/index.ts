@@ -1,11 +1,11 @@
-import { ApolloServer, PlaygroundConfig } from "apollo-server-express";
-import * as bodyParser from "body-parser";
-import * as cors from "cors";
-import * as dotenv from "dotenv";
-import * as express from "express";
-import resolvers from "./data/resolvers";
-import typeDefs from "./data/schema";
-import { connect } from "./db/connection";
+import { ApolloServer, PlaygroundConfig } from 'apollo-server-express';
+import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
+import * as dotenv from 'dotenv';
+import * as express from 'express';
+import resolvers from './data/resolvers';
+import typeDefs from './data/schema';
+import { connect } from './db/connection';
 
 // load environment variables
 dotenv.config();
@@ -24,43 +24,41 @@ const { NODE_ENV, PORT } = process.env;
 
 let playground: PlaygroundConfig = false;
 
-if (NODE_ENV !== "production") {
+if (NODE_ENV !== 'production') {
   playground = {
     settings: {
-      "general.betaUpdates": false,
-      "editor.theme": "dark",
-      "editor.cursorShape": "line",
-      "editor.reuseHeaders": true,
-      "tracing.hideTracingResponse": true,
-      "editor.fontSize": 14,
-      "editor.fontFamily": `'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace`,
-      "request.credentials": "include"
-    }
+      'general.betaUpdates': false,
+      'editor.theme': 'dark',
+      'editor.cursorShape': 'line',
+      'editor.reuseHeaders': true,
+      'tracing.hideTracingResponse': true,
+      'editor.fontSize': 14,
+      'editor.fontFamily': `'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace`,
+      'request.credentials': 'include',
+    },
   };
 }
 
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  playground
+  playground,
 });
 
 // for health check
-app.get("/status", async (_, res) => {
-  res.end("ok");
+app.get('/status', async (_, res) => {
+  res.end('ok');
 });
 
-app.get("/script-manager", async (req, res) => {
+app.get('/script-manager', async (req, res) => {
   const { WIDGET_URL } = process.env;
 
   const instance = await connectionPromise;
 
-  const script = await instance.connection.db
-    .collection("scripts")
-    .findOne({ _id: req.query.id });
+  const script = await instance.connection.db.collection('scripts').findOne({ _id: req.query.id });
 
   if (!script) {
-    res.end("Not found");
+    res.end('Not found');
   }
 
   const generateScript = type => {
@@ -76,30 +74,28 @@ app.get("/script-manager", async (req, res) => {
     `;
   };
 
-  let erxesSettings = "{";
-  let includeScripts = "";
+  let erxesSettings = '{';
+  let includeScripts = '';
 
   if (script.messengerBrandCode) {
     erxesSettings += `messenger: { brand_id: "${script.messengerBrandCode}" },`;
-    includeScripts += generateScript("messenger");
+    includeScripts += generateScript('messenger');
   }
 
   if (script.kbTopicId) {
     erxesSettings += `knowledgeBase: { topic_id: "${script.kbTopicId}" },`;
-    includeScripts += generateScript("knowledgebase");
+    includeScripts += generateScript('knowledgebase');
   }
 
   if (script.leadMaps) {
-    erxesSettings += "forms: [";
+    erxesSettings += 'forms: [';
 
     script.leadMaps.forEach(map => {
-      erxesSettings += `{ brand_id: "${map.brandCode}", form_id: "${
-        map.formCode
-      }" },`;
-      includeScripts += generateScript("form");
+      erxesSettings += `{ brand_id: "${map.brandCode}", form_id: "${map.formCode}" },`;
+      includeScripts += generateScript('form');
     });
 
-    erxesSettings += "],";
+    erxesSettings += '],';
   }
 
   erxesSettings = `${erxesSettings}}`;
@@ -107,7 +103,7 @@ app.get("/script-manager", async (req, res) => {
   res.end(`window.erxesSettings=${erxesSettings};${includeScripts}`);
 });
 
-apolloServer.applyMiddleware({ app, path: "/graphql" });
+apolloServer.applyMiddleware({ app, path: '/graphql' });
 
 app.listen(PORT, () => {
   console.log(`Websocket server is running on port ${PORT}`);

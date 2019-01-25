@@ -1,4 +1,4 @@
-import * as nodemailer from "nodemailer";
+import * as nodemailer from 'nodemailer';
 
 export interface IEmail {
   toEmails: string[];
@@ -15,8 +15,8 @@ export const sendEmail = (args: IEmail): void => {
     service: MAIL_SERVICE,
     auth: {
       user: MAIL_USER,
-      pass: MAIL_PASS
-    }
+      pass: MAIL_PASS,
+    },
   });
 
   toEmails.forEach(toEmail => {
@@ -24,7 +24,7 @@ export const sendEmail = (args: IEmail): void => {
       from: fromEmail,
       to: toEmail,
       subject: title,
-      text: content
+      text: content,
     };
 
     transporter.sendMail(mailOptions, (error: Error, info: any) => {

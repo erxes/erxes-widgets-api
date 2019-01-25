@@ -1,5 +1,5 @@
-import { Model, model } from "mongoose";
-import { formSchema, IFormDocument } from "./definitions/forms";
+import { Model, model } from 'mongoose';
+import { formSchema, IFormDocument } from './definitions/forms';
 
 interface IFormModel extends Model<IFormDocument> {
   increaseViewCount(formId: string): Promise<IFormDocument>;
@@ -15,7 +15,7 @@ class Form {
     const form = await Forms.findOne({ _id: formId });
 
     if (!form) {
-      throw new Error("Form not found");
+      throw new Error('Form not found');
     }
 
     let viewCount = 0;
@@ -38,7 +38,7 @@ class Form {
     const form = await Forms.findOne({ _id: formId });
 
     if (!form) {
-      throw new Error("Form not found");
+      throw new Error('Form not found');
     }
 
     let contactsGathered = 0;
@@ -60,10 +60,7 @@ class Form {
   public static async addSubmission(formId: string, customerId: string) {
     const submittedAt = new Date();
 
-    await Forms.updateOne(
-      { _id: formId },
-      { $push: { submissions: { customerId, submittedAt } } }
-    );
+    await Forms.updateOne({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
 
     return Forms.findOne({ _id: formId });
   }
@@ -72,6 +69,6 @@ class Form {
 formSchema.loadClass(Form);
 
 // tslint:disable-next-line
-const Forms = model<IFormDocument, IFormModel>("forms", formSchema);
+const Forms = model<IFormDocument, IFormModel>('forms', formSchema);
 
 export default Forms;

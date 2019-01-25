@@ -8,32 +8,22 @@ import {
   IMessageEngageData,
   IUserDocument,
   Messages,
-  Users
-} from "../../../db/models";
+  Users,
+} from '../../../db/models';
 
-import { IBrowserInfo } from "../../../db/models/Customers";
+import { IBrowserInfo } from '../../../db/models/Customers';
 
 /*
  * Replaces customer & user infos in given content
  */
-export const replaceKeys = (params: {
-  content: string;
-  customer: ICustomerDocument;
-  user: IUserDocument;
-}): string => {
+export const replaceKeys = (params: { content: string; customer: ICustomerDocument; user: IUserDocument }): string => {
   const { content, customer, user } = params;
 
   let result = content;
 
   // replace customer fields
-  result = result.replace(
-    /{{\s?customer.name\s?}}/gi,
-    `${customer.firstName} ${customer.lastName}`
-  );
-  result = result.replace(
-    /{{\s?customer.email\s?}}/gi,
-    customer.primaryEmail || ""
-  );
+  result = result.replace(/{{\s?customer.name\s?}}/gi, `${customer.firstName} ${customer.lastName}`);
+  result = result.replace(/{{\s?customer.email\s?}}/gi, customer.primaryEmail || '');
 
   // replace user fields
   if (user.details) {
@@ -68,71 +58,67 @@ export const checkRule = (params: ICheckRuleParams): boolean => {
 
   let valueToTest: any;
 
-  if (kind === "browserLanguage") {
+  if (kind === 'browserLanguage') {
     valueToTest = language;
   }
 
-  if (kind === "currentPageUrl") {
+  if (kind === 'currentPageUrl') {
     valueToTest = url;
   }
 
-  if (kind === "city") {
+  if (kind === 'city') {
     valueToTest = city;
   }
 
-  if (kind === "country") {
+  if (kind === 'country') {
     valueToTest = country;
   }
 
-  if (kind === "numberOfVisits") {
+  if (kind === 'numberOfVisits') {
     valueToTest = numberOfVisits;
   }
 
   // is
-  if (condition === "is" && valueToTest !== ruleValue) {
+  if (condition === 'is' && valueToTest !== ruleValue) {
     return false;
   }
 
   // isNot
-  if (condition === "isNot" && valueToTest === ruleValue) {
+  if (condition === 'isNot' && valueToTest === ruleValue) {
     return false;
   }
 
   // isUnknown
-  if (condition === "isUnknown" && valueToTest) {
+  if (condition === 'isUnknown' && valueToTest) {
     return false;
   }
 
   // hasAnyValue
-  if (condition === "hasAnyValue" && !valueToTest) {
+  if (condition === 'hasAnyValue' && !valueToTest) {
     return false;
   }
 
   // startsWith
-  if (condition === "startsWith" && !valueToTest.startsWith(ruleValue)) {
+  if (condition === 'startsWith' && !valueToTest.startsWith(ruleValue)) {
     return false;
   }
 
   // endsWith
-  if (condition === "endsWith" && !valueToTest.endsWith(ruleValue)) {
+  if (condition === 'endsWith' && !valueToTest.endsWith(ruleValue)) {
     return false;
   }
 
   // contains
-  if (
-    condition === "contains" &&
-    valueToTest &&
-    !valueToTest.includes(ruleValue)
-  ) {
+  if (condition === 'contains' && valueToTest && !valueToTest.includes(ruleValue)) {
     return false;
   }
 
   // greaterThan
-  if (condition === "greaterThan" && valueToTest < parseInt(ruleValue, 10)) {
+  if (condition === 'greaterThan' && valueToTest < parseInt(ruleValue, 10)) {
     return false;
   }
 
-  if (condition === "lessThan" && valueToTest > parseInt(ruleValue, 10)) {
+  if (condition === 'lessThan' && valueToTest > parseInt(ruleValue, 10)) {
     return false;
   }
 
@@ -148,9 +134,7 @@ interface ICheckRulesParams {
   browserInfo: IBrowserInfo;
   numberOfVisits?: number;
 }
-export const checkRules = async (
-  params: ICheckRulesParams
-): Promise<boolean> => {
+export const checkRules = async (params: ICheckRulesParams): Promise<boolean> => {
   const { rules, browserInfo, numberOfVisits } = params;
 
   let passedAllRules = true;
@@ -179,13 +163,13 @@ export const createOrUpdateConversationAndMessages = async (args: {
 
   const prevMessage = await Messages.findOne({
     customerId: customer._id,
-    "engageData.messageId": engageData.messageId
+    'engageData.messageId': engageData.messageId,
   });
 
   // if previously created conversation for this customer
   if (prevMessage) {
     const messages = await Messages.find({
-      conversationId: prevMessage.conversationId
+      conversationId: prevMessage.conversationId,
     });
 
     // leave conversations with responses alone
@@ -194,10 +178,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
     }
 
     // mark as unread again && reset engageData
-    await Messages.updateOne(
-      { _id: prevMessage._id },
-      { $set: { engageData, isCustomerRead: false } }
-    );
+    await Messages.updateOne({ _id: prevMessage._id }, { $set: { engageData, isCustomerRead: false } });
 
     return null;
   }
@@ -206,7 +187,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
   const replacedContent = replaceKeys({
     content: engageData.content,
     customer,
-    user
+    user,
   });
 
   // create conversation
@@ -214,7 +195,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
     userId: user._id,
     customerId: customer._id,
     integrationId: integration._id,
-    content: replacedContent
+    content: replacedContent,
   });
 
   // create message
@@ -223,7 +204,7 @@ export const createOrUpdateConversationAndMessages = async (args: {
     conversationId: conversation._id,
     userId: user._id,
     customerId: customer._id,
-    content: replacedContent
+    content: replacedContent,
   });
 };
 
@@ -243,10 +224,10 @@ export const createEngageVisitorMessages = async (params: {
   await Messages.forceReadCustomerPreviousEngageMessages(customer._id);
 
   const messages = await EngageMessages.find({
-    "messenger.brandId": brand._id,
-    kind: "visitorAuto",
-    method: "messenger",
-    isLive: true
+    'messenger.brandId': brand._id,
+    kind: 'visitorAuto',
+    method: 'messenger',
+    isLive: true,
   });
 
   const conversationMessages = [];
@@ -266,7 +247,7 @@ export const createEngageVisitorMessages = async (params: {
     const isPassedAllRules = await checkRules({
       rules: messenger.rules,
       browserInfo,
-      numberOfVisits: urlVisits[browserInfo.url] || 0
+      numberOfVisits: urlVisits[browserInfo.url] || 0,
     });
 
     // if given visitor is matched with given condition then create
@@ -279,8 +260,8 @@ export const createEngageVisitorMessages = async (params: {
         engageData: {
           ...messenger,
           messageId: message._id,
-          fromUserId: message.fromUserId
-        }
+          fromUserId: message.fromUserId,
+        },
       });
 
       if (conversationMessage) {
@@ -288,10 +269,7 @@ export const createEngageVisitorMessages = async (params: {
         conversationMessages.push(conversationMessage);
 
         // add given customer to customerIds list
-        await EngageMessages.updateOne(
-          { _id: message._id },
-          { $push: { customerIds: customer._id } }
-        );
+        await EngageMessages.updateOne({ _id: message._id }, { $push: { customerIds: customer._id } });
       }
     }
   }

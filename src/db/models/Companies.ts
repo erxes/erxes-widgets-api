@@ -1,6 +1,6 @@
-import { Model, model } from "mongoose";
-import { mutateAppApi } from "../../utils";
-import { companySchema, ICompanyDocument } from "./definitions/companies";
+import { Model, model } from 'mongoose';
+import { mutateAppApi } from '../../utils';
+import { companySchema, ICompanyDocument } from './definitions/companies';
 
 interface ICompanyDoc {
   id?: string;
@@ -25,7 +25,7 @@ class Company {
       modifiedAt: new Date(),
       primaryName: name,
       names: [name],
-      ...restDoc
+      ...restDoc,
     });
 
     // call app api's create customer log
@@ -44,7 +44,7 @@ class Company {
    */
   public static async getOrCreate(doc: ICompanyDoc) {
     const company = await Companies.findOne({
-      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }]
+      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
     });
 
     if (company) {
@@ -58,9 +58,6 @@ class Company {
 companySchema.loadClass(Company);
 
 // tslint:disable-next-line
-const Companies = model<ICompanyDocument, ICompanyModel>(
-  "companies",
-  companySchema
-);
+const Companies = model<ICompanyDocument, ICompanyModel>('companies', companySchema);
 
 export default Companies;

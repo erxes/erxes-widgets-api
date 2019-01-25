@@ -1,20 +1,10 @@
-import {
-  Brands,
-  Companies,
-  Conversations,
-  Customers,
-  Integrations,
-  Messages
-} from "../../../db/models";
+import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
-import {
-  IBrowserInfo,
-  IVisitorContactInfoParams
-} from "../../../db/models/Customers";
+import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
 
-import { mutateAppApi } from "../../../utils";
-import { createEngageVisitorMessages } from "../utils/engage";
-import { unreadMessagesQuery } from "../utils/messenger";
+import { mutateAppApi } from '../../../utils';
+import { createEngageVisitorMessages } from '../utils/engage';
+import { unreadMessagesQuery } from '../utils/messenger';
 
 export default {
   /*
@@ -31,17 +21,9 @@ export default {
       companyData?: any;
       data?: any;
       cachedCustomerId?: string;
-    }
+    },
   ) {
-    const {
-      brandCode,
-      email,
-      phone,
-      isUser,
-      companyData,
-      data,
-      cachedCustomerId
-    } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
 
     const customData = data;
 
@@ -49,19 +31,16 @@ export default {
     const brand = await Brands.findOne({ code: brandCode });
 
     // find integration
-    const integration = await Integrations.getIntegration(
-      brandCode,
-      "messenger"
-    );
+    const integration = await Integrations.getIntegration(brandCode, 'messenger');
 
     if (!integration) {
-      throw new Error("Integration not found");
+      throw new Error('Integration not found');
     }
 
     let customer = await Customers.getCustomer({
       cachedCustomerId,
       email,
-      phone
+      phone,
     });
 
     if (customer) {
@@ -71,9 +50,9 @@ export default {
         doc: {
           email,
           phone,
-          isUser
+          isUser,
         },
-        customData
+        customData,
       });
 
       // create new customer
@@ -83,9 +62,9 @@ export default {
           integrationId: integration._id,
           email,
           phone,
-          isUser
+          isUser,
         },
-        customData
+        customData,
       );
     }
 
@@ -105,7 +84,7 @@ export default {
       languageCode: integration.languageCode,
       messengerData,
       customerId: customer._id,
-      brand
+      brand,
     };
   },
 
@@ -120,22 +99,16 @@ export default {
       conversationId?: string;
       message: string;
       attachments?: any[];
-    }
+    },
   ) {
-    const {
-      integrationId,
-      customerId,
-      conversationId,
-      message,
-      attachments
-    } = args;
+    const { integrationId, customerId, conversationId, message, attachments } = args;
 
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
       integrationId,
       customerId,
-      content: message
+      content: message,
     });
 
     // create message
@@ -143,7 +116,7 @@ export default {
       conversationId: conversation._id,
       customerId,
       content: message,
-      attachments
+      attachments,
     });
 
     await Conversations.updateOne(
@@ -157,9 +130,9 @@ export default {
           content: message,
 
           // Mark as unread
-          readUserIds: []
-        }
-      }
+          readUserIds: [],
+        },
+      },
     );
 
     // mark customer as active
@@ -182,10 +155,10 @@ export default {
       {
         conversationId: args.conversationId,
         userId: { $exists: true },
-        isCustomerRead: { $ne: true }
+        isCustomerRead: { $ne: true },
       },
       { isCustomerRead: true },
-      { multi: true }
+      { multi: true },
     );
 
     return response;
@@ -198,27 +171,18 @@ export default {
   /*
    * Update customer location field
    */
-  async saveBrowserInfo(
-    _root,
-    {
-      customerId,
-      browserInfo
-    }: { customerId: string; browserInfo: IBrowserInfo }
-  ) {
+  async saveBrowserInfo(_root, { customerId, browserInfo }: { customerId: string; browserInfo: IBrowserInfo }) {
     // update location
     await Customers.updateLocation(customerId, browserInfo);
 
     // update messenger session data
-    const customer = await Customers.updateMessengerSession(
-      customerId,
-      browserInfo.url || ""
-    );
+    const customer = await Customers.updateMessengerSession(customerId, browserInfo.url || '');
 
     // Preventing from displaying non messenger integrations like form's messages
     // as last unread message
     const integration = await Integrations.findOne({
       _id: customer.integrationId,
-      kind: "messenger"
+      kind: 'messenger',
     });
 
     if (!integration) {
@@ -237,16 +201,16 @@ export default {
         brand,
         integration,
         customer,
-        browserInfo
+        browserInfo,
       });
     }
 
     // find conversations
     const convs = await Conversations.find({
       integrationId: integration._id,
-      customerId: customer._id
+      customerId: customer._id,
     });
 
     return Messages.findOne(unreadMessagesQuery(convs));
-  }
+  },
 };

@@ -1,5 +1,5 @@
-import { Model, model } from "mongoose";
-import { Configs, Customers, Users } from "./";
+import { Model, model } from 'mongoose';
+import { Configs, Customers, Users } from './';
 import {
   boardSchema,
   dealSchema,
@@ -10,8 +10,8 @@ import {
   IStageDocument,
   pipelineSchema,
   productSchema,
-  stageSchema
-} from "./definitions/deals";
+  stageSchema,
+} from './definitions/deals';
 
 interface IProductDataInput {
   productName: string;
@@ -52,63 +52,56 @@ interface IDealModel extends Model<IDealDocument> {
 
 class Deal {
   public static async createDeal(doc: IDealInput) {
-    const {
-      stageName,
-      userEmail,
-      productsData,
-      boardName,
-      pipelineName,
-      customerEmail
-    } = doc;
+    const { stageName, userEmail, productsData, boardName, pipelineName, customerEmail } = doc;
 
     const { productName, uom, currency } = productsData;
 
     const user = await Users.findOne({ email: userEmail });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     const board = await DealBoards.findOne({ name: boardName });
 
     if (!board) {
-      throw new Error("Board not found");
+      throw new Error('Board not found');
     }
 
     const pipeline = await DealPipelines.findOne({
       boardId: board._id,
-      name: pipelineName
+      name: pipelineName,
     });
 
     if (!pipeline) {
-      throw new Error("Pipeline not found");
+      throw new Error('Pipeline not found');
     }
 
     const stage = await DealStages.findOne({
       name: stageName,
-      pipelineId: pipeline._id
+      pipelineId: pipeline._id,
     });
 
     if (!stage) {
-      throw new Error("Stage not found");
+      throw new Error('Stage not found');
     }
 
     const product = await DealProducts.findOne({ name: productName });
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error('Product not found');
     }
 
-    const uomConfig = await Configs.findOne({ code: "dealUOM" });
+    const uomConfig = await Configs.findOne({ code: 'dealUOM' });
 
     if (!uomConfig.value.includes(uom)) {
-      throw new Error("Bad uom config");
+      throw new Error('Bad uom config');
     }
 
-    const currencyConfig = await Configs.findOne({ code: "dealCurrency" });
+    const currencyConfig = await Configs.findOne({ code: 'dealCurrency' });
 
     if (!currencyConfig.value.includes(currency)) {
-      throw new Error("Bad currency config");
+      throw new Error('Bad currency config');
     }
 
     const customerIds = [];
@@ -116,10 +109,7 @@ class Deal {
     if (customerEmail) {
       const email = customerEmail;
 
-      const customerObj = await Customers.getOrCreateCustomer(
-        { email },
-        { email, integrationId: "" }
-      );
+      const customerObj = await Customers.getOrCreateCustomer({ email }, { email, integrationId: '' });
 
       customerIds.push(customerObj._id);
     }
@@ -135,8 +125,8 @@ class Deal {
       customerIds,
       productsData: {
         ...productsData,
-        productId: product._id
-      }
+        productId: product._id,
+      },
     });
   }
 }
@@ -144,30 +134,18 @@ class Deal {
 dealSchema.loadClass(Deal);
 
 // tslint:disable-next-line
-const Deals = model<IDealDocument, IDealModel>("deals", dealSchema);
+const Deals = model<IDealDocument, IDealModel>('deals', dealSchema);
 
 // tslint:disable-next-line
-const DealStages = model<IStageDocument, IStageModel>(
-  "deal_stages",
-  stageSchema
-);
+const DealStages = model<IStageDocument, IStageModel>('deal_stages', stageSchema);
 
 // tslint:disable-next-line
-const DealBoards = model<IBoardDocument, IBoardModel>(
-  "deal_boards",
-  boardSchema
-);
+const DealBoards = model<IBoardDocument, IBoardModel>('deal_boards', boardSchema);
 
 // tslint:disable-next-line
-const DealPipelines = model<IPipelineDocument, IPipelineModel>(
-  "deal_pipelines",
-  pipelineSchema
-);
+const DealPipelines = model<IPipelineDocument, IPipelineModel>('deal_pipelines', pipelineSchema);
 
 // tslint:disable-next-line
-const DealProducts = model<IProductDocument, IProductModel>(
-  "products",
-  productSchema
-);
+const DealProducts = model<IProductDocument, IProductModel>('products', productSchema);
 
 export { Deals, DealStages, DealProducts, DealBoards, DealPipelines };

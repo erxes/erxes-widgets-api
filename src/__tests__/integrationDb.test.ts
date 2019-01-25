@@ -1,12 +1,7 @@
-import { brandFactory, integrationFactory } from "../db/factories";
-import {
-  Customers,
-  IBrandDocument,
-  IIntegrationDocument,
-  Integrations
-} from "../db/models";
+import { brandFactory, integrationFactory } from '../db/factories';
+import { Customers, IBrandDocument, IIntegrationDocument, Integrations } from '../db/models';
 
-describe("Integrations", () => {
+describe('Integrations', () => {
   let _brand: IBrandDocument;
   let _integration: IIntegrationDocument;
 
@@ -15,7 +10,7 @@ describe("Integrations", () => {
     _brand = await brandFactory();
     _integration = await integrationFactory({
       brandId: _brand._id,
-      kind: "messenger"
+      kind: 'messenger',
     });
   });
 
@@ -24,11 +19,8 @@ describe("Integrations", () => {
     return Customers.deleteMany({});
   });
 
-  test("getIntegration() must return an integration", async () => {
-    const integration = await Integrations.getIntegration(
-      _brand.code,
-      _integration.kind
-    );
+  test('getIntegration() must return an integration', async () => {
+    const integration = await Integrations.getIntegration(_brand.code, _integration.kind);
     expect(integration).toBeDefined();
     expect(integration.kind).toBe(_integration.kind);
   });

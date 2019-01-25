@@ -1,4 +1,4 @@
-import * as validator from "validator";
+import * as validator from 'validator';
 
 import {
   Brands,
@@ -8,12 +8,12 @@ import {
   Forms,
   IMessageDocument,
   Integrations,
-  Messages
-} from "../../../db/models";
+  Messages,
+} from '../../../db/models';
 
-import { IBrowserInfo } from "../../../db/models/Customers";
-import { mutateAppApi } from "../../../utils";
-import { IEmail, sendEmail } from "../utils/email";
+import { IBrowserInfo } from '../../../db/models/Customers';
+import { mutateAppApi } from '../../../utils';
+import { IEmail, sendEmail } from '../utils/email';
 
 interface ISubmission {
   _id: string;
@@ -28,10 +28,7 @@ interface IError {
   text: string;
 }
 
-export const validate = async (
-  formId: string,
-  submissions: ISubmission[]
-): Promise<IError[]> => {
+export const validate = async (formId: string, submissions: ISubmission[]): Promise<IError[]> => {
   const fields = await Fields.find({ contentTypeId: formId });
   const errors = [];
 
@@ -43,7 +40,7 @@ export const validate = async (
       continue;
     }
 
-    const value = submission.value || "";
+    const value = submission.value || '';
 
     const type = field.type;
     const validation = field.validation;
@@ -52,51 +49,45 @@ export const validate = async (
     if (field.isRequired && !value) {
       errors.push({
         fieldId: field._id,
-        code: "required",
-        text: "Required"
+        code: 'required',
+        text: 'Required',
       });
     }
 
     if (value) {
       // email
-      if (
-        (type === "email" || validation === "email") &&
-        !validator.isEmail(value)
-      ) {
+      if ((type === 'email' || validation === 'email') && !validator.isEmail(value)) {
         errors.push({
           fieldId: field._id,
-          code: "invalidEmail",
-          text: "Invalid email"
+          code: 'invalidEmail',
+          text: 'Invalid email',
         });
       }
 
       // phone
-      if (
-        (type === "phone" || validation === "phone") &&
-        !/^\d{8,}$/.test(value.replace(/[\s()+\-\.]|ext/gi, ""))
-      ) {
+      if ((type === 'phone' || validation === 'phone') && !/^\d{8,}$/.test(value.replace(/[\s()+\-\.]|ext/gi, ''))) {
         errors.push({
           fieldId: field._id,
-          code: "invalidPhone",
-          text: "Invalid phone"
+          code: 'invalidPhone',
+          text: 'Invalid phone',
         });
       }
 
       // number
-      if (validation === "number" && !validator.isNumeric(value.toString())) {
+      if (validation === 'number' && !validator.isNumeric(value.toString())) {
         errors.push({
           fieldId: field._id,
-          code: "invalidNumber",
-          text: "Invalid number"
+          code: 'invalidNumber',
+          text: 'Invalid number',
         });
       }
 
       // date
-      if (validation === "date" && !validator.isISO8601(value)) {
+      if (validation === 'date' && !validator.isISO8601(value)) {
         errors.push({
           fieldId: field._id,
-          code: "invalidDate",
-          text: "Invalid Date"
+          code: 'invalidDate',
+          text: 'Invalid Date',
         });
       }
     }
@@ -123,32 +114,29 @@ export const saveValues = async (args: {
 
   let email;
   let phone;
-  let firstName = "";
-  let lastName = "";
+  let firstName = '';
+  let lastName = '';
 
   submissions.forEach(submission => {
-    if (submission.type === "email") {
+    if (submission.type === 'email') {
       email = submission.value;
     }
 
-    if (submission.type === "phone") {
+    if (submission.type === 'phone') {
       phone = submission.value;
     }
 
-    if (submission.type === "firstName") {
+    if (submission.type === 'firstName') {
       firstName = submission.value;
     }
 
-    if (submission.type === "lastName") {
+    if (submission.type === 'lastName') {
       lastName = submission.value;
     }
   });
 
   // get or create customer
-  const customer = await Customers.getOrCreateCustomer(
-    { email },
-    { integrationId, email, firstName, lastName, phone }
-  );
+  const customer = await Customers.getOrCreateCustomer({ email }, { integrationId, email, firstName, lastName, phone });
 
   await Customers.updateLocation(customer._id, browserInfo);
 
@@ -159,14 +147,14 @@ export const saveValues = async (args: {
   const conversation = await Conversations.createConversation({
     integrationId,
     customerId: customer._id,
-    content
+    content,
   });
 
   // create message
   return Messages.createMessage({
     conversationId: conversation._id,
     content,
-    formWidgetData: submissions
+    formWidgetData: submissions,
   });
 };
 
@@ -177,27 +165,27 @@ export default {
     const form = await Forms.findOne({ code: args.formCode });
 
     if (!brand || !form) {
-      throw new Error("Invalid configuration");
+      throw new Error('Invalid configuration');
     }
 
     // find integration by brandId & formId
     const integ = await Integrations.findOne({
       brandId: brand._id,
-      formId: form._id
+      formId: form._id,
     });
 
     if (!integ) {
-      throw new Error("Integration not found");
+      throw new Error('Integration not found');
     }
 
-    if (integ.formData && integ.formData.loadType === "embedded") {
+    if (integ.formData && integ.formData.loadType === 'embedded') {
       await Forms.increaseViewCount(form._id);
     }
 
     // return integration details
     return {
       integration: integ,
-      form
+      form,
     };
   },
 
@@ -209,20 +197,20 @@ export default {
       formId: string;
       submissions: ISubmission[];
       browserInfo: any;
-    }
+    },
   ) {
     const { formId, submissions } = args;
 
     const errors = await validate(formId, submissions);
 
     if (errors.length > 0) {
-      return { status: "error", errors };
+      return { status: 'error', errors };
     }
 
     const message = await saveValues(args);
 
     if (!message) {
-      return { status: "error", errors: ["Invalid form"] };
+      return { status: 'error', errors: ['Invalid form'] };
     }
 
     // increasing form submitted count
@@ -234,7 +222,7 @@ export default {
         conversationPublishClientMessage(_id: "${message._id}")
       }`);
 
-    return { status: "ok", messageId: message._id };
+    return { status: 'ok', messageId: message._id };
   },
 
   // send email
@@ -244,5 +232,5 @@ export default {
 
   formIncreaseViewCount(_root, { formId }: { formId: string }) {
     return Forms.increaseViewCount(formId);
-  }
+  },
 };

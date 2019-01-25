@@ -1,16 +1,13 @@
-import { Deals } from "../../../db/models";
-import { IDealInput } from "../../../db/models/Deals";
+import { Deals } from '../../../db/models';
+import { IDealInput } from '../../../db/models/Deals';
 
 export default {
   /*
    * Create a new deal
    */
-  async sendEvent(
-    _root,
-    { type, dealDoc }: { type: string; dealDoc: IDealInput }
-  ) {
-    if (type === "createDeal") {
+  async sendEvent(_root, { type, dealDoc }: { type: string; dealDoc: IDealInput }) {
+    if (type === 'createDeal') {
       return Deals.createDeal(dealDoc);
     }
-  }
+  },
 };

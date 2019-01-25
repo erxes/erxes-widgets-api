@@ -1,8 +1,8 @@
 import {
   KnowledgeBaseArticles as KnowledgeBaseArticlesModel,
   KnowledgeBaseCategories as KnowledgeBaseCategoriesModel,
-  KnowledgeBaseTopics as KnowledgeBaseTopicsModel
-} from "../../../db/models";
+  KnowledgeBaseTopics as KnowledgeBaseTopicsModel,
+} from '../../../db/models';
 
 export default {
   /**
@@ -17,10 +17,7 @@ export default {
    * Find Category detail data along with its articles
    * @return {Promise} category detail
    */
-  knowledgeBaseCategoriesDetail(
-    _root: any,
-    { categoryId }: { categoryId: string }
-  ) {
+  knowledgeBaseCategoriesDetail(_root: any, { categoryId }: { categoryId: string }) {
     return KnowledgeBaseCategoriesModel.findOne({ _id: categoryId });
   },
 
@@ -29,10 +26,7 @@ export default {
    * in a topic found by topicId
    * @return {Promise} searched articles
    */
-  async knowledgeBaseArticles(
-    _root: any,
-    args: { topicId: string; searchString: string }
-  ) {
+  async knowledgeBaseArticles(_root: any, args: { topicId: string; searchString: string }) {
     const { topicId, searchString } = args;
 
     let articleIds: string[] = [];
@@ -44,7 +38,7 @@ export default {
     }
 
     const categories = await KnowledgeBaseCategoriesModel.find({
-      _id: topic.categoryIds
+      _id: topic.categoryIds,
     });
 
     categories.forEach(category => {
@@ -53,8 +47,8 @@ export default {
 
     return KnowledgeBaseArticlesModel.find({
       _id: { $in: articleIds },
-      content: { $regex: `.*${searchString.trim()}.*`, $options: "i" },
-      status: "publish"
+      content: { $regex: `.*${searchString.trim()}.*`, $options: 'i' },
+      status: 'publish',
     });
   },
 
@@ -64,5 +58,5 @@ export default {
    */
   knowledgeBaseLoader(_root: any, { topicId }: { topicId: string }) {
     return KnowledgeBaseTopicsModel.findOne({ _id: topicId }, { loadType: 1 });
-  }
+  },
 };

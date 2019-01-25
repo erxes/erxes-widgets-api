@@ -1,10 +1,7 @@
-import { Model, model } from "mongoose";
+import { Model, model } from 'mongoose';
 
-import Conversations from "./Conversations";
-import {
-  IMessageDocument,
-  messageSchema
-} from "./definitions/conversationMessages";
+import Conversations from './Conversations';
+import { IMessageDocument, messageSchema } from './definitions/conversationMessages';
 
 interface IMessageParams {
   conversationId: string;
@@ -18,9 +15,7 @@ interface IMessageParams {
 
 interface IMessageModel extends Model<IMessageDocument> {
   createMessage(doc: IMessageParams): Promise<IMessageDocument>;
-  forceReadCustomerPreviousEngageMessages(
-    customerId: string
-  ): Promise<IMessageDocument>;
+  forceReadCustomerPreviousEngageMessages(customerId: string): Promise<IMessageDocument>;
 }
 
 class Message {
@@ -29,11 +24,11 @@ class Message {
    */
   public static async createMessage(doc: IMessageParams) {
     const conversation = await Conversations.findOne({
-      _id: doc.conversationId
+      _id: doc.conversationId,
     });
 
     if (!conversation) {
-      throw new Error("Conversation not found");
+      throw new Error('Conversation not found');
     }
 
     // increment messageCount
@@ -41,16 +36,16 @@ class Message {
       conversation._id,
       {
         messageCount: conversation.messageCount + 1,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     // create message
     return Messages.create({
       createdAt: new Date(),
       internal: false,
-      ...doc
+      ...doc,
     });
   }
 
@@ -60,10 +55,10 @@ class Message {
       {
         customerId,
         engageData: { $exists: true },
-        isCustomerRead: { $ne: true }
+        isCustomerRead: { $ne: true },
       },
       { $set: { isCustomerRead: true } },
-      { multi: true }
+      { multi: true },
     );
   }
 }
@@ -71,9 +66,6 @@ class Message {
 messageSchema.loadClass(Message);
 
 // tslint:disable-next-line
-const Messages = model<IMessageDocument, IMessageModel>(
-  "conversation_messages",
-  messageSchema
-);
+const Messages = model<IMessageDocument, IMessageModel>('conversation_messages', messageSchema);
 
 export default Messages;

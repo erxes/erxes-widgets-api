@@ -1,16 +1,12 @@
-import Conversation from "./conversation";
-import ConversationMessage from "./conversationMessage";
-import customScalars from "./customScalars";
-import Engage from "./engage";
-import Field from "./field";
-import Form from "./form";
-import {
-  knowledgeBaseArticle,
-  knowledgeBaseCategory,
-  knowledgeBaseTopic
-} from "./knowledgeBase";
-import Mutation from "./mutations";
-import Query from "./queries";
+import Conversation from './conversation';
+import ConversationMessage from './conversationMessage';
+import customScalars from './customScalars';
+import Engage from './engage';
+import Field from './field';
+import Form from './form';
+import { knowledgeBaseArticle, knowledgeBaseCategory, knowledgeBaseTopic } from './knowledgeBase';
+import Mutation from './mutations';
+import Query from './queries';
 
 export default {
   ...customScalars,
@@ -21,7 +17,7 @@ export default {
   Field,
 
   EngageData: {
-    ...Engage
+    ...Engage,
   },
 
   Query,
@@ -29,5 +25,5 @@ export default {
 
   KnowledgeBaseArticle: knowledgeBaseArticle,
   KnowledgeBaseCategory: knowledgeBaseCategory,
-  KnowledgeBaseTopic: knowledgeBaseTopic
+  KnowledgeBaseTopic: knowledgeBaseTopic,
 };

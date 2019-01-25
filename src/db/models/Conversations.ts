@@ -1,19 +1,16 @@
-import { Model, model } from "mongoose";
-import { mutateAppApi } from "../../utils";
-import { CONVERSATION_STATUSES } from "./definitions/constants";
-import { IMessageDocument } from "./definitions/conversationMessages";
-import {
-  conversationSchema,
-  IConversationDocument
-} from "./definitions/conversations";
+import { Model, model } from 'mongoose';
+import { mutateAppApi } from '../../utils';
+import { CONVERSATION_STATUSES } from './definitions/constants';
+import { IMessageDocument } from './definitions/conversationMessages';
+import { conversationSchema, IConversationDocument } from './definitions/conversations';
 
-import { Messages } from "./";
+import { Messages } from './';
 
 interface ISTATUSES {
-  NEW: "new";
-  OPEN: "open";
-  CLOSED: "closed";
-  ALL_LIST: ["new", "open", "closed"];
+  NEW: 'new';
+  OPEN: 'open';
+  CLOSED: 'closed';
+  ALL_LIST: ['new', 'open', 'closed'];
 }
 
 interface IConversationParams {
@@ -28,9 +25,7 @@ interface IConversationModel extends Model<IConversationDocument> {
   getMessages(conversationId: string): Promise<IMessageDocument[]>;
   getConversationStatuses(): ISTATUSES;
   createConversation(doc: IConversationParams): Promise<IConversationDocument>;
-  getOrCreateConversation(
-    doc: IConversationParams
-  ): Promise<IConversationDocument>;
+  getOrCreateConversation(doc: IConversationParams): Promise<IConversationDocument>;
 }
 
 class Conversation {
@@ -42,9 +37,9 @@ class Conversation {
     return Messages.find({
       conversationId,
       internal: false,
-      fromBot: { $exists: false }
+      fromBot: { $exists: false },
     }).sort({
-      createdAt: 1
+      createdAt: 1,
     });
   }
 
@@ -56,7 +51,7 @@ class Conversation {
 
     const count = await Conversations.find({
       customerId,
-      integrationId
+      integrationId,
     }).countDocuments();
 
     const conversation = await Conversations.create({
@@ -69,7 +64,7 @@ class Conversation {
       messageCount: 0,
 
       // Number is used for denormalization of posts count
-      number: count + 1
+      number: count + 1,
     });
 
     // call app api's create conversation log
@@ -102,9 +97,9 @@ class Conversation {
           readUserIds: [],
 
           // reopen this conversation if it's closed
-          status: this.getConversationStatuses().OPEN
+          status: this.getConversationStatuses().OPEN,
         },
-        { new: true }
+        { new: true },
       );
     }
 
@@ -112,7 +107,7 @@ class Conversation {
     return this.createConversation({
       customerId,
       integrationId,
-      content
+      content,
     });
   }
 }
@@ -120,9 +115,6 @@ class Conversation {
 conversationSchema.loadClass(Conversation);
 
 // tslint:disable-next-line
-const Conversations = model<IConversationDocument, IConversationModel>(
-  "conversations",
-  conversationSchema
-);
+const Conversations = model<IConversationDocument, IConversationModel>('conversations', conversationSchema);
 
 export default Conversations;
