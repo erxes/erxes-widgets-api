@@ -1,4 +1,6 @@
+.git
 .gitignore
 *.md
-scripts
 *.yml
+scripts
+.snyk
