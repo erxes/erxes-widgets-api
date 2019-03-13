@@ -98,7 +98,7 @@ export default {
 
   async messengerSupporters(_root, { integrationId }: { integrationId: string }) {
     const integration = await Integrations.findOne({ _id: integrationId });
-    const messengerData = integration.messengerData;
+    const messengerData = integration.messengerData || { supporterIds: [] };
 
     return Users.find({ _id: { $in: messengerData.supporterIds || [] } });
   },
