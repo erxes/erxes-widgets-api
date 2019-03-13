@@ -122,6 +122,10 @@ export const checkRule = (params: ICheckRuleParams): boolean => {
     return false;
   }
 
+  if (condition === 'doesNotContain' && valueToTest.includes(ruleValue)) {
+    return false;
+  }
+
   return true;
 };
 
