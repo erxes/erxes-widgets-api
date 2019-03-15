@@ -65,6 +65,8 @@ export const loadClass = () => {
   }
 
   messageSchema.loadClass(Message);
+
+  return messageSchema;
 };
 
 loadClass();

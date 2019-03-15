@@ -68,6 +68,8 @@ export const loadClass = () => {
   }
 
   formSchema.loadClass(Form);
+
+  return formSchema;
 };
 
 loadClass();

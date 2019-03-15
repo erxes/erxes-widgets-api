@@ -57,6 +57,8 @@ export const loadClass = () => {
   }
 
   companySchema.loadClass(Company);
+
+  return companySchema;
 };
 
 loadClass();

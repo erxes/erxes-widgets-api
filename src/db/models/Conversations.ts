@@ -114,6 +114,8 @@ export const loadClass = () => {
   }
 
   conversationSchema.loadClass(Conversation);
+
+  return conversationSchema;
 };
 
 loadClass();

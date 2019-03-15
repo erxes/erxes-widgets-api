@@ -77,6 +77,8 @@ export const loadClass = () => {
   }
 
   integrationSchema.loadClass(Integration);
+
+  return integrationSchema;
 };
 
 loadClass();

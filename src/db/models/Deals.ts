@@ -133,6 +133,8 @@ export const loadClass = () => {
   }
 
   dealSchema.loadClass(Deal);
+
+  return dealSchema;
 };
 
 loadClass();

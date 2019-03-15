@@ -344,6 +344,8 @@ export const loadClass = () => {
   }
 
   customerSchema.loadClass(Customer);
+
+  return customerSchema;
 };
 
 loadClass();
