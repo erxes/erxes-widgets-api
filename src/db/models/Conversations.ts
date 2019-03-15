@@ -28,91 +28,95 @@ interface IConversationModel extends Model<IConversationDocument> {
   getOrCreateConversation(doc: IConversationParams): Promise<IConversationDocument>;
 }
 
-class Conversation {
-  public static getConversationStatuses() {
-    return CONVERSATION_STATUSES;
-  }
-
-  public static getMessages(conversationId: string) {
-    return Messages.find({
-      conversationId,
-      internal: false,
-      fromBot: { $exists: false },
-    }).sort({
-      createdAt: 1,
-    });
-  }
-
-  /**
-   * Create new conversation
-   */
-  public static async createConversation(doc: IConversationParams) {
-    const { integrationId, userId, customerId, content } = doc;
-
-    const count = await Conversations.find({
-      customerId,
-      integrationId,
-    }).countDocuments();
-
-    const conversation = await Conversations.create({
-      customerId,
-      userId,
-      integrationId,
-      content,
-      status: this.getConversationStatuses().NEW,
-      createdAt: new Date(),
-      messageCount: 0,
-
-      // Number is used for denormalization of posts count
-      number: count + 1,
-    });
-
-    // call app api's create conversation log
-    mutateAppApi(`
-      mutation {
-        activityLogsAddConversationLog(
-          conversationId: "${conversation._id}",
-          customerId: "${customerId}",
-        ) {
-          _id
-        }
-      }`);
-
-    return conversation;
-  }
-
-  /**
-   * Get or create conversation
-   */
-  public static getOrCreateConversation(doc: IConversationParams) {
-    const { conversationId, integrationId, customerId, content } = doc;
-
-    // customer can write a message
-    // to the closed conversation even if it's closed
-    if (conversationId) {
-      return Conversations.findByIdAndUpdate(
-        conversationId,
-        {
-          // mark this conversation as unread
-          readUserIds: [],
-
-          // reopen this conversation if it's closed
-          status: this.getConversationStatuses().OPEN,
-        },
-        { new: true },
-      );
+export const loadClass = () => {
+  class Conversation {
+    public static getConversationStatuses() {
+      return CONVERSATION_STATUSES;
     }
 
-    // create conversation
-    return this.createConversation({
-      customerId,
-      integrationId,
-      content,
-    });
-  }
-}
+    public static getMessages(conversationId: string) {
+      return Messages.find({
+        conversationId,
+        internal: false,
+        fromBot: { $exists: false },
+      }).sort({
+        createdAt: 1,
+      });
+    }
 
-conversationSchema.loadClass(Conversation);
+    /**
+     * Create new conversation
+     */
+    public static async createConversation(doc: IConversationParams) {
+      const { integrationId, userId, customerId, content } = doc;
+
+      const count = await Conversations.find({
+        customerId,
+        integrationId,
+      }).countDocuments();
+
+      const conversation = await Conversations.create({
+        customerId,
+        userId,
+        integrationId,
+        content,
+        status: this.getConversationStatuses().NEW,
+        createdAt: new Date(),
+        messageCount: 0,
+
+        // Number is used for denormalization of posts count
+        number: count + 1,
+      });
+
+      // call app api's create conversation log
+      mutateAppApi(`
+        mutation {
+          activityLogsAddConversationLog(
+            conversationId: "${conversation._id}",
+            customerId: "${customerId}",
+          ) {
+            _id
+          }
+        }`);
+
+      return conversation;
+    }
+
+    /**
+     * Get or create conversation
+     */
+    public static getOrCreateConversation(doc: IConversationParams) {
+      const { conversationId, integrationId, customerId, content } = doc;
+
+      // customer can write a message
+      // to the closed conversation even if it's closed
+      if (conversationId) {
+        return Conversations.findByIdAndUpdate(
+          conversationId,
+          {
+            // mark this conversation as unread
+            readUserIds: [],
+
+            // reopen this conversation if it's closed
+            status: this.getConversationStatuses().OPEN,
+          },
+          { new: true },
+        );
+      }
+
+      // create conversation
+      return this.createConversation({
+        customerId,
+        integrationId,
+        content,
+      });
+    }
+  }
+
+  conversationSchema.loadClass(Conversation);
+};
+
+loadClass();
 
 // tslint:disable-next-line
 const Conversations = model<IConversationDocument, IConversationModel>('conversations', conversationSchema);

@@ -50,88 +50,92 @@ interface IDealModel extends Model<IDealDocument> {
   createDeal(doc: IDealInput): IDealDocument;
 }
 
-class Deal {
-  public static async createDeal(doc: IDealInput) {
-    const { stageName, userEmail, productsData, boardName, pipelineName, customerEmail } = doc;
+export const loadClass = () => {
+  class Deal {
+    public static async createDeal(doc: IDealInput) {
+      const { stageName, userEmail, productsData, boardName, pipelineName, customerEmail } = doc;
 
-    const { productName, uom, currency } = productsData;
+      const { productName, uom, currency } = productsData;
 
-    const user = await Users.findOne({ email: userEmail });
+      const user = await Users.findOne({ email: userEmail });
 
-    if (!user) {
-      throw new Error('User not found');
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const board = await DealBoards.findOne({ name: boardName });
+
+      if (!board) {
+        throw new Error('Board not found');
+      }
+
+      const pipeline = await DealPipelines.findOne({
+        boardId: board._id,
+        name: pipelineName,
+      });
+
+      if (!pipeline) {
+        throw new Error('Pipeline not found');
+      }
+
+      const stage = await DealStages.findOne({
+        name: stageName,
+        pipelineId: pipeline._id,
+      });
+
+      if (!stage) {
+        throw new Error('Stage not found');
+      }
+
+      const product = await DealProducts.findOne({ name: productName });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      const uomConfig = await Configs.findOne({ code: 'dealUOM' });
+
+      if (!uomConfig.value.includes(uom)) {
+        throw new Error('Bad uom config');
+      }
+
+      const currencyConfig = await Configs.findOne({ code: 'dealCurrency' });
+
+      if (!currencyConfig.value.includes(currency)) {
+        throw new Error('Bad currency config');
+      }
+
+      const customerIds = [];
+
+      if (customerEmail) {
+        const email = customerEmail;
+
+        const customerObj = await Customers.getOrCreateCustomer({ email }, { email, integrationId: '' });
+
+        customerIds.push(customerObj._id);
+      }
+
+      delete doc.stageName;
+      delete doc.userEmail;
+      delete productsData.productName;
+
+      return Deals.create({
+        ...doc,
+        stageId: stage._id,
+        userId: user._id,
+        customerIds,
+        productsData: {
+          ...productsData,
+          productId: product._id,
+        },
+      });
     }
-
-    const board = await DealBoards.findOne({ name: boardName });
-
-    if (!board) {
-      throw new Error('Board not found');
-    }
-
-    const pipeline = await DealPipelines.findOne({
-      boardId: board._id,
-      name: pipelineName,
-    });
-
-    if (!pipeline) {
-      throw new Error('Pipeline not found');
-    }
-
-    const stage = await DealStages.findOne({
-      name: stageName,
-      pipelineId: pipeline._id,
-    });
-
-    if (!stage) {
-      throw new Error('Stage not found');
-    }
-
-    const product = await DealProducts.findOne({ name: productName });
-
-    if (!product) {
-      throw new Error('Product not found');
-    }
-
-    const uomConfig = await Configs.findOne({ code: 'dealUOM' });
-
-    if (!uomConfig.value.includes(uom)) {
-      throw new Error('Bad uom config');
-    }
-
-    const currencyConfig = await Configs.findOne({ code: 'dealCurrency' });
-
-    if (!currencyConfig.value.includes(currency)) {
-      throw new Error('Bad currency config');
-    }
-
-    const customerIds = [];
-
-    if (customerEmail) {
-      const email = customerEmail;
-
-      const customerObj = await Customers.getOrCreateCustomer({ email }, { email, integrationId: '' });
-
-      customerIds.push(customerObj._id);
-    }
-
-    delete doc.stageName;
-    delete doc.userEmail;
-    delete productsData.productName;
-
-    return Deals.create({
-      ...doc,
-      stageId: stage._id,
-      userId: user._id,
-      customerIds,
-      productsData: {
-        ...productsData,
-        productId: product._id,
-      },
-    });
   }
-}
 
-dealSchema.loadClass(Deal);
+  dealSchema.loadClass(Deal);
+};
+
+loadClass();
 
 // tslint:disable-next-line
 const Deals = model<IDealDocument, IDealModel>('deals', dealSchema);

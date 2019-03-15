@@ -3,9 +3,15 @@ import { engageMessageSchema, IEngageMessageDocument } from './definitions/engag
 
 interface IEngageMessageModel extends Model<IEngageMessageDocument> {}
 
-class EngageMessage {}
+export const loadClass = () => {
+  class EngageMessage {}
 
-engageMessageSchema.loadClass(EngageMessage);
+  engageMessageSchema.loadClass(EngageMessage);
+
+  return engageMessageSchema;
+};
+
+loadClass();
 
 // tslint:disable-next-line
 export const EngageMessages = model<IEngageMessageDocument, IEngageMessageModel>(

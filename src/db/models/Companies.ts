@@ -13,49 +13,53 @@ interface ICompanyModel extends Model<ICompanyDocument> {
   createCompany(doc: ICompanyDoc): ICompanyDocument;
 }
 
-class Company {
-  /**
-   * Create a company
-   */
-  public static async createCompany(doc: ICompanyDoc) {
-    const { name, ...restDoc } = doc;
+export const loadClass = () => {
+  class Company {
+    /**
+     * Create a company
+     */
+    public static async createCompany(doc: ICompanyDoc) {
+      const { name, ...restDoc } = doc;
 
-    const company = await Companies.create({
-      createdAt: new Date(),
-      modifiedAt: new Date(),
-      primaryName: name,
-      names: [name],
-      ...restDoc,
-    });
+      const company = await Companies.create({
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+        primaryName: name,
+        names: [name],
+        ...restDoc,
+      });
 
-    // call app api's create customer log
-    mutateAppApi(`
-      mutation {
-        activityLogsAddCompanyLog(_id: "${company._id}") {
-          _id
-        }
-      }`);
+      // call app api's create customer log
+      mutateAppApi(`
+        mutation {
+          activityLogsAddCompanyLog(_id: "${company._id}") {
+            _id
+          }
+        }`);
 
-    return company;
-  }
-
-  /**
-   * Get or create company
-   */
-  public static async getOrCreate(doc: ICompanyDoc) {
-    const company = await Companies.findOne({
-      $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
-    });
-
-    if (company) {
       return company;
     }
 
-    return this.createCompany(doc);
-  }
-}
+    /**
+     * Get or create company
+     */
+    public static async getOrCreate(doc: ICompanyDoc) {
+      const company = await Companies.findOne({
+        $or: [{ names: { $in: [doc.name] } }, { primaryName: doc.name }],
+      });
 
-companySchema.loadClass(Company);
+      if (company) {
+        return company;
+      }
+
+      return this.createCompany(doc);
+    }
+  }
+
+  companySchema.loadClass(Company);
+};
+
+loadClass();
 
 // tslint:disable-next-line
 const Companies = model<ICompanyDocument, ICompanyModel>('companies', companySchema);
