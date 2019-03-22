@@ -1,5 +1,5 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi, validateEmail } from '../../utils';
+import { mutateAppApi } from '../../utils';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
@@ -130,7 +130,6 @@ export const loadClass = () => {
         modifiedAt: new Date(),
       };
       if (email) {
-        modifier.hasValidEmail = await validateEmail(email);
         modifier.primaryEmail = email;
         modifier.emails = [email];
       }
@@ -330,7 +329,6 @@ export const loadClass = () => {
           { _id: customerId },
           {
             'visitorContactInfo.email': value,
-            hasValidEmail: await validateEmail(value),
           },
         );
       }
