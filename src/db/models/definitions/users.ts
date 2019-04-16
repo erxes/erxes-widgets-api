@@ -1,6 +1,6 @@
-import { Document, Schema } from "mongoose";
-import { field } from "../utils";
-import { ROLES } from "./constants";
+import { Document, Schema } from 'mongoose';
+import { field } from '../utils';
+import { ROLES } from './constants';
 
 export interface IEmailSignature {
   brandId?: string;
@@ -36,8 +36,10 @@ export interface IUser {
   password: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+  registrationToken?: string;
   role?: string;
   isOwner?: boolean;
+  hasSeenOnBoard?: boolean;
   email?: string;
   getNotificationByEmail?: boolean;
   emailSignatures?: IEmailSignature[];
@@ -58,9 +60,9 @@ export interface IUserDocument extends IUser, Document {
 const emailSignatureSchema = new Schema(
   {
     brandId: field({ type: String }),
-    signature: field({ type: String })
+    signature: field({ type: String }),
   },
-  { _id: false }
+  { _id: false },
 );
 
 // Detail schema
@@ -71,9 +73,9 @@ const detailSchema = new Schema(
     fullName: field({ type: String }),
     position: field({ type: String }),
     location: field({ type: String, optional: true }),
-    description: field({ type: String, optional: true })
+    description: field({ type: String, optional: true }),
   },
-  { _id: false }
+  { _id: false },
 );
 
 const linkSchema = new Schema(
@@ -83,9 +85,9 @@ const linkSchema = new Schema(
     facebook: field({ type: String, optional: true }),
     github: field({ type: String, optional: true }),
     youtube: field({ type: String, optional: true }),
-    website: field({ type: String, optional: true })
+    website: field({ type: String, optional: true }),
   },
-  { _id: false }
+  { _id: false },
 );
 
 // User schema
@@ -94,25 +96,24 @@ export const userSchema = new Schema({
   username: field({ type: String }),
   password: field({ type: String }),
   resetPasswordToken: field({ type: String }),
+  registrationToken: field({ type: String }),
   resetPasswordExpires: field({ type: Date }),
   role: field({
     type: String,
-    enum: [ROLES.ADMIN, ROLES.CONTRIBUTOR]
+    enum: [ROLES.ADMIN, ROLES.CONTRIBUTOR],
   }),
   isOwner: field({ type: Boolean }),
+  hasSeenOnBoard: field({ type: Boolean }),
   email: field({
     type: String,
     lowercase: true,
     unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please fill a valid email address"
-    ]
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
   }),
   getNotificationByEmail: field({ type: Boolean }),
   emailSignatures: field({ type: [emailSignatureSchema] }),
   starredConversationIds: field({ type: [String] }),
-  details: field({ type: detailSchema }),
+  details: field({ type: detailSchema, default: {} }),
   links: field({ type: linkSchema, default: {} }),
-  isActive: field({ type: Boolean, default: true })
+  isActive: field({ type: Boolean, default: true }),
 });

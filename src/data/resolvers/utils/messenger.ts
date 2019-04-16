@@ -1,23 +1,8 @@
-import {
-  IConversationDocument,
-  IIntegrationDocument
-} from "../../../db/models";
+import { IConversationDocument, IIntegrationDocument } from '../../../db/models';
 
-const daysAsString = [
-  "sunday",
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday"
-];
+const daysAsString = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-export const isTimeInBetween = (
-  date: Date,
-  startTime: string,
-  closeTime: string
-): boolean => {
+export const isTimeInBetween = (date: Date, startTime: string, closeTime: string): boolean => {
   // concatnating time ranges with today's date
   const dateString = date.toLocaleDateString();
   const startDate = new Date(`${dateString} ${startTime}`);
@@ -27,17 +12,14 @@ export const isTimeInBetween = (
 };
 
 const isWeekday = (day: string): boolean => {
-  return ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day);
+  return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].includes(day);
 };
 
 const isWeekend = (day: string): boolean => {
-  return ["saturday", "sunday"].includes(day);
+  return ['saturday', 'sunday'].includes(day);
 };
 
-export const isOnline = (
-  integration: IIntegrationDocument,
-  now = new Date()
-): boolean => {
+export const isOnline = (integration: IIntegrationDocument, now = new Date()): boolean => {
   if (!integration.messengerData) {
     return false;
   }
@@ -48,7 +30,7 @@ export const isOnline = (
   /*
    * Manual: We can determine state from isOnline field value when method is manual
    */
-  if (availabilityMethod === "manual") {
+  if (availabilityMethod === 'manual') {
     return messengerData.isOnline;
   }
 
@@ -62,21 +44,21 @@ export const isOnline = (
   }
 
   // check by everyday config
-  const everydayConf = onlineHours.find(c => c.day === "everyday");
+  const everydayConf = onlineHours.find(c => c.day === 'everyday');
 
   if (everydayConf) {
     return isTimeInBetween(now, everydayConf.from, everydayConf.to);
   }
 
   // check by weekdays config
-  const weekdaysConf = onlineHours.find(c => c.day === "weekdays");
+  const weekdaysConf = onlineHours.find(c => c.day === 'weekdays');
 
   if (weekdaysConf && isWeekday(day)) {
     return isTimeInBetween(now, weekdaysConf.from, weekdaysConf.to);
   }
 
   // check by weekends config
-  const weekendsConf = onlineHours.find(c => c.day === "weekends");
+  const weekendsConf = onlineHours.find(c => c.day === 'weekends');
 
   if (weekendsConf && isWeekend(day)) {
     return isTimeInBetween(now, weekendsConf.from, weekendsConf.to);
@@ -95,7 +77,7 @@ export const isOnline = (
 export const unreadMessagesSelector = {
   userId: { $exists: true },
   internal: false,
-  isCustomerRead: { $ne: true }
+  isCustomerRead: { $ne: true },
 };
 
 export const unreadMessagesQuery = (conversations: IConversationDocument[]) => {
@@ -103,6 +85,6 @@ export const unreadMessagesQuery = (conversations: IConversationDocument[]) => {
 
   return {
     conversationId: { $in: conversationIds },
-    ...unreadMessagesSelector
+    ...unreadMessagesSelector,
   };
 };

@@ -1,6 +1,6 @@
-import { Model, model } from "mongoose";
-import { mutateAppApi, validateEmail } from "../../utils";
-import { customerSchema, ICustomerDocument } from "./definitions/customers";
+import { Model, model } from 'mongoose';
+import { mutateAppApi } from '../../utils';
+import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -45,342 +45,310 @@ export interface IBrowserInfo {
 interface ICustomerModel extends Model<ICustomerDocument> {
   getCustomer(doc: IGetCustomerParams): Promise<ICustomerDocument>;
 
-  getOrCreateCustomer(
-    getParams: IGetCustomerParams,
-    createParams: ICreateCustomerParams
-  ): Promise<ICustomerDocument>;
+  getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams): Promise<ICustomerDocument>;
 
-  createMessengerCustomer(
-    doc: ICreateCustomerParams,
-    customData: any
-  ): Promise<ICustomerDocument>;
+  createMessengerCustomer(doc: ICreateCustomerParams, customData: any): Promise<ICustomerDocument>;
 
-  updateMessengerCustomer(
-    param: IUpdateMessengerCustomerParams
-  ): Promise<ICustomerDocument>;
+  updateMessengerCustomer(param: IUpdateMessengerCustomerParams): Promise<ICustomerDocument>;
 
   markCustomerAsActive(customerId: string): Promise<ICustomerDocument>;
   markCustomerAsNotActive(customerId: string): Promise<ICustomerDocument>;
 
   updateMessengerSession(_id: string, url: string): Promise<ICustomerDocument>;
-  updateLocation(
-    _id: string,
-    browserInfo: IBrowserInfo
-  ): Promise<ICustomerDocument>;
+  updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>;
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>;
-  saveVisitorContactInfo(
-    doc: IVisitorContactInfoParams
-  ): Promise<ICustomerDocument>;
+  saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>;
 }
 
-class Customer {
-  /*
-   * Fix firstName, lastName, description abbriviations
-   */
-  public static fixCustomData(
-    customData: any
-  ): { extractedInfo: any; updatedCustomData: any } {
-    const extractedInfo: any = {};
-    const updatedCustomData = { ...customData };
+export const loadClass = () => {
+  class Customer {
+    /*
+     * Fix firstName, lastName, description abbriviations
+     */
+    public static fixCustomData(customData: any): { extractedInfo: any; updatedCustomData: any } {
+      const extractedInfo: any = {};
+      const updatedCustomData = { ...customData };
 
-    // Setting customData fields to customer fields
-    Object.keys(updatedCustomData).forEach(key => {
-      if (key === "first_name" || key === "firstName") {
-        extractedInfo.firstName = updatedCustomData[key];
+      // Setting customData fields to customer fields
+      Object.keys(updatedCustomData).forEach(key => {
+        if (key === 'first_name' || key === 'firstName') {
+          extractedInfo.firstName = updatedCustomData[key];
 
-        delete updatedCustomData[key];
-      }
-
-      if (key === "last_name" || key === "lastName") {
-        extractedInfo.lastName = updatedCustomData[key];
-
-        delete updatedCustomData[key];
-      }
-
-      if (key === "bio" || key === "description") {
-        extractedInfo.description = updatedCustomData[key];
-
-        delete updatedCustomData[key];
-      }
-    });
-
-    return { extractedInfo, updatedCustomData };
-  }
-
-  /*
-   * Get customer
-   */
-  public static getCustomer(params: IGetCustomerParams) {
-    const { email, phone, cachedCustomerId } = params;
-
-    if (email) {
-      return Customers.findOne({
-        $or: [{ emails: { $in: [email] } }, { primaryEmail: email }]
-      });
-    }
-
-    if (phone) {
-      return Customers.findOne({
-        $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }]
-      });
-    }
-
-    if (cachedCustomerId) {
-      return Customers.findOne({ _id: cachedCustomerId });
-    }
-
-    return null;
-  }
-
-  /*
-   * Create a new customer
-   */
-  public static async createCustomer(doc: ICreateCustomerParams) {
-    const { email, phone, ...restDoc } = doc;
-
-    const modifier: any = {
-      ...restDoc,
-      createdAt: new Date(),
-      modifiedAt: new Date()
-    };
-    if (email) {
-      modifier.hasValidEmail = await validateEmail(email);
-      modifier.primaryEmail = email;
-      modifier.emails = [email];
-    }
-
-    if (phone) {
-      modifier.primaryPhone = phone;
-      modifier.phones = [phone];
-    }
-
-    const customer = await Customers.create(modifier);
-
-    // call app api's create customer log
-    mutateAppApi(`
-      mutation {
-        activityLogsAddCustomerLog(_id: "${customer._id}") {
-          _id
+          delete updatedCustomData[key];
         }
-      }`);
 
-    return customer;
-  }
+        if (key === 'last_name' || key === 'lastName') {
+          extractedInfo.lastName = updatedCustomData[key];
 
-  /*
-   * Create a new messenger customer
-   */
-  public static async createMessengerCustomer(
-    doc: ICreateCustomerParams,
-    customData: any
-  ) {
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(
-      customData || {}
-    );
-    return this.createCustomer({
-      ...doc,
-      ...extractedInfo,
-      messengerData: {
-        lastSeenAt: new Date(),
-        isActive: true,
-        sessionCount: 1,
-        customData: updatedCustomData
+          delete updatedCustomData[key];
+        }
+
+        if (key === 'bio' || key === 'description') {
+          extractedInfo.description = updatedCustomData[key];
+
+          delete updatedCustomData[key];
+        }
+      });
+
+      return { extractedInfo, updatedCustomData };
+    }
+
+    /*
+     * Get customer
+     */
+    public static getCustomer(params: IGetCustomerParams) {
+      const { email, phone, cachedCustomerId } = params;
+
+      if (email) {
+        return Customers.findOne({
+          $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
+        });
       }
-    });
-  }
 
-  /*
-   * Update messenger customer
-   */
-  public static async updateMessengerCustomer(
-    param: IUpdateMessengerCustomerParams
-  ) {
-    const { _id, doc, customData } = param;
+      if (phone) {
+        return Customers.findOne({
+          $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
+        });
+      }
 
-    const customer = await Customers.findOne({ _id });
+      if (cachedCustomerId) {
+        return Customers.findOne({ _id: cachedCustomerId });
+      }
 
-    if (!customer) {
-      throw new Error("Customer not found");
-    }
-
-    const { extractedInfo, updatedCustomData } = this.fixCustomData(
-      customData || {}
-    );
-
-    const emails = customer.emails || [];
-
-    if (doc.email && !emails.includes(doc.email)) {
-      emails.push(doc.email);
-    }
-
-    const phones = customer.phones || [];
-
-    if (doc.phone && !phones.includes(doc.phone)) {
-      phones.push(doc.phone);
-    }
-
-    const modifier = {
-      ...doc,
-      ...extractedInfo,
-      phones,
-      emails,
-      modifiedAt: new Date(),
-      "messengerData.customData": updatedCustomData
-    };
-
-    await Customers.updateOne({ _id }, { $set: modifier });
-
-    return Customers.findOne({ _id });
-  }
-
-  /**
-   * Get or create customer
-   */
-  public static async getOrCreateCustomer(
-    getParams: IGetCustomerParams,
-    createParams: ICreateCustomerParams
-  ) {
-    const customer = await this.getCustomer(getParams);
-
-    if (customer) {
-      return customer;
-    }
-
-    return this.createCustomer(createParams);
-  }
-
-  /*
-   * Update messenger session data
-   */
-  public static async updateMessengerSession(_id: string, url: string) {
-    const now = new Date();
-    const customer = await Customers.findOne({ _id });
-
-    if (!customer) {
       return null;
     }
 
-    const query: any = {
-      $set: {
-        // update messengerData
-        "messengerData.lastSeenAt": now,
-        "messengerData.isActive": true
+    /*
+     * Create a new customer
+     */
+    public static async createCustomer(doc: ICreateCustomerParams) {
+      const { email, phone, ...restDoc } = doc;
+
+      const modifier: any = {
+        ...restDoc,
+        createdAt: new Date(),
+        modifiedAt: new Date(),
+      };
+      if (email) {
+        modifier.primaryEmail = email;
+        modifier.emails = [email];
       }
-    };
 
-    const messengerData = customer.messengerData;
+      if (phone) {
+        modifier.primaryPhone = phone;
+        modifier.phones = [phone];
+      }
 
-    // Preventing session count to increase on page every refresh
-    // Close your web site tab and reopen it after 6 seconds then it will increase
-    // session count by 1
-    if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
-      // update session count
-      query.$inc = { "messengerData.sessionCount": 1 };
+      const customer = await Customers.create(modifier);
 
-      // save access history by location.pathname
-      const urlVisits = customer.urlVisits || {};
+      // call app api's create customer log
+      mutateAppApi(`
+        mutation {
+          activityLogsAddCustomerLog(_id: "${customer._id}") {
+            _id
+          }
+        }`);
 
-      urlVisits[url] = (urlVisits[url] || 0) + 1;
-
-      query.urlVisits = urlVisits;
+      return customer;
     }
 
-    // update
-    await Customers.findByIdAndUpdate(_id, query);
+    /*
+     * Create a new messenger customer
+     */
+    public static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
+      const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+      return this.createCustomer({
+        ...doc,
+        ...extractedInfo,
+        messengerData: {
+          lastSeenAt: new Date(),
+          isActive: true,
+          sessionCount: 1,
+          customData: updatedCustomData,
+        },
+      });
+    }
 
-    // updated customer
-    return Customers.findOne({ _id });
-  }
+    /*
+     * Update messenger customer
+     */
+    public static async updateMessengerCustomer(param: IUpdateMessengerCustomerParams) {
+      const { _id, doc, customData } = param;
 
-  /**
-   * Mark customer as active
-   */
-  public static async markCustomerAsActive(customerId: string) {
-    await Customers.updateOne(
-      { _id: customerId },
-      { $set: { "messengerData.isActive": true } }
-    );
+      const customer = await Customers.findOne({ _id });
 
-    return Customers.findOne({ _id: customerId });
-  }
+      if (!customer) {
+        throw new Error('Customer not found');
+      }
 
-  /**
-   * Mark customer as inactive
-   */
-  public static async markCustomerAsNotActive(customerId: string) {
-    await Customers.updateOne(
-      { _id: customerId },
-      {
+      const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+
+      const emails = customer.emails || [];
+
+      if (doc.email && !emails.includes(doc.email)) {
+        emails.push(doc.email);
+      }
+
+      const phones = customer.phones || [];
+
+      if (doc.phone && !phones.includes(doc.phone)) {
+        phones.push(doc.phone);
+      }
+
+      const modifier = {
+        ...doc,
+        ...extractedInfo,
+        phones,
+        emails,
+        modifiedAt: new Date(),
+        'messengerData.customData': updatedCustomData,
+      };
+
+      await Customers.updateOne({ _id }, { $set: modifier });
+
+      return Customers.findOne({ _id });
+    }
+
+    /**
+     * Get or create customer
+     */
+    public static async getOrCreateCustomer(getParams: IGetCustomerParams, createParams: ICreateCustomerParams) {
+      const customer = await this.getCustomer(getParams);
+
+      if (customer) {
+        return customer;
+      }
+
+      return this.createCustomer(createParams);
+    }
+
+    /*
+     * Update messenger session data
+     */
+    public static async updateMessengerSession(_id: string, url: string) {
+      const now = new Date();
+      const customer = await Customers.findOne({ _id });
+
+      if (!customer) {
+        return null;
+      }
+
+      const query: any = {
         $set: {
-          "messengerData.isActive": false,
-          "messengerData.lastSeenAt": new Date()
-        }
+          // update messengerData
+          'messengerData.lastSeenAt': now,
+          'messengerData.isActive': true,
+        },
+      };
+
+      const messengerData = customer.messengerData;
+
+      // Preventing session count to increase on page every refresh
+      // Close your web site tab and reopen it after 6 seconds then it will increase
+      // session count by 1
+      if (messengerData && now.getTime() - messengerData.lastSeenAt > 6 * 1000) {
+        // update session count
+        query.$inc = { 'messengerData.sessionCount': 1 };
+
+        // save access history by location.pathname
+        const urlVisits = customer.urlVisits || {};
+
+        urlVisits[url] = (urlVisits[url] || 0) + 1;
+
+        query.urlVisits = urlVisits;
       }
-    );
 
-    return Customers.findOne({ _id: customerId });
-  }
+      // update
+      await Customers.findByIdAndUpdate(_id, query);
 
-  /*
-   * Update customer's location info
-   */
-  public static async updateLocation(_id: string, browserInfo: IBrowserInfo) {
-    await Customers.findByIdAndUpdate(
-      { _id },
-      {
-        $set: { location: browserInfo }
-      }
-    );
+      // updated customer
+      return Customers.findOne({ _id });
+    }
 
-    return Customers.findOne({ _id });
-  }
+    /**
+     * Mark customer as active
+     */
+    public static async markCustomerAsActive(customerId: string) {
+      await Customers.updateOne({ _id: customerId }, { $set: { 'messengerData.isActive': true } });
 
-  /*
-   * Add companyId to companyIds list
-   */
-  public static async addCompany(_id: string, companyId: string) {
-    await Customers.findByIdAndUpdate(_id, {
-      $addToSet: { companyIds: companyId }
-    });
+      return Customers.findOne({ _id: customerId });
+    }
 
-    // updated customer
-    return Customers.findOne({ _id });
-  }
-
-  /*
-   * If customer is a visitor then we will contact with this customer using
-   * this information later
-   */
-  public static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
-    const { customerId, type, value } = args;
-
-    if (type === "email") {
+    /**
+     * Mark customer as inactive
+     */
+    public static async markCustomerAsNotActive(customerId: string) {
       await Customers.updateOne(
         { _id: customerId },
         {
-          "visitorContactInfo.email": value,
-          hasValidEmail: await validateEmail(value)
-        }
+          $set: {
+            'messengerData.isActive': false,
+            'messengerData.lastSeenAt': new Date(),
+          },
+        },
       );
+
+      return Customers.findOne({ _id: customerId });
     }
 
-    if (type === "phone") {
-      await Customers.updateOne(
-        { _id: customerId },
-        { "visitorContactInfo.phone": value }
+    /*
+     * Update customer's location info
+     */
+    public static async updateLocation(_id: string, browserInfo: IBrowserInfo) {
+      await Customers.findByIdAndUpdate(
+        { _id },
+        {
+          $set: { location: browserInfo },
+        },
       );
+
+      return Customers.findOne({ _id });
     }
 
-    return Customers.findOne({ _id: customerId });
+    /*
+     * Add companyId to companyIds list
+     */
+    public static async addCompany(_id: string, companyId: string) {
+      await Customers.findByIdAndUpdate(_id, {
+        $addToSet: { companyIds: companyId },
+      });
+
+      // updated customer
+      return Customers.findOne({ _id });
+    }
+
+    /*
+     * If customer is a visitor then we will contact with this customer using
+     * this information later
+     */
+    public static async saveVisitorContactInfo(args: IVisitorContactInfoParams) {
+      const { customerId, type, value } = args;
+
+      if (type === 'email') {
+        await Customers.updateOne(
+          { _id: customerId },
+          {
+            'visitorContactInfo.email': value,
+          },
+        );
+      }
+
+      if (type === 'phone') {
+        await Customers.updateOne({ _id: customerId }, { 'visitorContactInfo.phone': value });
+      }
+
+      return Customers.findOne({ _id: customerId });
+    }
   }
-}
 
-customerSchema.loadClass(Customer);
+  customerSchema.loadClass(Customer);
+
+  return customerSchema;
+};
+
+loadClass();
 
 // tslint:disable-next-line
-const Customers = model<ICustomerDocument, ICustomerModel>(
-  "customers",
-  customerSchema
-);
+const Customers = model<ICustomerDocument, ICustomerModel>('customers', customerSchema);
 
 export default Customers;

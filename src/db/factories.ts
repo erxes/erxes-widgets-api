@@ -1,5 +1,5 @@
-import * as faker from "faker";
-import * as Random from "meteor-random";
+import * as faker from 'faker';
+import * as Random from 'meteor-random';
 
 import {
   Brands,
@@ -18,9 +18,9 @@ import {
   Integrations,
   Messages,
   MessengerApps,
-  Users
-} from "./models";
-import { IMessengerAppCrendentials } from "./models/definitions/messengerApps";
+  Users,
+} from './models';
+import { IMessengerAppCrendentials } from './models/definitions/messengerApps';
 
 interface IUserParams {
   fullName?: string;
@@ -29,9 +29,9 @@ interface IUserParams {
 export const userFactory = (params: IUserParams = {}) => {
   const user = new Users({
     details: {
-      fullName: params.fullName || faker.random.word()
+      fullName: params.fullName || faker.random.word(),
     },
-    email: params.email || faker.internet.email()
+    email: params.email || faker.internet.email(),
   });
 
   return user.save();
@@ -45,7 +45,7 @@ export const brandFactory = (params: IBrandParams = {}) => {
   const brand = new Brands({
     name: params.name || faker.random.word(),
     code: params.code || faker.random.word(),
-    userId: Random.id()
+    userId: Random.id(),
   });
 
   return brand.save();
@@ -60,10 +60,10 @@ interface IIntegrationParams {
 export const integrationFactory = (params: IIntegrationParams = {}) => {
   const integration = new Integrations({
     name: faker.random.word(),
-    kind: params.kind || "messenger",
+    kind: params.kind || 'messenger',
     brandId: params.brandId || Random.id(),
     formId: params.formId || Random.id(),
-    messengerData: params.messengerData
+    messengerData: params.messengerData,
   });
 
   return integration.save();
@@ -76,7 +76,7 @@ interface IFormParams {
 export const formFactory = (params: IFormParams = {}) => {
   const form = new Forms({
     title: params.title || faker.random.word(),
-    code: params.code || Random.id()
+    code: params.code || Random.id(),
   });
 
   return form.save();
@@ -90,7 +90,7 @@ interface IFormFieldParams {
 }
 export const formFieldFactory = (params: IFormFieldParams = {}) => {
   const field = new Fields({
-    contentType: "form",
+    contentType: 'form',
     contentTypeId: params.contentTypeId || Random.id(),
     type: params.type || faker.random.word(),
     name: faker.random.word(),
@@ -98,7 +98,7 @@ export const formFieldFactory = (params: IFormFieldParams = {}) => {
     text: faker.random.word(),
     description: faker.random.word(),
     isRequired: params.isRequired || false,
-    number: faker.random.word()
+    number: faker.random.word(),
   });
 
   return field.save();
@@ -129,17 +129,17 @@ export function customerFactory(params: ICustomerParams = {}) {
     primaryEmail: params.primaryEmail || email,
     emails: params.emails || [email],
 
-    primaryPhone: params.primaryPhone || "244244",
-    phones: params.phones || ["244244"],
+    primaryPhone: params.primaryPhone || '244244',
+    phones: params.phones || ['244244'],
 
     isUser: faker.random.boolean(),
     name: faker.name.findName(),
     messengerData: {
       lastSeenAt: faker.date.between(createdAt, new Date()),
       isActive: params.isActive || false,
-      sessionCount: faker.random.number()
+      sessionCount: faker.random.number(),
     },
-    urlVisits: params.urlVisits
+    urlVisits: params.urlVisits,
   });
 
   return customer.save();
@@ -153,7 +153,7 @@ export function conversationFactory() {
     integrationId: Random.id(),
     number: 1,
     messageCount: 0,
-    status: Conversations.getConversationStatuses().NEW
+    status: Conversations.getConversationStatuses().NEW,
   });
 
   return conversation.save();
@@ -174,7 +174,7 @@ export function messageFactory(params: IConversationMessageParams = {}) {
     createdAt: faker.date.past(),
     isCustomerRead: params.isCustomerRead,
     engageData: params.engageData,
-    ...params
+    ...params,
   });
 
   return message.save();
@@ -189,7 +189,7 @@ export function companyFactory(params: ICompanyParams = {}) {
     primaryName: params.primaryName || faker.lorem.sentence,
     names: params.names || [faker.lorem.sentence],
     lastSeenAt: faker.date.past(),
-    sessionCount: faker.random.number()
+    sessionCount: faker.random.number(),
   });
 
   return company.save();
@@ -209,8 +209,8 @@ export function engageDataFactory(params: IMessageEngageDataParams) {
     brandId: params.brandId || Random.id(),
     content: params.content || faker.lorem.sentence(),
     fromUserId: params.fromUserId || Random.id(),
-    kind: params.kind || "popup",
-    sentAs: params.sentAs || "post"
+    kind: params.kind || 'popup',
+    sentAs: params.sentAs || 'post',
   };
 }
 
@@ -243,7 +243,7 @@ export function dealFactory(params: IDealInput) {
     companyIds: params.companyIds || [Random.id()],
     customerIds: params.customerIds || [Random.id()],
     description: params.description || faker.random.word(),
-    productsData: params.productsData || {}
+    productsData: params.productsData || {},
   });
 }
 
@@ -257,9 +257,9 @@ interface IDealProductInput {
 export function dealProductFactory(params: IDealProductInput) {
   return DealProducts.create({
     name: params.name || faker.random.word(),
-    type: params.type || "product",
+    type: params.type || 'product',
     description: params.description || faker.random.word(),
-    sku: params.sku || faker.random.word()
+    sku: params.sku || faker.random.word(),
   });
 }
 
@@ -271,7 +271,7 @@ interface IDealBoardInput {
 export function dealBoardFactory(params: IDealBoardInput) {
   return DealBoards.create({
     name: params.name || faker.random.word(),
-    isDefault: params.isDefault || false
+    isDefault: params.isDefault || false,
   });
 }
 
@@ -284,8 +284,8 @@ interface IDealStageInput {
 export function dealStageFactory(params: IDealStageInput) {
   return DealStages.create({
     name: params.name || faker.random.word(),
-    probability: params.probability || "10%",
-    pipelineId: params.pipelineId || Random.id()
+    probability: params.probability || '10%',
+    pipelineId: params.pipelineId || Random.id(),
   });
 }
 
@@ -297,7 +297,7 @@ interface IDealPipelineInput {
 export function dealPipelineFactory(params: IDealPipelineInput) {
   return DealPipelines.create({
     name: params.name || faker.random.word(),
-    boardId: params.boardId || Random.id()
+    boardId: params.boardId || Random.id(),
   });
 }
 
@@ -309,7 +309,7 @@ interface IConfigInput {
 export function configFactory(params: IConfigInput) {
   return Configs.create({
     code: params.code || faker.random.word(),
-    value: params.value || [faker.random.word()]
+    value: params.value || [faker.random.word()],
   });
 }
 
@@ -322,7 +322,7 @@ interface IMessengerApp {
 export function messengerAppFactory(params: IMessengerApp) {
   return MessengerApps.create({
     name: params.name || faker.random.word(),
-    kind: params.kind || "knowledgebase",
-    credentials: params.credentials
+    kind: params.kind || 'knowledgebase',
+    credentials: params.credentials,
   });
 }

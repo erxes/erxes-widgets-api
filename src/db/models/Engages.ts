@@ -1,17 +1,20 @@
-import { Model, model } from "mongoose";
-import {
-  engageMessageSchema,
-  IEngageMessageDocument
-} from "./definitions/engages";
+import { Model, model } from 'mongoose';
+import { engageMessageSchema, IEngageMessageDocument } from './definitions/engages';
 
 interface IEngageMessageModel extends Model<IEngageMessageDocument> {}
 
-class EngageMessage {}
+export const loadClass = () => {
+  class EngageMessage {}
 
-engageMessageSchema.loadClass(EngageMessage);
+  engageMessageSchema.loadClass(EngageMessage);
+
+  return engageMessageSchema;
+};
+
+loadClass();
 
 // tslint:disable-next-line
-export const EngageMessages = model<
-  IEngageMessageDocument,
-  IEngageMessageModel
->("engage_messages", engageMessageSchema);
+export const EngageMessages = model<IEngageMessageDocument, IEngageMessageModel>(
+  'engage_messages',
+  engageMessageSchema,
+);

@@ -1,4 +1,4 @@
-import { Conversations, IConversationDocument, Users } from "../../db/models";
+import { Conversations, IConversationDocument, Users } from '../../db/models';
 
 export default {
   participatedUsers(conversation: IConversationDocument) {
@@ -7,5 +7,5 @@ export default {
 
   messages(conversation: IConversationDocument) {
     return Conversations.getMessages(conversation._id);
-  }
+  },
 };

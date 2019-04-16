@@ -1,63 +1,63 @@
-import { checkRule, checkRules } from "../data/resolvers/utils/engage";
+import { checkRule, checkRules } from '../data/resolvers/utils/engage';
 
 const browserLanguageRule = {
-  kind: "browserLanguage",
-  condition: "is",
-  value: "en"
+  kind: 'browserLanguage',
+  condition: 'is',
+  value: 'en',
 };
 
-describe("checkRules", () => {
-  test("browserLanguage: not matched", async () => {
+describe('checkRules', () => {
+  test('browserLanguage: not matched', async () => {
     const response = await checkRules({
       rules: [browserLanguageRule],
-      browserInfo: { language: "mn" }
+      browserInfo: { language: 'mn' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("browserLanguage: not all rules matched", async () => {
+  test('browserLanguage: not all rules matched', async () => {
     const response = await checkRules({
       rules: [
         browserLanguageRule,
         {
-          kind: "browserLanguage",
-          condition: "is",
-          value: "mn"
-        }
+          kind: 'browserLanguage',
+          condition: 'is',
+          value: 'mn',
+        },
       ],
 
-      browserInfo: { language: "en" }
+      browserInfo: { language: 'en' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("browserLanguage: all rules matched", async () => {
+  test('browserLanguage: all rules matched', async () => {
     const response = await checkRules({
       rules: [browserLanguageRule, browserLanguageRule],
-      browserInfo: { language: "en" }
+      browserInfo: { language: 'en' },
     });
 
     expect(response).toBe(true);
   });
 });
 
-describe("checkIndividualRule", () => {
+describe('checkIndividualRule', () => {
   // is
-  test("is: not matching", () => {
+  test('is: not matching', () => {
     const response = checkRule({
       rule: browserLanguageRule,
-      browserInfo: { language: "mn" }
+      browserInfo: { language: 'mn' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("is: matching", () => {
+  test('is: matching', () => {
     const response = checkRule({
       rule: browserLanguageRule,
-      browserInfo: { language: "en" }
+      browserInfo: { language: 'en' },
     });
 
     expect(response).toBe(true);
@@ -65,24 +65,24 @@ describe("checkIndividualRule", () => {
 
   // isNot
   const isNotRule = {
-    kind: "currentPageUrl",
-    condition: "isNot",
-    value: "/page"
+    kind: 'currentPageUrl',
+    condition: 'isNot',
+    value: '/page',
   };
 
-  test("isNot: not matching", () => {
+  test('isNot: not matching', () => {
     const response = checkRule({
       rule: isNotRule,
-      browserInfo: { url: "/page" }
+      browserInfo: { url: '/page' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("isNot: matching", () => {
+  test('isNot: matching', () => {
     const response = checkRule({
       rule: isNotRule,
-      browserInfo: { url: "/category" }
+      browserInfo: { url: '/category' },
     });
 
     expect(response).toBe(true);
@@ -90,23 +90,23 @@ describe("checkIndividualRule", () => {
 
   // isUnknown
   const isUnknownRule = {
-    kind: "city",
-    condition: "isUnknown"
+    kind: 'city',
+    condition: 'isUnknown',
   };
 
-  test("isUnknown: not matching", () => {
+  test('isUnknown: not matching', () => {
     const response = checkRule({
       rule: isUnknownRule,
-      browserInfo: { city: "Ulaanbaatar" }
+      browserInfo: { city: 'Ulaanbaatar' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("isUnknown: matching", () => {
+  test('isUnknown: matching', () => {
     const response = checkRule({
       rule: isUnknownRule,
-      browserInfo: {}
+      browserInfo: {},
     });
 
     expect(response).toBe(true);
@@ -114,23 +114,23 @@ describe("checkIndividualRule", () => {
 
   // hasAnyValue
   const hasAnyValueRule = {
-    kind: "country",
-    condition: "hasAnyValue"
+    kind: 'country',
+    condition: 'hasAnyValue',
   };
 
-  test("hasAnyValue: not matching", () => {
+  test('hasAnyValue: not matching', () => {
     const response = checkRule({
       rule: hasAnyValueRule,
-      browserInfo: {}
+      browserInfo: {},
     });
 
     expect(response).toBe(false);
   });
 
-  test("hasAnyValue: matching", () => {
+  test('hasAnyValue: matching', () => {
     const response = checkRule({
       rule: hasAnyValueRule,
-      browserInfo: { country: "MN" }
+      browserInfo: { country: 'MN' },
     });
 
     expect(response).toBe(true);
@@ -138,24 +138,24 @@ describe("checkIndividualRule", () => {
 
   // startsWith
   const startsWithRule = {
-    kind: "browserLanguage",
-    condition: "startsWith",
-    value: "en"
+    kind: 'browserLanguage',
+    condition: 'startsWith',
+    value: 'en',
   };
 
-  test("startsWith: not matching", () => {
+  test('startsWith: not matching', () => {
     const response = checkRule({
       rule: startsWithRule,
-      browserInfo: { language: "mongolian" }
+      browserInfo: { language: 'mongolian' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("startsWith: matching", () => {
+  test('startsWith: matching', () => {
     const response = checkRule({
       rule: startsWithRule,
-      browserInfo: { language: "english" }
+      browserInfo: { language: 'english' },
     });
 
     expect(response).toBe(true);
@@ -163,24 +163,24 @@ describe("checkIndividualRule", () => {
 
   // endsWith
   const endsWithRule = {
-    kind: "browserLanguage",
-    condition: "endsWith",
-    value: "ian"
+    kind: 'browserLanguage',
+    condition: 'endsWith',
+    value: 'ian',
   };
 
-  test("endsWith: not matching", () => {
+  test('endsWith: not matching', () => {
     const response = checkRule({
       rule: endsWithRule,
-      browserInfo: { language: "english" }
+      browserInfo: { language: 'english' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("endsWith: matching", () => {
+  test('endsWith: matching', () => {
     const response = checkRule({
       rule: endsWithRule,
-      browserInfo: { language: "mongolian" }
+      browserInfo: { language: 'mongolian' },
     });
 
     expect(response).toBe(true);
@@ -188,26 +188,26 @@ describe("checkIndividualRule", () => {
 
   // greaterThan
   const greaterThanRule = {
-    kind: "numberOfVisits",
-    condition: "greaterThan",
-    value: "1"
+    kind: 'numberOfVisits',
+    condition: 'greaterThan',
+    value: '1',
   };
 
-  test("greaterThan: not matching", () => {
+  test('greaterThan: not matching', () => {
     const response = checkRule({
       rule: greaterThanRule,
       browserInfo: {},
-      numberOfVisits: 0
+      numberOfVisits: 0,
     });
 
     expect(response).toBe(false);
   });
 
-  test("greaterThan: matching", () => {
+  test('greaterThan: matching', () => {
     const response = checkRule({
       rule: greaterThanRule,
       browserInfo: {},
-      numberOfVisits: 2
+      numberOfVisits: 2,
     });
 
     expect(response).toBe(true);
@@ -215,26 +215,26 @@ describe("checkIndividualRule", () => {
 
   // lessThan
   const lessThanRule = {
-    kind: "numberOfVisits",
-    condition: "lessThan",
-    value: "1"
+    kind: 'numberOfVisits',
+    condition: 'lessThan',
+    value: '1',
   };
 
-  test("lessThan: not matching", () => {
+  test('lessThan: not matching', () => {
     const response = checkRule({
       rule: lessThanRule,
       browserInfo: {},
-      numberOfVisits: 2
+      numberOfVisits: 2,
     });
 
     expect(response).toBe(false);
   });
 
-  test("lessThan: matching", () => {
+  test('lessThan: matching', () => {
     const response = checkRule({
       rule: lessThanRule,
       browserInfo: {},
-      numberOfVisits: 0
+      numberOfVisits: 0,
     });
 
     expect(response).toBe(true);
@@ -242,24 +242,24 @@ describe("checkIndividualRule", () => {
 
   // contains ======
   const containsRule = {
-    kind: "currentPageUrl",
-    condition: "contains",
-    value: "page"
+    kind: 'currentPageUrl',
+    condition: 'contains',
+    value: 'page',
   };
 
-  test("contains: not matching", () => {
+  test('contains: not matching', () => {
     const response = checkRule({
       rule: containsRule,
-      browserInfo: { url: "/test" }
+      browserInfo: { url: '/test' },
     });
 
     expect(response).toBe(false);
   });
 
-  test("contains: matching", () => {
+  test('contains: matching', () => {
     const response = checkRule({
       rule: containsRule,
-      browserInfo: { url: "/page" }
+      browserInfo: { url: '/page' },
     });
 
     expect(response).toBe(true);

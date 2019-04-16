@@ -97,6 +97,7 @@ export const types = `
     createdAt: Date
     attachments: [Attachment]
     internal: Boolean
+    fromBot: Boolean
     engageData: EngageData
     messengerAppData: JSON
   }

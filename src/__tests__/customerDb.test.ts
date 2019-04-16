@@ -1,20 +1,20 @@
-import * as faker from "faker";
-import * as Random from "meteor-random";
+import * as faker from 'faker';
+import * as Random from 'meteor-random';
 
-import { customerFactory } from "../db/factories";
-import { Customers, ICustomerDocument } from "../db/models";
+import { customerFactory } from '../db/factories';
+import { Customers, ICustomerDocument } from '../db/models';
 
 /**
  * Customer related tests
  */
-describe("Customers", () => {
+describe('Customers', () => {
   let _customer: ICustomerDocument;
 
   beforeEach(async () => {
     // Creating test customer
     _customer = await customerFactory({
-      primaryEmail: "email@gmail.com",
-      emails: ["email@gmail.com", "anotheremail@gmail.com"]
+      primaryEmail: 'email@gmail.com',
+      emails: ['email@gmail.com', 'anotheremail@gmail.com'],
     });
   });
 
@@ -23,20 +23,20 @@ describe("Customers", () => {
     return Customers.deleteMany({});
   });
 
-  test("createMessengerCustomer() must return a new customer", async () => {
+  test('createMessengerCustomer() must return a new customer', async () => {
     const now = new Date();
 
-    const firstName = "test first name";
-    const lastName = "test last name";
-    const bio = "test BIO 1231321312";
-    const email = "email@gmail.com";
-    const phone = "422999";
+    const firstName = 'test first name';
+    const lastName = 'test last name';
+    const bio = 'test BIO 1231321312';
+    const email = 'email@gmail.com';
+    const phone = '422999';
 
     const customData = {
       first_name: firstName,
       last_name: lastName,
       bio,
-      created_at: "1321313"
+      created_at: '1321313',
     };
 
     const customer = await Customers.createMessengerCustomer(
@@ -44,9 +44,9 @@ describe("Customers", () => {
         integrationId: _customer.integrationId,
         email,
         phone,
-        isUser: _customer.isUser
+        isUser: _customer.isUser,
       },
-      customData
+      customData,
     );
 
     expect(customer).toBeDefined();
@@ -67,7 +67,7 @@ describe("Customers", () => {
     const messengerData = customer.messengerData;
 
     if (!messengerData) {
-      throw new Error("messengerData is null");
+      throw new Error('messengerData is null');
     }
 
     expect(messengerData.lastSeenAt).toBeDefined();
@@ -79,66 +79,63 @@ describe("Customers", () => {
     expect(messengerData.customData.created_at).toBe(customData.created_at);
   });
 
-  test("getCustomer(): emails, primaryEmail", async () => {
+  test('getCustomer(): emails, primaryEmail', async () => {
     let customer = await Customers.getCustomer({
-      email: "anotheremail@gmail.com"
+      email: 'anotheremail@gmail.com',
     });
 
     expect(customer._id).toBeDefined();
 
     // check primaryEmail
     customer = await customerFactory({
-      primaryEmail: "customer@gmail.com",
-      emails: ["main@gmail.com"]
+      primaryEmail: 'customer@gmail.com',
+      emails: ['main@gmail.com'],
     });
 
     customer = await Customers.getCustomer({
-      email: "customer@gmail.com"
+      email: 'customer@gmail.com',
     });
 
     expect(customer._id).toBeDefined();
   });
 
-  test("getCustomer(): phones, primaryPhone", async () => {
+  test('getCustomer(): phones, primaryPhone', async () => {
     // check phones
     let customer = await customerFactory({
-      phones: ["911111"]
+      phones: ['911111'],
     });
 
     customer = await Customers.getCustomer({
-      phone: "911111"
+      phone: '911111',
     });
 
     expect(customer._id).toBeDefined();
 
     // check primaryPhone
     customer = await customerFactory({
-      primaryPhone: "24244242"
+      primaryPhone: '24244242',
     });
 
     customer = await Customers.getCustomer({
-      phone: "24244242"
+      phone: '24244242',
     });
 
     expect(customer._id).toBeDefined();
   });
 
-  test("getOrCreateCustomer() must return an existing customer", async () => {
+  test('getOrCreateCustomer() must return an existing customer', async () => {
     const now = new Date();
 
     const doc = {
       ..._customer,
-      email: "email@gmail.com",
-      integrationId: _customer.integrationId
+      email: 'email@gmail.com',
+      integrationId: _customer.integrationId,
     };
 
-    const customer = await Customers.getOrCreateCustomer(
-      { email: doc.email },
-      doc
-    );
+    const customer = await Customers.getOrCreateCustomer({ email: doc.email }, doc);
 
     expect(customer).toBeDefined();
-    expect(customer.emails).toContain("email@gmail.com");
+    expect(customer.emails).toContain('email@gmail.com');
     expect(customer.isUser).toBe(_customer.isUser);
     expect(customer._id).toBe(_customer._id);
     expect(customer.integrationId).toBe(_customer.integrationId);
@@ -146,26 +143,21 @@ describe("Customers", () => {
     expect(customer.createdAt < now).toBe(true);
 
     if (!customer.messengerData || !_customer.messengerData) {
-      throw new Error("messengerData is null");
+      throw new Error('messengerData is null');
     }
 
-    expect(JSON.stringify(customer.messengerData)).toEqual(
-      JSON.stringify(_customer.messengerData)
-    );
+    expect(JSON.stringify(customer.messengerData)).toEqual(JSON.stringify(_customer.messengerData));
   });
 
-  test("getOrCreateCustomer() must return a new customer", async () => {
+  test('getOrCreateCustomer() must return a new customer', async () => {
     const unexistingCustomer = {
       integrationId: Random.id(),
-      email: faker.internet.email()
+      email: faker.internet.email(),
     };
 
     const now = new Date();
 
-    const customer = await Customers.getOrCreateCustomer(
-      { email: unexistingCustomer.email },
-      unexistingCustomer
-    );
+    const customer = await Customers.getOrCreateCustomer({ email: unexistingCustomer.email }, unexistingCustomer);
 
     expect(customer).toBeDefined();
     expect(customer.primaryEmail).toBe(unexistingCustomer.email);
@@ -175,7 +167,7 @@ describe("Customers", () => {
     expect(customer.createdAt).toBeDefined();
   });
 
-  test("active state", async () => {
+  test('active state', async () => {
     // inactive
     const now = new Date();
     let customer = await Customers.markCustomerAsNotActive(_customer._id);
@@ -184,7 +176,7 @@ describe("Customers", () => {
     expect(customer.messengerData).toBeDefined();
 
     if (!customer.messengerData) {
-      throw new Error("messengerData is null");
+      throw new Error('messengerData is null');
     }
 
     expect(customer.messengerData.isActive).toBeFalsy();
@@ -194,20 +186,17 @@ describe("Customers", () => {
     customer = await Customers.markCustomerAsActive(_customer._id);
 
     if (!customer.messengerData) {
-      throw new Error("messengerData is null");
+      throw new Error('messengerData is null');
     }
 
     expect(customer.messengerData).toBeDefined();
     expect(customer.messengerData.isActive).toBeTruthy();
   });
 
-  test("updateMessengerSession()", async () => {
+  test('updateMessengerSession()', async () => {
     const now = new Date();
 
-    const customer = await Customers.updateMessengerSession(
-      _customer._id,
-      "/career/open"
-    );
+    const customer = await Customers.updateMessengerSession(_customer._id, '/career/open');
 
     const { messengerData } = customer;
 
@@ -218,45 +207,45 @@ describe("Customers", () => {
       expect(messengerData.lastSeenAt >= now.getTime()).toBeTruthy();
     }
 
-    expect(customer.urlVisits["/career/open"]).toBe(1);
+    expect(customer.urlVisits['/career/open']).toBe(1);
   });
 
-  test("addCompany()", async () => {
-    await Customers.addCompany(_customer._id, "DFDAFDFFDSF");
-    await Customers.addCompany(_customer._id, "DFFDSFDSFJK");
+  test('addCompany()', async () => {
+    await Customers.addCompany(_customer._id, 'DFDAFDFFDSF');
+    await Customers.addCompany(_customer._id, 'DFFDSFDSFJK');
 
     const updatedCustomer = await Customers.findOne({ _id: _customer._id });
 
     if (!updatedCustomer) {
-      throw new Error("customer not found");
+      throw new Error('customer not found');
     }
 
     // check company in companyIds
     expect((updatedCustomer.companyIds || []).length).toBe(2);
   });
 
-  test("saveVisitorContactInfo()", async () => {
+  test('saveVisitorContactInfo()', async () => {
     // email ==========
     let customer = await Customers.saveVisitorContactInfo({
       customerId: _customer._id,
-      type: "email",
-      value: "test@gmail.com"
+      type: 'email',
+      value: 'test@gmail.com',
     });
 
     let visitorContactInfo: any = customer.visitorContactInfo || {};
 
-    expect(visitorContactInfo.email).toBe("test@gmail.com");
+    expect(visitorContactInfo.email).toBe('test@gmail.com');
 
     // phone ===============
     customer = await Customers.saveVisitorContactInfo({
       customerId: _customer._id,
-      type: "phone",
-      value: "985435353"
+      type: 'phone',
+      value: '985435353',
     });
 
     visitorContactInfo = customer.visitorContactInfo || {};
 
     // check company in companyIds
-    expect(visitorContactInfo.phone).toBe("985435353");
+    expect(visitorContactInfo.phone).toBe('985435353');
   });
 });

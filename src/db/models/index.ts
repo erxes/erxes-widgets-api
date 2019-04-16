@@ -1,47 +1,34 @@
-import Brands from "./Brands";
-import Companies from "./Companies";
-import Configs from "./Configs";
-import Conversations from "./Conversations";
-import Customers from "./Customers";
-import {
-  DealBoards,
-  DealPipelines,
-  DealProducts,
-  Deals,
-  DealStages
-} from "./Deals";
-import { EngageMessages } from "./Engages";
-import Fields from "./Fields";
-import Forms from "./Forms";
-import Integrations from "./Integrations";
-import {
-  KnowledgeBaseArticles,
-  KnowledgeBaseCategories,
-  KnowledgeBaseTopics
-} from "./KnowledgeBase";
-import Messages from "./Messages";
-import MessengerApps from "./MessengerApps";
-import Users from "./Users";
+import Brands from './Brands';
+import Companies from './Companies';
+import Configs from './Configs';
+import Conversations from './Conversations';
+import Customers from './Customers';
+import { DealBoards, DealPipelines, DealProducts, Deals, DealStages } from './Deals';
+import { EngageMessages } from './Engages';
+import Fields from './Fields';
+import Forms from './Forms';
+import Integrations from './Integrations';
+import { KnowledgeBaseArticles, KnowledgeBaseCategories, KnowledgeBaseTopics } from './KnowledgeBase';
+import Messages from './Messages';
+import MessengerApps from './MessengerApps';
+import Users from './Users';
 
-import { IBrandDocument } from "./definitions/brands";
-import { IConversationDocument } from "./definitions/conversations";
-import { ICustomerDocument } from "./definitions/customers";
-import { IIntegrationDocument } from "./definitions/integrations";
-import { IUserDocument } from "./definitions/users";
+import { IBrandDocument } from './definitions/brands';
+import { IConversationDocument } from './definitions/conversations';
+import { ICustomerDocument } from './definitions/customers';
+import { IIntegrationDocument } from './definitions/integrations';
+import { IUserDocument } from './definitions/users';
 
-import {
-  IEngageData as IMessageEngageData,
-  IMessageDocument
-} from "./definitions/conversationMessages";
+import { IEngageData as IMessageEngageData, IMessageDocument } from './definitions/conversationMessages';
 
-import { IFieldDocument } from "./definitions/fields";
-import { IFormDocument } from "./definitions/forms";
+import { IFieldDocument } from './definitions/fields';
+import { IFormDocument } from './definitions/forms';
 
 import {
   IArticleDocument as IKbArticleDocument,
   ICategoryDocument as IKbCategoryDocument,
-  ITopicDocument as IKbTopicDocument
-} from "./definitions/knowledgebase";
+  ITopicDocument as IKbTopicDocument,
+} from './definitions/knowledgebase';
 
 export {
   Companies,
@@ -75,5 +62,5 @@ export {
   IKbTopicDocument,
   IKbCategoryDocument,
   IKbArticleDocument,
-  MessengerApps
+  MessengerApps,
 };
