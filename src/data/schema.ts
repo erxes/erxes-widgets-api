@@ -283,6 +283,7 @@ export const mutations = `
       data: JSON
 
       cachedCustomerId: String
+      deviceToken: String
     ): MessengerConnectResponse
 
     saveBrowserInfo(
