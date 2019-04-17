@@ -114,6 +114,7 @@ interface ICustomerParams {
   primaryPhone?: string;
   isActive?: boolean;
   urlVisits?: object;
+  deviceToken?: string;
 }
 export function customerFactory(params: ICustomerParams = {}) {
   const createdAt = faker.date.past();
@@ -140,6 +141,7 @@ export function customerFactory(params: ICustomerParams = {}) {
       sessionCount: faker.random.number(),
     },
     urlVisits: params.urlVisits,
+    deviceToken: params.deviceToken || [],
   });
 
   return customer.save();

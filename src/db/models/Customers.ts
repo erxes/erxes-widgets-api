@@ -197,12 +197,16 @@ export const loadClass = () => {
         phones.push(doc.phone);
       }
 
+      let tokens: string[] = [];
+
       if (doc.deviceToken) {
         const deviceTokens: any = customer.deviceToken || [];
 
-        if (deviceTokens.includes(doc.deviceToken)) {
-          delete doc.deviceToken;
+        if (!deviceTokens.includes(doc.deviceToken)) {
+          tokens = [...deviceTokens, doc.deviceToken];
         }
+
+        delete doc.deviceToken;
       }
 
       const modifier = {
@@ -211,6 +215,7 @@ export const loadClass = () => {
         phones,
         emails,
         modifiedAt: new Date(),
+        deviceToken: tokens,
         'messengerData.customData': updatedCustomData,
       };
 
