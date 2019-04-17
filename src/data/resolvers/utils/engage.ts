@@ -99,12 +99,12 @@ export const checkRule = (params: ICheckRuleParams): boolean => {
   }
 
   // startsWith
-  if (condition === 'startsWith' && !valueToTest.startsWith(ruleValue)) {
+  if (condition === 'startsWith' && valueToTest && !valueToTest.startsWith(ruleValue)) {
     return false;
   }
 
   // endsWith
-  if (condition === 'endsWith' && !valueToTest.endsWith(ruleValue)) {
+  if (condition === 'endsWith' && valueToTest && !valueToTest.endsWith(ruleValue)) {
     return false;
   }
 
