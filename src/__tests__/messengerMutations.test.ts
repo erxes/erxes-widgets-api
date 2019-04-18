@@ -103,7 +103,8 @@ describe('messenger connect', () => {
     expect(customer.primaryEmail).toBe(email);
     expect(customer.emails).toContain(email);
     expect(customer.integrationId).toBe(_integration._id);
-    expect((customer.deviceToken || []).length).toBe(1);
+    expect(customer.deviceTokens.length).toBe(1);
+    expect(customer.deviceTokens).toContain('111');
     expect(customer.createdAt >= now).toBeTruthy();
     expect((customer.companyIds || []).length).toBe(1);
     expect((customer.messengerData || { sessionCount: 0 }).sessionCount).toBe(1);
@@ -142,7 +143,9 @@ describe('messenger connect', () => {
     // must be updated
     expect(customer.firstName).toBe('name');
     expect(customer.isUser).toBeTruthy();
-    expect((customer.deviceToken || []).length).toBe(2);
+    expect(customer.deviceTokens.length).toBe(2);
+    expect(customer.deviceTokens).toContain('111');
+    expect(customer.deviceTokens).toContain('222');
 
     if (!customer.messengerData) {
       throw new Error('messengerData is null');

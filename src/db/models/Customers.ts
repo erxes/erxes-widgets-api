@@ -162,6 +162,7 @@ export const loadClass = () => {
       return this.createCustomer({
         ...doc,
         ...extractedInfo,
+        deviceTokens: doc.deviceToken,
         messengerData: {
           lastSeenAt: new Date(),
           isActive: true,
@@ -197,13 +198,11 @@ export const loadClass = () => {
         phones.push(doc.phone);
       }
 
-      let tokens: string[] = [];
+      const deviceTokens: string[] = customer.deviceTokens || [];
 
       if (doc.deviceToken) {
-        const deviceTokens: any = customer.deviceToken || [];
-
         if (!deviceTokens.includes(doc.deviceToken)) {
-          tokens = [...deviceTokens, doc.deviceToken];
+          deviceTokens.push(doc.deviceToken);
         }
 
         delete doc.deviceToken;
@@ -215,7 +214,7 @@ export const loadClass = () => {
         phones,
         emails,
         modifiedAt: new Date(),
-        deviceToken: tokens,
+        deviceTokens,
         'messengerData.customData': updatedCustomData,
       };
 

@@ -141,7 +141,7 @@ export function customerFactory(params: ICustomerParams = {}) {
       sessionCount: faker.random.number(),
     },
     urlVisits: params.urlVisits,
-    deviceToken: params.deviceToken || [],
+    deviceTokens: params.deviceToken || [],
   });
 
   return customer.save();
