@@ -162,7 +162,7 @@ export const loadClass = () => {
       return this.createCustomer({
         ...doc,
         ...extractedInfo,
-        deviceTokens: doc.deviceToken,
+        deviceTokens: [doc.deviceToken],
         messengerData: {
           lastSeenAt: new Date(),
           isActive: true,
