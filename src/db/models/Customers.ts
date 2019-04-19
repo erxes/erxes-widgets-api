@@ -17,6 +17,7 @@ interface ICreateCustomerParams {
   lastName?: string;
   description?: string;
   messengerData?: any;
+  deviceToken?: string;
 }
 
 export interface IUpdateMessengerCustomerParams {
@@ -25,6 +26,7 @@ export interface IUpdateMessengerCustomerParams {
     email?: string;
     phone?: string;
     isUser?: boolean;
+    deviceToken?: string;
   };
   customData?: any;
 }
@@ -160,6 +162,7 @@ export const loadClass = () => {
       return this.createCustomer({
         ...doc,
         ...extractedInfo,
+        deviceTokens: [doc.deviceToken],
         messengerData: {
           lastSeenAt: new Date(),
           isActive: true,
@@ -195,12 +198,23 @@ export const loadClass = () => {
         phones.push(doc.phone);
       }
 
+      const deviceTokens: string[] = customer.deviceTokens || [];
+
+      if (doc.deviceToken) {
+        if (!deviceTokens.includes(doc.deviceToken)) {
+          deviceTokens.push(doc.deviceToken);
+        }
+
+        delete doc.deviceToken;
+      }
+
       const modifier = {
         ...doc,
         ...extractedInfo,
         phones,
         emails,
         modifiedAt: new Date(),
+        deviceTokens,
         'messengerData.customData': updatedCustomData,
       };
 

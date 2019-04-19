@@ -21,9 +21,10 @@ export default {
       companyData?: any;
       data?: any;
       cachedCustomerId?: string;
+      deviceToken?: string;
     },
   ) {
-    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
 
     const customData = data;
 
@@ -51,6 +52,7 @@ export default {
           email,
           phone,
           isUser,
+          deviceToken,
         },
         customData,
       });
@@ -63,6 +65,7 @@ export default {
           email,
           phone,
           isUser,
+          deviceToken,
         },
         customData,
       );
