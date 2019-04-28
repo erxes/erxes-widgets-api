@@ -1,5 +1,4 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
@@ -141,17 +140,7 @@ export const loadClass = () => {
         modifier.phones = [phone];
       }
 
-      const customer = await Customers.create(modifier);
-
-      // call app api's create customer log
-      mutateAppApi(`
-        mutation {
-          activityLogsAddCustomerLog(_id: "${customer._id}") {
-            _id
-          }
-        }`);
-
-      return customer;
+      return Customers.create(modifier);
     }
 
     /*

@@ -1,5 +1,4 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
 import { CONVERSATION_STATUSES } from './definitions/constants';
 import { IMessageDocument } from './definitions/conversationMessages';
 import { conversationSchema, IConversationDocument } from './definitions/conversations';
@@ -55,7 +54,7 @@ export const loadClass = () => {
         integrationId,
       }).countDocuments();
 
-      const conversation = await Conversations.create({
+      return Conversations.create({
         customerId,
         userId,
         integrationId,
@@ -67,19 +66,6 @@ export const loadClass = () => {
         // Number is used for denormalization of posts count
         number: count + 1,
       });
-
-      // call app api's create conversation log
-      mutateAppApi(`
-        mutation {
-          activityLogsAddConversationLog(
-            conversationId: "${conversation._id}",
-            customerId: "${customerId}",
-          ) {
-            _id
-          }
-        }`);
-
-      return conversation;
     }
 
     /**
