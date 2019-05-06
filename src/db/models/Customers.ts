@@ -1,4 +1,5 @@
 import { Model, model } from 'mongoose';
+import { publish } from '../../pubsub';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
@@ -140,7 +141,15 @@ export const loadClass = () => {
         modifier.phones = [phone];
       }
 
-      return Customers.create(modifier);
+      const customer = await Customers.create(modifier);
+
+      // notify main api
+      publish('activityLog', {
+        type: 'create-customer',
+        payload: customer,
+      });
+
+      return customer;
     }
 
     /*
@@ -148,6 +157,7 @@ export const loadClass = () => {
      */
     public static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
       const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+
       return this.createCustomer({
         ...doc,
         ...extractedInfo,

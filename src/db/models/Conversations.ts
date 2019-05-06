@@ -3,6 +3,7 @@ import { CONVERSATION_STATUSES } from './definitions/constants';
 import { IMessageDocument } from './definitions/conversationMessages';
 import { conversationSchema, IConversationDocument } from './definitions/conversations';
 
+import { publish } from '../../pubsub';
 import { Messages } from './';
 
 interface ISTATUSES {
@@ -54,7 +55,7 @@ export const loadClass = () => {
         integrationId,
       }).countDocuments();
 
-      return Conversations.create({
+      const conversation = await Conversations.create({
         customerId,
         userId,
         integrationId,
@@ -66,6 +67,13 @@ export const loadClass = () => {
         // Number is used for denormalization of posts count
         number: count + 1,
       });
+
+      publish('activityLog', {
+        type: 'create-conversation',
+        payload: conversation,
+      });
+
+      return conversation;
     }
 
     /**

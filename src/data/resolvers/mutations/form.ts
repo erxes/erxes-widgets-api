@@ -12,7 +12,7 @@ import {
 } from '../../../db/models';
 
 import { IBrowserInfo } from '../../../db/models/Customers';
-import { mutateAppApi } from '../../../utils';
+import { publish } from '../../../pubsub';
 import { IEmail, sendEmail } from '../utils/email';
 
 interface ISubmission {
@@ -216,11 +216,16 @@ export default {
     // increasing form submitted count
     await Forms.increaseContactsGathered(formId);
 
-    // notify app api
-    mutateAppApi(`
-      mutation {
-        conversationPublishClientMessage(_id: "${message._id}")
-      }`);
+    // notify main api
+    publish('callPublish', {
+      trigger: 'conversationClientMessageInserted',
+      payload: message,
+    });
+
+    publish('callPublish', {
+      trigger: 'conversationMessageInserted',
+      payload: message,
+    });
 
     return { status: 'ok', messageId: message._id };
   },

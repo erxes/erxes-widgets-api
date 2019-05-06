@@ -1,8 +1,7 @@
 import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
 import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
-
-import { mutateAppApi } from '../../../utils';
+import { publish } from '../../../pubsub';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { unreadMessagesQuery } from '../utils/messenger';
 
@@ -141,11 +140,16 @@ export default {
     // mark customer as active
     await Customers.markCustomerAsActive(conversation.customerId);
 
-    // notify app api
-    mutateAppApi(`
-      mutation {
-        conversationPublishClientMessage(_id: "${msg._id}")
-      }`);
+    // notify main api
+    publish('callPublish', {
+      trigger: 'conversationClientMessageInserted',
+      payload: msg,
+    });
+
+    publish('callPublish', {
+      trigger: 'conversationMessageInserted',
+      payload: msg,
+    });
 
     return msg;
   },
