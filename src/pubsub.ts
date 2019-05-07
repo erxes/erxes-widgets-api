@@ -32,6 +32,12 @@ const redisOptions = {
 const broker = new Redis(redisOptions);
 
 export const publish = (action: string, data) => {
+  const { NODE_ENV } = process.env;
+
+  if (NODE_ENV !== 'production') {
+    return;
+  }
+
   return broker.publish(
     'widgetNotification',
     JSON.stringify({
