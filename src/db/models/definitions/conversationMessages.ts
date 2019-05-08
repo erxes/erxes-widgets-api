@@ -181,6 +181,7 @@ const facebookSchema = new Schema(
     messageId: field({
       type: String,
       optional: true,
+      index: true,
     }),
 
     // comment, reaction, etc ...
@@ -326,7 +327,7 @@ export const messageSchema = new Schema({
   mentionedUserIds: field({ type: [String] }),
   conversationId: field({ type: String, index: true }),
   internal: field({ type: Boolean }),
-  customerId: field({ type: String }),
+  customerId: field({ type: String, index: true }),
   fromBot: field({ type: Boolean }),
   userId: field({ type: String }),
   createdAt: field({ type: Date, index: true }),
