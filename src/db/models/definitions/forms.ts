@@ -1,5 +1,6 @@
 import { Document, Schema } from 'mongoose';
 import { field } from '../utils';
+import { IRule } from './engages';
 
 export interface ICallout extends Document {
   title?: string;
@@ -21,6 +22,7 @@ export interface IForm {
   buttonText?: string;
   themeColor?: string;
   callout?: ICallout;
+  rules?: IRule;
 }
 
 export interface IFormDocument extends IForm, Document {
@@ -40,6 +42,25 @@ const calloutSchema = new Schema(
     buttonText: field({ type: String, optional: true }),
     featuredImage: field({ type: String, optional: true }),
     skip: field({ type: Boolean, optional: true }),
+  },
+  { _id: false },
+);
+
+// schema for form's rules
+const rulesSchema = new Schema(
+  {
+    _id: field({ type: String }),
+
+    // browserLanguage, currentUrl, etc ...
+    kind: field({ type: String }),
+
+    // Browser language, Current url etc ...
+    text: field({ type: String }),
+
+    // is, isNot, startsWith
+    condition: field({ type: String }),
+
+    value: field({ type: String }),
   },
   { _id: false },
 );
@@ -73,4 +94,5 @@ export const formSchema = new Schema({
   viewCount: field({ type: Number }),
   contactsGathered: field({ type: Number }),
   submissions: field({ type: [submissionSchema] }),
+  rules: field({ type: [rulesSchema] }),
 });

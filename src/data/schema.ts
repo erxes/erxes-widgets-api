@@ -116,6 +116,14 @@ export const types = `
     order: Int
   }
 
+  type FormRule {
+    _id : String!
+    kind: String!
+    text: String!
+    condition: String!
+    value: String
+  }
+
   type Form {
     _id: String
     title: String
@@ -124,6 +132,7 @@ export const types = `
     themeColor: String
     callout: JSON
     fields: [Field]
+    rules: [FormRule]
   }
 
   type MessengerConnectResponse {
