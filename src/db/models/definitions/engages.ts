@@ -20,7 +20,7 @@ export interface IEmail {
 
 export interface IEmailDocument extends IEmail, Document {}
 
-export interface IRule extends Document {
+interface IRule extends Document {
   _id: string;
   kind: string;
   text: string;
