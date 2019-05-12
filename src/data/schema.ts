@@ -116,7 +116,7 @@ export const types = `
     order: Int
   }
 
-  type FormRule {
+  type Rule {
     _id : String!
     kind: String!
     text: String!
@@ -132,7 +132,7 @@ export const types = `
     themeColor: String
     callout: JSON
     fields: [Field]
-    rules: [FormRule]
+    rules: [Rule]
   }
 
   type MessengerConnectResponse {
@@ -310,7 +310,11 @@ export const mutations = `
 
     readConversationMessages(conversationId: String): JSON
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): JSON
-    formConnect(brandCode: String!, formCode: String!): FormConnectResponse
+
+    formConnect(
+      brandCode: String!,
+      formCode: String!
+    ): FormConnectResponse
 
     saveForm(
       integrationId: String!
