@@ -1,5 +1,7 @@
 import { Document, Schema } from 'mongoose';
 import { field } from '../utils';
+import { ruleSchema } from './common/schemas';
+import { IRule } from './common/types';
 
 export interface ICallout extends Document {
   title?: string;
@@ -21,6 +23,7 @@ export interface IForm {
   buttonText?: string;
   themeColor?: string;
   callout?: ICallout;
+  rules?: IRule;
 }
 
 export interface IFormDocument extends IForm, Document {
@@ -73,4 +76,5 @@ export const formSchema = new Schema({
   viewCount: field({ type: Number }),
   contactsGathered: field({ type: Number }),
   submissions: field({ type: [submissionSchema] }),
+  rules: field({ type: [ruleSchema] }),
 });
