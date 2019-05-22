@@ -73,6 +73,13 @@ export const loadClass = () => {
 
       // Setting customData fields to customer fields
       Object.keys(updatedCustomData).forEach(key => {
+        const parsedDate = Date.parse(updatedCustomData[key]);
+
+        // Checking if it is date
+        if (isNaN(updatedCustomData[key]) && !isNaN(parsedDate)) {
+          updatedCustomData[key] = new Date(parsedDate);
+        }
+
         if (key === 'first_name' || key === 'firstName') {
           extractedInfo.firstName = updatedCustomData[key];
 
