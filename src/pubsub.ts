@@ -80,13 +80,11 @@ const createBrokerInstance = (): GooglePubSub | Redis => {
 const broker = createBrokerInstance();
 
 export const publish = (action: string, data: IPubsubData) => {
-  /*
   const { NODE_ENV } = process.env;
 
   if (NODE_ENV !== 'production') {
     return;
   }
-  */
 
   return broker.publish('widgetNotification', JSON.stringify({ action, data }));
 };
