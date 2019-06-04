@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as Redis from 'ioredis';
 import * as path from 'path';
-import { IMessageDocument } from './db/models';
+import { IConversationDocument, ICustomerDocument, IMessageDocument } from './db/models';
+import { ICompanyDocument } from './db/models/definitions/companies';
 
 // load environment variables
 dotenv.config();
@@ -17,9 +18,9 @@ interface IGoogleOptions {
 }
 
 interface IPubsubData {
-  trigger: string;
-  type: string;
-  payload: IMessageDocument;
+  type?: string;
+  trigger?: string;
+  payload: IMessageDocument | IConversationDocument | ICustomerDocument | ICompanyDocument;
 }
 
 const {
