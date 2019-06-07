@@ -9,6 +9,10 @@ import { ICompanyDocument } from './db/models/definitions/companies';
 // load environment variables
 dotenv.config();
 
+interface IPubSub {
+  publish(trigger: string, payload: any, options?: any): any;
+}
+
 interface IGoogleOptions {
   projectId: string;
   credentials: {
@@ -68,14 +72,22 @@ const configGooglePubsub = (): IGoogleOptions => {
   };
 };
 
-const createBrokerInstance = (): GooglePubSub | Redis => {
+const createBrokerInstance = (): IPubSub => {
+  let pubsub;
+
   if (PUBSUB_TYPE === 'GOOGLE') {
     const googleOptions = configGooglePubsub();
 
-    return new GooglePubSub(googleOptions);
+    const googlePubsub = new GooglePubSub(googleOptions);
+
+    pubsub = googlePubsub;
+  } else {
+    const redisPubsub = new Redis(redisOptions);
+
+    pubsub = redisPubsub;
   }
 
-  return new Redis(redisOptions);
+  return pubsub;
 };
 
 const broker = createBrokerInstance();
