@@ -32,6 +32,8 @@
     ]
   },
   "dependencies": {
+    "@axelspringer/graphql-google-pubsub": "^1.2.1",
+    "@google-cloud/pubsub": "^0.29.1",
     "apollo-server-express": "^2.3.1",
     "body-parser": "^1.17.1",
     "cors": "^2.8.1",
@@ -39,7 +41,7 @@
     "express": "^4.15.2",
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.3",
-    "ioredis": "^4.9.0",
+    "ioredis": "^4.9.5",
     "meteor-random": "0.0.3",
     "mongoose": "^5.2.16",
     "nodemailer": "^4.0.1",

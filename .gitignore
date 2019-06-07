@@ -1,4 +1,5 @@
 node_modules
+google_cred.json
 settings.js
 server/settings.js
 dist

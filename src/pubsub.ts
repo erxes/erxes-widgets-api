@@ -1,14 +1,39 @@
+import { GooglePubSub } from '@axelspringer/graphql-google-pubsub';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 import * as Redis from 'ioredis';
+import * as path from 'path';
+import { IConversationDocument, ICustomerDocument, IMessageDocument } from './db/models';
+import { ICompanyDocument } from './db/models/definitions/companies';
 
 // load environment variables
 dotenv.config();
 
+interface IPubSub {
+  publish(trigger: string, payload: any, options?: any): any;
+}
+
+interface IGoogleOptions {
+  projectId: string;
+  credentials: {
+    client_email: string;
+    private_key: string;
+  };
+}
+
+interface IPubsubData {
+  type?: string;
+  trigger?: string;
+  payload: IMessageDocument | IConversationDocument | ICustomerDocument | ICompanyDocument;
+}
+
 const {
+  PUBSUB_TYPE,
   REDIS_HOST = 'localhost',
   REDIS_PORT = 6379,
   REDIS_PASSWORD = '',
 }: {
+  PUBSUB_TYPE?: string;
   REDIS_HOST?: string;
   REDIS_PORT?: number;
   REDIS_PASSWORD?: string;
@@ -29,20 +54,50 @@ const redisOptions = {
   },
 };
 
-const broker = new Redis(redisOptions);
+const configGooglePubsub = (): IGoogleOptions => {
+  const checkHasConfigFile = fs.existsSync(path.join(__dirname, '..', '/google_cred.json'));
 
-export const publish = (action: string, data) => {
+  if (!checkHasConfigFile) {
+    throw new Error('Google credentials file not found!');
+  }
+
+  const serviceAccount = require('../google_cred.json');
+
+  return {
+    projectId: serviceAccount.project_id,
+    credentials: {
+      client_email: serviceAccount.client_email,
+      private_key: serviceAccount.private_key,
+    },
+  };
+};
+
+const createBrokerInstance = (): IPubSub => {
+  let pubsub;
+
+  if (PUBSUB_TYPE === 'GOOGLE') {
+    const googleOptions = configGooglePubsub();
+
+    const googlePubsub = new GooglePubSub(googleOptions);
+
+    pubsub = googlePubsub;
+  } else {
+    const redisPubsub = new Redis(redisOptions);
+
+    pubsub = redisPubsub;
+  }
+
+  return pubsub;
+};
+
+const broker = createBrokerInstance();
+
+export const publish = (action: string, data: IPubsubData) => {
   const { NODE_ENV } = process.env;
 
   if (NODE_ENV !== 'production') {
     return;
   }
 
-  return broker.publish(
-    'widgetNotification',
-    JSON.stringify({
-      action,
-      data,
-    }),
-  );
+  return broker.publish('widgetNotification', JSON.stringify({ action, data }));
 };
