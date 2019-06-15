@@ -214,6 +214,10 @@ export const loadClass = () => {
         delete doc.deviceToken;
       }
 
+      if (customer.isUser) {
+        doc.isUser = true;
+      }
+
       const modifier = {
         ...doc,
         ...extractedInfo,
@@ -348,13 +352,13 @@ export const loadClass = () => {
         await Customers.updateOne(
           { _id: customerId },
           {
-            'visitorContactInfo.email': value,
+            $set: { 'visitorContactInfo.email': value },
           },
         );
       }
 
       if (type === 'phone') {
-        await Customers.updateOne({ _id: customerId }, { 'visitorContactInfo.phone': value });
+        await Customers.updateOne({ _id: customerId }, { $set: { 'visitorContactInfo.phone': value } });
       }
 
       return Customers.findOne({ _id: customerId });
