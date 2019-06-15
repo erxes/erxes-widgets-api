@@ -192,6 +192,8 @@ export const loadClass = () => {
 
       const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
 
+      let fixedCustomData = updatedCustomData;
+
       const emails = customer.emails || [];
 
       if (doc.email && !emails.includes(doc.email)) {
@@ -218,6 +220,10 @@ export const loadClass = () => {
         doc.isUser = true;
       }
 
+      if (customer.messengerData.customData && Object.keys(updatedCustomData).length === 0) {
+        fixedCustomData = customer.messengerData.customData;
+      }
+
       const modifier = {
         ...doc,
         ...extractedInfo,
@@ -225,7 +231,7 @@ export const loadClass = () => {
         emails,
         modifiedAt: new Date(),
         deviceTokens,
-        'messengerData.customData': updatedCustomData,
+        'messengerData.customData': fixedCustomData,
       };
 
       await Customers.updateOne({ _id }, { $set: modifier });
