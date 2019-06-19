@@ -90,7 +90,7 @@ const createPubsubInstance = (): IPubSub => {
   return pubsub;
 };
 
-const broker = createPubsubInstance();
+const pubsubInstance = createPubsubInstance();
 
 export const publish = (action: string, data: IPubsubData) => {
   const { NODE_ENV } = process.env;
@@ -99,5 +99,5 @@ export const publish = (action: string, data: IPubsubData) => {
     return;
   }
 
-  return broker.publish('widgetNotification', JSON.stringify({ action, data }));
+  return pubsubInstance.publish('widgetNotification', JSON.stringify({ action, data }));
 };
