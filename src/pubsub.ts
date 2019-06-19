@@ -72,7 +72,7 @@ const configGooglePubsub = (): IGoogleOptions => {
   };
 };
 
-const createBrokerInstance = (): IPubSub => {
+const createPubsubInstance = (): IPubSub => {
   let pubsub;
 
   if (PUBSUB_TYPE === 'GOOGLE') {
@@ -90,12 +90,12 @@ const createBrokerInstance = (): IPubSub => {
   return pubsub;
 };
 
-const broker = createBrokerInstance();
+const broker = createPubsubInstance();
 
 export const publish = (action: string, data: IPubsubData) => {
   const { NODE_ENV } = process.env;
 
-  if (NODE_ENV !== 'production') {
+  if (NODE_ENV === 'test') {
     return;
   }
 
