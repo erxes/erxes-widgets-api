@@ -151,6 +151,14 @@ export default {
       payload: msg,
     });
 
+    publish('callPublish', {
+      trigger: 'conversationClientTypingStatusChanged',
+      payload: {
+        conversationId,
+        text: '',
+      },
+    });
+
     return msg;
   },
 
@@ -219,5 +227,14 @@ export default {
     });
 
     return Messages.findOne(unreadMessagesQuery(convs));
+  },
+
+  sendTypingInfo(_root, args: { conversationId: string; text?: string }) {
+    publish('callPublish', {
+      trigger: 'conversationClientTypingStatusChanged',
+      payload: args,
+    });
+
+    return 'ok';
   },
 };
