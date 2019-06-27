@@ -1,6 +1,9 @@
-.git
-.gitignore
 *.md
 *.yml
-scripts
+.env*
+.git*
 .snyk
+Dockerfile*
+scripts
+scripts
+src
