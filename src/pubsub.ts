@@ -3,8 +3,6 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as Redis from 'ioredis';
 import * as path from 'path';
-import { IConversationDocument, ICustomerDocument, IMessageDocument } from './db/models';
-import { ICompanyDocument } from './db/models/definitions/companies';
 
 // load environment variables
 dotenv.config();
@@ -24,7 +22,7 @@ interface IGoogleOptions {
 interface IPubsubData {
   type?: string;
   trigger?: string;
-  payload: IMessageDocument | IConversationDocument | ICustomerDocument | ICompanyDocument;
+  payload: any;
 }
 
 const {
@@ -72,7 +70,7 @@ const configGooglePubsub = (): IGoogleOptions => {
   };
 };
 
-const createBrokerInstance = (): IPubSub => {
+const createPubsubInstance = (): IPubSub => {
   let pubsub;
 
   if (PUBSUB_TYPE === 'GOOGLE') {
@@ -90,14 +88,14 @@ const createBrokerInstance = (): IPubSub => {
   return pubsub;
 };
 
-const broker = createBrokerInstance();
+const pubsubInstance = createPubsubInstance();
 
 export const publish = (action: string, data: IPubsubData) => {
   const { NODE_ENV } = process.env;
 
-  if (NODE_ENV !== 'production') {
+  if (NODE_ENV === 'test') {
     return;
   }
 
-  return broker.publish('widgetNotification', JSON.stringify({ action, data }));
+  return pubsubInstance.publish('widgetNotification', JSON.stringify({ action, data }));
 };

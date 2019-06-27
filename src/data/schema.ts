@@ -332,6 +332,8 @@ export const mutations = `
 
     formIncreaseViewCount(formId: String!): JSON
 
+    sendTypingInfo(conversationId: String!, text: String): String
+
     sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;

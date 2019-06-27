@@ -29,7 +29,6 @@ if (NODE_ENV !== 'production') {
     settings: {
       'general.betaUpdates': false,
       'editor.theme': 'dark',
-      'editor.cursorShape': 'line',
       'editor.reuseHeaders': true,
       'tracing.hideTracingResponse': true,
       'editor.fontSize': 14,
