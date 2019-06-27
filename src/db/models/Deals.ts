@@ -2,16 +2,13 @@ import { Model, model } from 'mongoose';
 import { Configs, Customers, Users } from './';
 import {
   boardSchema,
-  dealSchema,
   IBoardDocument,
-  IDealDocument,
   IPipelineDocument,
-  IProductDocument,
   IStageDocument,
   pipelineSchema,
-  productSchema,
   stageSchema,
-} from './definitions/deals';
+} from './definitions/boards';
+import { dealSchema, IDealDocument, IProductDocument, productSchema } from './definitions/deals';
 
 interface IProductDataInput {
   productName: string;
