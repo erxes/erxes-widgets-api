@@ -196,7 +196,7 @@ export const loadClass = () => {
 
       const customer = await Customers.create(modifier);
 
-      await Customers.updateProfileScore(customer._id, false);
+      await Customers.updateProfileScore(customer._id, true);
 
       // notify main api
       publish('activityLog', {
@@ -284,7 +284,7 @@ export const loadClass = () => {
 
       await Customers.updateOne({ _id }, { $set: modifier });
 
-      await Customers.updateProfileScore(customer._id, false);
+      await Customers.updateProfileScore(customer._id, true);
 
       return Customers.findOne({ _id });
     }
@@ -417,7 +417,9 @@ export const loadClass = () => {
         await Customers.updateOne({ _id: customerId }, { $set: { 'visitorContactInfo.phone': value } });
       }
 
-      return Customers.updateProfileScore(customerId, true);
+      await Customers.updateProfileScore(customerId, true);
+
+      return Customers.findOne({ _id: customerId });
     }
   }
 
