@@ -60,6 +60,7 @@ interface ICustomerModel extends Model<ICustomerDocument> {
   updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>;
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>;
   saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>;
+  updateProfileScore(customerId: string, save: boolean): never;
 }
 
 export const loadClass = () => {
@@ -100,6 +101,51 @@ export const loadClass = () => {
       });
 
       return { extractedInfo, updatedCustomData };
+    }
+
+    /**
+     * Update customer profile score
+     */
+    public static async updateProfileScore(customerId: string, save: boolean) {
+      let score = 0;
+
+      const nullValues = ['', null];
+      const customer = await Customers.findOne({ _id: customerId });
+
+      if (!customer) {
+        return 0;
+      }
+
+      if (!nullValues.includes(customer.firstName || '')) {
+        score += 10;
+      }
+
+      if (!nullValues.includes(customer.lastName || '')) {
+        score += 5;
+      }
+
+      if (!nullValues.includes(customer.primaryEmail || '')) {
+        score += 15;
+      }
+
+      if (!nullValues.includes(customer.primaryPhone || '')) {
+        score += 10;
+      }
+
+      if (customer.visitorContactInfo != null) {
+        score += 5;
+      }
+
+      if (!save) {
+        return {
+          updateOne: {
+            filter: { _id: customerId },
+            update: { $set: { profileScore: score } },
+          },
+        };
+      }
+
+      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score } });
     }
 
     /*
@@ -149,6 +195,8 @@ export const loadClass = () => {
       }
 
       const customer = await Customers.create(modifier);
+
+      await Customers.updateProfileScore(customer._id, false);
 
       // notify main api
       publish('activityLog', {
@@ -235,6 +283,8 @@ export const loadClass = () => {
       };
 
       await Customers.updateOne({ _id }, { $set: modifier });
+
+      await Customers.updateProfileScore(customer._id, false);
 
       return Customers.findOne({ _id });
     }
@@ -367,7 +417,7 @@ export const loadClass = () => {
         await Customers.updateOne({ _id: customerId }, { $set: { 'visitorContactInfo.phone': value } });
       }
 
-      return Customers.findOne({ _id: customerId });
+      return Customers.updateProfileScore(customerId, true);
     }
   }
 
