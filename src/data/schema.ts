@@ -116,6 +116,14 @@ export const types = `
     order: Int
   }
 
+  type Rule {
+    _id : String!
+    kind: String!
+    text: String!
+    condition: String!
+    value: String
+  }
+
   type Form {
     _id: String
     title: String
@@ -124,6 +132,7 @@ export const types = `
     themeColor: String
     callout: JSON
     fields: [Field]
+    rules: [Rule]
   }
 
   type MessengerConnectResponse {
@@ -283,6 +292,7 @@ export const mutations = `
       data: JSON
 
       cachedCustomerId: String
+      deviceToken: String
     ): MessengerConnectResponse
 
     saveBrowserInfo(
@@ -300,7 +310,11 @@ export const mutations = `
 
     readConversationMessages(conversationId: String): JSON
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): JSON
-    formConnect(brandCode: String!, formCode: String!): FormConnectResponse
+
+    formConnect(
+      brandCode: String!,
+      formCode: String!
+    ): FormConnectResponse
 
     saveForm(
       integrationId: String!
@@ -317,6 +331,8 @@ export const mutations = `
     ): String
 
     formIncreaseViewCount(formId: String!): JSON
+
+    sendTypingInfo(conversationId: String!, text: String): String
 
     sendEvent(type: String, dealDoc: DealInput): JSON
   }

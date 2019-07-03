@@ -114,6 +114,7 @@ interface ICustomerParams {
   primaryPhone?: string;
   isActive?: boolean;
   urlVisits?: object;
+  deviceToken?: string;
 }
 export function customerFactory(params: ICustomerParams = {}) {
   const createdAt = faker.date.past();
@@ -140,6 +141,7 @@ export function customerFactory(params: ICustomerParams = {}) {
       sessionCount: faker.random.number(),
     },
     urlVisits: params.urlVisits,
+    deviceTokens: params.deviceToken || [],
   });
 
   return customer.save();
@@ -270,6 +272,7 @@ interface IDealBoardInput {
 
 export function dealBoardFactory(params: IDealBoardInput) {
   return DealBoards.create({
+    type: 'deal',
     name: params.name || faker.random.word(),
     isDefault: params.isDefault || false,
   });
@@ -283,6 +286,7 @@ interface IDealStageInput {
 
 export function dealStageFactory(params: IDealStageInput) {
   return DealStages.create({
+    type: 'deal',
     name: params.name || faker.random.word(),
     probability: params.probability || '10%',
     pipelineId: params.pipelineId || Random.id(),
@@ -296,6 +300,7 @@ interface IDealPipelineInput {
 
 export function dealPipelineFactory(params: IDealPipelineInput) {
   return DealPipelines.create({
+    type: 'deal',
     name: params.name || faker.random.word(),
     boardId: params.boardId || Random.id(),
   });

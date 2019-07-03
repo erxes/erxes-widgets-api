@@ -1,6 +1,5 @@
 import { Document, Schema } from 'mongoose';
 import { field } from '../utils';
-import { ROLES } from './constants';
 
 export interface IEmailSignature {
   brandId?: string;
@@ -37,7 +36,7 @@ export interface IUser {
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   registrationToken?: string;
-  role?: string;
+  registrationTokenExpires?: Date;
   isOwner?: boolean;
   hasSeenOnBoard?: boolean;
   email?: string;
@@ -47,6 +46,8 @@ export interface IUser {
   details?: IDetail;
   links?: ILink;
   isActive?: boolean;
+  groupIds?: string[];
+  deviceTokens?: string[];
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -97,18 +98,14 @@ export const userSchema = new Schema({
   password: field({ type: String }),
   resetPasswordToken: field({ type: String }),
   registrationToken: field({ type: String }),
+  registrationTokenExpires: field({ type: Date }),
   resetPasswordExpires: field({ type: Date }),
-  role: field({
-    type: String,
-    enum: [ROLES.ADMIN, ROLES.CONTRIBUTOR],
-  }),
   isOwner: field({ type: Boolean }),
   hasSeenOnBoard: field({ type: Boolean }),
   email: field({
     type: String,
-    lowercase: true,
     unique: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/, 'Please fill a valid email address'],
   }),
   getNotificationByEmail: field({ type: Boolean }),
   emailSignatures: field({ type: [emailSignatureSchema] }),
@@ -116,4 +113,6 @@ export const userSchema = new Schema({
   details: field({ type: detailSchema, default: {} }),
   links: field({ type: linkSchema, default: {} }),
   isActive: field({ type: Boolean, default: true }),
+  groupIds: field({ type: [String] }),
+  deviceTokens: field({ type: [String], default: [] }),
 });

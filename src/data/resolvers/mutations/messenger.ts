@@ -1,8 +1,7 @@
 import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
 import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
-
-import { mutateAppApi } from '../../../utils';
+import { publish } from '../../../pubsub';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { unreadMessagesQuery } from '../utils/messenger';
 
@@ -21,9 +20,10 @@ export default {
       companyData?: any;
       data?: any;
       cachedCustomerId?: string;
+      deviceToken?: string;
     },
   ) {
-    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId } = args;
+    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
 
     const customData = data;
 
@@ -51,6 +51,7 @@ export default {
           email,
           phone,
           isUser,
+          deviceToken,
         },
         customData,
       });
@@ -63,6 +64,7 @@ export default {
           email,
           phone,
           isUser,
+          deviceToken,
         },
         customData,
       );
@@ -138,11 +140,24 @@ export default {
     // mark customer as active
     await Customers.markCustomerAsActive(conversation.customerId);
 
-    // notify app api
-    mutateAppApi(`
-      mutation {
-        conversationPublishClientMessage(_id: "${msg._id}")
-      }`);
+    // notify main api
+    publish('callPublish', {
+      trigger: 'conversationClientMessageInserted',
+      payload: msg,
+    });
+
+    publish('callPublish', {
+      trigger: 'conversationMessageInserted',
+      payload: msg,
+    });
+
+    publish('callPublish', {
+      trigger: 'conversationClientTypingStatusChanged',
+      payload: {
+        conversationId,
+        text: '',
+      },
+    });
 
     return msg;
   },
@@ -212,5 +227,14 @@ export default {
     });
 
     return Messages.findOne(unreadMessagesQuery(convs));
+  },
+
+  sendTypingInfo(_root, args: { conversationId: string; text?: string }) {
+    publish('callPublish', {
+      trigger: 'conversationClientTypingStatusChanged',
+      payload: args,
+    });
+
+    return 'ok';
   },
 };

@@ -1,5 +1,5 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
+import { publish } from '../../pubsub';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
@@ -17,6 +17,7 @@ interface ICreateCustomerParams {
   lastName?: string;
   description?: string;
   messengerData?: any;
+  deviceToken?: string;
 }
 
 export interface IUpdateMessengerCustomerParams {
@@ -25,6 +26,7 @@ export interface IUpdateMessengerCustomerParams {
     email?: string;
     phone?: string;
     isUser?: boolean;
+    deviceToken?: string;
   };
   customData?: any;
 }
@@ -58,6 +60,7 @@ interface ICustomerModel extends Model<ICustomerDocument> {
   updateLocation(_id: string, browserInfo: IBrowserInfo): Promise<ICustomerDocument>;
   addCompany(_id: string, companyId: string): Promise<ICustomerDocument>;
   saveVisitorContactInfo(doc: IVisitorContactInfoParams): Promise<ICustomerDocument>;
+  updateProfileScore(customerId: string, save: boolean): never;
 }
 
 export const loadClass = () => {
@@ -71,6 +74,13 @@ export const loadClass = () => {
 
       // Setting customData fields to customer fields
       Object.keys(updatedCustomData).forEach(key => {
+        const parsedDate = Date.parse(updatedCustomData[key]);
+
+        // Checking if it is date
+        if (isNaN(updatedCustomData[key]) && !isNaN(parsedDate)) {
+          updatedCustomData[key] = new Date(parsedDate);
+        }
+
         if (key === 'first_name' || key === 'firstName') {
           extractedInfo.firstName = updatedCustomData[key];
 
@@ -91,6 +101,51 @@ export const loadClass = () => {
       });
 
       return { extractedInfo, updatedCustomData };
+    }
+
+    /**
+     * Update customer profile score
+     */
+    public static async updateProfileScore(customerId: string, save: boolean) {
+      let score = 0;
+
+      const nullValues = ['', null];
+      const customer = await Customers.findOne({ _id: customerId });
+
+      if (!customer) {
+        return 0;
+      }
+
+      if (!nullValues.includes(customer.firstName || '')) {
+        score += 10;
+      }
+
+      if (!nullValues.includes(customer.lastName || '')) {
+        score += 5;
+      }
+
+      if (!nullValues.includes(customer.primaryEmail || '')) {
+        score += 15;
+      }
+
+      if (!nullValues.includes(customer.primaryPhone || '')) {
+        score += 10;
+      }
+
+      if (customer.visitorContactInfo != null) {
+        score += 5;
+      }
+
+      if (!save) {
+        return {
+          updateOne: {
+            filter: { _id: customerId },
+            update: { $set: { profileScore: score } },
+          },
+        };
+      }
+
+      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score } });
     }
 
     /*
@@ -141,13 +196,13 @@ export const loadClass = () => {
 
       const customer = await Customers.create(modifier);
 
-      // call app api's create customer log
-      mutateAppApi(`
-        mutation {
-          activityLogsAddCustomerLog(_id: "${customer._id}") {
-            _id
-          }
-        }`);
+      await Customers.updateProfileScore(customer._id, true);
+
+      // notify main api
+      publish('activityLog', {
+        type: 'create-customer',
+        payload: customer,
+      });
 
       return customer;
     }
@@ -157,9 +212,11 @@ export const loadClass = () => {
      */
     public static async createMessengerCustomer(doc: ICreateCustomerParams, customData: any) {
       const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
+
       return this.createCustomer({
         ...doc,
         ...extractedInfo,
+        deviceTokens: doc.deviceToken ? [doc.deviceToken] : [],
         messengerData: {
           lastSeenAt: new Date(),
           isActive: true,
@@ -183,6 +240,8 @@ export const loadClass = () => {
 
       const { extractedInfo, updatedCustomData } = this.fixCustomData(customData || {});
 
+      let fixedCustomData = updatedCustomData;
+
       const emails = customer.emails || [];
 
       if (doc.email && !emails.includes(doc.email)) {
@@ -195,16 +254,37 @@ export const loadClass = () => {
         phones.push(doc.phone);
       }
 
+      const deviceTokens: string[] = customer.deviceTokens || [];
+
+      if (doc.deviceToken) {
+        if (!deviceTokens.includes(doc.deviceToken)) {
+          deviceTokens.push(doc.deviceToken);
+        }
+
+        delete doc.deviceToken;
+      }
+
+      if (customer.isUser) {
+        doc.isUser = true;
+      }
+
+      if (customer.messengerData.customData && Object.keys(updatedCustomData).length === 0) {
+        fixedCustomData = customer.messengerData.customData;
+      }
+
       const modifier = {
         ...doc,
         ...extractedInfo,
         phones,
         emails,
         modifiedAt: new Date(),
-        'messengerData.customData': updatedCustomData,
+        deviceTokens,
+        'messengerData.customData': fixedCustomData,
       };
 
       await Customers.updateOne({ _id }, { $set: modifier });
+
+      await Customers.updateProfileScore(customer._id, true);
 
       return Customers.findOne({ _id });
     }
@@ -328,14 +408,16 @@ export const loadClass = () => {
         await Customers.updateOne(
           { _id: customerId },
           {
-            'visitorContactInfo.email': value,
+            $set: { 'visitorContactInfo.email': value },
           },
         );
       }
 
       if (type === 'phone') {
-        await Customers.updateOne({ _id: customerId }, { 'visitorContactInfo.phone': value });
+        await Customers.updateOne({ _id: customerId }, { $set: { 'visitorContactInfo.phone': value } });
       }
+
+      await Customers.updateProfileScore(customerId, true);
 
       return Customers.findOne({ _id: customerId });
     }

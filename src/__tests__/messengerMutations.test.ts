@@ -40,6 +40,7 @@ describe('messenger connect', () => {
       primaryEmail: 'test@gmail.com',
       emails: ['test@gmail.com'],
       primaryPhone: '96221050',
+      deviceToken: '111',
     });
   });
 
@@ -87,7 +88,7 @@ describe('messenger connect', () => {
 
     const { customerId } = await messengerMutations.messengerConnect(
       {},
-      { brandCode: _brand.code, email, companyData: { name: 'company' } },
+      { brandCode: _brand.code, email, companyData: { name: 'company' }, deviceToken: '111' },
     );
 
     expect(customerId).toBeDefined();
@@ -102,6 +103,8 @@ describe('messenger connect', () => {
     expect(customer.primaryEmail).toBe(email);
     expect(customer.emails).toContain(email);
     expect(customer.integrationId).toBe(_integration._id);
+    expect(customer.deviceTokens.length).toBe(1);
+    expect(customer.deviceTokens).toContain('111');
     expect(customer.createdAt >= now).toBeTruthy();
     expect((customer.companyIds || []).length).toBe(1);
     expect((customer.messengerData || { sessionCount: 0 }).sessionCount).toBe(1);
@@ -116,6 +119,7 @@ describe('messenger connect', () => {
         brandCode: _brand.code,
         email: _customer.primaryEmail,
         isUser: true,
+        deviceToken: '222',
         // customData
         data: {
           plan: 1,
@@ -139,6 +143,9 @@ describe('messenger connect', () => {
     // must be updated
     expect(customer.firstName).toBe('name');
     expect(customer.isUser).toBeTruthy();
+    expect(customer.deviceTokens.length).toBe(2);
+    expect(customer.deviceTokens).toContain('111');
+    expect(customer.deviceTokens).toContain('222');
 
     if (!customer.messengerData) {
       throw new Error('messengerData is null');

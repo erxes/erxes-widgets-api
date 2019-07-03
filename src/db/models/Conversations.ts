@@ -1,9 +1,9 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
 import { CONVERSATION_STATUSES } from './definitions/constants';
 import { IMessageDocument } from './definitions/conversationMessages';
 import { conversationSchema, IConversationDocument } from './definitions/conversations';
 
+import { publish } from '../../pubsub';
 import { Messages } from './';
 
 interface ISTATUSES {
@@ -68,16 +68,10 @@ export const loadClass = () => {
         number: count + 1,
       });
 
-      // call app api's create conversation log
-      mutateAppApi(`
-        mutation {
-          activityLogsAddConversationLog(
-            conversationId: "${conversation._id}",
-            customerId: "${customerId}",
-          ) {
-            _id
-          }
-        }`);
+      publish('activityLog', {
+        type: 'create-conversation',
+        payload: conversation,
+      });
 
       return conversation;
     }

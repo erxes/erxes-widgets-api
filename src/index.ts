@@ -3,6 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as express from 'express';
+import * as path from 'path';
 import resolvers from './data/resolvers';
 import typeDefs from './data/schema';
 import { connect } from './db/connection';
@@ -14,6 +15,8 @@ dotenv.config();
 const connectionPromise = connect();
 
 const app = express();
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -29,7 +32,6 @@ if (NODE_ENV !== 'production') {
     settings: {
       'general.betaUpdates': false,
       'editor.theme': 'dark',
-      'editor.cursorShape': 'line',
       'editor.reuseHeaders': true,
       'tracing.hideTracingResponse': true,
       'editor.fontSize': 14,

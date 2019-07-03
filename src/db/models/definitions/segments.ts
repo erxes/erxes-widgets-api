@@ -1,12 +1,13 @@
 import { Document, Schema } from 'mongoose';
 import { field } from '../utils';
-import { COC_CONTENT_TYPES } from './constants';
+import { ACTIVITY_CONTENT_TYPES } from './constants';
 
 export interface ICondition {
   field: string;
   operator: string;
   type: string;
   value?: string;
+  brandId?: string;
   dateUnit?: string;
 }
 
@@ -43,6 +44,11 @@ const conditionSchema = new Schema(
       type: String,
       optional: true,
     }),
+
+    brandId: field({
+      type: String,
+      optional: true,
+    }),
   },
   { _id: false },
 );
@@ -51,7 +57,7 @@ export const segmentSchema = new Schema({
   _id: field({ pkey: true }),
   contentType: field({
     type: String,
-    enum: COC_CONTENT_TYPES.ALL,
+    enum: ACTIVITY_CONTENT_TYPES.ALL,
   }),
   name: field({ type: String }),
   description: field({ type: String, optional: true }),

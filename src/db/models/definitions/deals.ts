@@ -1,6 +1,6 @@
 import { Document, Schema } from 'mongoose';
 import { field } from '../utils';
-import { PROBABILITY, PRODUCT_TYPES } from './constants';
+import { PRODUCT_TYPES } from './constants';
 
 interface ICommonFields {
   userId?: string;
@@ -8,39 +8,12 @@ interface ICommonFields {
   order?: number;
 }
 
-export interface IBoard extends ICommonFields {
-  name?: string;
-  isDefault?: boolean;
-}
-
-export interface IBoardDocument extends IBoard, Document {
-  _id: string;
-}
-
-export interface IPipeline extends ICommonFields {
-  name?: string;
-  boardId?: string;
-}
-
-export interface IPipelineDocument extends IPipeline, Document {
-  _id: string;
-}
-
-export interface IStage extends ICommonFields {
-  name?: string;
-  probability?: string;
-  pipelineId?: string;
-}
-
-export interface IStageDocument extends IStage, Document {
-  _id: string;
-}
-
 export interface IProduct {
   name: string;
   type?: string;
   description?: string;
   sku?: string;
+  productId?: string;
 }
 
 export interface IProductDocument extends IProduct, Document {
@@ -88,34 +61,6 @@ const commonFieldsSchema = {
   order: field({ type: Number }),
 };
 
-export const boardSchema = new Schema({
-  _id: field({ pkey: true }),
-  name: field({ type: String }),
-  isDefault: field({
-    type: Boolean,
-    default: false,
-  }),
-  ...commonFieldsSchema,
-});
-
-export const pipelineSchema = new Schema({
-  _id: field({ pkey: true }),
-  name: field({ type: String }),
-  boardId: field({ type: String }),
-  ...commonFieldsSchema,
-});
-
-export const stageSchema = new Schema({
-  _id: field({ pkey: true }),
-  name: field({ type: String }),
-  probability: field({
-    type: String,
-    enum: PROBABILITY.ALL,
-  }), // Win probability
-  pipelineId: field({ type: String }),
-  ...commonFieldsSchema,
-});
-
 export const productSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String }),
@@ -158,7 +103,7 @@ export const dealSchema = new Schema({
   closeDate: field({ type: Date }),
   description: field({ type: String, optional: true }),
   assignedUserIds: field({ type: [String] }),
-  stageId: field({ type: String }),
+  stageId: field({ type: String, optional: true }),
   modifiedAt: field({
     type: Date,
     default: new Date(),

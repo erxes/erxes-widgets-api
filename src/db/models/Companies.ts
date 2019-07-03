@@ -1,5 +1,5 @@
 import { Model, model } from 'mongoose';
-import { mutateAppApi } from '../../utils';
+import { publish } from '../../pubsub';
 import { companySchema, ICompanyDocument } from './definitions/companies';
 
 interface ICompanyDoc {
@@ -29,13 +29,11 @@ export const loadClass = () => {
         ...restDoc,
       });
 
-      // call app api's create customer log
-      mutateAppApi(`
-        mutation {
-          activityLogsAddCompanyLog(_id: "${company._id}") {
-            _id
-          }
-        }`);
+      // notify main api
+      publish('activityLog', {
+        type: 'create-company',
+        payload: company,
+      });
 
       return company;
     }
