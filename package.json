@@ -24,7 +24,8 @@
     "lint": "tslint 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
     "precommit": "lint-staged",
-    "generateVersion": "ts-node ./src/commands/generateVersion.ts"
+    "generateVersion": "ts-node ./src/commands/generateVersion.ts",
+    "release": "release-it"
   },
   "lint-staged": {
     "*.ts": [
