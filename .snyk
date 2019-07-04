@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.1
+version: v1.13.5
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:chownr:20180731':
@@ -9,4 +9,12 @@ ignore:
     - node-pre-gyp > tar > chownr:
         reason: Development only
         expires: '2018-12-13T02:48:47.308Z'
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - apollo-server-express > apollo-server-core > lodash:
+        patched: '2019-07-04T05:57:32.433Z'
+    - mongoose > async > lodash:
+        patched: '2019-07-04T05:57:32.433Z'
+    - apollo-server-express > apollo-server-core > apollo-engine-reporting > lodash:
+        patched: '2019-07-04T05:57:32.433Z'
