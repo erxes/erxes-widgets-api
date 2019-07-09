@@ -197,6 +197,7 @@ export const types = `
     description: String
     categories: [KnowledgeBaseCategory]
     color: String
+    backgroundImage: String
     languageCode: String
   }
 
