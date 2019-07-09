@@ -332,7 +332,7 @@ export const mutations = `
       content: String
     ): String
 
-    knowledgebaseIncReactionCount(articleId: String!, reactionChoice: String!)
+    knowledgebaseIncReactionCount(articleId: String!, reactionChoice: String!): String
     formIncreaseViewCount(formId: String!): JSON
     sendTypingInfo(conversationId: String!, text: String): String
     sendEvent(type: String, dealDoc: DealInput): JSON
