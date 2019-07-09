@@ -174,6 +174,7 @@ export const types = `
     title: String
     summary: String
     content: String
+    reactionChoices: [String]
     createdBy: String
     createdDate: Date
     modifiedBy: String
@@ -331,10 +332,9 @@ export const mutations = `
       content: String
     ): String
 
+    knowledgebaseIncReactionCount(articleId: String!, reactionChoice: String!)
     formIncreaseViewCount(formId: String!): JSON
-
     sendTypingInfo(conversationId: String!, text: String): String
-
     sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;
