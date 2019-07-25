@@ -17,12 +17,10 @@ import {
   Brands,
   Conversations,
   Customers,
-  EngageMessages,
   IBrandDocument,
   ICustomerDocument,
   IIntegrationDocument,
   Integrations,
-  IUserDocument,
   Messages,
 } from '../db/models';
 
@@ -153,7 +151,6 @@ describe('createConversation', () => {
 });
 
 describe('createEngageVisitorMessages', () => {
-  let _user: IUserDocument;
   let _brand: IBrandDocument;
   let _customer: ICustomerDocument;
   let _integration: IIntegrationDocument;
@@ -166,33 +163,6 @@ describe('createEngageVisitorMessages', () => {
 
     _brand = await brandFactory({});
     _integration = await integrationFactory({ brandId: _brand._id });
-    _user = await userFactory({});
-
-    const message = new EngageMessages({
-      title: 'Visitor',
-      fromUserId: _user._id,
-      kind: 'visitorAuto',
-      method: 'messenger',
-      isLive: true,
-      messenger: {
-        brandId: _brand._id,
-        rules: [
-          {
-            kind: 'currentPageUrl',
-            condition: 'is',
-            value: '/page',
-          },
-          {
-            kind: 'numberOfVisits',
-            condition: 'greaterThan',
-            value: 10,
-          },
-        ],
-        content: 'hi {{ customer.name }}',
-      },
-    });
-
-    return message.save();
   });
 
   afterEach(async () => {

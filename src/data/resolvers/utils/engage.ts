@@ -1,6 +1,5 @@
 import {
   Conversations,
-  EngageMessages,
   IBrandDocument,
   ICustomerDocument,
   IIntegrationDocument,
@@ -12,6 +11,7 @@ import {
 } from '../../../db/models';
 
 import { IBrowserInfo } from '../../../db/models/Customers';
+import { EngagesAPI } from '../dataSources';
 
 /*
  * Replaces customer & user infos in given content
@@ -227,7 +227,9 @@ export const createEngageVisitorMessages = async (params: {
   // force read previous unread engage messages ============
   await Messages.forceReadCustomerPreviousEngageMessages(customer._id);
 
-  const messages = await EngageMessages.find({
+  const engagesApi = new EngagesAPI();
+
+  const messages = await engagesApi.engagesList({
     'messenger.brandId': brand._id,
     kind: 'visitorAuto',
     method: 'messenger',
@@ -271,9 +273,6 @@ export const createEngageVisitorMessages = async (params: {
       if (conversationMessage) {
         // collect created messages
         conversationMessages.push(conversationMessage);
-
-        // add given customer to customerIds list
-        await EngageMessages.updateOne({ _id: message._id }, { $push: { customerIds: customer._id } });
       }
     }
   }
