@@ -4,6 +4,8 @@ import {
   replaceKeys,
 } from '../data/resolvers/utils/engage';
 
+import * as sinon from 'sinon';
+
 import {
   brandFactory,
   customerFactory,
@@ -23,6 +25,8 @@ import {
   Integrations,
   Messages,
 } from '../db/models';
+
+import EngagesAPI from '../data/resolvers/dataSources/engages';
 
 describe('replace keys', () => {
   test('must replace customer, user placeholders', async () => {
@@ -175,6 +179,35 @@ describe('createEngageVisitorMessages', () => {
   });
 
   test('must create conversation & message object', async () => {
+    // const api = new EngagesAPI();
+    const user = await userFactory({});
+
+    const engageMessage = {
+      title: 'Visitor',
+      fromUserId: user._id,
+      kind: 'visitorAuto',
+      method: 'messenger',
+      isLive: true,
+      messenger: {
+        brandId: _brand._id,
+        rules: [
+          {
+            kind: 'currentPageUrl',
+            condition: 'is',
+            value: '/page',
+          },
+          {
+            kind: 'numberOfVisits',
+            condition: 'greaterThan',
+            value: 10,
+          },
+        ],
+        content: 'hi {{ customer.name }}',
+      },
+    };
+
+    sinon.stub(EngagesAPI.prototype, 'engagesList').callsFake(() => [engageMessage]);
+
     // previous unread conversation messages created by engage
     await messageFactory({
       customerId: _customer._id,

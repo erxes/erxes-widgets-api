@@ -239,7 +239,7 @@ export const createEngageVisitorMessages = async (params: {
   const conversationMessages = [];
 
   for (const message of messages) {
-    const messenger = message.messenger ? message.messenger.toJSON() : {};
+    const messenger = message.messenger ? message.messenger : {};
 
     const user = await Users.findOne({ _id: message.fromUserId });
 

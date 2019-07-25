@@ -50,6 +50,7 @@
     "mongoose": "^5.2.16",
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
+    "sinon": "^7.3.2",
     "underscore": "^1.8.3",
     "validator": "^10.9.0"
   },
