@@ -273,6 +273,8 @@ export const createEngageVisitorMessages = async (params: {
       if (conversationMessage) {
         // collect created messages
         conversationMessages.push(conversationMessage);
+
+        await engagesApi.engagesPushCustomerIds(message._id, customer._id);
       }
     }
   }
