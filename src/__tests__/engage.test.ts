@@ -207,6 +207,7 @@ describe('createEngageVisitorMessages', () => {
     };
 
     sinon.stub(EngagesAPI.prototype, 'engagesList').callsFake(() => [engageMessage]);
+    sinon.stub(EngagesAPI.prototype, 'engagesPushCustomerIds').callsFake(() => ({}));
 
     // previous unread conversation messages created by engage
     await messageFactory({
