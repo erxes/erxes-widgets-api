@@ -1,5 +1,5 @@
 import { Model, model } from 'mongoose';
-import { publish } from '../../pubsub';
+import { sendMessage } from '../../messageQueue';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 interface IGetCustomerParams {
   email?: string;
@@ -199,7 +199,7 @@ export const loadClass = () => {
       await Customers.updateProfileScore(customer._id, true);
 
       // notify main api
-      publish('activityLog', {
+      sendMessage('activityLog', {
         type: 'create-customer',
         payload: customer,
       });
