@@ -3,7 +3,7 @@ import { CONVERSATION_STATUSES } from './definitions/constants';
 import { IMessageDocument } from './definitions/conversationMessages';
 import { conversationSchema, IConversationDocument } from './definitions/conversations';
 
-import { publish } from '../../pubsub';
+import { sendMessage } from '../../messageQueue';
 import { Messages } from './';
 
 interface ISTATUSES {
@@ -68,7 +68,7 @@ export const loadClass = () => {
         number: count + 1,
       });
 
-      publish('activityLog', {
+      sendMessage('activityLog', {
         type: 'create-conversation',
         payload: conversation,
       });
