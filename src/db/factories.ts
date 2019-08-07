@@ -4,7 +4,6 @@ import * as Random from 'meteor-random';
 import {
   Brands,
   Companies,
-  Configs,
   Conversations,
   Customers,
   Fields,
@@ -210,19 +209,6 @@ export function engageDataFactory(params: IMessageEngageDataParams) {
     sentAs: params.sentAs || 'post',
   };
 }
-
-interface IConfigInput {
-  code?: string;
-  value: string[];
-}
-
-export function configFactory(params: IConfigInput) {
-  return Configs.create({
-    code: params.code || faker.random.word(),
-    value: params.value || [faker.random.word()],
-  });
-}
-
 interface IMessengerApp {
   name?: string;
   kind?: string;
