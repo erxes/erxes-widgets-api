@@ -206,54 +206,11 @@ export const types = `
     loadType: String
   }
 
-  type Deal {
-    _id: String!
-    name: String!
-    stageId: String!
-    boardId: String
-    companyIds: [String]
-    customerIds: [String]
-    assignedUserIds: [String]
-    amount: JSON
-    closeDate: Date
-    description: String
-    productsData: JSON
-    modifiedAt: Date
-    modifiedBy: String
-    order: Int
-    createdAt: Date
-  }
-
   input AttachmentInput {
     url: String!
     name: String!
     type: String!
     size: Float
-  }
-
-  input DealInput {
-    name: String!
-    stageName: String!
-    boardName: String!
-    pipelineName: String
-    userEmail: String!
-    companyIds: [String]
-    customerEmail: String
-    description: String
-    productsData: DealProductInput!
-  }
-
-  input DealProductInput {
-    productName: String!
-    uom: String!
-    currency: String!
-    quantity: Int!
-    unitPrice: Int!
-    taxPercent: Int
-    tax: Int
-    discountPercent: Int
-    discount: Int
-    amount: Int
   }
 
   input FieldValueInput {
@@ -335,7 +292,6 @@ export const mutations = `
     knowledgebaseIncReactionCount(articleId: String!, reactionChoice: String!): String
     formIncreaseViewCount(formId: String!): JSON
     sendTypingInfo(conversationId: String!, text: String): String
-    sendEvent(type: String, dealDoc: DealInput): JSON
   }
 `;
 

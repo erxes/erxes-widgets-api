@@ -7,11 +7,6 @@ import {
   Configs,
   Conversations,
   Customers,
-  DealBoards,
-  DealPipelines,
-  DealProducts,
-  Deals,
-  DealStages,
   Fields,
   Forms,
   IMessageEngageData,
@@ -214,96 +209,6 @@ export function engageDataFactory(params: IMessageEngageDataParams) {
     kind: params.kind || 'popup',
     sentAs: params.sentAs || 'post',
   };
-}
-
-interface IProductDataInput {
-  productName?: string;
-  uom?: string;
-  currency?: string;
-  quantity?: number;
-  unitPrice?: number;
-  taxPercent?: number;
-  tax?: number;
-  discountPercent?: number;
-  discount?: number;
-  amount?: number;
-}
-
-interface IDealInput {
-  name?: string;
-  stageId?: string;
-  companyIds?: string[];
-  customerIds?: string[];
-  description?: string;
-  productsData?: IProductDataInput;
-}
-
-export function dealFactory(params: IDealInput) {
-  return Deals.create({
-    name: params.name || faker.random.word(),
-    stageId: params.stageId || Random.id(),
-    companyIds: params.companyIds || [Random.id()],
-    customerIds: params.customerIds || [Random.id()],
-    description: params.description || faker.random.word(),
-    productsData: params.productsData || {},
-  });
-}
-
-interface IDealProductInput {
-  name?: string;
-  type?: string;
-  description?: string;
-  sku?: string;
-}
-
-export function dealProductFactory(params: IDealProductInput) {
-  return DealProducts.create({
-    name: params.name || faker.random.word(),
-    type: params.type || 'product',
-    description: params.description || faker.random.word(),
-    sku: params.sku || faker.random.word(),
-  });
-}
-
-interface IDealBoardInput {
-  name?: string;
-  isDefault?: boolean;
-}
-
-export function dealBoardFactory(params: IDealBoardInput) {
-  return DealBoards.create({
-    type: 'deal',
-    name: params.name || faker.random.word(),
-    isDefault: params.isDefault || false,
-  });
-}
-
-interface IDealStageInput {
-  name?: string;
-  probability?: string;
-  pipelineId?: string;
-}
-
-export function dealStageFactory(params: IDealStageInput) {
-  return DealStages.create({
-    type: 'deal',
-    name: params.name || faker.random.word(),
-    probability: params.probability || '10%',
-    pipelineId: params.pipelineId || Random.id(),
-  });
-}
-
-interface IDealPipelineInput {
-  name?: string;
-  boardId?: string;
-}
-
-export function dealPipelineFactory(params: IDealPipelineInput) {
-  return DealPipelines.create({
-    type: 'deal',
-    name: params.name || faker.random.word(),
-    boardId: params.boardId || Random.id(),
-  });
 }
 
 interface IConfigInput {
