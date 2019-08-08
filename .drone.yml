@@ -27,6 +27,7 @@ pipeline:
       branch:
         - master
         - develop
+        - staging
       event:
         - push
 
@@ -89,6 +90,7 @@ pipeline:
       branch:
         - master
         - develop
+        - staging
       event:
         - push
 
