@@ -72,7 +72,10 @@ export default {
 
     // get or create company
     if (companyData) {
-      const company = await Companies.getOrCreate(companyData);
+      const company = await Companies.getOrCreate({
+        ...companyData,
+        scopeBrandIds: [brand._id],
+      });
 
       // add company to customer's companyIds list
       await Customers.addCompany(customer._id, company._id);

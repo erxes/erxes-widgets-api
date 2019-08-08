@@ -1,25 +1,29 @@
 import * as faker from 'faker';
-import * as Random from 'meteor-random';
 
-import { customerFactory } from '../db/factories';
-import { Customers, ICustomerDocument } from '../db/models';
+import { customerFactory, integrationFactory } from '../db/factories';
+import { Customers, ICustomerDocument, IIntegrationDocument, Integrations } from '../db/models';
 
 /**
  * Customer related tests
  */
 describe('Customers', () => {
+  let _integration: IIntegrationDocument;
   let _customer: ICustomerDocument;
 
   beforeEach(async () => {
+    _integration = await integrationFactory({});
+
     // Creating test customer
     _customer = await customerFactory({
+      integrationId: _integration._id,
       primaryEmail: 'email@gmail.com',
       emails: ['email@gmail.com', 'anotheremail@gmail.com'],
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test customers
+    await Integrations.deleteMany({});
     return Customers.deleteMany({});
   });
 
@@ -151,7 +155,7 @@ describe('Customers', () => {
 
   test('getOrCreateCustomer() must return a new customer', async () => {
     const unexistingCustomer = {
-      integrationId: Random.id(),
+      integrationId: _integration._id,
       email: faker.internet.email(),
     };
 
