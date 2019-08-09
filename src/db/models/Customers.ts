@@ -1,6 +1,7 @@
 import { Model, model } from 'mongoose';
 import { sendMessage } from '../../messageQueue';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
+import Integrations from './Integrations';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
@@ -179,11 +180,19 @@ export const loadClass = () => {
     public static async createCustomer(doc: ICreateCustomerParams) {
       const { email, phone, ...restDoc } = doc;
 
+      const integration = await Integrations.findOne({ _id: doc.integrationId });
+
+      if (!integration) {
+        throw new Error('Integration not found');
+      }
+
       const modifier: any = {
         ...restDoc,
+        scopeBrandIds: [integration.brandId],
         createdAt: new Date(),
         modifiedAt: new Date(),
       };
+
       if (email) {
         modifier.primaryEmail = email;
         modifier.emails = [email];
