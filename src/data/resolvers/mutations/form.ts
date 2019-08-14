@@ -153,6 +153,7 @@ export const saveValues = async (args: {
   // create message
   return Messages.createMessage({
     conversationId: conversation._id,
+    customerId: customer._id,
     content,
     formWidgetData: submissions,
   });
