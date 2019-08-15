@@ -5,6 +5,13 @@
 
 * **docker:** fix dockerfile permission error ([3815953](https://github.com/erxes/erxes-widgets-api/commit/3815953))
 
+# [0.10.0](https://github.com/erxes/erxes-widgets-api/compare/0.9.17...0.10.0) (2019-08-15)
+
+
+### Bug Fixes
+
+* **docker:** fix dockerfile permission error ([3815953](https://github.com/erxes/erxes-widgets-api/commit/3815953))
+
 ## [0.9.17](https://github.com/erxes/erxes-widgets-api/compare/0.9.16...0.9.17) (2019-07-09)
 
 
