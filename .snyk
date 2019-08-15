@@ -33,4 +33,12 @@ ignore:
     - '@axelspringer/graphql-google-pubsub > @google-cloud/pubsub > lodash.merge':
         reason: None given
         expires: '2019-08-08T03:59:06.514Z'
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - apollo-server-express > apollo-server-core > lodash:
+        patched: '2019-08-15T13:42:47.923Z'
+    - mongoose > async > lodash:
+        patched: '2019-08-15T13:42:47.923Z'
+    - apollo-server-express > apollo-server-core > apollo-engine-reporting > lodash:
+        patched: '2019-08-15T13:42:47.923Z'

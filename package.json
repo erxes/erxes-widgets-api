@@ -25,7 +25,9 @@
     "format": "prettier --write 'src/**/*.ts'",
     "precommit": "lint-staged",
     "generateVersion": "ts-node ./src/commands/generateVersion.ts",
-    "release": "release-it"
+    "release": "release-it",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "lint-staged": {
     "*.ts": [
@@ -49,7 +51,8 @@
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
     "underscore": "^1.8.3",
-    "validator": "^10.9.0"
+    "validator": "^10.9.0",
+    "snyk": "^1.216.5"
   },
   "peerOptionalDependencies": {
     "kerberos": "^1.0.0"
@@ -77,5 +80,6 @@
     "tslint-config-prettier": "^1.1.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.9.2"
-  }
+  },
+  "snyk": true
 }
