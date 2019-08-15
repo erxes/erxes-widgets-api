@@ -1,7 +1,7 @@
 import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
 import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
-import { publish } from '../../../pubsub';
+import { sendMessage } from '../../../messageQueue';
 import { createEngageVisitorMessages } from '../utils/engage';
 import { unreadMessagesQuery } from '../utils/messenger';
 
@@ -72,7 +72,10 @@ export default {
 
     // get or create company
     if (companyData) {
-      const company = await Companies.getOrCreate(companyData);
+      const company = await Companies.getOrCreate({
+        ...companyData,
+        scopeBrandIds: [brand._id],
+      });
 
       // add company to customer's companyIds list
       await Customers.addCompany(customer._id, company._id);
@@ -141,17 +144,17 @@ export default {
     await Customers.markCustomerAsActive(conversation.customerId);
 
     // notify main api
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationClientMessageInserted',
       payload: msg,
     });
 
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationMessageInserted',
       payload: msg,
     });
 
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationClientTypingStatusChanged',
       payload: {
         conversationId,
@@ -230,7 +233,7 @@ export default {
   },
 
   sendTypingInfo(_root, args: { conversationId: string; text?: string }) {
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationClientTypingStatusChanged',
       payload: args,
     });

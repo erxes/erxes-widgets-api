@@ -1,5 +1,3 @@
-export const LANGUAGE_CHOICES = ['', 'mn', 'en', 'fr', 'de', 'kr', 'es', 'ptBr', 'jp', 'ru', 'zh'];
-
 export const CONVERSATION_STATUSES = {
   NEW: 'new',
   OPEN: 'open',
@@ -57,7 +55,8 @@ export const KIND_CHOICES = {
   MESSENGER: 'messenger',
   FORM: 'form',
   FACEBOOK: 'facebook',
-  ALL: ['messenger', 'form', 'facebook'],
+  GMAIL: 'gmail',
+  ALL: ['messenger', 'form', 'facebook', 'gmail'],
 };
 
 // messenger data availability constants
@@ -307,6 +306,8 @@ export const NOTIFICATION_TYPES = {
   TASK_CHANGE: 'taskChange',
   TASK_DUE_DATE: 'taskDueDate',
   TASK_DELETE: 'taskDelete',
+  CUSTOMER_MENTION: 'customerMention',
+  COMPANY_MENTION: 'companyMention',
   ALL: [
     'channelMembersChange',
     'conversationAddMessage',
@@ -330,5 +331,7 @@ export const NOTIFICATION_TYPES = {
     'taskChange',
     'taskDueDate',
     'taskDelete',
+    'customerMention',
+    'companyMention',
   ],
 };

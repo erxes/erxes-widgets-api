@@ -121,9 +121,9 @@ describe('Form mutations', () => {
   });
 
   describe('saveValues', () => {
-    const integrationId = 'DFDFDAFD';
     const formTitle = 'Form';
 
+    let integrationId: string;
     let formId: string;
 
     let emailField: IFieldDocument;
@@ -133,6 +133,7 @@ describe('Form mutations', () => {
     let arbitraryField: IFieldDocument;
 
     beforeEach(async () => {
+      integrationId = (await integrationFactory({}))._id;
       formId = (await formFactory({ title: formTitle }))._id;
 
       const contentTypeId = formId;

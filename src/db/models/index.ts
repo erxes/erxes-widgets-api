@@ -1,9 +1,7 @@
 import Brands from './Brands';
 import Companies from './Companies';
-import Configs from './Configs';
 import Conversations from './Conversations';
 import Customers from './Customers';
-import { DealBoards, DealPipelines, DealProducts, Deals, DealStages } from './Deals';
 import { EngageMessages } from './Engages';
 import Fields from './Fields';
 import Forms from './Forms';
@@ -33,12 +31,6 @@ import {
 export {
   Companies,
   Brands,
-  Deals,
-  DealStages,
-  DealProducts,
-  DealBoards,
-  DealPipelines,
-  Configs,
   IBrandDocument,
   Conversations,
   IConversationDocument,

@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import mongoose = require('mongoose');
+import { debugDb } from '../debuggers';
 
 dotenv.config();
 
@@ -11,13 +12,13 @@ mongoose.set('useFindAndModify', false);
 
 mongoose.connection
   .on('connected', () => {
-    console.log(`Connected to the database: ${MONGO_URL}`);
+    debugDb(`Connected to the database: ${MONGO_URL}`);
   })
   .on('disconnected', () => {
-    console.log(`Disconnected from the database: ${MONGO_URL}`);
+    debugDb(`Disconnected from the database: ${MONGO_URL}`);
   })
   .on('error', error => {
-    console.log(`Database connection error: ${MONGO_URL}`, error);
+    debugDb(`Database connection error: ${MONGO_URL}`, error);
   });
 
 export function connect() {

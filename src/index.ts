@@ -7,6 +7,7 @@ import * as path from 'path';
 import resolvers from './data/resolvers';
 import typeDefs from './data/schema';
 import { connect } from './db/connection';
+import { debugInit } from './debuggers';
 
 // load environment variables
 dotenv.config();
@@ -108,5 +109,5 @@ app.get('/script-manager', async (req, res) => {
 apolloServer.applyMiddleware({ app, path: '/graphql' });
 
 app.listen(PORT, () => {
-  console.log(`Websocket server is running on port ${PORT}`);
+  debugInit(`Websocket server is running on port ${PORT}`);
 });

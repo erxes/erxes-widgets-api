@@ -12,7 +12,7 @@ import {
 } from '../../../db/models';
 
 import { IBrowserInfo } from '../../../db/models/Customers';
-import { publish } from '../../../pubsub';
+import { sendMessage } from '../../../messageQueue';
 import { IEmail, sendEmail } from '../utils/email';
 
 interface ISubmission {
@@ -153,6 +153,7 @@ export const saveValues = async (args: {
   // create message
   return Messages.createMessage({
     conversationId: conversation._id,
+    customerId: customer._id,
     content,
     formWidgetData: submissions,
   });
@@ -217,12 +218,12 @@ export default {
     await Forms.increaseContactsGathered(formId);
 
     // notify main api
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationClientMessageInserted',
       payload: message,
     });
 
-    publish('callPublish', {
+    sendMessage('callPublish', {
       trigger: 'conversationMessageInserted',
       payload: message,
     });

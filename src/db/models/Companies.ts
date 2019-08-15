@@ -1,5 +1,5 @@
 import { Model, model } from 'mongoose';
-import { publish } from '../../pubsub';
+import { sendMessage } from '../../messageQueue';
 import { companySchema, ICompanyDocument } from './definitions/companies';
 
 interface ICompanyDoc {
@@ -30,7 +30,7 @@ export const loadClass = () => {
       });
 
       // notify main api
-      publish('activityLog', {
+      sendMessage('activityLog', {
         type: 'create-company',
         payload: company,
       });
