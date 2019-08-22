@@ -17,6 +17,7 @@ const connectionPromise = connect();
 
 const app = express();
 
+app.disable('x-powered-by');
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
