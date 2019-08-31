@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/erxes/erxes-widgets-api/compare/0.10.0...0.10.1) (2019-08-31)
+
+
+### Bug Fixes
+
+* **kb:** articles query searchString default value ([c65217f](https://github.com/erxes/erxes-widgets-api/commit/c65217f)), closes [#82](https://github.com/erxes/erxes-widgets-api/issues/82)
+
 # [0.10.0](https://github.com/erxes/erxes-widgets-api/compare/0.9.17...0.10.0) (2019-08-15)
 
 
