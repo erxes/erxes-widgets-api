@@ -1,5 +1,6 @@
 import { Model, model } from 'mongoose';
 import { sendMessage } from '../../messageQueue';
+import { Conformities } from './Conformities';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 import Integrations from './Integrations';
 interface IGetCustomerParams {
@@ -398,8 +399,11 @@ export const loadClass = () => {
      * Add companyId to companyIds list
      */
     public static async addCompany(_id: string, companyId: string) {
-      await Customers.findByIdAndUpdate(_id, {
-        $addToSet: { companyIds: companyId },
+      await Conformities.create({
+        mainType: 'customer',
+        mainTypeId: _id,
+        relType: 'company',
+        relTypeId: companyId,
       });
 
       // updated customer

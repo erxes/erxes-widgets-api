@@ -2,6 +2,7 @@ import * as faker from 'faker';
 
 import { customerFactory, integrationFactory } from '../db/factories';
 import { Customers, ICustomerDocument, IIntegrationDocument, Integrations } from '../db/models';
+import { Conformities } from '../db/models/Conformities';
 
 /**
  * Customer related tests
@@ -218,14 +219,9 @@ describe('Customers', () => {
     await Customers.addCompany(_customer._id, 'DFDAFDFFDSF');
     await Customers.addCompany(_customer._id, 'DFFDSFDSFJK');
 
-    const updatedCustomer = await Customers.findOne({ _id: _customer._id });
-
-    if (!updatedCustomer) {
-      throw new Error('customer not found');
-    }
-
-    // check company in companyIds
-    expect((updatedCustomer.companyIds || []).length).toBe(2);
+    expect(
+      await Conformities.find({ mainType: 'customer', mainTypeId: _customer._id, relType: 'company' }).count(),
+    ).toBe(2);
   });
 
   test('saveVisitorContactInfo()', async () => {
