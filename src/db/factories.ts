@@ -50,6 +50,7 @@ interface IIntegrationParams {
   brandId?: string;
   formId?: string;
   messengerData?: any;
+  leadData?: any;
 }
 export const integrationFactory = (params: IIntegrationParams = {}) => {
   const integration = new Integrations({
@@ -58,6 +59,7 @@ export const integrationFactory = (params: IIntegrationParams = {}) => {
     brandId: params.brandId || Random.id(),
     formId: params.formId || Random.id(),
     messengerData: params.messengerData,
+    leadData: params.leadData || {},
   });
 
   return integration.save();

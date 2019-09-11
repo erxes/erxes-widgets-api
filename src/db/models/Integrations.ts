@@ -79,7 +79,7 @@ export const loadClass = () => {
     }
 
     public static async increaseViewCount(formId: string) {
-      const integration = await Integrations.findOne({ _id: formId });
+      const integration = await Integrations.findOne({ formId });
 
       if (!integration) {
         throw new Error('Integration not found');
@@ -106,7 +106,7 @@ export const loadClass = () => {
      * Increase form submitted count
      */
     public static async increaseContactsGathered(formId: string) {
-      const integration = await Integrations.findOne({ _id: formId });
+      const integration = await Integrations.findOne({ formId });
 
       if (!integration) {
         throw new Error('Integration not found');
