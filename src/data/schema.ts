@@ -59,7 +59,7 @@ export const types = `
     languageCode: String
     uiOptions: JSON
     messengerData: JSON
-    formData: JSON
+    leadData: JSON
   }
 
   type Brand {
@@ -129,10 +129,7 @@ export const types = `
     title: String
     description: String
     buttonText: String
-    themeColor: String
-    callout: JSON
     fields: [Field]
-    rules: [Rule]
   }
 
   type MessengerConnectResponse {
