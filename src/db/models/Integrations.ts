@@ -8,6 +8,9 @@ interface IIntegrationModel extends Model<IIntegrationDocument> {
   getIntegration(brandCode: string, kind: string, brandObject?: boolean): IIntegrationDocument;
 
   getMessengerData(integration: IIntegrationDocument);
+
+  increaseViewCount(formId: string): Promise<IIntegrationDocument>;
+  increaseContactsGathered(formId: string): Promise<IIntegrationDocument>;
 }
 
 export const loadClass = () => {
@@ -73,6 +76,57 @@ export const loadClass = () => {
         knowledgeBaseTopicId: topicId,
         formCode,
       };
+    }
+
+    public static async increaseViewCount(formId: string) {
+      const integration = await Integrations.findOne({ formId });
+
+      if (!integration) {
+        throw new Error('Integration not found');
+      }
+
+      const leadData = integration.leadData;
+
+      let viewCount = 0;
+
+      if (leadData && leadData.viewCount) {
+        viewCount = leadData.viewCount;
+      }
+
+      viewCount++;
+
+      leadData.viewCount = viewCount;
+
+      await Integrations.updateOne({ formId }, { leadData });
+
+      return Integrations.findOne({ formId });
+    }
+
+    /*
+     * Increase form submitted count
+     */
+    public static async increaseContactsGathered(formId: string) {
+      const integration = await Integrations.findOne({ formId });
+
+      if (!integration) {
+        throw new Error('Integration not found');
+      }
+
+      const leadData = integration.leadData;
+
+      let contactsGathered = 0;
+
+      if (leadData && leadData.contactsGathered) {
+        contactsGathered = leadData.contactsGathered;
+      }
+
+      contactsGathered++;
+
+      leadData.contactsGathered = contactsGathered;
+
+      await Integrations.updateOne({ formId }, { leadData });
+
+      return Integrations.findOne({ formId });
     }
   }
 

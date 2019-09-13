@@ -1,5 +1,5 @@
 import { customerFactory, formFactory } from '../db/factories';
-import { Forms, IFormDocument } from '../db/models';
+import { Forms, FormSubmissions, IFormDocument } from '../db/models';
 
 /**
  * Form related tests
@@ -12,39 +12,23 @@ describe('Forms', () => {
     _form = await formFactory({});
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clearing test forms
-    return Forms.deleteMany({});
+    await Forms.deleteMany({});
+    await FormSubmissions.deleteMany({});
   });
 
-  test('Increase view count of form', async () => {
-    let updatedForm = await Forms.increaseViewCount(_form._id);
-    expect(updatedForm.viewCount).toBe(1);
-
-    updatedForm = await Forms.increaseViewCount(_form._id);
-    expect(updatedForm.viewCount).toBe(2);
-  });
-
-  test('Increase contacts gathered', async () => {
-    let updatedForm = await Forms.increaseContactsGathered(_form._id);
-
-    expect(updatedForm.contactsGathered).toBe(1);
-
-    updatedForm = await Forms.increaseContactsGathered(_form._id);
-    expect(updatedForm.contactsGathered).toBe(2);
-  });
-
-  test('update submitted customer ids', async () => {
+  test('form submission', async () => {
     const customer = await customerFactory({});
 
-    const updatedForm = await Forms.addSubmission(_form._id, customer._id);
+    const doc = {
+      formId: _form._id,
+      customerId: customer._id,
+    };
 
-    expect(updatedForm.submissions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          customerId: customer._id,
-        }),
-      ]),
-    );
+    const updated = await FormSubmissions.createFormSubmission(doc);
+
+    expect(updated.formId).toBe(_form._id);
+    expect(updated.customerId).toBe(customer._id);
   });
 });

@@ -1,80 +1,39 @@
 import { Model, model } from 'mongoose';
-import { formSchema, IFormDocument } from './definitions/forms';
+import {
+  formSchema,
+  formSubmissionSchema,
+  IFormDocument,
+  IFormSubmission,
+  IFormSubmissionDocument,
+} from './definitions/forms';
 
-interface IFormModel extends Model<IFormDocument> {
-  increaseViewCount(formId: string): Promise<IFormDocument>;
-  increaseContactsGathered(formId: string): Promise<IFormDocument>;
-  addSubmission(formId: string, customerId: string): Promise<IFormDocument>;
+export interface IFormModel extends Model<IFormDocument> {}
+
+export interface IFormSubmissionModel extends Model<IFormSubmissionDocument> {
+  createFormSubmission(doc: IFormSubmission): Promise<IFormSubmissionDocument>;
 }
 
-export const loadClass = () => {
-  class Form {
-    /*
-     * Increase form view count
+export const loadFormSubmissionClass = () => {
+  class FormSubmission {
+    /**
+     * Creates a form submission
      */
-    public static async increaseViewCount(formId: string) {
-      const form = await Forms.findOne({ _id: formId });
-
-      if (!form) {
-        throw new Error('Form not found');
-      }
-
-      let viewCount = 0;
-
-      if (form.viewCount) {
-        viewCount = form.viewCount;
-      }
-
-      viewCount++;
-
-      await Forms.updateOne({ _id: formId }, { viewCount });
-
-      return Forms.findOne({ _id: formId });
-    }
-
-    /*
-     * Increase form submitted count
-     */
-    public static async increaseContactsGathered(formId: string) {
-      const form = await Forms.findOne({ _id: formId });
-
-      if (!form) {
-        throw new Error('Form not found');
-      }
-
-      let contactsGathered = 0;
-
-      if (form.contactsGathered) {
-        contactsGathered = form.contactsGathered;
-      }
-
-      contactsGathered++;
-
-      await Forms.updateOne({ _id: formId }, { contactsGathered });
-
-      return Forms.findOne({ _id: formId });
-    }
-
-    /*
-     * Add customer to submitted customer ids
-     */
-    public static async addSubmission(formId: string, customerId: string) {
-      const submittedAt = new Date();
-
-      await Forms.updateOne({ _id: formId }, { $push: { submissions: { customerId, submittedAt } } });
-
-      return Forms.findOne({ _id: formId });
+    public static async createFormSubmission(doc: IFormSubmission) {
+      return FormSubmissions.create(doc);
     }
   }
 
-  formSchema.loadClass(Form);
+  formSubmissionSchema.loadClass(FormSubmission);
 
-  return formSchema;
+  return formSubmissionSchema;
 };
 
-loadClass();
+loadFormSubmissionClass();
 
 // tslint:disable-next-line
 const Forms = model<IFormDocument, IFormModel>('forms', formSchema);
 
-export default Forms;
+// tslint:disable-next-line
+const FormSubmissions = model<IFormSubmissionDocument, IFormSubmissionModel>('form_submissions', formSubmissionSchema);
+
+export { Forms, FormSubmissions };

@@ -1,4 +1,5 @@
 import { Document, Schema } from 'mongoose';
+import { IRule, ruleSchema } from './common';
 import { FORM_LOAD_TYPES, FORM_SUCCESS_ACTIONS, KIND_CHOICES, MESSENGER_DATA_AVAILABILITY } from './constants';
 import { field } from './utils';
 
@@ -44,7 +45,15 @@ export interface IMessengerData {
 
 export interface IMessengerDataDocument extends IMessengerData, Document {}
 
-export interface IFormData {
+interface ICallout extends Document {
+  title?: string;
+  body?: string;
+  buttonText?: string;
+  featuredImage?: string;
+  skip?: boolean;
+}
+
+export interface ILeadData {
   loadType?: string;
   successAction?: string;
   fromEmail?: string;
@@ -55,9 +64,15 @@ export interface IFormData {
   adminEmailContent?: string;
   thankContent?: string;
   redirectUrl?: string;
+  themeColor?: string;
+  callout?: ICallout;
+  rules?: IRule;
 }
 
-export interface IFormDataDocument extends IFormData, Document {}
+export interface ILeadDataDocument extends ILeadData, Document {
+  viewCount?: number;
+  contactsGathered?: number;
+}
 
 export interface IUiOptions {
   color?: string;
@@ -75,14 +90,14 @@ export interface IIntegration {
   languageCode?: string;
   tagIds?: string[];
   formId?: string;
-  formData?: IFormData;
+  leadData?: ILeadData;
   messengerData?: IMessengerData;
   uiOptions?: IUiOptions;
 }
 
 export interface IIntegrationDocument extends IIntegration, Document {
   _id: string;
-  formData?: IFormDataDocument;
+  leadData?: ILeadDataDocument;
   messengerData?: IMessengerDataDocument;
   uiOptions?: IUiOptionsDocument;
 }
@@ -128,8 +143,29 @@ const messengerDataSchema = new Schema(
   { _id: false },
 );
 
-// subdocument schema for FormData
-const formDataSchema = new Schema(
+// schema for form's callout component
+const calloutSchema = new Schema(
+  {
+    title: field({ type: String, optional: true }),
+    body: field({ type: String, optional: true }),
+    buttonText: field({ type: String, optional: true }),
+    featuredImage: field({ type: String, optional: true }),
+    skip: field({ type: Boolean, optional: true }),
+  },
+  { _id: false },
+);
+
+// schema for form submission details
+const submissionSchema = new Schema(
+  {
+    customerId: field({ type: String }),
+    submittedAt: field({ type: Date }),
+  },
+  { _id: false },
+);
+
+// subdocument schema for leadData
+const leadDataSchema = new Schema(
   {
     loadType: field({
       type: String,
@@ -172,6 +208,30 @@ const formDataSchema = new Schema(
       type: String,
       optional: true,
     }),
+    themeColor: field({
+      type: String,
+      optional: true,
+    }),
+    callout: field({
+      type: calloutSchema,
+      optional: true,
+    }),
+    viewCount: field({
+      type: Number,
+      optional: true,
+    }),
+    contactsGathered: field({
+      type: Number,
+      optional: true,
+    }),
+    submissions: field({
+      type: [submissionSchema],
+      optional: true,
+    }),
+    rules: field({
+      type: [ruleSchema],
+      optional: true,
+    }),
   },
   { _id: false },
 );
@@ -204,7 +264,7 @@ export const integrationSchema = new Schema({
   }),
   tagIds: field({ type: [String], optional: true }),
   formId: field({ type: String }),
-  formData: field({ type: formDataSchema }),
+  leadData: field({ type: leadDataSchema }),
   messengerData: field({ type: messengerDataSchema }),
   uiOptions: field({ type: uiOptionsSchema }),
 });
