@@ -168,7 +168,7 @@ export const saveValues = async (args: {
 
 export default {
   // Find integrationId by brandCode
-  async formConnect(_root, args: { brandCode: string; formCode: string }) {
+  async leadConnect(_root, args: { brandCode: string; formCode: string }) {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
@@ -198,7 +198,7 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(
+  async saveLead(
     _root,
     args: {
       integrationId: string;
@@ -243,7 +243,7 @@ export default {
     sendEmail(args);
   },
 
-  formIncreaseViewCount(_root, { formId }: { formId: string }) {
+  leadIncreaseViewCount(_root, { formId }: { formId: string }) {
     return Forms.increaseViewCount(formId);
   },
 };
