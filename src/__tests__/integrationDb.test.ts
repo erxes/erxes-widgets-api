@@ -30,7 +30,7 @@ describe('Integrations', () => {
     expect(integration.kind).toBe(_integration.kind);
   });
 
-  test('Increase view count of form', async () => {
+  test('Increase view count of lead', async () => {
     let updated = await Integrations.increaseViewCount(_integration.formId);
     expect(updated.leadData.viewCount).toBe(1);
 

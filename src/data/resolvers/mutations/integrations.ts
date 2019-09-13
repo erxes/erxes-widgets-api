@@ -187,7 +187,7 @@ export default {
     }
 
     if (integ.leadData && integ.leadData.loadType === 'embedded') {
-      await Forms.increaseViewCount(form._id);
+      await Integrations.increaseViewCount(form._id);
     }
 
     // return integration details
@@ -222,7 +222,7 @@ export default {
     }
 
     // increasing form submitted count
-    await Forms.increaseContactsGathered(formId);
+    await Integrations.increaseContactsGathered(formId);
 
     // notify main api
     sendMessage('callPublish', {
@@ -244,6 +244,6 @@ export default {
   },
 
   leadIncreaseViewCount(_root, { formId }: { formId: string }) {
-    return Forms.increaseViewCount(formId);
+    return Integrations.increaseViewCount(formId);
   },
 };
