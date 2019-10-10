@@ -190,6 +190,13 @@ export default {
       await Integrations.increaseViewCount(form._id);
     }
 
+    // notify main api
+    sendMessage('leadInstalled', {
+      payload: {
+        integrationId: integ._id,
+      },
+    });
+
     // return integration details
     return {
       integration: integ,
