@@ -148,12 +148,12 @@ export const loadClass = () => {
         return {
           updateOne: {
             filter: { _id: customerId },
-            update: { $set: { profileScore: score } },
+            update: { $set: { profileScore: score, searchText } },
           },
         };
       }
 
-      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score } });
+      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score, searchText } });
     }
 
     /*
