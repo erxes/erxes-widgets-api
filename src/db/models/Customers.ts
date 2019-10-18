@@ -121,27 +121,27 @@ export const loadClass = () => {
 
       if (!nullValues.includes(customer.firstName || '')) {
         score += 10;
-        searchText.concat(searchText, ' ', customer.firstName);
+        searchText = searchText.concat(' ', customer.firstName);
       }
 
       if (!nullValues.includes(customer.lastName || '')) {
         score += 5;
-        searchText.concat(searchText, ' ', customer.lastName);
+        searchText = searchText.concat(' ', customer.lastName);
       }
 
       if (!nullValues.includes(customer.primaryEmail || '')) {
         score += 15;
-        searchText.concat(searchText, ' ', customer.primaryEmail);
+        searchText = searchText.concat(' ', customer.primaryEmail);
       }
 
       if (!nullValues.includes(customer.primaryPhone || '')) {
         score += 10;
-        searchText.concat(searchText, ' ', customer.primaryPhone);
+        searchText = searchText.concat(' ', customer.primaryPhone);
       }
 
       if (customer.visitorContactInfo != null) {
         score += 5;
-        searchText.concat(searchText, ' ', customer.visitorContactInfo.email, ' ', customer.visitorContactInfo.phone);
+        searchText = searchText.concat(' ', customer.visitorContactInfo.email, ' ', customer.visitorContactInfo.phone);
       }
 
       if (!save) {
