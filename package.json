@@ -45,7 +45,7 @@
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.3",
     "meteor-random": "0.0.3",
-    "mongoose": "^5.2.16",
+    "mongoose": "^5.4.10",
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
     "underscore": "^1.8.3",
