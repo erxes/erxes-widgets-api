@@ -9,6 +9,14 @@ import {
 
 export interface IFormModel extends Model<IFormDocument> {}
 
+export const loadFormClass = () => {
+  class Form {}
+
+  formSchema.loadClass(Form);
+
+  return formSchema;
+};
+
 export interface IFormSubmissionModel extends Model<IFormSubmissionDocument> {
   createFormSubmission(doc: IFormSubmission): Promise<IFormSubmissionDocument>;
 }
@@ -28,6 +36,7 @@ export const loadFormSubmissionClass = () => {
   return formSubmissionSchema;
 };
 
+loadFormClass();
 loadFormSubmissionClass();
 
 // tslint:disable-next-line
