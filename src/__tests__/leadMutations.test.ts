@@ -1,6 +1,7 @@
 import formMutations, { saveValues, validate } from '../data/resolvers/mutations/lead';
 import { brandFactory, formFactory, formFieldFactory, integrationFactory } from '../db/factories';
-import { Brands, Conversations, Customers, Fields, IFieldDocument, Integrations, Messages } from '../db/models';
+import { Brands, Conversations, Customers, Fields, Integrations, Messages } from '../db/models';
+import { IFieldDocument } from '../db/models/definitions/fields';
 
 describe('Form mutations', () => {
   // remove previous datas
