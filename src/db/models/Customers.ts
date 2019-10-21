@@ -117,7 +117,7 @@ export const loadClass = () => {
       }
 
       let score = 0;
-      let searchText = (customer.emails || []).join(' ').concat((customer.phones || []).join(' '));
+      let searchText = (customer.emails || []).join(' ').concat(' ', (customer.phones || []).join(' '));
 
       if (!nullValues.includes(customer.firstName || '')) {
         score += 10;
