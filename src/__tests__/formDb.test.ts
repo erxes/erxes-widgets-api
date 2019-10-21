@@ -1,5 +1,6 @@
 import { customerFactory, formFactory } from '../db/factories';
-import { Forms, FormSubmissions, IFormDocument } from '../db/models';
+import { Forms, FormSubmissions } from '../db/models';
+import { IFormDocument } from '../db/models/definitions/forms';
 
 /**
  * Form related tests
