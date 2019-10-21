@@ -109,13 +109,13 @@ export const loadClass = () => {
      * Update customer profile score
      */
     public static async updateProfileScore(customerId: string, save: boolean) {
-      const nullValues = ['', null];
       const customer = await Customers.findOne({ _id: customerId });
 
       if (!customer) {
         return 0;
       }
 
+      const nullValues = ['', null];
       let score = 0;
       let searchText = (customer.emails || []).join(' ').concat(' ', (customer.phones || []).join(' '));
 
@@ -141,7 +141,12 @@ export const loadClass = () => {
 
       if (customer.visitorContactInfo != null) {
         score += 5;
-        searchText = searchText.concat(' ', customer.visitorContactInfo.email, ' ', customer.visitorContactInfo.phone);
+        searchText = searchText.concat(
+          ' ',
+          customer.visitorContactInfo.email || '',
+          ' ',
+          customer.visitorContactInfo.phone || '',
+        );
       }
 
       if (!save) {
