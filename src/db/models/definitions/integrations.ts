@@ -1,7 +1,12 @@
 import { Document, Schema } from 'mongoose';
 import { IRule, ruleSchema } from './common';
-import { FORM_LOAD_TYPES, FORM_SUCCESS_ACTIONS, KIND_CHOICES, MESSENGER_DATA_AVAILABILITY } from './constants';
+import { KIND_CHOICES, LEAD_LOAD_TYPES, LEAD_SUCCESS_ACTIONS, MESSENGER_DATA_AVAILABILITY } from './constants';
 import { field } from './utils';
+
+export interface ISubmission extends Document {
+  customerId: string;
+  submittedAt: Date;
+}
 
 export interface ILink {
   twitter?: string;
@@ -45,7 +50,7 @@ export interface IMessengerData {
 
 export interface IMessengerDataDocument extends IMessengerData, Document {}
 
-interface ICallout extends Document {
+export interface ICallout extends Document {
   title?: string;
   body?: string;
   buttonText?: string;
@@ -97,6 +102,7 @@ export interface IIntegration {
 
 export interface IIntegrationDocument extends IIntegration, Document {
   _id: string;
+  createdUserId: string;
   leadData?: ILeadDataDocument;
   messengerData?: IMessengerDataDocument;
   uiOptions?: IUiOptionsDocument;
@@ -143,8 +149,8 @@ const messengerDataSchema = new Schema(
   { _id: false },
 );
 
-// schema for form's callout component
-const calloutSchema = new Schema(
+// schema for lead's callout component
+export const calloutSchema = new Schema(
   {
     title: field({ type: String, optional: true }),
     body: field({ type: String, optional: true }),
@@ -155,8 +161,9 @@ const calloutSchema = new Schema(
   { _id: false },
 );
 
-// schema for form submission details
-const submissionSchema = new Schema(
+// TODO: remove
+// schema for lead submission details
+export const submissionSchema = new Schema(
   {
     customerId: field({ type: String }),
     submittedAt: field({ type: Date }),
@@ -164,16 +171,16 @@ const submissionSchema = new Schema(
   { _id: false },
 );
 
-// subdocument schema for leadData
+// subdocument schema for LeadData
 const leadDataSchema = new Schema(
   {
     loadType: field({
       type: String,
-      enum: FORM_LOAD_TYPES.ALL,
+      enum: LEAD_LOAD_TYPES.ALL,
     }),
     successAction: field({
       type: String,
-      enum: FORM_SUCCESS_ACTIONS.ALL,
+      enum: LEAD_SUCCESS_ACTIONS.ALL,
       optional: true,
     }),
     fromEmail: field({
@@ -224,10 +231,6 @@ const leadDataSchema = new Schema(
       type: Number,
       optional: true,
     }),
-    submissions: field({
-      type: [submissionSchema],
-      optional: true,
-    }),
     rules: field({
       type: [ruleSchema],
       optional: true,
@@ -249,6 +252,7 @@ const uiOptionsSchema = new Schema(
 // schema for integration document
 export const integrationSchema = new Schema({
   _id: field({ pkey: true }),
+  createdUserId: field({ type: String }),
 
   kind: field({
     type: String,
@@ -265,6 +269,8 @@ export const integrationSchema = new Schema({
   tagIds: field({ type: [String], optional: true }),
   formId: field({ type: String }),
   leadData: field({ type: leadDataSchema }),
+  // TODO: remove
+  formData: field({ type: leadDataSchema }),
   messengerData: field({ type: messengerDataSchema }),
   uiOptions: field({ type: uiOptionsSchema }),
 });

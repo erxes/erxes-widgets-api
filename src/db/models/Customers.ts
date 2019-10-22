@@ -109,45 +109,56 @@ export const loadClass = () => {
      * Update customer profile score
      */
     public static async updateProfileScore(customerId: string, save: boolean) {
-      let score = 0;
-
-      const nullValues = ['', null];
       const customer = await Customers.findOne({ _id: customerId });
 
       if (!customer) {
         return 0;
       }
 
+      const nullValues = ['', null];
+      let score = 0;
+      let searchText = (customer.emails || []).join(' ').concat(' ', (customer.phones || []).join(' '));
+
       if (!nullValues.includes(customer.firstName || '')) {
         score += 10;
+        searchText = searchText.concat(' ', customer.firstName);
       }
 
       if (!nullValues.includes(customer.lastName || '')) {
         score += 5;
+        searchText = searchText.concat(' ', customer.lastName);
       }
 
       if (!nullValues.includes(customer.primaryEmail || '')) {
         score += 15;
+        searchText = searchText.concat(' ', customer.primaryEmail);
       }
 
       if (!nullValues.includes(customer.primaryPhone || '')) {
         score += 10;
+        searchText = searchText.concat(' ', customer.primaryPhone);
       }
 
       if (customer.visitorContactInfo != null) {
         score += 5;
+        searchText = searchText.concat(
+          ' ',
+          customer.visitorContactInfo.email || '',
+          ' ',
+          customer.visitorContactInfo.phone || '',
+        );
       }
 
       if (!save) {
         return {
           updateOne: {
             filter: { _id: customerId },
-            update: { $set: { profileScore: score } },
+            update: { $set: { profileScore: score, searchText } },
           },
         };
       }
 
-      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score } });
+      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score, searchText } });
     }
 
     /*

@@ -26,6 +26,7 @@ export const loadClass = () => {
         modifiedAt: new Date(),
         primaryName: name,
         names: [name],
+        searchText: [doc.name, doc.plan || ''].join(' '),
         ...restDoc,
       });
 

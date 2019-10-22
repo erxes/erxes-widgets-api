@@ -14,6 +14,7 @@ import {
   MessengerApps,
   Users,
 } from './models';
+import { FORM_TYPES } from './models/definitions/constants';
 import { IMessengerAppCrendentials } from './models/definitions/messengerApps';
 
 interface IUserParams {
@@ -68,11 +69,13 @@ export const integrationFactory = (params: IIntegrationParams = {}) => {
 interface IFormParams {
   title?: string;
   code?: string;
+  type?: string;
 }
 export const formFactory = (params: IFormParams = {}) => {
   const form = new Forms({
     title: params.title || faker.random.word(),
     code: params.code || Random.id(),
+    type: params.type || FORM_TYPES.LEAD,
   });
 
   return form.save();
