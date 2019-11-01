@@ -25,7 +25,9 @@
     "format": "prettier --write 'src/**/*.ts'",
     "precommit": "lint-staged",
     "generateVersion": "ts-node ./src/commands/generateVersion.ts",
-    "release": "release-it"
+    "release": "release-it",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "lint-staged": {
     "*.ts": [
@@ -45,9 +47,10 @@
     "graphql": "^14.0.2",
     "graphql-tools": "^4.0.3",
     "meteor-random": "0.0.3",
-    "mongoose": "^5.2.16",
+    "mongoose": "5.7.5",
     "nodemailer": "^4.0.1",
     "q": "^1.5.1",
+    "snyk": "^1.239.5",
     "underscore": "^1.8.3",
     "validator": "^10.9.0"
   },
@@ -69,7 +72,7 @@
     "jest": "22.0.4",
     "lint-staged": "^3.6.0",
     "prettier": "^1.13.7",
-    "release-it": "^12.3.5",
+    "release-it": "^12.4.3",
     "ts-jest": "22.0.4",
     "ts-node": "^7.0.0",
     "ts-node-dev": "^1.0.0-pre.32",
@@ -77,5 +80,6 @@
     "tslint-config-prettier": "^1.1.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.9.2"
-  }
+  },
+  "snyk": true
 }

@@ -6,6 +6,7 @@ import {
   Customers,
   Fields,
   Forms,
+  FormSubmissions,
   IMessageDocument,
   Integrations,
   Messages,
@@ -141,7 +142,13 @@ export const saveValues = async (args: {
   await Customers.updateLocation(customer._id, browserInfo);
 
   // Inserting customer id into submitted customer ids
-  Forms.addSubmission(formId, customer._id);
+  const doc = {
+    formId,
+    customerId: customer._id,
+    submittedAt: new Date(),
+  };
+
+  FormSubmissions.createFormSubmission(doc);
 
   // create conversation
   const conversation = await Conversations.createConversation({
@@ -161,7 +168,7 @@ export const saveValues = async (args: {
 
 export default {
   // Find integrationId by brandCode
-  async formConnect(_root, args: { brandCode: string; formCode: string }) {
+  async leadConnect(_root, args: { brandCode: string; formCode: string }) {
     const brand = await Brands.findOne({ code: args.brandCode });
     const form = await Forms.findOne({ code: args.formCode });
 
@@ -179,9 +186,16 @@ export default {
       throw new Error('Integration not found');
     }
 
-    if (integ.formData && integ.formData.loadType === 'embedded') {
-      await Forms.increaseViewCount(form._id);
+    if (integ.leadData && integ.leadData.loadType === 'embedded') {
+      await Integrations.increaseViewCount(form._id);
     }
+
+    // notify main api
+    sendMessage('leadInstalled', {
+      payload: {
+        integrationId: integ._id,
+      },
+    });
 
     // return integration details
     return {
@@ -191,7 +205,7 @@ export default {
   },
 
   // create new conversation using form data
-  async saveForm(
+  async saveLead(
     _root,
     args: {
       integrationId: string;
@@ -215,7 +229,7 @@ export default {
     }
 
     // increasing form submitted count
-    await Forms.increaseContactsGathered(formId);
+    await Integrations.increaseContactsGathered(formId);
 
     // notify main api
     sendMessage('callPublish', {
@@ -236,7 +250,7 @@ export default {
     sendEmail(args);
   },
 
-  formIncreaseViewCount(_root, { formId }: { formId: string }) {
-    return Forms.increaseViewCount(formId);
+  leadIncreaseViewCount(_root, { formId }: { formId: string }) {
+    return Integrations.increaseViewCount(formId);
   },
 };

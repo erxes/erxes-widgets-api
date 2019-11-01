@@ -106,7 +106,6 @@ describe('messenger connect', () => {
     expect(customer.deviceTokens.length).toBe(1);
     expect(customer.deviceTokens).toContain('111');
     expect(customer.createdAt >= now).toBeTruthy();
-    expect((customer.companyIds || []).length).toBe(1);
     expect((customer.messengerData || { sessionCount: 0 }).sessionCount).toBe(1);
   });
 
