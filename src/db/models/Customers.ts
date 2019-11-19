@@ -6,6 +6,7 @@ import Integrations from './Integrations';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
+  code?: string;
   cachedCustomerId?: string;
 }
 
@@ -14,6 +15,7 @@ interface ICreateCustomerParams {
   email?: string;
   hasValidEmail?: boolean;
   phone?: string;
+  code?: string;
   isUser?: boolean;
   firstName?: string;
   lastName?: string;
@@ -27,6 +29,7 @@ export interface IUpdateMessengerCustomerParams {
   doc: {
     email?: string;
     phone?: string;
+    code?: string;
     isUser?: boolean;
     deviceToken?: string;
   };
@@ -131,12 +134,15 @@ export const loadClass = () => {
 
       if (!nullValues.includes(customer.primaryEmail || '')) {
         score += 15;
-        searchText = searchText.concat(' ', customer.primaryEmail);
       }
 
       if (!nullValues.includes(customer.primaryPhone || '')) {
         score += 10;
-        searchText = searchText.concat(' ', customer.primaryPhone);
+      }
+
+      if (!nullValues.includes(customer.code || '')) {
+        score += 10;
+        searchText = searchText.concat(' ', customer.code);
       }
 
       if (customer.visitorContactInfo != null) {
@@ -164,26 +170,32 @@ export const loadClass = () => {
     /*
      * Get customer
      */
-    public static getCustomer(params: IGetCustomerParams) {
-      const { email, phone, cachedCustomerId } = params;
+    public static async getCustomer(params: IGetCustomerParams) {
+      const { email, phone, code, cachedCustomerId } = params;
+
+      let customer: ICustomerDocument;
 
       if (email) {
-        return Customers.findOne({
+        customer = await Customers.findOne({
           $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
         });
       }
 
-      if (phone) {
-        return Customers.findOne({
+      if (!customer && phone) {
+        customer = await Customers.findOne({
           $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
         });
       }
 
-      if (cachedCustomerId) {
-        return Customers.findOne({ _id: cachedCustomerId });
+      if (!customer && code) {
+        customer = await Customers.findOne({ code });
       }
 
-      return null;
+      if (!customer && cachedCustomerId) {
+        customer = await Customers.findOne({ _id: cachedCustomerId });
+      }
+
+      return customer;
     }
 
     /*

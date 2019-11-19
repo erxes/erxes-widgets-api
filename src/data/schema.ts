@@ -242,6 +242,7 @@ export const mutations = `
       brandCode: String!
       email: String
       phone: String
+      code: String
       isUser: Boolean
 
       companyData: JSON
