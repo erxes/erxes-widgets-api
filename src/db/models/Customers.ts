@@ -6,6 +6,7 @@ import Integrations from './Integrations';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
+  code?: string;
   cachedCustomerId?: string;
 }
 
@@ -14,6 +15,7 @@ interface ICreateCustomerParams {
   email?: string;
   hasValidEmail?: boolean;
   phone?: string;
+  code?: string;
   isUser?: boolean;
   firstName?: string;
   lastName?: string;
@@ -27,6 +29,7 @@ export interface IUpdateMessengerCustomerParams {
   doc: {
     email?: string;
     phone?: string;
+    code?: string;
     isUser?: boolean;
     deviceToken?: string;
   };
@@ -165,7 +168,7 @@ export const loadClass = () => {
      * Get customer
      */
     public static getCustomer(params: IGetCustomerParams) {
-      const { email, phone, cachedCustomerId } = params;
+      const { email, phone, code, cachedCustomerId } = params;
 
       if (email) {
         return Customers.findOne({
@@ -177,6 +180,10 @@ export const loadClass = () => {
         return Customers.findOne({
           $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
         });
+      }
+
+      if (code) {
+        return Customers.findOne({ code });
       }
 
       if (cachedCustomerId) {

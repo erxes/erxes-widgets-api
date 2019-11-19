@@ -16,6 +16,7 @@ export default {
       brandCode: string;
       email?: string;
       phone?: string;
+      code?: string;
       isUser?: boolean;
       companyData?: any;
       data?: any;
@@ -23,7 +24,7 @@ export default {
       deviceToken?: string;
     },
   ) {
-    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
+    const { brandCode, email, phone, code, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
 
     const customData = data;
 
@@ -41,6 +42,7 @@ export default {
       cachedCustomerId,
       email,
       phone,
+      code,
     });
 
     if (customer) {
@@ -50,6 +52,7 @@ export default {
         doc: {
           email,
           phone,
+          code,
           isUser,
           deviceToken,
         },
@@ -63,6 +66,7 @@ export default {
           integrationId: integration._id,
           email,
           phone,
+          code,
           isUser,
           deviceToken,
         },
