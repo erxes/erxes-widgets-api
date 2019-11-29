@@ -1,3 +1,5 @@
+import * as strip from 'strip';
+
 import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
 import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
@@ -112,12 +114,14 @@ export default {
   ) {
     const { integrationId, customerId, conversationId, message, attachments } = args;
 
+    const conversationContent = strip(message || '').substring(0, 100);
+
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
       integrationId,
       customerId,
-      content: message,
+      content: conversationContent,
     });
 
     // create message
@@ -136,7 +140,7 @@ export default {
           status: Conversations.getConversationStatuses().OPEN,
 
           // setting conversation's content to last message
-          content: message,
+          content: conversationContent,
 
           // Mark as unread
           readUserIds: [],
