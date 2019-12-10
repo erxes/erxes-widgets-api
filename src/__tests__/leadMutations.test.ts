@@ -1,6 +1,7 @@
-import formMutations, { saveValues, validate } from '../data/resolvers/mutations/form';
+import formMutations, { saveValues, validate } from '../data/resolvers/mutations/lead';
 import { brandFactory, formFactory, formFieldFactory, integrationFactory } from '../db/factories';
-import { Brands, Conversations, Customers, Fields, Forms, IFieldDocument, Integrations, Messages } from '../db/models';
+import { Brands, Conversations, Customers, Fields, Integrations, Messages } from '../db/models';
+import { IFieldDocument } from '../db/models/definitions/fields';
 
 describe('Form mutations', () => {
   // remove previous datas
@@ -10,11 +11,10 @@ describe('Form mutations', () => {
     await Fields.deleteMany({});
     await Conversations.deleteMany({});
     await Messages.deleteMany({});
-    await Forms.deleteMany({});
     await Customers.deleteMany({});
   });
 
-  describe('formConnect', () => {
+  describe('leadConnect', () => {
     const brandCode = 'brandCode';
     const formCode = 'formCode';
 
@@ -26,7 +26,7 @@ describe('Form mutations', () => {
     });
 
     test('connect', async () => {
-      const res = await formMutations.formConnect({}, { brandCode, formCode });
+      const res = await formMutations.leadConnect({}, { brandCode, formCode });
 
       // must return integrationId and formId
       expect(res.integration._id).toBeDefined();

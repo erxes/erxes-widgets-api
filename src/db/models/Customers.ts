@@ -1,10 +1,12 @@
 import { Model, model } from 'mongoose';
 import { sendMessage } from '../../messageQueue';
+import { Conformities } from './Conformities';
 import { customerSchema, ICustomerDocument } from './definitions/customers';
 import Integrations from './Integrations';
 interface IGetCustomerParams {
   email?: string;
   phone?: string;
+  code?: string;
   cachedCustomerId?: string;
 }
 
@@ -13,6 +15,7 @@ interface ICreateCustomerParams {
   email?: string;
   hasValidEmail?: boolean;
   phone?: string;
+  code?: string;
   isUser?: boolean;
   firstName?: string;
   lastName?: string;
@@ -26,6 +29,7 @@ export interface IUpdateMessengerCustomerParams {
   doc: {
     email?: string;
     phone?: string;
+    code?: string;
     isUser?: boolean;
     deviceToken?: string;
   };
@@ -108,21 +112,24 @@ export const loadClass = () => {
      * Update customer profile score
      */
     public static async updateProfileScore(customerId: string, save: boolean) {
-      let score = 0;
-
-      const nullValues = ['', null];
       const customer = await Customers.findOne({ _id: customerId });
 
       if (!customer) {
         return 0;
       }
 
+      const nullValues = ['', null];
+      let score = 0;
+      let searchText = (customer.emails || []).join(' ').concat(' ', (customer.phones || []).join(' '));
+
       if (!nullValues.includes(customer.firstName || '')) {
         score += 10;
+        searchText = searchText.concat(' ', customer.firstName);
       }
 
       if (!nullValues.includes(customer.lastName || '')) {
         score += 5;
+        searchText = searchText.concat(' ', customer.lastName);
       }
 
       if (!nullValues.includes(customer.primaryEmail || '')) {
@@ -133,45 +140,62 @@ export const loadClass = () => {
         score += 10;
       }
 
+      if (!nullValues.includes(customer.code || '')) {
+        score += 10;
+        searchText = searchText.concat(' ', customer.code);
+      }
+
       if (customer.visitorContactInfo != null) {
         score += 5;
+        searchText = searchText.concat(
+          ' ',
+          customer.visitorContactInfo.email || '',
+          ' ',
+          customer.visitorContactInfo.phone || '',
+        );
       }
 
       if (!save) {
         return {
           updateOne: {
             filter: { _id: customerId },
-            update: { $set: { profileScore: score } },
+            update: { $set: { profileScore: score, searchText } },
           },
         };
       }
 
-      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score } });
+      await Customers.updateOne({ _id: customerId }, { $set: { profileScore: score, searchText } });
     }
 
     /*
      * Get customer
      */
-    public static getCustomer(params: IGetCustomerParams) {
-      const { email, phone, cachedCustomerId } = params;
+    public static async getCustomer(params: IGetCustomerParams) {
+      const { email, phone, code, cachedCustomerId } = params;
+
+      let customer: ICustomerDocument;
 
       if (email) {
-        return Customers.findOne({
+        customer = await Customers.findOne({
           $or: [{ emails: { $in: [email] } }, { primaryEmail: email }],
         });
       }
 
-      if (phone) {
-        return Customers.findOne({
+      if (!customer && phone) {
+        customer = await Customers.findOne({
           $or: [{ phones: { $in: [phone] } }, { primaryPhone: phone }],
         });
       }
 
-      if (cachedCustomerId) {
-        return Customers.findOne({ _id: cachedCustomerId });
+      if (!customer && code) {
+        customer = await Customers.findOne({ code });
       }
 
-      return null;
+      if (!customer && cachedCustomerId) {
+        customer = await Customers.findOne({ _id: cachedCustomerId });
+      }
+
+      return customer;
     }
 
     /*
@@ -398,8 +422,11 @@ export const loadClass = () => {
      * Add companyId to companyIds list
      */
     public static async addCompany(_id: string, companyId: string) {
-      await Customers.findByIdAndUpdate(_id, {
-        $addToSet: { companyIds: companyId },
+      await Conformities.create({
+        mainType: 'customer',
+        mainTypeId: _id,
+        relType: 'company',
+        relTypeId: companyId,
       });
 
       // updated customer

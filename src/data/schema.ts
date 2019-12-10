@@ -59,7 +59,7 @@ export const types = `
     languageCode: String
     uiOptions: JSON
     messengerData: JSON
-    formData: JSON
+    leadData: JSON
   }
 
   type Brand {
@@ -129,10 +129,7 @@ export const types = `
     title: String
     description: String
     buttonText: String
-    themeColor: String
-    callout: JSON
     fields: [Field]
-    rules: [Rule]
   }
 
   type MessengerConnectResponse {
@@ -245,6 +242,7 @@ export const mutations = `
       brandCode: String!
       email: String
       phone: String
+      code: String
       isUser: Boolean
 
       companyData: JSON
@@ -270,12 +268,12 @@ export const mutations = `
     readConversationMessages(conversationId: String): JSON
     saveCustomerGetNotified(customerId: String!, type: String!, value: String!): JSON
 
-    formConnect(
+    leadConnect(
       brandCode: String!,
       formCode: String!
     ): FormConnectResponse
 
-    saveForm(
+    saveLead(
       integrationId: String!
       formId: String!
       submissions: [FieldValueInput]
@@ -290,7 +288,7 @@ export const mutations = `
     ): String
 
     knowledgebaseIncReactionCount(articleId: String!, reactionChoice: String!): String
-    formIncreaseViewCount(formId: String!): JSON
+    leadIncreaseViewCount(formId: String!): JSON
     sendTypingInfo(conversationId: String!, text: String): String
   }
 `;

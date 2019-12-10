@@ -4,7 +4,7 @@ import Conversations from './Conversations';
 import Customers from './Customers';
 import { EngageMessages } from './Engages';
 import Fields from './Fields';
-import Forms from './Forms';
+import { Forms, FormSubmissions } from './Forms';
 import Integrations from './Integrations';
 import { KnowledgeBaseArticles, KnowledgeBaseCategories, KnowledgeBaseTopics } from './KnowledgeBase';
 import Messages from './Messages';
@@ -39,6 +39,7 @@ export {
   Fields,
   IFieldDocument,
   Forms,
+  FormSubmissions,
   IFormDocument,
   Integrations,
   IIntegrationDocument,

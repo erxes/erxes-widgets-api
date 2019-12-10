@@ -66,6 +66,7 @@ export interface ICustomer {
   isUser?: boolean;
   integrationId?: string;
   tagIds?: string[];
+  // TODO migrate after remove 1row
   companyIds?: string[];
   mergedIds?: string[];
   status?: string;
@@ -75,6 +76,7 @@ export interface ICustomer {
   visitorContactInfo?: IVisitorContact;
   urlVisits?: any;
   deviceTokens?: string[];
+  code?: string;
 }
 
 export interface ICustomerDocument extends ICustomer, Document {
@@ -88,6 +90,7 @@ export interface ICustomerDocument extends ICustomer, Document {
   createdAt: Date;
   modifiedAt: Date;
   deviceTokens?: string[];
+  searchText?: string;
 }
 
 /* location schema */
@@ -208,7 +211,6 @@ export const customerSchema = schemaWrapper(
 
     integrationId: field({ type: String, optional: true }),
     tagIds: field({ type: [String], optional: true, index: true }),
-    companyIds: field({ type: [String], optional: true }),
 
     // Merged customer ids
     mergedIds: field({ type: [String], optional: true }),
@@ -228,5 +230,7 @@ export const customerSchema = schemaWrapper(
     urlVisits: Object,
 
     deviceTokens: field({ type: [String], default: [] }),
+    searchText: field({ type: String, optional: true, index: true }),
+    code: field({ type: String, label: 'Code', optional: true }),
   }),
 );

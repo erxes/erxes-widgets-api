@@ -27,7 +27,7 @@ export default {
    * @return {Promise} searched articles
    */
   async knowledgeBaseArticles(_root: any, args: { topicId: string; searchString: string }) {
-    const { topicId, searchString } = args;
+    const { topicId, searchString = '' } = args;
 
     let articleIds: string[] = [];
 
