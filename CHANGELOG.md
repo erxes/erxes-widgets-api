@@ -1,3 +1,16 @@
+## [0.11.2](https://github.com/erxes/erxes-widgets-api/compare/0.11.1...0.11.2) (2019-12-15)
+
+
+### Bug Fixes
+
+* **deal:** fixed search ([8d8863f](https://github.com/erxes/erxes-widgets-api/commit/8d8863f)), closes [#1251](https://github.com/erxes/erxes-widgets-api/issues/1251)
+
+
+### Features
+
+* **customers:** added code field ([40e52d8](https://github.com/erxes/erxes-widgets-api/commit/40e52d8)), closes [#631](https://github.com/erxes/erxes-widgets-api/issues/631)
+* **integration:** archive ([149c367](https://github.com/erxes/erxes-widgets-api/commit/149c367)), closes [#624](https://github.com/erxes/erxes-widgets-api/issues/624)
+
 ## [0.11.1](https://github.com/erxes/erxes-widgets-api/compare/0.11.0...0.11.1) (2019-11-01)
 
 # [0.11.0](https://github.com/erxes/erxes-widgets-api/compare/0.10.1...0.11.0) (2019-11-01)
