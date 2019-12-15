@@ -1,3 +1,5 @@
+import * as strip from 'strip';
+
 import { Brands, Companies, Conversations, Customers, Integrations, Messages } from '../../../db/models';
 
 import { IBrowserInfo, IVisitorContactInfoParams } from '../../../db/models/Customers';
@@ -16,6 +18,7 @@ export default {
       brandCode: string;
       email?: string;
       phone?: string;
+      code?: string;
       isUser?: boolean;
       companyData?: any;
       data?: any;
@@ -23,7 +26,7 @@ export default {
       deviceToken?: string;
     },
   ) {
-    const { brandCode, email, phone, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
+    const { brandCode, email, phone, code, isUser, companyData, data, cachedCustomerId, deviceToken } = args;
 
     const customData = data;
 
@@ -41,6 +44,7 @@ export default {
       cachedCustomerId,
       email,
       phone,
+      code,
     });
 
     if (customer) {
@@ -50,6 +54,7 @@ export default {
         doc: {
           email,
           phone,
+          code,
           isUser,
           deviceToken,
         },
@@ -63,6 +68,7 @@ export default {
           integrationId: integration._id,
           email,
           phone,
+          code,
           isUser,
           deviceToken,
         },
@@ -108,12 +114,14 @@ export default {
   ) {
     const { integrationId, customerId, conversationId, message, attachments } = args;
 
+    const conversationContent = strip(message || '').substring(0, 100);
+
     // get or create conversation
     const conversation = await Conversations.getOrCreateConversation({
       conversationId,
       integrationId,
       customerId,
-      content: message,
+      content: conversationContent,
     });
 
     // create message
@@ -132,7 +140,7 @@ export default {
           status: Conversations.getConversationStatuses().OPEN,
 
           // setting conversation's content to last message
-          content: message,
+          content: conversationContent,
 
           // Mark as unread
           readUserIds: [],
