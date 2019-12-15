@@ -70,10 +70,19 @@ export const loadClass = () => {
 
       const formCode = leadApp && leadApp.credentials ? (leadApp.credentials as ILeadCredentials).formCode : null;
 
+      // website app ============
+      const websiteApp = await MessengerApps.findOne({
+        kind: 'website',
+        'credentials.integrationId': integration._id,
+      });
+
+      const websiteAppData = websiteApp && websiteApp.credentials;
+
       return {
         ...(messengerData || {}),
         messages: messagesByLanguage,
         knowledgeBaseTopicId: topicId,
+        websiteAppData,
         formCode,
       };
     }
